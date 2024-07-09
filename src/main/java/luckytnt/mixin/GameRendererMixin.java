@@ -13,6 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.RotationAxis;
 
@@ -24,7 +25,7 @@ public abstract class GameRendererMixin {
 	private Camera camera;
 
 	@Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;loadProjectionMatrix(Lorg/joml/Matrix4f;)V", shift = At.Shift.AFTER), cancellable = true)
-	private void renderWorldInject(float tickDelta, long limitTime, CallbackInfo info) {
+	private void renderWorldInject(RenderTickCounter tickCounter, CallbackInfo info) {
 		MinecraftClient minecraft = MinecraftClient.getInstance();
 		ClientPlayerEntity player = minecraft.player;
 		

@@ -41,7 +41,7 @@ public class HailstoneProjectile extends LExplosiveProjectile {
 	public void onEntityHit(EntityHitResult result) {
 		super.onEntityHit(result);
 		if(result.getEntity() instanceof LivingEntity lent) {
-			Reference<DamageType> type = getLevel().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(LuckyTNTMod.MODID, "hailstone")));
+			Reference<DamageType> type = getLevel().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(LuckyTNTMod.MODID, "hailstone")));
 			DamageSource source = new DamageSource(type, this, owner());
 			
 			lent.damage(source, 4f);

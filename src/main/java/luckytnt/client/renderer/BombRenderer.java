@@ -29,13 +29,13 @@ public class BombRenderer extends EntityRenderer<LExplosiveProjectile>{
 		stack.push();
 		stack.scale(entity.getEffect().getSize(entity), entity.getEffect().getSize(entity), entity.getEffect().getSize(entity));
 		VertexConsumer vc = buffer.getBuffer(RenderLayer.getEntityCutout(getTexture(entity)));
-		model.render(stack, vc, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 0.0625f);
+		model.render(stack, vc, light, OverlayTexture.DEFAULT_UV);
 		super.render(entity, rotY, partialTicks, stack, buffer, light);
 		stack.pop();
 	}
 
 	@Override
 	public Identifier getTexture(LExplosiveProjectile entity) {
-		return new Identifier("luckytntmod:textures/tsarbomb.png");
+		return Identifier.of("luckytntmod:textures/tsarbomb.png");
 	}
 }

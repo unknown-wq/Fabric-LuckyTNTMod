@@ -47,7 +47,7 @@ public class GroveTNTEffect extends PrimedTNTEffect {
 							case 4: string = "birchtree"; break;
 							case 5: string = "jungletree"; break;
 						}
-						StructureTemplate template = ((ServerWorld)entity.getLevel()).getStructureTemplateManager().getTemplateOrBlank(new Identifier(LuckyTNTMod.MODID, string));
+						StructureTemplate template = ((ServerWorld)entity.getLevel()).getStructureTemplateManager().getTemplateOrBlank(Identifier.of(LuckyTNTMod.MODID, string));
 						if(template != null) {
 							template.place((ServerWorld)entity.getLevel(), pos.add(-1, 0, -1), pos.add(-1, 0, -1), new StructurePlacementData(), entity.getLevel().random, 3);
 						}

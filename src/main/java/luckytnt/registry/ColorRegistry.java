@@ -5,10 +5,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.color.block.BlockColorProvider;
 import net.minecraft.client.color.item.ItemColorProvider;
 import net.minecraft.client.color.world.BiomeColors;
-import net.minecraft.client.color.world.GrassColors;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;
+import net.minecraft.world.biome.GrassColors;
 
 public class ColorRegistry {
 	

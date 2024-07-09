@@ -20,6 +20,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -52,8 +53,8 @@ public class AngryMiner extends HostileEntity implements RangedAttackMob {
 	}
 	
 	@Override
-	public void dropEquipment(DamageSource source, int looting, boolean hit) {
-		super.dropEquipment(source, looting, hit);
+	public void dropEquipment(ServerWorld world, DamageSource source, boolean causedByPlayer) {
+		super.dropEquipment(world, source, causedByPlayer);
 		dropItem(ItemRegistry.DYNAMITE.get());
 	}
 		

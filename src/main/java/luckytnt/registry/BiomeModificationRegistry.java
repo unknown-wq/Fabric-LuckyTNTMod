@@ -19,10 +19,10 @@ public class BiomeModificationRegistry {
 	};
 
 	public static void init() {
-		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.UNDERGROUND_ORES, RegistryKey.of(RegistryKeys.PLACED_FEATURE, new Identifier(LuckyTNTMod.MODID, "gunpowder_ores")));
-		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.UNDERGROUND_ORES, RegistryKey.of(RegistryKeys.PLACED_FEATURE, new Identifier(LuckyTNTMod.MODID, "uranium_ores")));
+		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.UNDERGROUND_ORES, RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LuckyTNTMod.MODID, "gunpowder_ores")));
+		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.UNDERGROUND_ORES, RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LuckyTNTMod.MODID, "uranium_ores")));
 		
-		BiomeModifications.addFeature(GENERAL, GenerationStep.Feature.SURFACE_STRUCTURES, RegistryKey.of(RegistryKeys.PLACED_FEATURE, new Identifier(LuckyTNTMod.MODID, "graves")));
-		BiomeModifications.addFeature(GENERAL, GenerationStep.Feature.SURFACE_STRUCTURES, RegistryKey.of(RegistryKeys.PLACED_FEATURE, new Identifier(LuckyTNTMod.MODID, "altar")));
+		BiomeModifications.addFeature(GENERAL, GenerationStep.Feature.SURFACE_STRUCTURES, RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LuckyTNTMod.MODID, "graves")));
+		BiomeModifications.addFeature(GENERAL, GenerationStep.Feature.SURFACE_STRUCTURES, RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LuckyTNTMod.MODID, "altar")));
 	}
 }

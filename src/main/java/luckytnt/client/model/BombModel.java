@@ -16,7 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 
 public class BombModel <T extends Entity> extends EntityModel<T> {
-	public static final EntityModelLayer LAYER_LOCATION = new EntityModelLayer(new Identifier(LuckyTNTMod.MODID, "tsar_bomb_model"), "main");
+	public static final EntityModelLayer LAYER_LOCATION = new EntityModelLayer(Identifier.of(LuckyTNTMod.MODID, "tsar_bomb_model"), "main");
 	private final ModelPart TsarBomb;
 
 	public BombModel(ModelPart root) {
@@ -74,7 +74,7 @@ public class BombModel <T extends Entity> extends EntityModel<T> {
 	}
 
 	@Override
-	public void render(MatrixStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void render(MatrixStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int i) {
 		TsarBomb.render(poseStack, buffer, packedLight, packedOverlay);
 	}
 }

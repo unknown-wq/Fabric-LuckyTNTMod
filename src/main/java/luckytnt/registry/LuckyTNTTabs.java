@@ -75,11 +75,11 @@ public class LuckyTNTTabs {
 			populator.add(ItemRegistry.TOXIC_STONE.get());
         }).build();
 		
-		Registry.register(Registries.ITEM_GROUP, new Identifier(LuckyTNTMod.MODID, "luckytntmod_a_normal_tnt"), NORMAL_TNT);
-		Registry.register(Registries.ITEM_GROUP, new Identifier(LuckyTNTMod.MODID, "luckytntmod_b_god_tnt"), GOD_TNT);
-		Registry.register(Registries.ITEM_GROUP, new Identifier(LuckyTNTMod.MODID, "luckytntmod_c_doomsday_tnt"), DOOMSDAY_TNT);
-		Registry.register(Registries.ITEM_GROUP, new Identifier(LuckyTNTMod.MODID, "luckytntmod_d_dynamite"), DYNAMITE);
-		Registry.register(Registries.ITEM_GROUP, new Identifier(LuckyTNTMod.MODID, "luckytntmod_e_minecarts"), MINECART);
-		Registry.register(Registries.ITEM_GROUP, new Identifier(LuckyTNTMod.MODID, "luckytntmod_f_other"), OTHER);
+		Registry.register(Registries.ITEM_GROUP, Identifier.of(LuckyTNTMod.MODID, "luckytntmod_a_normal_tnt"), NORMAL_TNT);
+		Registry.register(Registries.ITEM_GROUP, Identifier.of(LuckyTNTMod.MODID, "luckytntmod_b_god_tnt"), GOD_TNT);
+		Registry.register(Registries.ITEM_GROUP, Identifier.of(LuckyTNTMod.MODID, "luckytntmod_c_doomsday_tnt"), DOOMSDAY_TNT);
+		Registry.register(Registries.ITEM_GROUP, Identifier.of(LuckyTNTMod.MODID, "luckytntmod_d_dynamite"), DYNAMITE);
+		Registry.register(Registries.ITEM_GROUP, Identifier.of(LuckyTNTMod.MODID, "luckytntmod_e_minecarts"), MINECART);
+		Registry.register(Registries.ITEM_GROUP, Identifier.of(LuckyTNTMod.MODID, "luckytntmod_f_other"), OTHER);
 	}
 }

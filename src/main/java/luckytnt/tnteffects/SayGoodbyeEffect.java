@@ -32,7 +32,7 @@ public class SayGoodbyeEffect extends PrimedTNTEffect{
 	public void serverExplosion(IExplosiveEntity entity) {		
 		PlayerEntity ent = entity.getLevel().getClosestPlayer((Entity)entity, 60);
 		if(ent != null) {
-			Reference<DamageType> type = entity.getLevel().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(LuckyTNTMod.MODID, "say_goodbye")));
+			Reference<DamageType> type = entity.getLevel().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(LuckyTNTMod.MODID, "say_goodbye")));
 			DamageSource source = new DamageSource(type, (Entity)entity, entity.owner());
 			
 			ImprovedExplosion explosion = new ImprovedExplosion(ent.getWorld(), (Entity) entity, source, ent.getX(), ent.getY(), ent.getZ(), 20);

@@ -14,14 +14,14 @@ import net.minecraft.util.Identifier;
 
 public class EffectRegistry {
 	
-	public static final RegistryKey<StatusEffect> CONTAMINATED = RegistryKey.of(Registries.STATUS_EFFECT.getKey(), new Identifier(LuckyTNTMod.MODID, "contaminated"));
-	public static final RegistryKey<StatusEffect> MIDAS_TOUCH = RegistryKey.of(Registries.STATUS_EFFECT.getKey(), new Identifier(LuckyTNTMod.MODID, "midas_touch"));
+	public static final RegistryKey<StatusEffect> CONTAMINATED = RegistryKey.of(Registries.STATUS_EFFECT.getKey(), Identifier.of(LuckyTNTMod.MODID, "contaminated"));
+	public static final RegistryKey<StatusEffect> MIDAS_TOUCH = RegistryKey.of(Registries.STATUS_EFFECT.getKey(), Identifier.of(LuckyTNTMod.MODID, "midas_touch"));
 
 	public static final Supplier<StatusEffect> CONTAMINATED_EFFECT = registerEffect(() -> new ContaminatedEffect(StatusEffectCategory.HARMFUL, 0xB9C300), "contaminated");
 	public static final Supplier<StatusEffect> MIDAS_TOUCH_EFFECT = registerEffect(() -> new MidasTouchEffect(StatusEffectCategory.NEUTRAL, 0xDFB93E), "midas_touch");
 	
 	public static Supplier<StatusEffect> registerEffect(Supplier<StatusEffect> effect, String name) {		
-		StatusEffect reffect = Registry.register(Registries.STATUS_EFFECT, new Identifier(LuckyTNTMod.MODID, name), effect.get());
+		StatusEffect reffect = Registry.register(Registries.STATUS_EFFECT, Identifier.of(LuckyTNTMod.MODID, name), effect.get());
 		return () -> reffect;
 	}
 	

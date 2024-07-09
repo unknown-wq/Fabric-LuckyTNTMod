@@ -268,7 +268,7 @@ public class BlockRegistry {
 	public static final Supplier<Block> PRESENT = registerBlock("present", () -> new PresentBlock(AbstractBlock.Settings.create().mapColor(MapColor.RED).sounds(BlockSoundGroup.WOOL).strength(0.3f, 0f)));
 	
 	public static Supplier<Block> registerBlock(String name, Supplier<Block> blockSupplier) {
-		Block block = Registry.register(Registries.BLOCK, new Identifier(LuckyTNTMod.MODID, name), blockSupplier.get());
+		Block block = Registry.register(Registries.BLOCK, Identifier.of(LuckyTNTMod.MODID, name), blockSupplier.get());
 		return () -> block;
 	}
 	

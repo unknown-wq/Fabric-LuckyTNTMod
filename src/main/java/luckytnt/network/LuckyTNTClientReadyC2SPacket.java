@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 
 public class LuckyTNTClientReadyC2SPacket extends ClientReadyC2SPacket {
 
-	public static final Identifier NAME = new Identifier(LuckyTNTMod.MODID, "lucky_tnt_client_ready_c2s");
+	public static final Identifier NAME = Identifier.of(LuckyTNTMod.MODID, "lucky_tnt_client_ready_c2s");
 	public static final CustomPayload.Id<LuckyTNTClientReadyC2SPacket> ID = new CustomPayload.Id<>(NAME);
     public static final PacketCodec<RegistryByteBuf, LuckyTNTClientReadyC2SPacket> CODEC = PacketCodec.of(ClientReadyC2SPacket::write, LuckyTNTClientReadyC2SPacket::new);
 	

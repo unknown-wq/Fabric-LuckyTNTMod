@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 public class LevelVariablesS2CPacket implements CustomPayload {
 
-	public static final Identifier NAME = new Identifier(LuckyTNTMod.MODID, "level_variables_s2c");
+	public static final Identifier NAME = Identifier.of(LuckyTNTMod.MODID, "level_variables_s2c");
 	public static final CustomPayload.Id<LevelVariablesS2CPacket> ID = new CustomPayload.Id<>(NAME);
     public static final PacketCodec<RegistryByteBuf, LevelVariablesS2CPacket> CODEC = PacketCodec.of(LevelVariablesS2CPacket::write, LevelVariablesS2CPacket::new);
 	

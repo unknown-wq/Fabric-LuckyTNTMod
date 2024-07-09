@@ -51,9 +51,9 @@ public class Grave extends Feature<DefaultFeatureConfig>{
 	public BlockState chestSouthLeft = Blocks.CHEST.getDefaultState().with(ChestBlock.FACING, Direction.SOUTH).with(ChestBlock.CHEST_TYPE, ChestType.LEFT);
 	public BlockState chestSouthRight = Blocks.CHEST.getDefaultState().with(ChestBlock.FACING, Direction.SOUTH).with(ChestBlock.CHEST_TYPE, ChestType.RIGHT);
 	
-	public static final Identifier GRAVE_LOOT_1_LOCATION = new Identifier("luckytntmod:chests/grave_loot_1");
-	public static final Identifier GRAVE_LOOT_2_LOCATION = new Identifier("luckytntmod:chests/grave_loot_2");
-	public static final Identifier GRAVE_LOOT_RARE_LOCATION = new Identifier("luckytntmod:chests/grave_loot_rare");
+	public static final Identifier GRAVE_LOOT_1_LOCATION = Identifier.of("luckytntmod:chests/grave_loot_1");
+	public static final Identifier GRAVE_LOOT_2_LOCATION = Identifier.of("luckytntmod:chests/grave_loot_2");
+	public static final Identifier GRAVE_LOOT_RARE_LOCATION = Identifier.of("luckytntmod:chests/grave_loot_rare");
 	
 	public static final RegistryKey<LootTable> GRAVE_LOOT_1 = RegistryKey.of(RegistryKeys.LOOT_TABLE, GRAVE_LOOT_1_LOCATION);
 	public static final RegistryKey<LootTable> GRAVE_LOOT_2 = RegistryKey.of(RegistryKeys.LOOT_TABLE, GRAVE_LOOT_2_LOCATION);

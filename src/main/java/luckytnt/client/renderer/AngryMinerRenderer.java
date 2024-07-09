@@ -17,6 +17,6 @@ public class AngryMinerRenderer extends BipedEntityRenderer<AngryMiner, BipedEnt
 
 	@Override
 	public Identifier getTexture(AngryMiner entity) {
-		return new Identifier("luckytntmod:textures/angryminer.png");
+		return Identifier.of("luckytntmod:textures/angryminer.png");
 	}
 }

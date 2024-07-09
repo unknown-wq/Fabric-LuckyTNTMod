@@ -537,12 +537,12 @@ public class EntityRegistry {
 	};
 	
 	public static <T extends Entity> Supplier<EntityType<T>> registerEntity(String name, Supplier<EntityType<T>> entitySupplier) {
-		EntityType<T> rtype = Registry.register(Registries.ENTITY_TYPE, new Identifier(LuckyTNTMod.MODID, name), entitySupplier.get());
+		EntityType<T> rtype = Registry.register(Registries.ENTITY_TYPE, Identifier.of(LuckyTNTMod.MODID, name), entitySupplier.get());
 		return () -> rtype;
 	}
 	
 	public static <F extends BlockEntity> Supplier<BlockEntityType<F>> registerBlockEntity(String name, Supplier<BlockEntityType<F>> entitySupplier) {
-		BlockEntityType<F> rtype = Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(LuckyTNTMod.MODID, name), entitySupplier.get());
+		BlockEntityType<F> rtype = Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(LuckyTNTMod.MODID, name), entitySupplier.get());
 		return () -> rtype;
 	}
 	

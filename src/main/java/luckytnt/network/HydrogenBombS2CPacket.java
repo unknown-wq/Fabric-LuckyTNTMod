@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier;
 
 public class HydrogenBombS2CPacket implements CustomPayload {
 	
-	public static final Identifier NAME = new Identifier(LuckyTNTMod.MODID, "hydrogen_bomb_s2c");
+	public static final Identifier NAME = Identifier.of(LuckyTNTMod.MODID, "hydrogen_bomb_s2c");
 	public static final CustomPayload.Id<HydrogenBombS2CPacket> ID = new CustomPayload.Id<>(NAME);
     public static final PacketCodec<RegistryByteBuf, HydrogenBombS2CPacket> CODEC = PacketCodec.of(HydrogenBombS2CPacket::write, HydrogenBombS2CPacket::new);
 	

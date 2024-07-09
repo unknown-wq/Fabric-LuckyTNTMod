@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 public class LuckyTNTUpdateConfigValuesPacket extends UpdateConfigValuesPacket {
 
-	public static final Identifier NAME = new Identifier(LuckyTNTMod.MODID, "lucky_tnt_update_config_values");
+	public static final Identifier NAME = Identifier.of(LuckyTNTMod.MODID, "lucky_tnt_update_config_values");
 	public static final CustomPayload.Id<LuckyTNTUpdateConfigValuesPacket> ID = new CustomPayload.Id<>(NAME);
     public static final PacketCodec<RegistryByteBuf, LuckyTNTUpdateConfigValuesPacket> CODEC = PacketCodec.of(UpdateConfigValuesPacket::write, LuckyTNTUpdateConfigValuesPacket::new);
 	

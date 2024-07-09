@@ -16,7 +16,7 @@ public class SoundRegistry {
 	public static Supplier<SoundEvent> VACUUM_CLEANER = register("vacuum_cleaner");
 	
 	public static Supplier<SoundEvent> register(String name){
-		SoundEvent event = Registry.register(Registries.SOUND_EVENT, new Identifier(LuckyTNTMod.MODID, name), SoundEvent.of(new Identifier(LuckyTNTMod.MODID, name)));
+		SoundEvent event = Registry.register(Registries.SOUND_EVENT, Identifier.of(LuckyTNTMod.MODID, name), SoundEvent.of(Identifier.of(LuckyTNTMod.MODID, name)));
 		return () -> event;
 	}
 	

@@ -9,13 +9,13 @@ import luckytnt.item.VacuumCleaner;
 import luckytntlib.item.LDynamiteItem;
 import luckytntlib.item.LTNTMinecartItem;
 import luckytntlib.item.LuckyDynamiteItem;
-import net.minecraft.client.item.TooltipType;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
@@ -224,7 +224,7 @@ public class ItemRegistry {
 	public static final Supplier<Item> TOXIC_STONE = registerItem("toxic_stone", () -> new BlockItem(BlockRegistry.TOXIC_STONE.get(), new Item.Settings()));
 	
 	public static Supplier<Item> registerItem(String name, Supplier<Item> itemSupplier) {
-		Item ritem = Registry.register(Registries.ITEM, new Identifier(LuckyTNTMod.MODID, name), itemSupplier.get());
+		Item ritem = Registry.register(Registries.ITEM, Identifier.of(LuckyTNTMod.MODID, name), itemSupplier.get());
 		return () -> ritem;
 	}
 	

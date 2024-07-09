@@ -44,7 +44,7 @@ public class EntityFireworkEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		EntityType<?> type = Registries.ENTITY_TYPE.get(new Identifier(ent.getPersistentData().getString("type")));
+		EntityType<?> type = Registries.ENTITY_TYPE.get(Identifier.of(ent.getPersistentData().getString("type")));
 		if(type == null) {
 			type = EntityType.PIG;
 		}

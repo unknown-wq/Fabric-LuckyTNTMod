@@ -17,7 +17,7 @@ public class FeatureRegistry {
 	public static final Supplier<Feature<?>> altar = registerFeature("altar", () -> new Altar(DefaultFeatureConfig.CODEC));
 	
 	public static Supplier<Feature<?>> registerFeature(String name, Supplier<Feature<?>> featureSupplier) {
-		Feature<?> feature = Registry.register(Registries.FEATURE, new Identifier(LuckyTNTMod.MODID, name), featureSupplier.get());
+		Feature<?> feature = Registry.register(Registries.FEATURE, Identifier.of(LuckyTNTMod.MODID, name), featureSupplier.get());
 		return () -> feature;
 	}
 	
