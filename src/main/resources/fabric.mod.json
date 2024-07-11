@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "luckytntmod",
-	"version": "5.0",
+	"version": "6.0",
 	"name": "Lucky TNT Mod",
 	"description": "Lucky TNT adds tons of new TNT to destroy your world with!",
 	"authors": [
@@ -25,8 +25,8 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.11",
-		"minecraft": ">=1.20.5",
-		"luckytntlib": ">=0.100.2.0",
+		"minecraft": ">=1.21",
+		"luckytntlib": ">=0.100.6.0",
 		"java": ">=21",
 		"fabric-api": "*"
 	}
