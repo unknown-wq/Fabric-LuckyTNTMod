@@ -1,0 +1,12 @@
+{
+	"type": "luckytntmod:blasting_mult",
+	"experience": 1,
+	"cookingtime": 100,
+	"ingredient": {
+		"item": "luckytntmod:deepslate_gunpowder_ore"
+	},
+	"result": {
+		"id": "minecraft:gunpowder",
+		"count": 5
+	}
+}
