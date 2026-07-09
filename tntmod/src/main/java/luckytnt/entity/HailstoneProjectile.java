@@ -21,6 +21,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.Holder;
 
 public class HailstoneProjectile extends LExplosiveProjectile {
@@ -30,22 +31,22 @@ public class HailstoneProjectile extends LExplosiveProjectile {
 	}
 
 	@Override
-	public void onBlockHit(BlockHitResult result) {
-		super.onBlockHit(result);
-		getWorld().playSound(null, new BlockPos(Mth.floor(x()), Mth.floor(y()), Mth.floor(z())), SoundEvents.BLOCK_GLASS_BREAK, SoundSource.BLOCKS, 0.5f, 1f);
+	public void onHitBlock(BlockHitResult result) {
+		super.onHitBlock(result);
+		level().playSound(null, new BlockPos(Mth.floor(x()), Mth.floor(y()), Mth.floor(z())), SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 0.5f, 1f);
 		for(int count = 0; count < 10; count++)
-			getWorld().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SNOW.defaultBlockState()), x(), y(), z(), 0, 0, 0);
+			level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SNOW.defaultBlockState()), x(), y(), z(), 0, 0, 0);
 		destroy();
 	}
-	
+
 	@Override
-	public void onEntityHit(EntityHitResult result) {
-		super.onEntityHit(result);
-		if(result.getEntity() instanceof LivingEntity lent) {
-			Reference<DamageType> type = getLevel().registryAccess().get(Registries.DAMAGE_TYPE).entryOf(ResourceKey.of(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "hailstone")));
+	public void onHitEntity(EntityHitResult result) {
+		super.onHitEntity(result);
+		if(result.getEntity() instanceof LivingEntity lent && getLevel() instanceof ServerLevel serverLevel) {
+			Reference<DamageType> type = getLevel().registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(ResourceKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "hailstone")));
 			DamageSource source = new DamageSource(type, this, owner());
-			
-			lent.damage(source, 4f);
+
+			lent.hurtServer(serverLevel, source, 4f);
 		}
-	} 
+	}
 }

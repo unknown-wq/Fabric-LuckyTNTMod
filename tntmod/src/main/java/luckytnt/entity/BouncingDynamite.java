@@ -20,26 +20,26 @@ public class BouncingDynamite extends LExplosiveProjectile {
 	}
 	
 	@Override
-	public void onBlockHit(BlockHitResult hitResult) {
-		Vec3 flyDir = getVelocity();
+	public void onHitBlock(BlockHitResult hitResult) {
+		Vec3 flyDir = getDeltaMovement();
 		if(hitResult != null) {
-			if(getPersistentData().getInt("bounces") >= 12) {
-				if(getWorld() instanceof ServerLevel) {
+			if(getPersistentData().getIntOr("bounces", 0) >= 12) {
+				if(level() instanceof ServerLevel) {
 					getEffect().serverExplosion(this);
-					getWorld().playSound(this, new BlockPos(Mth.floor(getX()), Mth.floor(getY()), Mth.floor(getZ())), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (getWorld().getRandom().nextFloat() - getWorld().getRandom().nextFloat()) * 0.2f) * 0.7f);
+					level().playSound(this, new BlockPos(Mth.floor(getX()), Mth.floor(getY()), Mth.floor(getZ())), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level().getRandom().nextFloat() - level().getRandom().nextFloat()) * 0.2f) * 0.7f);
 				}
 				discard();
 			}
-			Vec3 normalVec = new Vec3(hitResult.getSide().getVector().getX(), hitResult.getSide().getVector().getY(), hitResult.getSide().getVector().getZ());
-			double num = normalVec.dotProduct(flyDir);
-			double denom = normalVec.dotProduct(normalVec);
-			Vec3 result = normalVec.multiply(num/denom);
-			Vec3 bounceDir = flyDir.subtract(result.multiply(2f));
-			setVelocity(bounceDir.multiply(0.5f + Math.random() * 0.25f));
+			Vec3 normalVec = new Vec3(hitResult.getDirection().getUnitVec3i().getX(), hitResult.getDirection().getUnitVec3i().getY(), hitResult.getDirection().getUnitVec3i().getZ());
+			double num = normalVec.dot(flyDir);
+			double denom = normalVec.dot(normalVec);
+			Vec3 result = normalVec.scale(num/denom);
+			Vec3 bounceDir = flyDir.subtract(result.scale(2f));
+			setDeltaMovement(bounceDir.scale(0.5f + Math.random() * 0.25f));
 			CompoundTag nbt = getPersistentData();
-			nbt.putInt("bounces", getPersistentData().getInt("bounces") + 1);
+			nbt.putInt("bounces", getPersistentData().getIntOr("bounces", 0) + 1);
 			setPersistentData(nbt);
-			getWorld().playSound(null, x(), y(), z(), SoundEvents.ENTITY_SLIME_JUMP, SoundSource.MASTER, 1, 1);		
+			level().playSound(null, x(), y(), z(), SoundEvents.SLIME_JUMP, SoundSource.MASTER, 1, 1);
 		}
 	}
 }

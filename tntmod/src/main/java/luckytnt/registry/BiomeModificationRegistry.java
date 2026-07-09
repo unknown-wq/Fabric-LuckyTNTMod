@@ -19,10 +19,10 @@ public class BiomeModificationRegistry {
 	};
 
 	public static void init() {
-		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.UNDERGROUND_ORES, ResourceKey.of(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "gunpowder_ores")));
-		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.UNDERGROUND_ORES, ResourceKey.of(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "uranium_ores")));
+		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.of(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "gunpowder_ores")));
+		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.of(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "uranium_ores")));
 		
-		BiomeModifications.addFeature(GENERAL, GenerationStep.Feature.SURFACE_STRUCTURES, ResourceKey.of(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "graves")));
-		BiomeModifications.addFeature(GENERAL, GenerationStep.Feature.SURFACE_STRUCTURES, ResourceKey.of(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "altar")));
+		BiomeModifications.addFeature(GENERAL, GenerationStep.Decoration.SURFACE_STRUCTURES, ResourceKey.of(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "graves")));
+		BiomeModifications.addFeature(GENERAL, GenerationStep.Decoration.SURFACE_STRUCTURES, ResourceKey.of(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "altar")));
 	}
 }

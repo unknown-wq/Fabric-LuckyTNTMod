@@ -28,44 +28,44 @@ public class AngryMiner extends Monster implements RangedAttackMob {
 	
 	public AngryMiner(EntityType<AngryMiner> type, Level level) {
 		super(type, level);
-		equipStack(EquipmentSlot.MAINHAND, new ItemStack(ItemRegistry.DYNAMITE.get()));
+		setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemRegistry.DYNAMITE.get()));
 	}
-	
+
 	@Override
-	public void initGoals() {
-		super.initGoals();
-		targetSelector.add(0, new NearestAttackableTargetGoal<Player>(this, Player.class, false, false));
-		targetSelector.add(1, new NearestAttackableTargetGoal<IronGolem>(this, IronGolem.class, false, false));
-		targetSelector.add(2, new HurtByTargetGoal(this, Player.class).setGroupRevenge(getClass()));
-		goalSelector.add(3, new PanicGoal(this, 1.2f));
-		goalSelector.add(4, new WaterAvoidingRandomStrollGoal(this, 1));
-		goalSelector.add(5, new RandomLookAroundGoal(this));
-		goalSelector.add(6, new FloatGoal(this));
-		goalSelector.add(0, new RangedAttackGoal(this, 1.25f, 20, 10));
+	public void registerGoals() {
+		super.registerGoals();
+		targetSelector.addGoal(0, new NearestAttackableTargetGoal<Player>(this, Player.class, false, false));
+		targetSelector.addGoal(1, new NearestAttackableTargetGoal<IronGolem>(this, IronGolem.class, false, false));
+		targetSelector.addGoal(2, new HurtByTargetGoal(this, Player.class).setAlertOthers(getClass()));
+		goalSelector.addGoal(3, new PanicGoal(this, 1.2f));
+		goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1));
+		goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+		goalSelector.addGoal(6, new FloatGoal(this));
+		goalSelector.addGoal(0, new RangedAttackGoal(this, 1.25f, 20, 10));
 	}
-	
+
 	@Override
-	public void shootAt(LivingEntity entity, float strength) {
+	public void performRangedAttack(LivingEntity entity, float strength) {
 		double xVel = entity.getX() - getX();
-		double yVel = entity.getY() + getStandingEyeHeight() - 1.1f;
+		double yVel = entity.getY() + getEyeHeight() - 1.1f;
 		double zVel = entity.getZ() - getZ();
-		ItemRegistry.DYNAMITE.get().shoot(getWorld(), getX(), getY() + getStandingEyeHeight(), getZ(), new Vec3(xVel, yVel - getY() - getStandingEyeHeight() + Math.sqrt(xVel * xVel + zVel * zVel) * 0.2f, zVel), 2, this);
+		ItemRegistry.DYNAMITE.get().shoot(level(), getX(), getY() + getEyeHeight(), getZ(), new Vec3(xVel, yVel - getY() - getEyeHeight() + Math.sqrt(xVel * xVel + zVel * zVel) * 0.2f, zVel), 2, this);
 	}
-	
+
 	@Override
-	public void dropEquipment(ServerLevel world, DamageSource source, boolean causedByPlayer) {
-		super.dropEquipment(world, source, causedByPlayer);
-		dropItem(ItemRegistry.DYNAMITE.get());
+	public void dropCustomDeathLoot(ServerLevel world, DamageSource source, boolean causedByPlayer) {
+		super.dropCustomDeathLoot(world, source, causedByPlayer);
+		spawnAtLocation(world, ItemRegistry.DYNAMITE.get());
 	}
-		
+
 	@Override
-	public boolean canImmediatelyDespawn(double distance) {
+	public boolean removeWhenFarAway(double distance) {
 		return false;
 	}
-	
+
 	public static AttributeSupplier.Builder createAttributes() {
 		return Mob.createMobAttributes()
-			.add(Attributes.GENERIC_MOVEMENT_SPEED, 0.3f)
-			.add(Attributes.GENERIC_MAX_HEALTH, 40);
+			.add(Attributes.MOVEMENT_SPEED, 0.3f)
+			.add(Attributes.MAX_HEALTH, 40);
 	}
 }

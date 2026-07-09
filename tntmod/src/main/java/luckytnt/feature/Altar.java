@@ -14,11 +14,11 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.gen.feature.DefaultFeatureConfig;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.gen.feature.util.FeatureContext;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
-public class Altar extends Feature<DefaultFeatureConfig>{
+public class Altar extends Feature<NoneFeatureConfiguration>{
 	public BlockState ground = Blocks.GRASS_BLOCK.defaultBlockState();
 	
 	public BlockState slab = Blocks.STONE_BRICK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
@@ -27,7 +27,7 @@ public class Altar extends Feature<DefaultFeatureConfig>{
 	public BlockState wall = Blocks.STONE_BRICK_WALL.defaultBlockState();
 	public BlockState mossyWall = Blocks.MOSSY_STONE_BRICK_WALL.defaultBlockState();
 	
-	public Altar(Codec<DefaultFeatureConfig> codec) {
+	public Altar(Codec<NoneFeatureConfiguration> codec) {
 		super(codec);
 	}
 	
@@ -62,7 +62,7 @@ public class Altar extends Feature<DefaultFeatureConfig>{
 	}
 
 	@Override
-	public boolean generate(FeatureContext<DefaultFeatureConfig> ctx) {
+	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
 		if(!LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE.get().booleanValue()) {
 	        int m = LocalDate.now().get(ChronoField.MONTH_OF_YEAR);
 	        if(m != 10) {
@@ -71,7 +71,7 @@ public class Altar extends Feature<DefaultFeatureConfig>{
 		}
 		
 		WorldGenLevel level = ctx.level();
-		BlockPos pos = ctx.getOrigin();
+		BlockPos pos = ctx.origin();
 		
 		if(level.getBiome(pos).is(ConventionalBiomeTags.IS_MUSHROOM)) {
 			ground = Blocks.MYCELIUM.defaultBlockState();
@@ -80,11 +80,11 @@ public class Altar extends Feature<DefaultFeatureConfig>{
 		for(int offX = -3; offX <= 3; offX++) {
 			for(int offY = -2; offY <= -1; offY++) {
 				for(int offZ = -3; offZ <= 3; offZ++) {
-					if(level.getBlockState(pos.add(offX, offY, offZ)).isAir()) {
+					if(level.getBlockState(pos.offset(offX, offY, offZ)).isAir()) {
 						if(offY == -2) {
-							level.setBlock(pos.add(offX, offY, offZ), Blocks.DIRT.defaultBlockState(), 3);
+							level.setBlock(pos.offset(offX, offY, offZ), Blocks.DIRT.defaultBlockState(), 3);
 						} else {
-							level.setBlock(pos.add(offX, offY, offZ), ground, 3);
+							level.setBlock(pos.offset(offX, offY, offZ), ground, 3);
 						}
 					}
 				}
@@ -93,45 +93,45 @@ public class Altar extends Feature<DefaultFeatureConfig>{
 		
 		for(int offX = -1; offX <= 1; offX++) {
 			for(int offZ = -1; offZ <= 1; offZ++) {
-				level.setBlock(pos.add(offX, 0, offZ), randomBrick(), 3);
+				level.setBlock(pos.offset(offX, 0, offZ), randomBrick(), 3);
 			}
 		}
 		
 		for(int offX = -1; offX <= 1; offX++) {
-			level.setBlock(pos.add(offX, 0, 2), randomSlab(), 3);
-			level.setBlock(pos.add(offX, 0, -2), randomSlab(), 3);
+			level.setBlock(pos.offset(offX, 0, 2), randomSlab(), 3);
+			level.setBlock(pos.offset(offX, 0, -2), randomSlab(), 3);
 		}
 		
 		for(int offZ = -1; offZ <= 1; offZ++) {
-			level.setBlock(pos.add(2, 0, offZ), randomSlab(), 3);
-			level.setBlock(pos.add(-2, 0, offZ), randomSlab(), 3);
+			level.setBlock(pos.offset(2, 0, offZ), randomSlab(), 3);
+			level.setBlock(pos.offset(-2, 0, offZ), randomSlab(), 3);
 		}
 		
-		level.setBlock(pos.add(1, 1, 0), randomSlab(), 3);
-		level.setBlock(pos.add(0, 1, -1), randomSlab(), 3);
-		level.setBlock(pos.add(1, 1, -1), Math.random() > 0.4D ? wall : mossyWall, 3);
-		level.setBlock(pos.add(1, 2, -1), randomSlab(), 3);
+		level.setBlock(pos.offset(1, 1, 0), randomSlab(), 3);
+		level.setBlock(pos.offset(0, 1, -1), randomSlab(), 3);
+		level.setBlock(pos.offset(1, 1, -1), Math.random() > 0.4D ? wall : mossyWall, 3);
+		level.setBlock(pos.offset(1, 2, -1), randomSlab(), 3);
 		
 		for(int offY = 1; offY <= 3; offY++) {
 			if(offY <= 2) {
-				level.setBlock(pos.add(1, offY, 1), Math.random() > 0.4D ? wall : mossyWall, 3);
-				level.setBlock(pos.add(-1, offY, 1), Math.random() > 0.4D ? wall : mossyWall, 3);
-				level.setBlock(pos.add(-1, offY, -1), Math.random() > 0.4D ? wall : mossyWall, 3);
+				level.setBlock(pos.offset(1, offY, 1), Math.random() > 0.4D ? wall : mossyWall, 3);
+				level.setBlock(pos.offset(-1, offY, 1), Math.random() > 0.4D ? wall : mossyWall, 3);
+				level.setBlock(pos.offset(-1, offY, -1), Math.random() > 0.4D ? wall : mossyWall, 3);
 			} else {
-				level.setBlock(pos.add(1, offY, 1), Math.random() > 0.4D ? wall : mossyWall, 3);
-				level.setBlock(pos.add(-1, offY, 1), randomSlab(), 3);
-				level.setBlock(pos.add(-1, offY, -1), Math.random() > 0.4D ? wall : mossyWall, 3);
+				level.setBlock(pos.offset(1, offY, 1), Math.random() > 0.4D ? wall : mossyWall, 3);
+				level.setBlock(pos.offset(-1, offY, 1), randomSlab(), 3);
+				level.setBlock(pos.offset(-1, offY, -1), Math.random() > 0.4D ? wall : mossyWall, 3);
 				
-				level.setBlock(pos.add(0, offY, 1), randomSlab().setValue(SlabBlock.TYPE, SlabType.TOP), 3);
-				level.setBlock(pos.add(-1, offY, 0), randomSlab().setValue(SlabBlock.TYPE, SlabType.TOP), 3);
+				level.setBlock(pos.offset(0, offY, 1), randomSlab().setValue(SlabBlock.TYPE, SlabType.TOP), 3);
+				level.setBlock(pos.offset(-1, offY, 0), randomSlab().setValue(SlabBlock.TYPE, SlabType.TOP), 3);
 			}
 		}
 		
-		level.setBlock(pos.add(0, 4, 0), randomBrick(), 3);
-		level.setBlock(pos.add(1, 4, 1), randomSlab(), 3);
-		level.setBlock(pos.add(-1, 4, -1), randomSlab(), 3);
+		level.setBlock(pos.offset(0, 4, 0), randomBrick(), 3);
+		level.setBlock(pos.offset(1, 4, 1), randomSlab(), 3);
+		level.setBlock(pos.offset(-1, 4, -1), randomSlab(), 3);
 		
-		level.setBlock(pos.add(0, 1, 0), randomTNT(), 3);
+		level.setBlock(pos.offset(0, 1, 0), randomTNT(), 3);
 		
 		
 		return false;
