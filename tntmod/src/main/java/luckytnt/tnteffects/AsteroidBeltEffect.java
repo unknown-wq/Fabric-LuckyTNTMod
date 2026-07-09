@@ -5,8 +5,8 @@ import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.core.particles.ParticleTypes;
 
 public class AsteroidBeltEffect extends PrimedTNTEffect {
 
@@ -20,7 +20,7 @@ public class AsteroidBeltEffect extends PrimedTNTEffect {
 			double z = ent.z() + 160 * Math.sin(angle * Math.PI / 180);
 			double y = RingTNTEffect.getFirstMotionBlockingBlock(ent.getLevel(), x, z);
 			tnt.setPosition(x, y + 1D, z);
-			ent.getLevel().spawnEntity(tnt);
+			ent.getLevel().addFreshEntity(tnt);
 		}
 	}
 	

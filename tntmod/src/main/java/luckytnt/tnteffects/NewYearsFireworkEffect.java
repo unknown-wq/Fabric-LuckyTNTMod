@@ -9,20 +9,20 @@ import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 public class NewYearsFireworkEffect extends PrimedTNTEffect {
 
@@ -30,16 +30,16 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 	public void serverExplosion(IExplosiveEntity ent) {
 		if(ent.getPersistentData().getInt("type") == 0) {
 			for(int count = 0; count < 10; count++) {
-				Vec3d vel = ((Entity)ent).getRotationVec(1).normalize();
+				Vec3 vel = ((Entity)ent).getRotationVec(1).normalize();
 				PrimedLTNT firework = EntityRegistry.NEW_YEARS_FIREWORK.get().create(ent.getLevel());
 				firework.setTNTFuse(40);
 				firework.setPosition(ent.getPos());
-				firework.setVelocity(vel.multiply(2));
-				NbtCompound tag = firework.getPersistentData();
+				firework.setDeltaMovement(vel.multiply(2));
+				CompoundTag tag = firework.getPersistentData();
 				tag.putInt("type", 1);
 				firework.setPersistentData(tag);
-				ent.getLevel().spawnEntity(firework);
-				((Entity)ent).setYaw(((Entity)ent).getYaw() + 36);
+				ent.getLevel().addFreshEntity(firework);
+				((Entity)ent).setYRot(((Entity)ent).getYRot() + 36);
 			}
 		} else {
 			Block block = getRandomConcrete();
@@ -56,7 +56,7 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 										double x = Math.cos(theta) * radius;
 										double z = Math.sin(theta) * radius;
 									
-										Vec3d vec = new Vec3d((ent.x() + (x * 20)) - ent.x(), (ent.y() + (y * 20)) - ent.y(), (ent.z() + (z * 20)) - ent.z()).normalize().multiply(1D + Math.random() * 0.5D);
+										Vec3 vec = new Vec3((ent.x() + (x * 20)) - ent.x(), (ent.y() + (y * 20)) - ent.y(), (ent.z() + (z * 20)) - ent.z()).normalize().multiply(1D + Math.random() * 0.5D);
 										addFallingBlock(ent.x(), ent.y(), ent.z(), vec.x, vec.y, vec.z, block.getDefaultState(), ent);
 									}
 								}
@@ -70,7 +70,7 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
-		((Entity)ent).setVelocity(((Entity)ent).getVelocity().x, 0.8f, ((Entity)ent).getVelocity().z);
+		((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 0.8f, ((Entity)ent).getDeltaMovement().z);
 		if(ent.getPersistentData().getString("shape").equals("")) {
 			String string = "";
 			int rand = new Random().nextInt(5);
@@ -82,7 +82,7 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 				case 4: string = Shape.CREEPER.asString(); break;
 				default: break;
 			}
-			NbtCompound tag = ent.getPersistentData();
+			CompoundTag tag = ent.getPersistentData();
 			tag.putString("shape", string);
 			ent.setPersistentData(tag);
 		}
@@ -94,12 +94,12 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 	}
 	
 	public void addFallingBlock(double x, double y, double z, double mX, double mY, double mZ, BlockState state, IExplosiveEntity ent) {
-		FallingBlockEntity block = FallingBlockEntity.spawnFromBlock(ent.getLevel(), new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z)), state);
+		FallingBlockEntity block = FallingBlockEntity.spawnFromBlock(ent.getLevel(), new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), state);
 		block.dropItem = false;
-		block.setVelocity(mX, mY, mZ);
-		ent.getLevel().spawnEntity(block);
-		if(ent.getLevel() instanceof ServerWorld sl) {
-			for(ServerPlayerEntity player : sl.getPlayers()) {
+		block.setDeltaMovement(mX, mY, mZ);
+		ent.getLevel().addFreshEntity(block);
+		if(ent.getLevel() instanceof ServerLevel sl) {
+			for(ServerPlayer player : sl.getPlayers()) {
 				if(player.distanceTo((Entity)ent) <= 100f) {
 					player.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(block));
 				}
@@ -125,8 +125,8 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
            		double d7 = shape[j][1];
 
            		for(double d8 = 0.25D; d8 <= 1.0D; d8 += 0.25D) {
-              		double d9 = MathHelper.lerp(d8, d4, d6) * speed;
-              		double d10 = MathHelper.lerp(d8, d5, d7) * speed;
+              		double d9 = Mth.lerp(d8, d4, d6) * speed;
+              		double d10 = Mth.lerp(d8, d5, d7) * speed;
               		double d11 = d9 * Math.sin(d3);
               		d9 = d9 * Math.cos(d3);
 

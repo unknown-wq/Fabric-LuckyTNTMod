@@ -8,23 +8,23 @@ import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.Level;
 
 public class PulseDynamiteEffect extends PrimedTNTEffect{
 
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
-		World level = entity.getLevel();
+		Level level = entity.getLevel();
 		if(entity instanceof LExplosiveProjectile ent) {
 			if(ent.inGround()) {
-				NbtCompound tag = ent.getPersistentData();
+				CompoundTag tag = ent.getPersistentData();
 				tag.putBoolean("hitBefore", true);
 				ent.setPersistentData(tag);
 			}
@@ -43,17 +43,17 @@ public class PulseDynamiteEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		World level = entity.getLevel();
+		Level level = entity.getLevel();
 		if (entity.getTNTFuse() <= 185) {
-			((Entity)entity).setVelocity(0, 0, 0);
+			((Entity)entity).setDeltaMovement(0, 0, 0);
 			((Entity)entity).setPosition(((Entity) entity).getLerpedPos(0f));
 			if (entity.getTNTFuse() % 20 == 0) {
-				if (entity.getLevel() instanceof ServerWorld) {
+				if (entity.getLevel() instanceof ServerLevel) {
 					ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), entity.getPersistentData().getInt("strength"));
 					explosion.doEntityExplosion(1f, true);
 					explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
-					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
-					NbtCompound tag = entity.getPersistentData();
+					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+					CompoundTag tag = entity.getPersistentData();
 					tag.putInt("strength", entity.getPersistentData().getInt("strength") + 1);
 					entity.setPersistentData(tag);
 				}

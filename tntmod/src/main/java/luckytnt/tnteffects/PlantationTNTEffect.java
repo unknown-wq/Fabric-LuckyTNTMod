@@ -12,19 +12,19 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.block.FarmlandBlock;
 import net.minecraft.block.FluidBlock;
 import net.minecraft.block.GrassBlock;
 import net.minecraft.block.MyceliumBlock;
-import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleEffect;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 public class PlantationTNTEffect extends PrimedTNTEffect {
 
@@ -33,7 +33,7 @@ public class PlantationTNTEffect extends PrimedTNTEffect {
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 41, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock().getBlastResistance() <= 200) {
 					if((!state.isFullCube(level, pos) || state.isOf(Blocks.FIRE) || state.isOf(Blocks.SOUL_FIRE) 
 					|| state.isIn(BlockTags.LEAVES) || Materials.isPlant(state) || state.isIn(BlockTags.SNOW)
@@ -51,7 +51,7 @@ public class PlantationTNTEffect extends PrimedTNTEffect {
 				double distance = Math.sqrt(offX * offX + offZ * offZ);
 				if(distance <= 42) {
 					int y = LevelEvents.getTopBlock(ent.getLevel(), ent.x() + offX, ent.z() + offZ, true);
-					BlockPos pos = new BlockPos(MathHelper.floor(ent.x() + offX), y, MathHelper.floor(ent.z() + offZ));
+					BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), y, Mth.floor(ent.z() + offZ));
 					ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 					ent.getLevel().setBlockState(pos, Blocks.GRASS_BLOCK.getDefaultState(), 3);
 				}
@@ -66,8 +66,8 @@ public class PlantationTNTEffect extends PrimedTNTEffect {
 				double distance = Math.sqrt(offX * offX + offZ * offZ);
 				boolean blockFound = false;
 				for(double offY = 320; offY > -64; offY--) {	
-					BlockPos pos = new BlockPos(MathHelper.floor(ent.x() + offX), MathHelper.floor(ent.y() + offY), MathHelper.floor(ent.z() + offZ));
-					BlockPos posUp = new BlockPos(MathHelper.floor(ent.x() + offX), MathHelper.floor(ent.y() + offY + 1), MathHelper.floor(ent.z() + offZ));
+					BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY), Mth.floor(ent.z() + offZ));
+					BlockPos posUp = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY + 1), Mth.floor(ent.z() + offZ));
 					BlockState state = ent.getLevel().getBlockState(pos);
 					BlockState stateUp = ent.getLevel().getBlockState(posUp);
 					

@@ -21,19 +21,19 @@ import luckytnt.block.XRayTNTBlock;
 import luckytntlib.block.LTNTBlock;
 import luckytntlib.block.LuckyTNTBlock;
 import luckytntlib.registry.TNTBlockRegistryData;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.block.DetectorRailBlock;
 import net.minecraft.block.ExperienceDroppingBlock;
-import net.minecraft.block.MapColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.block.PoweredRailBlock;
 import net.minecraft.block.RailBlock;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 
 public class BlockRegistry {
@@ -52,7 +52,7 @@ public class BlockRegistry {
 	public static final Supplier<LTNTBlock> DIGGING_TNT = LuckyTNTMod.RH.registerTNTBlock("digging_tnt", EntityRegistry.DIGGING_TNT, "n");
 	public static final Supplier<LTNTBlock> DRILLING_TNT = LuckyTNTMod.RH.registerTNTBlock("drilling_tnt", EntityRegistry.DRILLING_TNT, "n", MapColor.ORANGE, true);
 	public static final Supplier<LTNTBlock> SPHERE_TNT = LuckyTNTMod.RH.registerTNTBlock("sphere_tnt", EntityRegistry.SPHERE_TNT, "n", MapColor.ORANGE, true);
-	public static final Supplier<LTNTBlock> FLOATING_ISLAND = LuckyTNTMod.RH.registerTNTBlock(EntityRegistry.FLOATING_ISLAND, new TNTBlockRegistryData.Builder("floating_island").tab("n").description(Text.translatable("item.floating_island.info")).build());
+	public static final Supplier<LTNTBlock> FLOATING_ISLAND = LuckyTNTMod.RH.registerTNTBlock(EntityRegistry.FLOATING_ISLAND, new TNTBlockRegistryData.Builder("floating_island").tab("n").description(Component.translatable("item.floating_island.info")).build());
 	public static final Supplier<LTNTBlock> OCEAN_TNT = LuckyTNTMod.RH.registerTNTBlock("ocean_tnt", EntityRegistry.OCEAN_TNT, "n", MapColor.BLUE, true);
 	public static final Supplier<LTNTBlock> HELLFIRE_TNT = LuckyTNTMod.RH.registerTNTBlock("hellfire_tnt", EntityRegistry.HELLFIRE_TNT, "n");
 	public static final Supplier<LTNTBlock> FIRE_TNT = LuckyTNTMod.RH.registerTNTBlock("fire_tnt", EntityRegistry.FIRE_TNT, "n", MapColor.ORANGE, true);
@@ -98,10 +98,10 @@ public class BlockRegistry {
 	public static final Supplier<LTNTBlock> NUCLEAR_WASTE_TNT = LuckyTNTMod.RH.registerTNTBlock("nuclear_waste_tnt", EntityRegistry.NUCLEAR_WASTE_TNT, "n", MapColor.LIME, true);
 	public static final Supplier<LTNTBlock> STATIC_TNT = LuckyTNTMod.RH.registerTNTBlock("static_tnt", EntityRegistry.STATIC_TNT, "n", MapColor.ORANGE, true);
 	public static final Supplier<LTNTBlock> PUMPKIN_BOMB = LuckyTNTMod.RH.registerTNTBlock("pumpkin_bomb", EntityRegistry.PUMPKIN_BOMB, "n", MapColor.ORANGE, true);
-	public static final Supplier<LTNTBlock> SMOKE_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new SmokeTNTBlock(AbstractBlock.Settings.create().mapColor(MapColor.RED).sounds(BlockSoundGroup.GRASS)), new TNTBlockRegistryData.Builder("smoke_tnt").tab("n").description(Text.translatable("item.smoke_tnt.info")).build());
-	public static final Supplier<LTNTBlock> TROLL_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new TrollTNTBlock(AbstractBlock.Settings.create().mapColor(MapColor.RED).sounds(BlockSoundGroup.GRASS)), new TNTBlockRegistryData.Builder("troll_tnt").tab("n").build());
-	public static final Supplier<LTNTBlock> TROLL_TNT_MK2 = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new TrollTNTMk2Block(AbstractBlock.Settings.create().mapColor(MapColor.RED).sounds(BlockSoundGroup.GRASS)), new TNTBlockRegistryData.Builder("troll_tnt_mk2").tab("n").build());
-	public static final Supplier<LTNTBlock> TROLL_TNT_MK3 = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new TrollTNTMk3Block(AbstractBlock.Settings.create().mapColor(MapColor.RED).sounds(BlockSoundGroup.GRASS)), new TNTBlockRegistryData.Builder("troll_tnt_mk3").tab("n").build());
+	public static final Supplier<LTNTBlock> SMOKE_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new SmokeTNTBlock(BlockBehaviour.Properties.create().mapColor(MapColor.RED).sounds(SoundType.GRASS)), new TNTBlockRegistryData.Builder("smoke_tnt").tab("n").description(Component.translatable("item.smoke_tnt.info")).build());
+	public static final Supplier<LTNTBlock> TROLL_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new TrollTNTBlock(BlockBehaviour.Properties.create().mapColor(MapColor.RED).sounds(SoundType.GRASS)), new TNTBlockRegistryData.Builder("troll_tnt").tab("n").build());
+	public static final Supplier<LTNTBlock> TROLL_TNT_MK2 = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new TrollTNTMk2Block(BlockBehaviour.Properties.create().mapColor(MapColor.RED).sounds(SoundType.GRASS)), new TNTBlockRegistryData.Builder("troll_tnt_mk2").tab("n").build());
+	public static final Supplier<LTNTBlock> TROLL_TNT_MK3 = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new TrollTNTMk3Block(BlockBehaviour.Properties.create().mapColor(MapColor.RED).sounds(SoundType.GRASS)), new TNTBlockRegistryData.Builder("troll_tnt_mk3").tab("n").build());
 	public static final Supplier<LTNTBlock> CLUSTER_BOMB = LuckyTNTMod.RH.registerTNTBlock("cluster_bomb", EntityRegistry.CLUSTER_BOMB_TNT, "n");
 	public static final Supplier<LTNTBlock> AIR_STRIKE = LuckyTNTMod.RH.registerTNTBlock("air_strike", EntityRegistry.AIR_STRIKE, "n");
 	public static final Supplier<LTNTBlock> SPAMMING_TNT = LuckyTNTMod.RH.registerTNTBlock("spamming_tnt", EntityRegistry.SPAMMING_TNT, "n", MapColor.BROWN, false);
@@ -109,17 +109,17 @@ public class BlockRegistry {
 	public static final Supplier<LTNTBlock> ROULETTE_TNT = LuckyTNTMod.RH.registerTNTBlock("roulette_tnt", EntityRegistry.ROULETTE_TNT, "n");
 	public static final Supplier<LTNTBlock> SENSOR_TNT = LuckyTNTMod.RH.registerTNTBlock("sensor_tnt", EntityRegistry.SENSOR_TNT, "n", MapColor.BLUE, false);
 	public static final Supplier<LTNTBlock> RAINBOW_FIREWORK = LuckyTNTMod.RH.registerTNTBlock("rainbow_firework", EntityRegistry.RAINBOW_FIREWORK, "n", MapColor.WHITE_GRAY, false);
-	public static final Supplier<LTNTBlock> XRAY_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new XRayTNTBlock(AbstractBlock.Settings.create().mapColor(MapColor.RED).nonOpaque().sounds(BlockSoundGroup.GLASS)), new TNTBlockRegistryData.Builder("xray_tnt").tab("n").build());
+	public static final Supplier<LTNTBlock> XRAY_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new XRayTNTBlock(BlockBehaviour.Properties.create().mapColor(MapColor.RED).nonOpaque().sounds(SoundType.GLASS)), new TNTBlockRegistryData.Builder("xray_tnt").tab("n").build());
 	public static final Supplier<LTNTBlock> FARMING_TNT = LuckyTNTMod.RH.registerTNTBlock("farming_tnt", EntityRegistry.FARMING_TNT, "n", MapColor.BROWN, true);
 	public static final Supplier<LTNTBlock> PHANTOM_TNT = LuckyTNTMod.RH.registerTNTBlock("phantom_tnt", EntityRegistry.PHANTOM_TNT, "n", MapColor.PURPLE, true);
 	public static final Supplier<LTNTBlock> SWAP_TNT = LuckyTNTMod.RH.registerTNTBlock("swap_tnt", EntityRegistry.SWAP_TNT, "n", false);
 	public static final Supplier<LTNTBlock> IGNITER_TNT = LuckyTNTMod.RH.registerTNTBlock("igniter_tnt", EntityRegistry.IGNITER_TNT, "n", MapColor.LIGHT_GRAY, false);
 	public static final Supplier<LTNTBlock> MULTIPLYING_TNT = LuckyTNTMod.RH.registerTNTBlock("multiplying_tnt", EntityRegistry.MULTIPLYING_TNT, "n", MapColor.YELLOW, true);
 	public static final Supplier<LTNTBlock> BUTTER_TNT = LuckyTNTMod.RH.registerTNTBlock("butter_tnt", EntityRegistry.BUTTER_TNT, "n", MapColor.YELLOW, true);
-	public static final Supplier<LTNTBlock> TUNNELING_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new TunnelingTNTBlock(AbstractBlock.Settings.create().mapColor(MapColor.ORANGE).sounds(BlockSoundGroup.GRASS)), new TNTBlockRegistryData.Builder("tunneling_tnt").tab("n").build());
+	public static final Supplier<LTNTBlock> TUNNELING_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new TunnelingTNTBlock(BlockBehaviour.Properties.create().mapColor(MapColor.ORANGE).sounds(SoundType.GRASS)), new TNTBlockRegistryData.Builder("tunneling_tnt").tab("n").build());
 	public static final Supplier<LTNTBlock> PHYSICS_TNT = LuckyTNTMod.RH.registerTNTBlock("physics_tnt", EntityRegistry.PHYSICS_TNT, "n", true);
 	public static final Supplier<LTNTBlock> ORE_TNT = LuckyTNTMod.RH.registerTNTBlock("ore_tnt", EntityRegistry.ORE_TNT, "n", MapColor.LIGHT_GRAY, false);
-	public static final Supplier<LTNTBlock> REDSTONE_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new RedstoneTNTBlock(AbstractBlock.Settings.create().mapColor(MapColor.RED).sounds(BlockSoundGroup.GRASS)), new TNTBlockRegistryData.Builder("redstone_tnt").tab("n").build());
+	public static final Supplier<LTNTBlock> REDSTONE_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new RedstoneTNTBlock(BlockBehaviour.Properties.create().mapColor(MapColor.RED).sounds(SoundType.GRASS)), new TNTBlockRegistryData.Builder("redstone_tnt").tab("n").build());
 	public static final Supplier<LTNTBlock> RANDOM_TNT = LuckyTNTMod.RH.registerTNTBlock("random_tnt", EntityRegistry.RANDOM_TNT, "n", true);
 	public static final Supplier<LTNTBlock> TURRET_TNT = LuckyTNTMod.RH.registerTNTBlock("turret_tnt", EntityRegistry.TURRET_TNT, "n", MapColor.BLUE, false);
 	public static final Supplier<LTNTBlock> PULSE_TNT = LuckyTNTMod.RH.registerTNTBlock("pulse_tnt", EntityRegistry.PULSE_TNT, "n", MapColor.CYAN, false);
@@ -142,7 +142,7 @@ public class BlockRegistry {
 	public static final Supplier<LTNTBlock> RING_TNT = LuckyTNTMod.RH.registerTNTBlock("ring_tnt", EntityRegistry.RING_TNT, "n", MapColor.RED, true);
 	public static final Supplier<LTNTBlock> SCULK_TNT = LuckyTNTMod.RH.registerTNTBlock("sculk_tnt", EntityRegistry.SCULK_TNT, "n", MapColor.RED, true);
 	
-	public static final Supplier<LTNTBlock> LUCKY_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new LuckyTNTBlock(AbstractBlock.Settings.create().mapColor(MapColor.RED).sounds(BlockSoundGroup.GRASS), LuckyTNTMod.RH.TNTLists.get("n")), new TNTBlockRegistryData.Builder("lucky_tnt").tab("n").build());
+	public static final Supplier<LTNTBlock> LUCKY_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new LuckyTNTBlock(BlockBehaviour.Properties.create().mapColor(MapColor.RED).sounds(SoundType.GRASS), LuckyTNTMod.RH.TNTLists.get("n")), new TNTBlockRegistryData.Builder("lucky_tnt").tab("n").build());
 	
 	//God TNT
 	public static final Supplier<LTNTBlock> GLOBAL_DISASTER = LuckyTNTMod.RH.registerTNTBlock("global_disaster", EntityRegistry.GLOBAL_DISASTER, "g", MapColor.BLUE, true);
@@ -173,14 +173,14 @@ public class BlockRegistry {
 	public static final Supplier<LTNTBlock> PULSAR_TNT = LuckyTNTMod.RH.registerTNTBlock("pulsar_tnt", EntityRegistry.PULSAR_TNT, "g", MapColor.PURPLE, false);
 	public static final Supplier<LTNTBlock> LIGHTNING_STORM = LuckyTNTMod.RH.registerTNTBlock("lightning_storm", EntityRegistry.LIGHTNING_STORM, "g", MapColor.GRAY, true);
 	public static final Supplier<LTNTBlock> SILK_TOUCH_TNT = LuckyTNTMod.RH.registerTNTBlock("silk_touch_tnt", EntityRegistry.SILK_TOUCH_TNT, "g", MapColor.PURPLE, true);
-	public static final Supplier<LTNTBlock> ITEM_FIREWORK = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new ItemFireworkBlock(AbstractBlock.Settings.create().mapColor(MapColor.BLACK).sounds(BlockSoundGroup.GRASS)), new TNTBlockRegistryData.Builder("item_firework").description(Text.translatable("item.item_firework.info")).tab("g").build());
+	public static final Supplier<LTNTBlock> ITEM_FIREWORK = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new ItemFireworkBlock(BlockBehaviour.Properties.create().mapColor(MapColor.BLACK).sounds(SoundType.GRASS)), new TNTBlockRegistryData.Builder("item_firework").description(Component.translatable("item.item_firework.info")).tab("g").build());
 	public static final Supplier<LTNTBlock> ANIMAL_KINGDOM = LuckyTNTMod.RH.registerTNTBlock("animal_kingdom", EntityRegistry.ANIMAL_KINGDOM, "g", MapColor.LIGHT_BLUE, true);
 	public static final Supplier<LTNTBlock> ICE_AGE = LuckyTNTMod.RH.registerTNTBlock("ice_age", EntityRegistry.ICE_AGE, "g", MapColor.OFF_WHITE, true);
 	public static final Supplier<LTNTBlock> GIANT_TNT = LuckyTNTMod.RH.registerTNTBlock("giant_tnt", EntityRegistry.GIANT_TNT, "g", MapColor.RED, true);
 	public static final Supplier<LTNTBlock> MIMIC_TNT = LuckyTNTMod.RH.registerTNTBlock("mimic_tnt", EntityRegistry.MIMIC_TNT, "g", MapColor.RED, true);
 	public static final Supplier<LTNTBlock> REVERSED_TNT = LuckyTNTMod.RH.registerTNTBlock("reversed_tnt", EntityRegistry.REVERSED_TNT, "g", MapColor.LIGHT_BLUE, true);
-	public static final Supplier<LTNTBlock> ENTITY_FIREWORK = LuckyTNTMod.RH.registerTNTBlock(EntityRegistry.ENTITY_FIREWORK, new TNTBlockRegistryData.Builder("entity_firework").color(MapColor.BLACK).description(Text.translatable("item.entity_firework.info")).randomizedFuseUponExploded(false).tab("g").build());
-	public static final Supplier<LTNTBlock> CUSTOM_TNT = LuckyTNTMod.RH.registerTNTBlock(EntityRegistry.CUSTOM_TNT, new TNTBlockRegistryData.Builder("custom_tnt").color(MapColor.GRAY).description(Text.translatable("item.custom_tnt.info")).tab("g").build());
+	public static final Supplier<LTNTBlock> ENTITY_FIREWORK = LuckyTNTMod.RH.registerTNTBlock(EntityRegistry.ENTITY_FIREWORK, new TNTBlockRegistryData.Builder("entity_firework").color(MapColor.BLACK).description(Component.translatable("item.entity_firework.info")).randomizedFuseUponExploded(false).tab("g").build());
+	public static final Supplier<LTNTBlock> CUSTOM_TNT = LuckyTNTMod.RH.registerTNTBlock(EntityRegistry.CUSTOM_TNT, new TNTBlockRegistryData.Builder("custom_tnt").color(MapColor.GRAY).description(Component.translatable("item.custom_tnt.info")).tab("g").build());
 	public static final Supplier<LTNTBlock> RESET_TNT = LuckyTNTMod.RH.registerTNTBlock("reset_tnt", EntityRegistry.RESET_TNT, "g", MapColor.RED, false);
 	public static final Supplier<LTNTBlock> VICIOUS_TNT = LuckyTNTMod.RH.registerLivingTNTBlock("vicious_tnt", EntityRegistry.VICIOUS_TNT, "g", MapColor.RED, false);
 	public static final Supplier<LTNTBlock> HUNGRY_TNT = LuckyTNTMod.RH.registerTNTBlock("hungry_tnt", EntityRegistry.HUNGRY_TNT, "g", MapColor.ORANGE, true);
@@ -191,7 +191,7 @@ public class BlockRegistry {
 	public static final Supplier<LTNTBlock> CATALYST_TNT = LuckyTNTMod.RH.registerTNTBlock("catalyst_tnt", EntityRegistry.CATALYST_TNT, "g", MapColor.RED, true);
 	public static final Supplier<LTNTBlock> CANNON_TNT = LuckyTNTMod.RH.registerTNTBlock("cannon_tnt", EntityRegistry.CANNON_TNT, "g", MapColor.BLACK, true);
 	public static final Supplier<LTNTBlock> PLANTATION_TNT = LuckyTNTMod.RH.registerTNTBlock("plantation_tnt", EntityRegistry.PLANTATION_TNT, "g", MapColor.LIME, true);
-	public static final Supplier<LTNTBlock> GOTTHARD_TUNNEL = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new GotthardTunnelBlock(AbstractBlock.Settings.create().mapColor(MapColor.STONE_GRAY).sounds(BlockSoundGroup.GRASS)), new TNTBlockRegistryData.Builder("gotthard_tunnel").tab("g").description(Text.translatable("item.gotthard_tunnel.info")).build());
+	public static final Supplier<LTNTBlock> GOTTHARD_TUNNEL = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new GotthardTunnelBlock(BlockBehaviour.Properties.create().mapColor(MapColor.STONE_GRAY).sounds(SoundType.GRASS)), new TNTBlockRegistryData.Builder("gotthard_tunnel").tab("g").description(Component.translatable("item.gotthard_tunnel.info")).build());
 	public static final Supplier<LTNTBlock> LEVITATING_TNT = LuckyTNTMod.RH.registerTNTBlock("levitating_tnt", EntityRegistry.LEVITATING_TNT, "g", MapColor.CYAN, true);
 	public static final Supplier<LTNTBlock> SQUARING_TNT = LuckyTNTMod.RH.registerTNTBlock("squaring_tnt", EntityRegistry.SQUARING_TNT, "g", MapColor.TERRACOTTA_PINK, true);
 	public static final Supplier<LTNTBlock> MINERAL_TNT = LuckyTNTMod.RH.registerTNTBlock("mineral_tnt", EntityRegistry.MINERAL_TNT, "g", MapColor.DIAMOND_BLUE, true);
@@ -207,7 +207,7 @@ public class BlockRegistry {
 	public static final Supplier<LTNTBlock> DEIMOS = LuckyTNTMod.RH.registerTNTBlock("deimos", EntityRegistry.DEIMOS, "g", MapColor.LIGHT_BLUE, true);
 	public static final Supplier<LTNTBlock> PRESENT_DROP = LuckyTNTMod.RH.registerTNTBlock("present_drop", EntityRegistry.PRESENT_DROP, "g", MapColor.LIGHT_BLUE, true);
 	
-	public static final Supplier<LTNTBlock> LUCKY_GOD = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new LuckyTNTBlock(AbstractBlock.Settings.create().mapColor(MapColor.RED).sounds(BlockSoundGroup.GRASS), LuckyTNTMod.RH.TNTLists.get("g")), new TNTBlockRegistryData.Builder("lucky_god").tab("g").build());
+	public static final Supplier<LTNTBlock> LUCKY_GOD = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new LuckyTNTBlock(BlockBehaviour.Properties.create().mapColor(MapColor.RED).sounds(SoundType.GRASS), LuckyTNTMod.RH.TNTLists.get("g")), new TNTBlockRegistryData.Builder("lucky_god").tab("g").build());
 	
 	//Doomsday
 	public static final Supplier<LTNTBlock> SUPERNOVA = LuckyTNTMod.RH.registerTNTBlock("supernova", EntityRegistry.SUPERNOVA, "d", MapColor.PURPLE, false);
@@ -226,13 +226,13 @@ public class BlockRegistry {
 	public static final Supplier<LTNTBlock> JUMPING_TNT = LuckyTNTMod.RH.registerTNTBlock("jumping_tnt", EntityRegistry.JUMPING_TNT, "d", MapColor.YELLOW, true);
 	public static final Supplier<LTNTBlock> WASTELAND_TNT = LuckyTNTMod.RH.registerTNTBlock("wasteland_tnt", EntityRegistry.WASTELAND_TNT, "d", MapColor.GRAY, true);
 	public static final Supplier<LTNTBlock> TNT_X10000 = LuckyTNTMod.RH.registerTNTBlock("tnt_x10000", EntityRegistry.TNT_X10000, "d", MapColor.PINK, true);
-	public static final Supplier<LTNTBlock> CUSTOM_FIREWORK = LuckyTNTMod.RH.registerTNTBlock(EntityRegistry.CUSTOM_FIREWORK, new TNTBlockRegistryData.Builder("custom_firework").color(MapColor.LIGHT_GRAY).description(Text.translatable("item.custom_firework.info")).randomizedFuseUponExploded(false).tab("d").build());
+	public static final Supplier<LTNTBlock> CUSTOM_FIREWORK = LuckyTNTMod.RH.registerTNTBlock(EntityRegistry.CUSTOM_FIREWORK, new TNTBlockRegistryData.Builder("custom_firework").color(MapColor.LIGHT_GRAY).description(Component.translatable("item.custom_firework.info")).randomizedFuseUponExploded(false).tab("d").build());
 	public static final Supplier<LTNTBlock> ATLANTIS = LuckyTNTMod.RH.registerTNTBlock("atlantis", EntityRegistry.ATLANTIS, "d", MapColor.BLUE, false);
 	public static final Supplier<LTNTBlock> SOLAR_ERUPTION = LuckyTNTMod.RH.registerTNTBlock("solar_eruption", EntityRegistry.SOLAR_ERUPTION, "d", MapColor.BLACK, true);
 	public static final Supplier<LTNTBlock> VREDEFORT = LuckyTNTMod.RH.registerTNTBlock("vredefort", EntityRegistry.VREDEFORT, "d", MapColor.BLUE, true);
 	public static final Supplier<LTNTBlock> COLOSSAL_TNT = LuckyTNTMod.RH.registerTNTBlock("colossal_tnt", EntityRegistry.COLOSSAL_TNT, "d", MapColor.RED, true);
-	public static final Supplier<LTNTBlock> STRUCTURE_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new StructureTNTBlock(AbstractBlock.Settings.create().mapColor(MapColor.BLACK).sounds(BlockSoundGroup.GRASS)), new TNTBlockRegistryData.Builder("structure_tnt").description(Text.translatable("item.structure_tnt.info")).tab("d").build());
-	public static final Supplier<LTNTBlock> GRANDE_FINALE = LuckyTNTMod.RH.registerTNTBlock(EntityRegistry.GRANDE_FINALE, new TNTBlockRegistryData.Builder("grande_finale").color(MapColor.BLACK).description(Text.translatable("item.grande_finale.info")).tab("d").build());
+	public static final Supplier<LTNTBlock> STRUCTURE_TNT = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new StructureTNTBlock(BlockBehaviour.Properties.create().mapColor(MapColor.BLACK).sounds(SoundType.GRASS)), new TNTBlockRegistryData.Builder("structure_tnt").description(Component.translatable("item.structure_tnt.info")).tab("d").build());
+	public static final Supplier<LTNTBlock> GRANDE_FINALE = LuckyTNTMod.RH.registerTNTBlock(EntityRegistry.GRANDE_FINALE, new TNTBlockRegistryData.Builder("grande_finale").color(MapColor.BLACK).description(Component.translatable("item.grande_finale.info")).tab("d").build());
 	public static final Supplier<LTNTBlock> FLAT_EARTH = LuckyTNTMod.RH.registerTNTBlock("flat_earth", EntityRegistry.FLAT_EARTH, "d", MapColor.BLACK, true);
 	public static final Supplier<LTNTBlock> EVIL_TNT = LuckyTNTMod.RH.registerLivingTNTBlock("evil_tnt", EntityRegistry.EVIL_TNT, "d", MapColor.RED, true);
 	public static final Supplier<LTNTBlock> KOLA_BOREHOLE_TNT = LuckyTNTMod.RH.registerTNTBlock("kola_borehole_tnt", EntityRegistry.KOLA_BOREHOLE_TNT, "d", MapColor.BLACK, true);
@@ -251,24 +251,24 @@ public class BlockRegistry {
 	public static final Supplier<LTNTBlock> AETHER_TNT = LuckyTNTMod.RH.registerTNTBlock("aether_tnt", EntityRegistry.AETHER_TNT, "d", MapColor.LIGHT_BLUE, true);
 	public static final Supplier<LTNTBlock> PHOBOS = LuckyTNTMod.RH.registerTNTBlock("phobos", EntityRegistry.PHOBOS, "d", MapColor.LIGHT_BLUE, true);
 	
-	public static final Supplier<LTNTBlock> LUCKY_DOOMSDAY = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new LuckyTNTBlock(AbstractBlock.Settings.create().mapColor(MapColor.RED).sounds(BlockSoundGroup.GRASS), LuckyTNTMod.RH.TNTLists.get("d")), new TNTBlockRegistryData.Builder("lucky_doomsday").tab("d").build());
+	public static final Supplier<LTNTBlock> LUCKY_DOOMSDAY = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new LuckyTNTBlock(BlockBehaviour.Properties.create().mapColor(MapColor.RED).sounds(SoundType.GRASS), LuckyTNTMod.RH.TNTLists.get("d")), new TNTBlockRegistryData.Builder("lucky_doomsday").tab("d").build());
 	
 	//Other
-	public static final Supplier<Block> NUCLEAR_WASTE = registerBlock("nuclear_waste", () -> new NuclearWasteBlock(AbstractBlock.Settings.create().mapColor(MapColor.GREEN).sounds(BlockSoundGroup.SLIME).breakInstantly().noCollision().dropsNothing().ticksRandomly().luminance(s -> 8)));
-	public static final Supplier<Block> GUNPOWDER_ORE = registerBlock("gunpowder_ore", () -> new ExperienceDroppingBlock(UniformIntProvider.create(2, 5), AbstractBlock.Settings.create().mapColor(MapColor.LIGHT_GRAY).sounds(BlockSoundGroup.STONE).requiresTool().strength(3f, 3f)));
-	public static final Supplier<Block> DEEPSLATE_GUNPOWDER_ORE = registerBlock("deepslate_gunpowder_ore", () -> new ExperienceDroppingBlock(UniformIntProvider.create(2, 5), AbstractBlock.Settings.create().mapColor(MapColor.LIGHT_GRAY).sounds(BlockSoundGroup.DEEPSLATE).requiresTool().strength(4.5f, 3f)));
-	public static final Supplier<Block> URANIUM_ORE = registerBlock("uranium_ore", () -> new UraniumOreBlock(AbstractBlock.Settings.create().mapColor(MapColor.LIME).sounds(BlockSoundGroup.STONE).requiresTool().strength(3f, 3f)));
-	public static final Supplier<Block> DEEPSLATE_URANIUM_ORE = registerBlock("deepslate_uranium_ore", () -> new UraniumOreBlock(AbstractBlock.Settings.create().mapColor(MapColor.LIME).sounds(BlockSoundGroup.DEEPSLATE).requiresTool().strength(4.5f, 3f)));
-	public static final Supplier<Block> OBSIDIAN_RAIL = registerBlock("obsidian_rail", () -> new RailBlock(AbstractBlock.Settings.create().mapColor(MapColor.CLEAR).sounds(BlockSoundGroup.METAL).requiresTool().strength(0.7f, 1200f).noCollision()));
-	public static final Supplier<Block> OBSIDIAN_POWERED_RAIL = registerBlock("obsidian_powered_rail", () -> new PoweredRailBlock(AbstractBlock.Settings.create().mapColor(MapColor.CLEAR).sounds(BlockSoundGroup.METAL).requiresTool().strength(0.7f, 1200f).noCollision()));
-	public static final Supplier<Block> OBSIDIAN_ACTIVATOR_RAIL = registerBlock("obsidian_activator_rail", () -> new PoweredRailBlock(AbstractBlock.Settings.create().mapColor(MapColor.CLEAR).sounds(BlockSoundGroup.METAL).requiresTool().strength(0.7f, 1200f).noCollision()));
-	public static final Supplier<Block> OBSIDIAN_DETECTOR_RAIL = registerBlock("obsidian_detector_rail", () -> new DetectorRailBlock(AbstractBlock.Settings.create().mapColor(MapColor.CLEAR).sounds(BlockSoundGroup.METAL).requiresTool().strength(0.7f, 1200f).noCollision()));
+	public static final Supplier<Block> NUCLEAR_WASTE = registerBlock("nuclear_waste", () -> new NuclearWasteBlock(BlockBehaviour.Properties.create().mapColor(MapColor.GREEN).sounds(SoundType.SLIME).breakInstantly().noCollision().dropsNothing().ticksRandomly().luminance(s -> 8)));
+	public static final Supplier<Block> GUNPOWDER_ORE = registerBlock("gunpowder_ore", () -> new ExperienceDroppingBlock(UniformIntProvider.create(2, 5), BlockBehaviour.Properties.create().mapColor(MapColor.LIGHT_GRAY).sounds(SoundType.STONE).requiresTool().strength(3f, 3f)));
+	public static final Supplier<Block> DEEPSLATE_GUNPOWDER_ORE = registerBlock("deepslate_gunpowder_ore", () -> new ExperienceDroppingBlock(UniformIntProvider.create(2, 5), BlockBehaviour.Properties.create().mapColor(MapColor.LIGHT_GRAY).sounds(SoundType.DEEPSLATE).requiresTool().strength(4.5f, 3f)));
+	public static final Supplier<Block> URANIUM_ORE = registerBlock("uranium_ore", () -> new UraniumOreBlock(BlockBehaviour.Properties.create().mapColor(MapColor.LIME).sounds(SoundType.STONE).requiresTool().strength(3f, 3f)));
+	public static final Supplier<Block> DEEPSLATE_URANIUM_ORE = registerBlock("deepslate_uranium_ore", () -> new UraniumOreBlock(BlockBehaviour.Properties.create().mapColor(MapColor.LIME).sounds(SoundType.DEEPSLATE).requiresTool().strength(4.5f, 3f)));
+	public static final Supplier<Block> OBSIDIAN_RAIL = registerBlock("obsidian_rail", () -> new RailBlock(BlockBehaviour.Properties.create().mapColor(MapColor.CLEAR).sounds(SoundType.METAL).requiresTool().strength(0.7f, 1200f).noCollision()));
+	public static final Supplier<Block> OBSIDIAN_POWERED_RAIL = registerBlock("obsidian_powered_rail", () -> new PoweredRailBlock(BlockBehaviour.Properties.create().mapColor(MapColor.CLEAR).sounds(SoundType.METAL).requiresTool().strength(0.7f, 1200f).noCollision()));
+	public static final Supplier<Block> OBSIDIAN_ACTIVATOR_RAIL = registerBlock("obsidian_activator_rail", () -> new PoweredRailBlock(BlockBehaviour.Properties.create().mapColor(MapColor.CLEAR).sounds(SoundType.METAL).requiresTool().strength(0.7f, 1200f).noCollision()));
+	public static final Supplier<Block> OBSIDIAN_DETECTOR_RAIL = registerBlock("obsidian_detector_rail", () -> new DetectorRailBlock(BlockBehaviour.Properties.create().mapColor(MapColor.CLEAR).sounds(SoundType.METAL).requiresTool().strength(0.7f, 1200f).noCollision()));
 	@SuppressWarnings("deprecation")
-	public static final Supplier<Block> TOXIC_STONE = registerBlock("toxic_stone", () -> new ToxicStoneBlock(AbstractBlock.Settings.copyShallow(Blocks.STONE).mapColor(MapColor.GREEN).dropsLike(Blocks.STONE)));
-	public static final Supplier<Block> PRESENT = registerBlock("present", () -> new PresentBlock(AbstractBlock.Settings.create().mapColor(MapColor.RED).sounds(BlockSoundGroup.WOOL).strength(0.3f, 0f)));
+	public static final Supplier<Block> TOXIC_STONE = registerBlock("toxic_stone", () -> new ToxicStoneBlock(BlockBehaviour.Properties.copyShallow(Blocks.STONE).mapColor(MapColor.GREEN).dropsLike(Blocks.STONE)));
+	public static final Supplier<Block> PRESENT = registerBlock("present", () -> new PresentBlock(BlockBehaviour.Properties.create().mapColor(MapColor.RED).sounds(SoundType.WOOL).strength(0.3f, 0f)));
 	
 	public static Supplier<Block> registerBlock(String name, Supplier<Block> blockSupplier) {
-		Block block = Registry.register(Registries.BLOCK, Identifier.of(LuckyTNTMod.MODID, name), blockSupplier.get());
+		Block block = Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, name), blockSupplier.get());
 		return () -> block;
 	}
 	

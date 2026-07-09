@@ -15,23 +15,23 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.block.CoralParentBlock;
-import net.minecraft.block.MapColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 public class WorldOfWoolsEffect extends PrimedTNTEffect {
 	public static List<MapColor> WHITE = List.of(MapColor.WHITE, MapColor.OFF_WHITE, MapColor.TERRACOTTA_WHITE, MapColor.WHITE_GRAY);
@@ -58,7 +58,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 100, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				MapColor color = state.getMapColor(level, pos);
 				if(color != MapColor.CLEAR & !state.getCollisionShape(level, pos, ShapeContext.absent()).isEmpty() && state.getBlock().getBlastResistance() <= 200) {
 					if(WHITE.contains(color)) {
@@ -122,7 +122,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 			int x = new Random().nextInt(151) - 75;
 			int z = new Random().nextInt(151) - 75;
 			
-			BlockPos origin = new BlockPos(MathHelper.floor(ent.x() + x), MathHelper.floor(LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1), MathHelper.floor(ent.z() + z));
+			BlockPos origin = new BlockPos(Mth.floor(ent.x() + x), Mth.floor(LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1), Mth.floor(ent.z() + z));
 			boolean xOrZ = new Random().nextBoolean();
 			int rr = 16 + new Random().nextInt(11);
 			Block block = Blocks.RED_CONCRETE;
@@ -152,8 +152,8 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 			int z = new Random().nextInt(151) - 75;
 			
 			sheep.setPosition(ent.x() + x, LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1, ent.z() + z);
-			sheep.initialize((ServerWorld)ent.getLevel(), ent.getLevel().getLocalDifficulty(toBlockPos(ent.getPos())), SpawnReason.MOB_SUMMONED, null);
-			ent.getLevel().spawnEntity(sheep);
+			sheep.initialize((ServerLevel)ent.getLevel(), ent.getLevel().getLocalDifficulty(toBlockPos(ent.getPos())), SpawnReason.MOB_SUMMONED, null);
+			ent.getLevel().addFreshEntity(sheep);
 		}
 		
 		BlockPos min = toBlockPos(ent.getPos()).add(100, 100, 100);

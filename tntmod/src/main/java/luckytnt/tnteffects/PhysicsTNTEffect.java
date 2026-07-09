@@ -8,13 +8,13 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class PhysicsTNTEffect extends PrimedTNTEffect{
 
@@ -30,19 +30,19 @@ public class PhysicsTNTEffect extends PrimedTNTEffect{
 		explosion.doBlockExplosion(new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock().getBlastResistance() < 100) {
 					level.setBlockState(pos, Blocks.AIR.getDefaultState());
 					@SuppressWarnings("rawtypes")
-					Class[] parameters = new Class[]{World.class, double.class, double.class, double.class, BlockState.class};
+					Class[] parameters = new Class[]{Level.class, double.class, double.class, double.class, BlockState.class};
 					Constructor<FallingBlockEntity> sandConstructor;
 					try {
 						sandConstructor = FallingBlockEntity.class.getDeclaredConstructor(parameters);
 						sandConstructor.setAccessible(true);
 						try {
 							FallingBlockEntity sand = sandConstructor.newInstance(level, pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, state);
-							sand.setVelocity(Math.random() * 2f - 1f, 0.5f + Math.random() * 2, Math.random() * 2f - 1f);
-							level.spawnEntity(sand);
+							sand.setDeltaMovement(Math.random() * 2f - 1f, 0.5f + Math.random() * 2, Math.random() * 2f - 1f);
+							level.addFreshEntity(sand);
 						} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 							e.printStackTrace();
 						}

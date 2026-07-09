@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.Random;
 
 import luckytnt.LuckyTNTMod;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class RandomTNTCommand {
 
 	public static int executeGiveItems(ServerCommandSource command, int amount, boolean allowDuplicate, String key) {
-		if(command.getEntity() instanceof PlayerEntity player) {
+		if(command.getEntity() instanceof Player player) {
 			if(allowDuplicate) {
 				int j = 0;
 				for(int i = 0; i < amount; i++) {
@@ -23,7 +23,7 @@ public class RandomTNTCommand {
 					}
 				}
 				int l = j;
-				command.sendFeedback(() -> Text.translatable("command.randomtnt.success1").append(Text.literal(Integer.toString(l))).append(Text.translatable("command.randomtnt.success2")), false);
+				command.sendFeedback(() -> Component.translatable("command.randomtnt.success1").append(Component.literal(Integer.toString(l))).append(Component.translatable("command.randomtnt.success2")), false);
 			} else {
 				int j = 0;
 				int tries = 0;
@@ -37,7 +37,7 @@ public class RandomTNTCommand {
 					tries++;
 				}
 				int l = j;
-				command.sendFeedback(() -> Text.translatable("command.randomtnt.success1").append(Text.literal(Integer.toString(l))).append(Text.translatable("command.randomtnt.success2")), false);
+				command.sendFeedback(() -> Component.translatable("command.randomtnt.success1").append(Component.literal(Integer.toString(l))).append(Component.translatable("command.randomtnt.success2")), false);
 			}
 		}
 		return 1;

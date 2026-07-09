@@ -10,13 +10,13 @@ import luckytnt.registry.BlockRegistry;
 import luckytnt.util.StructureStates;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.structure.BastionRemnantGenerator;
 import net.minecraft.structure.DesertTempleGenerator;
 import net.minecraft.structure.OceanMonumentGenerator;
@@ -27,9 +27,9 @@ import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.structure.pool.StructurePool;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.Direction;
 import net.minecraft.util.math.random.ChunkRandom;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeSource;
@@ -53,7 +53,7 @@ public class StructureTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
 		String value = ent.getPersistentData().getString("structure");
-		if(ent.getLevel() instanceof ServerWorld sLevel) {
+		if(ent.getLevel() instanceof ServerLevel sLevel) {
 			DynamicRegistryManager rAccess = sLevel.getRegistryManager();
 			ChunkGenerator chunkGenerator = sLevel.getChunkManager().getChunkGenerator();
 			BiomeSource biomeSource = sLevel.getChunkManager().getChunkGenerator().getBiomeSource();
@@ -64,8 +64,8 @@ public class StructureTNTEffect extends PrimedTNTEffect {
 			Random random = sLevel.getRandom();
 			NoiseConfig randomState = sLevel.getChunkManager().getNoiseConfig();
 			
-			Registry<Structure> registry = rAccess.get(RegistryKeys.STRUCTURE);
-			Registry<StructurePool> pools = rAccess.get(RegistryKeys.TEMPLATE_POOL);
+			Registry<Structure> registry = rAccess.get(Registries.STRUCTURE);
+			Registry<StructurePool> pools = rAccess.get(Registries.TEMPLATE_POOL);
 
 			RegistryEntry<StructurePool> pool = pools.entryOf(BastionRemnantGenerator.STRUCTURE_POOLS);
 			

@@ -7,25 +7,25 @@ import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.Level;
 
 public class MultiplyingDynamiteEffect extends PrimedTNTEffect{
 
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
-		World level = entity.getLevel();
+		Level level = entity.getLevel();
 		if(entity instanceof LExplosiveProjectile ent) {
-			if(ent.inGround() && ent.getPersistentData().getInt("level") >= 3 && level instanceof ServerWorld) {
+			if(ent.inGround() && ent.getPersistentData().getInt("level") >= 3 && level instanceof ServerLevel) {
 				serverExplosion(ent);
 				ent.destroy();
 			}
-			if(ent.getTNTFuse() == 0 && level instanceof ServerWorld) {
+			if(ent.getTNTFuse() == 0 && level instanceof ServerLevel) {
 				serverExplosion(ent);
 				ent.destroy();
 			}
@@ -41,31 +41,31 @@ public class MultiplyingDynamiteEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		World level = entity.getLevel();
+		Level level = entity.getLevel();
 		if(entity.getPersistentData().getInt("level") < 3) {	
 			for(int count = 0; count < 4; count++) {
 				LExplosiveProjectile dynamite = EntityRegistry.MULTIPLYING_DYNAMITE.get().create(entity.getLevel());
 				dynamite.setPosition(entity.getPos());
 				dynamite.setOwner(entity.owner());
-				dynamite.setVelocity(((Entity)entity).getVelocity().add(Math.random() * 0.5f - 0.25f, Math.random() * 0.5f - 0.25f, Math.random() * 0.5f - 0.25f));
-				NbtCompound tag = dynamite.getPersistentData();
+				dynamite.setDeltaMovement(((Entity)entity).getDeltaMovement().add(Math.random() * 0.5f - 0.25f, Math.random() * 0.5f - 0.25f, Math.random() * 0.5f - 0.25f));
+				CompoundTag tag = dynamite.getPersistentData();
 				tag.putInt("level", entity.getPersistentData().getInt("level") + 1);
 				dynamite.setPersistentData(tag);
-				entity.getLevel().spawnEntity(dynamite);
+				entity.getLevel().addFreshEntity(dynamite);
 			}
 		}
 		else {
 			ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), 8);
 			explosion.doEntityExplosion(0.75f, true);
 			explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
-			level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+			level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
 		}
 	}
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		if(entity.getPersistentData().getInt("level") < 3) {
-			((Entity)entity).setVelocity(((Entity)entity).getVelocity().add(0f, 0.08f, 0f));
+			((Entity)entity).setDeltaMovement(((Entity)entity).getDeltaMovement().add(0f, 0.08f, 0f));
 		}
 	}
 	

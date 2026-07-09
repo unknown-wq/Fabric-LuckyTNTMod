@@ -11,17 +11,17 @@ import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSources;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class BlackHoleTNTEffect extends PrimedTNTEffect {
 
@@ -29,10 +29,10 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() < 400 && ent.getTNTFuse() >= 300) {
 			((Entity)ent).setNoGravity(true);
-			((Entity)ent).setVelocity(0, 0.05, 0);
+			((Entity)ent).setDeltaMovement(0, 0.05, 0);
 		}
 		if(ent.getTNTFuse() < 300) {
-			((Entity)ent).setVelocity(0, 0, 0);
+			((Entity)ent).setDeltaMovement(0, 0, 0);
 		}
 		if(ent.getTNTFuse() < 350) {
 			if(ent.getTNTFuse() % 20 == 0 && !ent.getLevel().isClient()) {
@@ -40,7 +40,7 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 					int offX = new Random().nextInt(75) - new Random().nextInt(75);
 					int offZ = new Random().nextInt(75) - new Random().nextInt(75);
 					int offY = LevelEvents.getTopBlock(ent.getLevel(), (int)Math.round(ent.x()) + offX, (int)Math.round(ent.z()) + offZ, false);
-					BlockPos pos = toBlockPos(new Vec3d(ent.x() + offX, offY, ent.z() + offZ));
+					BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, offY, ent.z() + offZ));
 					FallingBlockEntity.spawnFromBlock(ent.getLevel(), pos, ent.getLevel().getBlockState(pos));
 					ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
 				}
@@ -53,28 +53,28 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 				double x = ent.x() - block.getX();
 				double y = ent.y() - block.getY();
 				double z = ent.z() - block.getZ();
-				Vec3d vec = new Vec3d(x, y, z);
+				Vec3 vec = new Vec3(x, y, z);
 				if(vec.length() <= 2) {
 					block.discard();
 				}
-				Vec3d vec3 = vec.normalize().multiply(0.4D);
-				block.setVelocity(vec3.add(0, 0.1D, 0));
+				Vec3 vec3 = vec.normalize().multiply(0.4D);
+				block.setDeltaMovement(vec3.add(0, 0.1D, 0));
 			}
 			
 			for(LivingEntity living : list) {
 				double x = ent.x() - living.getX();
 				double y = ent.y() - living.getEyeY();
 				double z = ent.z() - living.getZ();
-				Vec3d vec = new Vec3d(x, y, z);
+				Vec3 vec = new Vec3(x, y, z);
 				DamageSources sources = ent.getLevel().getDamageSources();
-				if(vec.length() <= 2 && ent.getTNTFuse() % 80 == 0 && living instanceof PlayerEntity) {
+				if(vec.length() <= 2 && ent.getTNTFuse() % 80 == 0 && living instanceof Player) {
 					living.damage(sources.inWall(), 6f);
 				}
-				if(vec.length() <= 2 && !(living instanceof PlayerEntity)) {
+				if(vec.length() <= 2 && !(living instanceof Player)) {
 					living.discard();
 				}
-				Vec3d vec3 = vec.normalize().multiply((1D / (0.25D * vec.length() + 0.0001D)) + 0.5D);
-				living.setVelocity(vec3);
+				Vec3 vec3 = vec.normalize().multiply((1D / (0.25D * vec.length() + 0.0001D)) + 0.5D);
+				living.setDeltaMovement(vec3);
 			}
 		}
 	}
@@ -94,8 +94,8 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 			double x = living.getX() - ent.x();
 			double y = living.getEyeY() - ent.y();
 			double z = living.getZ() - ent.z();
-			Vec3d vec = new Vec3d(x, y, z).normalize().multiply(4);
-			living.setVelocity(vec);
+			Vec3 vec = new Vec3(x, y, z).normalize().multiply(4);
+			living.setDeltaMovement(vec);
 		}
 	}
 	

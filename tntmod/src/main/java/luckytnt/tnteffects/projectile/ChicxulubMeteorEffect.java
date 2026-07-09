@@ -9,14 +9,14 @@ import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.block.AbstractFireBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 
 public class ChicxulubMeteorEffect extends PrimedTNTEffect {
 	
@@ -27,7 +27,7 @@ public class ChicxulubMeteorEffect extends PrimedTNTEffect {
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), 60, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(distance <= 55 && state.getBlock().getBlastResistance() <= 100) {
 					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
 					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
@@ -45,9 +45,9 @@ public class ChicxulubMeteorEffect extends PrimedTNTEffect {
 			LExplosiveProjectile pompeii = EntityRegistry.POMPEII_PROJECTILE.get().create(entity.getLevel());
 			pompeii.setPosition(entity.getPos());
 			pompeii.setOwner(entity.owner());
-			pompeii.setVelocity(Math.random() * 8D - 4D, 3 + Math.random() * 2, Math.random() * 8D - 4D);
+			pompeii.setDeltaMovement(Math.random() * 8D - 4D, 3 + Math.random() * 2, Math.random() * 8D - 4D);
 			pompeii.setTNTFuse(100000);
-			entity.getLevel().spawnEntity(pompeii);
+			entity.getLevel().addFreshEntity(pompeii);
 		}
 	}
 	

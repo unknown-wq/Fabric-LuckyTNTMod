@@ -7,8 +7,8 @@ import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.core.particles.DustParticleEffect;
 
 public class AngryMinersEffect extends PrimedTNTEffect{
 
@@ -17,7 +17,7 @@ public class AngryMinersEffect extends PrimedTNTEffect{
 		for(int count = 0; count <= 8; count++) {
 			AngryMiner miner = EntityRegistry.ANGRY_MINER.get().create(entity.getLevel());
 			miner.setPosition(entity.getPos());
-			entity.getLevel().spawnEntity(miner);
+			entity.getLevel().addFreshEntity(miner);
 		}
 	}
 	

@@ -7,9 +7,9 @@ import java.util.Random;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.BlazeEntity;
 import net.minecraft.entity.mob.CaveSpiderEntity;
@@ -75,10 +75,10 @@ import net.minecraft.entity.passive.StriderEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WolfEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 
 public class AnimalKingdomEffect extends PrimedTNTEffect {
 
@@ -342,14 +342,14 @@ public class AnimalKingdomEffect extends PrimedTNTEffect {
 			int offX = new Random().nextInt(101) - 50;
 			int offZ = new Random().nextInt(101) - 50;
 			for(int y = ent.getLevel().getTopY(); y > ent.getLevel().getBottomY(); y--) {
-				BlockPos pos = toBlockPos(new Vec3d(ent.x() + offX, y, ent.z() + offZ));
+				BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, y, ent.z() + offZ));
 				BlockState state = ent.getLevel().getBlockState(pos);
 				if(Block.isFaceFullSquare(ent.getLevel().getBlockState(pos.down()).getCollisionShape(ent.getLevel(), pos.down()), Direction.UP) && !Block.isFaceFullSquare(state.getCollisionShape(ent.getLevel(), pos), Direction.UP)) {
 					mob.setPosition(pos.getX(), pos.getY(), pos.getZ());
-					if(ent.getLevel() instanceof ServerWorld sl) {
+					if(ent.getLevel() instanceof ServerLevel sl) {
 						mob.initialize(sl, ent.getLevel().getLocalDifficulty(pos), SpawnReason.MOB_SUMMONED, null);
 					}
-					ent.getLevel().spawnEntity(mob);
+					ent.getLevel().addFreshEntity(mob);
 					break;
 				}
 			}

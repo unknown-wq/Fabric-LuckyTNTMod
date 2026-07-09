@@ -12,26 +12,26 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class ReplayTNTEffect extends PrimedTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		if(entity.getLevel() instanceof ServerWorld sLevel && entity instanceof PrimedReplayTNT tnt) {
+		if(entity.getLevel() instanceof ServerLevel sLevel && entity instanceof PrimedReplayTNT tnt) {
 			if(tnt.getTNTFuse() == 400) {
 				ExplosionHelper.doSphericalExplosion(sLevel, tnt.getPos(), 10, new IForEachBlockExplosionEffect() {
 					
 					@Override
-					public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(state.getBlock() instanceof LTNTBlock) {
 							state.getBlock().onDestroyedByExplosion(sLevel, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
@@ -45,7 +45,7 @@ public class ReplayTNTEffect extends PrimedTNTEffect {
 				ExplosionHelper.doSphericalExplosion(sLevel, tnt.getPos(), 10, new IForEachBlockExplosionEffect() {
 					
 					@Override
-					public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(tnt.blocks.get(pos) != null) {
 							if(!tnt.blocks.get(pos).equals(state)) {
 								list.put(pos, state);
@@ -67,7 +67,7 @@ public class ReplayTNTEffect extends PrimedTNTEffect {
 				}
 			}
 		}
-		((Entity)entity).setVelocity(0, 0, 0);
+		((Entity)entity).setDeltaMovement(0, 0, 0);
 		((Entity)entity).setPosition(((Entity)entity).getLerpedPos(0f));
 	}
 	
@@ -84,8 +84,8 @@ public class ReplayTNTEffect extends PrimedTNTEffect {
 			}
 		}
 		if(entity.getTNTFuse() <= 200) {
-			Vec3d vec31 = new Vec3d((entity.x() + 0.175D) - (entity.x() - 0.175D), (entity.y() + 1.5D) - (entity.y() + 1.5D + 0.175D), 0);
-			Vec3d vec32 = new Vec3d((entity.x() + 0.175D) - (entity.x() - 0.175D), (entity.y() + 1.5D) - (entity.y() + 1.5D - 0.175D), 0);
+			Vec3 vec31 = new Vec3((entity.x() + 0.175D) - (entity.x() - 0.175D), (entity.y() + 1.5D) - (entity.y() + 1.5D + 0.175D), 0);
+			Vec3 vec32 = new Vec3((entity.x() + 0.175D) - (entity.x() - 0.175D), (entity.y() + 1.5D) - (entity.y() + 1.5D - 0.175D), 0);
 			
 			entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0f, 0f), 0.5f), entity.x(), entity.y() + 1.5D, entity.z(), 0, 0, 0);
 			entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0f, 0f), 0.5f), entity.x() - 0.0875D, entity.y() + 1.5D, entity.z(), 0, 0, 0);

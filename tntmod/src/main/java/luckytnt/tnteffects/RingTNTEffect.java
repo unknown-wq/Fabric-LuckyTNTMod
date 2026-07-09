@@ -5,12 +5,12 @@ import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 public class RingTNTEffect extends PrimedTNTEffect {
 
@@ -24,7 +24,7 @@ public class RingTNTEffect extends PrimedTNTEffect {
 			double z = ent.z() + 10 * Math.sin(angle * Math.PI / 180);
 			double y = getFirstMotionBlockingBlock(ent.getLevel(), x, z);
 			tnt.setPosition(x, y + 1D, z);
-			ent.getLevel().spawnEntity(tnt);
+			ent.getLevel().addFreshEntity(tnt);
 		}
 	}
 	
@@ -33,13 +33,13 @@ public class RingTNTEffect extends PrimedTNTEffect {
 		return BlockRegistry.RING_TNT.get();
 	}
 	
-	public static int getFirstMotionBlockingBlock(World level, double x, double z) {
+	public static int getFirstMotionBlockingBlock(Level level, double x, double z) {
 		if(!level.isClient) {
 			boolean blockFound = false;
 			int y = 0;
 			for(int offY = level.getTopY(); offY >= level.getBottomY(); offY--) {	
-				BlockPos pos = new BlockPos(MathHelper.floor(x), offY, MathHelper.floor(z));
-				BlockPos posUp = new BlockPos(MathHelper.floor(x), offY + 1, MathHelper.floor(z));
+				BlockPos pos = new BlockPos(Mth.floor(x), offY, Mth.floor(z));
+				BlockPos posUp = new BlockPos(Mth.floor(x), offY + 1, Mth.floor(z));
 				BlockState state = level.getBlockState(pos);
 				BlockState stateUp = level.getBlockState(posUp);				
 				if(!blockFound) {

@@ -7,36 +7,36 @@ import luckytnt.registry.EntityRegistry;
 import luckytnt.registry.ItemRegistry;
 import luckytntlib.block.LTNTBlock;
 import luckytntlib.entity.PrimedLTNT;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemPlacementContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.ItemActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 public class GotthardTunnelBlock extends LTNTBlock {
 	public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
 	public static final BooleanProperty STREETS = BooleanProperty.of("streets");
 
-	public GotthardTunnelBlock(AbstractBlock.Settings properties) {
+	public GotthardTunnelBlock(BlockBehaviour.Properties properties) {
 		super(properties, EntityRegistry.GOTTHARD_TUNNEL, false);
 	}
 
@@ -53,15 +53,15 @@ public class GotthardTunnelBlock extends LTNTBlock {
     }
 	
 	@Override
-	public PrimedLTNT explode(World level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
+	public PrimedLTNT explode(Level level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
 		if(TNT != null) {
-			BlockState state = level.getBlockState(new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z)));
+			BlockState state = level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)));
 			PrimedLTNT tnt = EntityRegistry.GOTTHARD_TUNNEL.get().create(level);
 			tnt.setFuse(40);
 			tnt.setPosition(x + 0.5f, y, z + 0.5f);
 			tnt.setOwner(igniter);
 			tnt.setTNTFuse(200);
-			NbtCompound tag = tnt.getPersistentData();
+			CompoundTag tag = tnt.getPersistentData();
 			if(state.contains(FACING)) {
 				tag.putString("direction", state.get(FACING).getName());
 			}
@@ -69,10 +69,10 @@ public class GotthardTunnelBlock extends LTNTBlock {
 				tag.putBoolean("streets", state.get(STREETS));
 			}
 			tnt.setPersistentData(tag);
-			level.spawnEntity(tnt);
-			level.playSound(null, new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z)), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.MASTER, 1, 1);
-			if(level.getBlockState(new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z))).getBlock() == this) {
-				level.setBlockState(new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z)), Blocks.AIR.getDefaultState(), 3);
+			level.addFreshEntity(tnt);
+			level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.ENTITY_TNT_PRIMED, SoundSource.MASTER, 1, 1);
+			if(level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).getBlock() == this) {
+				level.setBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), Blocks.AIR.getDefaultState(), 3);
 			}
 			return tnt;
 		}
@@ -80,8 +80,8 @@ public class GotthardTunnelBlock extends LTNTBlock {
 	}
 
 	@Override
-	public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World level, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult result) {
-		ItemStack itemstack = player.getStackInHand(hand);
+	public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+		ItemStack itemstack = player.getItemInHand(hand);
 		if(itemstack.isOf(Items.FLINT_AND_STEEL) || itemstack.isOf(Items.FIRE_CHARGE)) {
 			explode(level, false, pos.getX(), pos.getY(), pos.getZ(), player);
 			Item item = itemstack.getItem();
@@ -89,7 +89,7 @@ public class GotthardTunnelBlock extends LTNTBlock {
 				if (itemstack.isOf(Items.FLINT_AND_STEEL)) {
 					itemstack.damage(1, player, LivingEntity.getSlotForHand(hand));
 				} else {
-					itemstack.decrement(1);
+					itemstack.shrink(1);
 				}
 			}
 

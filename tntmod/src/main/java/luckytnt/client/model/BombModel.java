@@ -11,12 +11,12 @@ import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.resources.Identifier;
 
 public class BombModel <T extends Entity> extends EntityModel<T> {
-	public static final EntityModelLayer LAYER_LOCATION = new EntityModelLayer(Identifier.of(LuckyTNTMod.MODID, "tsar_bomb_model"), "main");
+	public static final EntityModelLayer LAYER_LOCATION = new EntityModelLayer(Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "tsar_bomb_model"), "main");
 	private final ModelPart TsarBomb;
 
 	public BombModel(ModelPart root) {
@@ -74,7 +74,7 @@ public class BombModel <T extends Entity> extends EntityModel<T> {
 	}
 
 	@Override
-	public void render(MatrixStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int i) {
+	public void render(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int i) {
 		TsarBomb.render(poseStack, buffer, packedLight, packedOverlay);
 	}
 }

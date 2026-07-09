@@ -2,10 +2,10 @@ package luckytnt.tnteffects;
 
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.core.particles.ParticleTypes;
 
 public class SupernovaEffect extends SphereTNTEffect {
 
@@ -18,7 +18,7 @@ public class SupernovaEffect extends SphereTNTEffect {
 		if(ent.getTNTFuse() == 300) {
 			Entity lighting = new LightningEntity(EntityType.LIGHTNING_BOLT, ent.getLevel());
 			lighting.setPosition(ent.x(), ent.y(), ent.z());
-			ent.getLevel().spawnEntity(lighting);
+			ent.getLevel().addFreshEntity(lighting);
 		}
 	}
 	

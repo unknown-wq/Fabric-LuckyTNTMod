@@ -7,12 +7,12 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class ShatterproofDynamiteEffect extends PrimedTNTEffect{
 
@@ -21,7 +21,7 @@ public class ShatterproofDynamiteEffect extends PrimedTNTEffect{
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), 5, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.isFullCube(level, pos) && state.getBlock().getBlastResistance() < 1200) {
 					level.setBlockState(pos, Blocks.OBSIDIAN.getDefaultState());
 				}

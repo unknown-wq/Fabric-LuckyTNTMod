@@ -13,10 +13,10 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.Context;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.PlayPayloadHandler;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 
 public class NetworkRegistry {
 
@@ -24,19 +24,19 @@ public class NetworkRegistry {
 		
 		@Override
 		public void receive(LuckyTNTUpdateConfigValuesPacket payload, Context context) {
-			NbtCompound tag = payload.data;
+			CompoundTag tag = payload.data;
 			
 			Config.writeToValues(tag, LuckyTNTConfigValues.CONFIG.getConfigValues());
 			
-			LuckyTNTConfigValues.CONFIG.save(context.server().getWorld(World.OVERWORLD));
+			LuckyTNTConfigValues.CONFIG.save(context.server().getWorld(Level.OVERWORLD));
 		}
 	};
 	private static final PlayPayloadHandler<LuckyTNTClientReadyC2SPacket> READY_C2S = new PlayPayloadHandler<LuckyTNTClientReadyC2SPacket>() {
 		
 		@Override
 		public void receive(LuckyTNTClientReadyC2SPacket payload, Context context) {
-			for(ServerWorld world : context.server().getWorlds()) {
-				for(ServerPlayerEntity entity : world.getPlayers()) {
+			for(ServerLevel world : context.server().getWorlds()) {
+				for(ServerPlayer entity : world.getPlayers()) {
 					LuckyTNTMod.RH.sendS2CPacket(entity, new LuckyTNTUpdateConfigValuesPacket(LuckyTNTConfigValues.CONFIG.getConfigValues()));
 				}
 			}

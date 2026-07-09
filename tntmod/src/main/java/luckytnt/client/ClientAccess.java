@@ -5,9 +5,9 @@ import luckytnt.client.gui.ConfigScreen;
 import luckytnt.util.NuclearBombLike;
 import luckytntlib.config.common.ConfigScreenFactory;
 import luckytntlib.util.IExplosiveEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.entity.Entity;
 
 public class ClientAccess {
 	
@@ -24,7 +24,7 @@ public class ClientAccess {
 	}
 	
 	public static void displayHydrogenBombParticles(int id) {
-		MinecraftClient minecraft = MinecraftClient.getInstance();
+		Minecraft minecraft = Minecraft.getInstance();
 		Entity ent = minecraft.world.getEntityById(id);
 		if(ent != null) {
 			if(ent instanceof IExplosiveEntity ient) {

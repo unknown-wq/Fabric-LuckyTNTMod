@@ -9,13 +9,13 @@ import org.joml.Vector3f;
 import luckytnt.registry.ItemRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.item.Item;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.world.World;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.world.level.Level;
 
 public class RainbowDynamiteEffect extends PrimedTNTEffect{
 
@@ -24,7 +24,7 @@ public class RainbowDynamiteEffect extends PrimedTNTEffect{
 		for(int count = 0; count <= 100; count++) {
 			
 			@SuppressWarnings("rawtypes")
-			Class[] parameters = new Class[]{World.class, double.class, double.class, double.class, BlockState.class};
+			Class[] parameters = new Class[]{Level.class, double.class, double.class, double.class, BlockState.class};
 			Constructor<FallingBlockEntity> sandConstructor;
 			try {
 				sandConstructor = FallingBlockEntity.class.getDeclaredConstructor(parameters);
@@ -47,8 +47,8 @@ public class RainbowDynamiteEffect extends PrimedTNTEffect{
 						case 11: state = Blocks.LIGHT_BLUE_CONCRETE.getDefaultState(); break;
 					}
 					FallingBlockEntity sand = sandConstructor.newInstance(entity.getLevel(), entity.getPos().x, entity.getPos().y, entity.getPos().z, state);
-					sand.setVelocity((Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f);
-					entity.getLevel().spawnEntity(sand);
+					sand.setDeltaMovement((Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f);
+					entity.getLevel().addFreshEntity(sand);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					e.printStackTrace();
 				}
@@ -60,12 +60,12 @@ public class RainbowDynamiteEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		((Entity)entity).setVelocity(((Entity)entity).getVelocity().add(0f, 0.08f, 0f));
+		((Entity)entity).setDeltaMovement(((Entity)entity).getDeltaMovement().add(0f, 0.08f, 0f));
 		
 		for(int count = 0; count < 5; count++) {
 			
 			@SuppressWarnings("rawtypes")
-			Class[] parameters = new Class[]{World.class, double.class, double.class, double.class, BlockState.class};
+			Class[] parameters = new Class[]{Level.class, double.class, double.class, double.class, BlockState.class};
 			Constructor<FallingBlockEntity> sandConstructor;
 			try {
 				sandConstructor = FallingBlockEntity.class.getDeclaredConstructor(parameters);
@@ -88,8 +88,8 @@ public class RainbowDynamiteEffect extends PrimedTNTEffect{
 						case 11: state = Blocks.LIGHT_BLUE_CONCRETE.getDefaultState(); break;
 					}
 					FallingBlockEntity sand = sandConstructor.newInstance(entity.getLevel(), entity.getPos().x, entity.getPos().y, entity.getPos().z, state);
-					sand.setVelocity((Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f);
-					entity.getLevel().spawnEntity(sand);
+					sand.setDeltaMovement((Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f);
+					entity.getLevel().addFreshEntity(sand);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					e.printStackTrace();
 				}

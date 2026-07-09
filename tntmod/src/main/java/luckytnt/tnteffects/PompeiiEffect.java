@@ -6,11 +6,11 @@ import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 
 public class PompeiiEffect extends PrimedTNTEffect{
 
@@ -24,10 +24,10 @@ public class PompeiiEffect extends PrimedTNTEffect{
 						LExplosiveProjectile pompeii = EntityRegistry.POMPEII_PROJECTILE.get().create(entity.getLevel());
 						pompeii.setPosition(entity.getPos());
 						pompeii.setOwner(entity.owner());
-						pompeii.setVelocity((Math.random() * 3D - 1.5D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 3D - 1.5D) * 0.1f, 3f + entity.getLevel().random.nextFloat() * 2f, 0f);	
+						pompeii.setDeltaMovement((Math.random() * 3D - 1.5D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 3D - 1.5D) * 0.1f, 3f + entity.getLevel().random.nextFloat() * 2f, 0f);	
 						pompeii.setOnFireFor(1000);
-						entity.getLevel().spawnEntity(pompeii);
-						entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.MASTER, 3, 1);
+						entity.getLevel().addFreshEntity(pompeii);
+						entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.MASTER, 3, 1);
 					}
 				}
 			}

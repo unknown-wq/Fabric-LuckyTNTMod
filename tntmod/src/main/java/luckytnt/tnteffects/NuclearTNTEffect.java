@@ -10,18 +10,18 @@ import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.IForEachEntityExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.PlantBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class NuclearTNTEffect extends PrimedTNTEffect{
 
@@ -39,14 +39,14 @@ public class NuclearTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doEntityExplosion(Entity entity, double distance) {
 				if(entity instanceof LivingEntity living) {
-					living.addStatusEffect(new StatusEffectInstance(Registries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 48 * strength));
+					living.addStatusEffect(new StatusEffectInstance(BuiltInRegistries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 48 * strength));
 				}
 			}
 		});
 		explosion.doBlockExplosion(1f, 1.3f, 1f, 1f, false, false);
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), strength * 3, new IForEachBlockExplosionEffect() {		
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock() instanceof PlantBlock || state.getBlock() instanceof LeavesBlock) {
 					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
 					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
@@ -56,7 +56,7 @@ public class NuclearTNTEffect extends PrimedTNTEffect{
 		explosion.doBlockExplosion(new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				BlockState stateAbove = level.getBlockState(pos.up());
 				if(stateAbove.isAir() && !state.isAir() && Math.random() < 0.33f) {
 					level.setBlockState(pos.up(), BlockRegistry.NUCLEAR_WASTE.get().getDefaultState());

@@ -5,7 +5,7 @@ import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
 public class ClusterBombEffect extends PrimedTNTEffect{
 
@@ -18,8 +18,8 @@ public class ClusterBombEffect extends PrimedTNTEffect{
 			LExplosiveProjectile shrapnel = EntityRegistry.SHRAPNEL.get().create(entity.getLevel());
 			shrapnel.setPosition(entity.getPos());
 			shrapnel.setOwner(entity.owner());
-			shrapnel.setVelocity(Math.random() - 0.5f, Math.random() * 1.5f, Math.random() - 0.5f);
-			entity.getLevel().spawnEntity(shrapnel);
+			shrapnel.setDeltaMovement(Math.random() - 0.5f, Math.random() * 1.5f, Math.random() - 0.5f);
+			entity.getLevel().addFreshEntity(shrapnel);
 		}
 	}
 }

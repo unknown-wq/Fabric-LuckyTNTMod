@@ -8,11 +8,11 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class NuclearWasteTNTEffect extends PrimedTNTEffect{
 
@@ -26,7 +26,7 @@ public class NuclearWasteTNTEffect extends PrimedTNTEffect{
 	public void serverExplosion(IExplosiveEntity entity) {
 		ExplosionHelper.doTopBlockExplosion(entity.getLevel(), entity.getPos(), radius, new IForEachBlockExplosionEffect() {
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(!level.getBlockState(pos.up()).isFullCube(level, pos.up()) && level.getBlockState(pos.up()).getBlock().getBlastResistance() < 100) {
 					level.getBlockState(pos.up()).getBlock().onDestroyedByExplosion(level, pos.up(), ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlockState(pos, BlockRegistry.NUCLEAR_WASTE.get().getDefaultState());

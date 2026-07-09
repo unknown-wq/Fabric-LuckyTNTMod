@@ -9,16 +9,16 @@ import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.Level;
 
 public class GrandeFinaleEffect extends PrimedTNTEffect {
 
@@ -37,21 +37,21 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 				case 1: entity = EntityRegistry.GRAVEL_FIREWORK.get().create(ent.getLevel()); break;
 				case 2: entity = EntityRegistry.RAINBOW_FIREWORK.get().create(ent.getLevel());; break;
 				case 3: entity = EntityRegistry.NEW_YEARS_FIREWORK.get().create(ent.getLevel());
-						NbtCompound tag = entity.getPersistentData();
+						CompoundTag tag = entity.getPersistentData();
 						tag.putInt("type", 1);
 						entity.setPersistentData(tag); break;
 			}
-			ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundCategory.MASTER, 3, 1);
+			ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundSource.MASTER, 3, 1);
 			entity.setPosition(ent.getPos());
 			entity.setOwner(ent.owner());
-			entity.setVelocity(Math.random() * 5 - Math.random() * 5, 0, Math.random() * 5 - Math.random() * 5);
+			entity.setDeltaMovement(Math.random() * 5 - Math.random() * 5, 0, Math.random() * 5 - Math.random() * 5);
 			entity.setTNTFuse(40 + new Random().nextInt(41));
-			ent.getLevel().spawnEntity(entity);
+			ent.getLevel().addFreshEntity(entity);
 		}
 		ent.getLevel().setBlockState(toBlockPos(ent.getPos()), Blocks.AIR.getDefaultState(), 3);
 		ent.getLevel().setBlockState(toBlockPos(ent.getPos()).add(0, 1, 0), Blocks.AIR.getDefaultState(), 3);
 		if(ent.getTNTFuse() <= 40) {
-			((Entity)ent).setVelocity(((Entity)ent).getVelocity().x, 1.6f, ((Entity)ent).getVelocity().z);
+			((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 1.6f, ((Entity)ent).getDeltaMovement().z);
 			ent.getLevel().addParticle(ParticleTypes.LARGE_SMOKE, ent.x(), ent.y(), ent.z(), 0, -0.5f, 0);
 			if(ent.getTNTFuse() == 0) {
 				Block template = Blocks.WHITE_CONCRETE;
@@ -74,7 +74,7 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 					FallingBlockEntity block = null;
 					try {
 						@SuppressWarnings("rawtypes")
-						Class[] classes = new Class[]{World.class, double.class, double.class, double.class, BlockState.class};
+						Class[] classes = new Class[]{Level.class, double.class, double.class, double.class, BlockState.class};
 						Constructor<FallingBlockEntity> constructor = FallingBlockEntity.class.getDeclaredConstructor(classes);
 						constructor.setAccessible(true);
 						block = constructor.newInstance(ent.getLevel(), ent.x(), ent.y(), ent.z(), template.getDefaultState());
@@ -83,8 +83,8 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 					}
 					if(block != null) {
 						block.dropItem = false;
-						block.setVelocity(Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f);
-						ent.getLevel().spawnEntity(block);
+						block.setDeltaMovement(Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f);
+						ent.getLevel().addFreshEntity(block);
 					}
 				}
 				for(int count = 0; count < 500; count++) {
@@ -92,8 +92,8 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 					tnt.setOwner(ent.owner());
 					tnt.setPosition(ent.getPos());
 					tnt.setTNTFuse(80 + (int)(Math.random() * 100));
-					tnt.setVelocity(Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f);
-					ent.getLevel().spawnEntity(tnt);
+					tnt.setDeltaMovement(Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f);
+					ent.getLevel().addFreshEntity(tnt);
 				}
 			}
 		}

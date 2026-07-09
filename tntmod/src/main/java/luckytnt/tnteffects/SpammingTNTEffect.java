@@ -3,10 +3,10 @@ package luckytnt.tnteffects;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class SpammingTNTEffect extends PrimedTNTEffect{
 
@@ -14,8 +14,8 @@ public class SpammingTNTEffect extends PrimedTNTEffect{
 	public void serverExplosion(IExplosiveEntity entity) {
 		for(int count = 0; count <= 400; count++) {
 			ItemEntity dirt = new ItemEntity(entity.getLevel(), entity.x(), entity.y(), entity.z(), new ItemStack(Items.DIRT));
-			dirt.setVelocity(Math.random() * 6 - 3, 3 + Math.random() * 3, Math.random() * 6 - 3);
-			entity.getLevel().spawnEntity(dirt);
+			dirt.setDeltaMovement(Math.random() * 6 - 3, 3 + Math.random() * 3, Math.random() * 6 - 3);
+			entity.getLevel().addFreshEntity(dirt);
 		}
 	}
 	
@@ -23,8 +23,8 @@ public class SpammingTNTEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity) {
 		for(int count = 0; count <= 20; count++) {
 			ItemEntity dirt = new ItemEntity(entity.getLevel(), entity.x(), entity.y(), entity.z(), new ItemStack(Items.DIRT));
-			dirt.setVelocity(Math.random() * 4 - 2, 2 + Math.random() * 2, Math.random() * 4 - 2);
-			entity.getLevel().spawnEntity(dirt);
+			dirt.setDeltaMovement(Math.random() * 4 - 2, 2 + Math.random() * 2, Math.random() * 4 - 2);
+			entity.getLevel().addFreshEntity(dirt);
 		}
 	}
 	

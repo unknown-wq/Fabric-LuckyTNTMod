@@ -10,14 +10,14 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.LuckyTNTEntityExtension;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class KnockbackTNTEffect extends PrimedTNTEffect {
 
@@ -28,7 +28,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 			for (LivingEntity lent : ents) {
 				if(lent instanceof LuckyTNTEntityExtension elent) {
 					if (elent.getAdditionalPersistentData().getInt("knockbacktime") > 0) {
-						NbtCompound tag = elent.getAdditionalPersistentData();
+						CompoundTag tag = elent.getAdditionalPersistentData();
 						tag.putInt("knockbacktime", elent.getAdditionalPersistentData().getInt("knockbacktime") - 1);
 						elent.setAdditionalPersistentData(tag);
 					}
@@ -37,28 +37,28 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 				double y = ent.y() - lent.getY();
 				double z = ent.z() - lent.getZ();
 				double distance = Math.sqrt(x * x + y * y + z * z) + 0.1D;
-				Vec3d vec = new Vec3d(x, y, z).normalize().multiply(1D / (distance * 0.2D) + 0.5D).add(0, 0.1D, 0);
+				Vec3 vec = new Vec3(x, y, z).normalize().multiply(1D / (distance * 0.2D) + 0.5D).add(0, 0.1D, 0);
 				if (distance > 2.1D && distance <= 75D && lent instanceof LuckyTNTEntityExtension elent && elent.getAdditionalPersistentData().getInt("knockbacktime") <= 0) {
-					if (lent instanceof PlayerEntity player) {
+					if (lent instanceof Player player) {
 						if (!player.isCreative()) {
-							lent.setVelocity(vec);
+							lent.setDeltaMovement(vec);
 						}
 					} else {
-						lent.setVelocity(vec);
+						lent.setDeltaMovement(vec);
 					}
 				} else if (distance <= 2.1D && lent instanceof LuckyTNTEntityExtension elent) {
-					if (lent instanceof PlayerEntity player) {
+					if (lent instanceof Player player) {
 						if (!player.isCreative()) {
-							NbtCompound tag = elent.getAdditionalPersistentData();
+							CompoundTag tag = elent.getAdditionalPersistentData();
 							tag.putInt("knockbacktime", 40);
 							elent.setAdditionalPersistentData(tag);
-							lent.setVelocity(vec.negate().normalize().multiply(5D).add(0, 0.5D, 0));
+							lent.setDeltaMovement(vec.negate().normalize().multiply(5D).add(0, 0.5D, 0));
 						}
 					} else {
-						NbtCompound tag = elent.getAdditionalPersistentData();
+						CompoundTag tag = elent.getAdditionalPersistentData();
 						tag.putInt("knockbacktime", 40);
 						elent.setAdditionalPersistentData(tag);
-						lent.setVelocity(vec.negate().normalize().multiply(5D).add(0, 0.5D, 0));
+						lent.setDeltaMovement(vec.negate().normalize().multiply(5D).add(0, 0.5D, 0));
 					}
 				}
 			}
@@ -80,8 +80,8 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 					offY /= distance2;
 					offZ /= distance2;
 					float damage = (1f - (float)distance);
-					entity.setVelocity(entity.getVelocity().add(offX * damage * 15, offY * damage * 15, offZ * damage * 15));
-					if(entity instanceof PlayerEntity player) {
+					entity.setDeltaMovement(entity.getDeltaMovement().add(offX * damage * 15, offY * damage * 15, offZ * damage * 15));
+					if(entity instanceof Player player) {
 						player.velocityModified = true;
 					}
 				}

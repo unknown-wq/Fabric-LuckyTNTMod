@@ -8,15 +8,15 @@ import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 public class CatalystTNTEffect extends PrimedTNTEffect {
 
@@ -28,16 +28,16 @@ public class CatalystTNTEffect extends PrimedTNTEffect {
 				double y = ent.y() + Math.random() * 15 - Math.random() * 15;
 				double z = ent.z() + Math.random() * 40 - Math.random() * 40;
 				if(!ent.getLevel().isClient()) {
-					ImprovedExplosion explosion = new ImprovedExplosion(ent.getLevel(), (Entity)ent, new Vec3d(x, y, z), 25 + new Random().nextInt(16));
+					ImprovedExplosion explosion = new ImprovedExplosion(ent.getLevel(), (Entity)ent, new Vec3(x, y, z), 25 + new Random().nextInt(16));
 					explosion.doEntityExplosion(2f, true);
 					explosion.doBlockExplosion(1f, 1f, 0.75f, 1f, false, false);
 				}
-				ent.getLevel().playSound(null, new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z)), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.BLOCKS, 4, (1.0F + (ent.getLevel().getRandom().nextFloat() - ent.getLevel().getRandom().nextFloat()) * 0.2F) * 0.7F);
-				NbtCompound tag = ent.getPersistentData();
+				ent.getLevel().playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4, (1.0F + (ent.getLevel().getRandom().nextFloat() - ent.getLevel().getRandom().nextFloat()) * 0.2F) * 0.7F);
+				CompoundTag tag = ent.getPersistentData();
 				tag.putInt("nextExplosion", 4 + (int)Math.round(Math.random()));
 				ent.setPersistentData(tag);
 			}
-			NbtCompound tag = ent.getPersistentData();
+			CompoundTag tag = ent.getPersistentData();
 			tag.putInt("nextExplosion", ent.getPersistentData().getInt("nextExplosion") - 1);
 			ent.setPersistentData(tag);
 		}

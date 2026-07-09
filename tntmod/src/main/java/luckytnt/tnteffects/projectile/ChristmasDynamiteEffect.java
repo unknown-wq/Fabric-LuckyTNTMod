@@ -10,25 +10,25 @@ import luckytnt.tnteffects.SnowTNTEffect;
 import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
-		World level = entity.getLevel();
+		Level level = entity.getLevel();
 		if(entity instanceof LExplosiveProjectile ent) {
 			if(ent.inGround() && ent.getTNTFuse() < 60) {
-				if(level instanceof ServerWorld) {
-					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+				if(level instanceof ServerLevel) {
+					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
 					serverExplosion(ent);
 				}
 				ent.destroy();
@@ -47,19 +47,19 @@ public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 	public void serverExplosion(IExplosiveEntity entity) {
 		SnowTNTEffect snowEffect = new SnowTNTEffect(25);
 		snowEffect.serverExplosion(entity);
-		((ServerWorld)entity.getLevel()).spawnParticles(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + Math.random() - 0.5f, entity.z() + Math.random() - 0.5f, 500, 0.5f, 0.5f, 0.5f, 0f);
+		((ServerLevel)entity.getLevel()).spawnParticles(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + Math.random() - 0.5f, entity.z() + Math.random() - 0.5f, 500, 0.5f, 0.5f, 0.5f, 0f);
 	}
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		if(entity.getTNTFuse() == 220) {
-			NbtCompound tag = entity.getPersistentData();
-			tag.putDouble("vecx", ((Entity)entity).getVelocity().x);
-			tag.putDouble("vecz", ((Entity)entity).getVelocity().z);
+			CompoundTag tag = entity.getPersistentData();
+			tag.putDouble("vecx", ((Entity)entity).getDeltaMovement().x);
+			tag.putDouble("vecz", ((Entity)entity).getDeltaMovement().z);
 			entity.setPersistentData(tag);
 		}
 		if(entity.getTNTFuse() <= 220 && entity.getTNTFuse() > 60) {
-			((Entity)entity).setVelocity(new Vec3d(entity.getPersistentData().getDouble("vecx"), 0, entity.getPersistentData().getDouble("vecz")).normalize().multiply(0.25f));
+			((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDouble("vecx"), 0, entity.getPersistentData().getDouble("vecz")).normalize().multiply(0.25f));
 			if(entity.getTNTFuse() % 20 == 0) {
 				LExplosiveProjectile dynamite = EntityRegistry.CHRISTMAS_DYNAMITE_PROJECTILE.get().create(entity.getLevel());
 				dynamite.setPosition(entity.getPos());
@@ -68,12 +68,12 @@ public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 				randomX *= new Random().nextBoolean() ? 1 : -1;
 				double randomZ = Math.random();
 				randomZ *= new Random().nextBoolean() ? 1 : -1;
-				dynamite.setVelocity(randomX, -Math.random() * 0.5f, randomZ);
-				entity.getLevel().spawnEntity(dynamite);
+				dynamite.setDeltaMovement(randomX, -Math.random() * 0.5f, randomZ);
+				entity.getLevel().addFreshEntity(dynamite);
 			}
 		}
 		else if(entity.getTNTFuse() > 60){
-			((Entity)entity).setVelocity(((Entity)entity).getVelocity().add(0f, 0.08f, 0f));
+			((Entity)entity).setDeltaMovement(((Entity)entity).getDeltaMovement().add(0f, 0.08f, 0f));
 		}
 	}
 	

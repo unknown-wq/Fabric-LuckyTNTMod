@@ -7,10 +7,10 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class CompactTNTEffect extends PrimedTNTEffect{
 	private final double chance;
@@ -28,7 +28,7 @@ public class CompactTNTEffect extends PrimedTNTEffect{
 		explosion.doBlockExplosion(new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(Math.random() < chance && !state.isAir() && state.getBlock().getBlastResistance() < 100) {
 					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
 					level.setBlockState(pos, place.get().get().getDefaultState());

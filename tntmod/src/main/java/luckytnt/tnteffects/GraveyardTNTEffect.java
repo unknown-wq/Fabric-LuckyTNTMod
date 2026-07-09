@@ -6,11 +6,11 @@ import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 public class GraveyardTNTEffect extends PrimedTNTEffect {
 
@@ -20,7 +20,7 @@ public class GraveyardTNTEffect extends PrimedTNTEffect {
 			for(int offY = 0; offY <= 10; offY++) {
 				for(int offZ = -20; offZ <= 20; offZ++) {
 					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					BlockPos pos = toBlockPos(new Vec3d(entity.x() + offX, entity.y() + offY - 10, entity.z() + offZ));
+					BlockPos pos = toBlockPos(new Vec3(entity.x() + offX, entity.y() + offY - 10, entity.z() + offZ));
 					if(distance <= 20 && entity.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 100 && !entity.getLevel().getBlockState(pos).isFullCube(entity.getLevel(), pos)) {
 						entity.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 						entity.getLevel().setBlockState(pos, Blocks.GRASS_BLOCK.getDefaultState());

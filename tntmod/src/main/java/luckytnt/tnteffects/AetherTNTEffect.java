@@ -11,21 +11,21 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.StructureWorldAccess;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.VegetationConfiguredFeatures;
 
@@ -33,10 +33,10 @@ public class AetherTNTEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		ExplosionHelper.doModifiedSphericalExplosion(ent.getLevel(), ent.getPos(), 100, new Vec3d(1f, 0.5f, 1f), new IForEachBlockExplosionEffect() {
+		ExplosionHelper.doModifiedSphericalExplosion(ent.getLevel(), ent.getPos(), 100, new Vec3(1f, 0.5f, 1f), new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(!state.isAir() && state.getBlock().getBlastResistance() <= 200 && (ent.y() - pos.getY()) <= 35) {
 					if(state.isIn(BlockTags.LOGS) && state.contains(Properties.AXIS)) {
 						level.setBlockState(pos.up(LuckyTNTConfigValues.ISLAND_HEIGHT.get() * 2), Blocks.DARK_OAK_LOG.getDefaultState().with(Properties.AXIS, state.get(Properties.AXIS)), 3);
@@ -59,14 +59,14 @@ public class AetherTNTEffect extends PrimedTNTEffect {
 				double x = ent.x() + offX;
 				double z = ent.z() + offZ;
 				if(distance <= 100) {
-					BlockPos pos = new BlockPos(MathHelper.floor(x), LevelEvents.getTopBlock(ent.getLevel(), x, z, true), MathHelper.floor(z)).up();
-					Registry<ConfiguredFeature<?, ?>> features = ent.getLevel().getRegistryManager().get(RegistryKeys.CONFIGURED_FEATURE);
+					BlockPos pos = new BlockPos(Mth.floor(x), LevelEvents.getTopBlock(ent.getLevel(), x, z, true), Mth.floor(z)).up();
+					Registry<ConfiguredFeature<?, ?>> features = ent.getLevel().getRegistryManager().get(Registries.CONFIGURED_FEATURE);
 					double random = Math.random();
 					
 					if(random > 0.1D && random <= 0.1125D) {
-						features.get(VegetationConfiguredFeatures.FOREST_FLOWERS).generate((StructureWorldAccess) ent.getLevel(), ((ServerWorld) ent.getLevel()).getChunkManager().getChunkGenerator(), Random.create(), pos);
+						features.get(VegetationConfiguredFeatures.FOREST_FLOWERS).generate((StructureWorldAccess) ent.getLevel(), ((ServerLevel) ent.getLevel()).getChunkManager().getChunkGenerator(), Random.create(), pos);
 					} else if(random > 0.15D && random <= 0.1625D) {
-						features.get(VegetationConfiguredFeatures.FLOWER_FLOWER_FOREST).generate((StructureWorldAccess) ent.getLevel(), ((ServerWorld) ent.getLevel()).getChunkManager().getChunkGenerator(), Random.create(), pos);
+						features.get(VegetationConfiguredFeatures.FLOWER_FLOWER_FOREST).generate((StructureWorldAccess) ent.getLevel(), ((ServerLevel) ent.getLevel()).getChunkManager().getChunkGenerator(), Random.create(), pos);
 					}
 				}
 			}

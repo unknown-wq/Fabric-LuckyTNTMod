@@ -11,15 +11,15 @@ import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.IForEachEntityExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.damage.DamageSources;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class DeathRayRayEffect extends PrimedTNTEffect{
 
@@ -28,11 +28,11 @@ public class DeathRayRayEffect extends PrimedTNTEffect{
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), 5, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock() instanceof UraniumOreBlock) {
 					if(Math.random() < 0.4f) {
 						ItemEntity antimatter = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ItemRegistry.ANTIMATTER.get()));
-						level.spawnEntity(antimatter);
+						level.addFreshEntity(antimatter);
 					}
 					level.setBlockState(pos, Blocks.AIR.getDefaultState());
 				}
@@ -52,7 +52,7 @@ public class DeathRayRayEffect extends PrimedTNTEffect{
 			@Override
 			public void doEntityExplosion(Entity ent, double distance) {
 				if(!ent.equals(entity.owner())) {
-					DamageSources sources = ent.getWorld().getDamageSources();
+					DamageSources sources = ent.level().getDamageSources();
 					if(ent instanceof ItemEntity itemEntity) {
 						if(!itemEntity.getStack().getItem().equals(ItemRegistry.ANTIMATTER.get())) {
 							ent.damage(sources.explosion(explosion), 1);

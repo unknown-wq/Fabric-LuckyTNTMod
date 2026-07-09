@@ -8,21 +8,21 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.block.FluidBlock;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class EndGateEffect extends PrimedTNTEffect{
 
@@ -31,7 +31,7 @@ public class EndGateEffect extends PrimedTNTEffect{
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), 30, new IForEachBlockExplosionEffect() {
 		
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				BlockPos posTop = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				
@@ -53,7 +53,7 @@ public class EndGateEffect extends PrimedTNTEffect{
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), 30, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				BlockPos posTop = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				BlockPos posAbove = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get() + 1, 0);
@@ -70,8 +70,8 @@ public class EndGateEffect extends PrimedTNTEffect{
 			int offZ = (int)Math.round(Math.random() * 30D - 15D);
 			EndermanEntity man = new EndermanEntity(EntityType.ENDERMAN, entity.getLevel());
 			for(int offY = 320; offY >= -64; offY--) {
-				BlockPos pos = toBlockPos(new Vec3d(entity.x() + offX, offY, entity.z() + offZ));
-				BlockPos posDown = toBlockPos(new Vec3d(entity.x() + offX, offY - 1, entity.z() + offZ));
+				BlockPos pos = toBlockPos(new Vec3(entity.x() + offX, offY, entity.z() + offZ));
+				BlockPos posDown = toBlockPos(new Vec3(entity.x() + offX, offY - 1, entity.z() + offZ));
 				BlockState state = entity.getLevel().getBlockState(pos);
 				BlockState stateDown = entity.getLevel().getBlockState(posDown);
 				
@@ -80,11 +80,11 @@ public class EndGateEffect extends PrimedTNTEffect{
 					break;
 				}
 			}
-			entity.getLevel().spawnEntity(man);
+			entity.getLevel().addFreshEntity(man);
 		}
 		
-		entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.BLOCK_END_PORTAL_SPAWN, SoundCategory.BLOCKS, 0.5f, 1);
-		if(entity.getLevel() instanceof ServerWorld sLevel) {
+		entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.BLOCK_END_PORTAL_SPAWN, SoundSource.BLOCKS, 0.5f, 1);
+		if(entity.getLevel() instanceof ServerLevel sLevel) {
 			sLevel.setTimeOfDay(18000);
 		}
 	}

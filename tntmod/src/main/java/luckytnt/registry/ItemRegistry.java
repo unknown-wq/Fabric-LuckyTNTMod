@@ -12,14 +12,14 @@ import luckytntlib.item.LuckyDynamiteItem;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.tooltip.TooltipType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Rarity;
 
 public class ItemRegistry {
@@ -92,7 +92,7 @@ public class ItemRegistry {
 	public static final Supplier<LDynamiteItem> RING_DYNAMITE = LuckyTNTMod.RH.registerDynamiteItem("ring_dynamite", EntityRegistry.RING_DYNAMITE, "dy");
 	public static final Supplier<LDynamiteItem> SCULK_DYNAMITE = LuckyTNTMod.RH.registerDynamiteItem("sculk_dynamite", EntityRegistry.SCULK_DYNAMITE, "dy");
 	
-	public static final Supplier<LDynamiteItem> LUCKY_DYNAMITE = LuckyTNTMod.RH.registerDynamiteItem(LuckyTNTMod.MODID, "lucky_dynamite", () -> new LuckyDynamiteItem(new Item.Settings(), LuckyTNTMod.RH.dynamiteLists.get("dy")), "dy", false, true);
+	public static final Supplier<LDynamiteItem> LUCKY_DYNAMITE = LuckyTNTMod.RH.registerDynamiteItem(LuckyTNTMod.MODID, "lucky_dynamite", () -> new LuckyDynamiteItem(new Item.Properties(), LuckyTNTMod.RH.dynamiteLists.get("dy")), "dy", false, true);
 	
 	//Minecart
 	public static final Supplier<LTNTMinecartItem> TNT_X5_MINECART = LuckyTNTMod.RH.registerTNTMinecartItem("tnt_x5_minecart", () -> EntityRegistry.TNT_X5_MINECART, "m");
@@ -163,68 +163,68 @@ public class ItemRegistry {
 	public static final Supplier<LTNTMinecartItem> RING_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecartItem("ring_tnt_minecart", () -> EntityRegistry.RING_TNT_MINECART, "m");
 	public static final Supplier<LTNTMinecartItem> SCULK_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecartItem("sculk_tnt_minecart", () -> EntityRegistry.SCULK_TNT_MINECART, "m");
 	
-	public static final Supplier<LTNTMinecartItem> LUCKY_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecartItem("lucky_tnt_minecart", () -> new LTNTMinecartItem(new Item.Settings().maxCount(1), () -> EntityRegistry.LUCKY_TNT_MINECART), "m", false, true);
+	public static final Supplier<LTNTMinecartItem> LUCKY_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecartItem("lucky_tnt_minecart", () -> new LTNTMinecartItem(new Item.Properties().stacksTo(1), () -> EntityRegistry.LUCKY_TNT_MINECART), "m", false, true);
 	
 	//Other
-	public static final Supplier<Item> NUCLEAR_WASTE = registerItem("nuclear_waste", () -> new BlockItem(BlockRegistry.NUCLEAR_WASTE.get(), new Item.Settings()));
-	public static final Supplier<Item> RED_CANDY = registerItem("red_candy", () -> new Item(new Item.Settings().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 100, 2), 1).statusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 100, 0), 1).build())));
-	public static final Supplier<Item> GREEN_CANDY = registerItem("green_candy", () -> new Item(new Item.Settings().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.JUMP_BOOST, 200, 2), 1).statusEffect(new StatusEffectInstance(StatusEffects.SPEED, 200, 2), 1).build())));
-	public static final Supplier<Item> BLUE_CANDY = registerItem("blue_candy", () -> new Item(new Item.Settings().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.WATER_BREATHING, 1200, 0), 1).statusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 500, 2), 1).statusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 1200, 0), 0).build())));
-	public static final Supplier<Item> PURPLE_CANDY = registerItem("purple_candy", () -> new Item(new Item.Settings().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 100, 3), 1).statusEffect(new StatusEffectInstance(StatusEffects.HEALTH_BOOST, 2000, 1), 1).build())));
-	public static final Supplier<Item> YELLOW_CANDY = registerItem("yellow_candy", () -> new Item(new Item.Settings().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.HASTE, 2000, 3), 1).build())));;
-	public static final Supplier<Item> URANIUM_INGOT = registerItem("uranium_ingot", () -> new Item(new Item.Settings()));
-	public static final Supplier<Item> ANTIMATTER = registerItem("antimatter", () -> new Item(new Item.Settings().rarity(Rarity.EPIC)) {
+	public static final Supplier<Item> NUCLEAR_WASTE = registerItem("nuclear_waste", () -> new BlockItem(BlockRegistry.NUCLEAR_WASTE.get(), new Item.Properties()));
+	public static final Supplier<Item> RED_CANDY = registerItem("red_candy", () -> new Item(new Item.Properties().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 100, 2), 1).statusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 100, 0), 1).build())));
+	public static final Supplier<Item> GREEN_CANDY = registerItem("green_candy", () -> new Item(new Item.Properties().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.JUMP_BOOST, 200, 2), 1).statusEffect(new StatusEffectInstance(StatusEffects.SPEED, 200, 2), 1).build())));
+	public static final Supplier<Item> BLUE_CANDY = registerItem("blue_candy", () -> new Item(new Item.Properties().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.WATER_BREATHING, 1200, 0), 1).statusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 500, 2), 1).statusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 1200, 0), 0).build())));
+	public static final Supplier<Item> PURPLE_CANDY = registerItem("purple_candy", () -> new Item(new Item.Properties().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 100, 3), 1).statusEffect(new StatusEffectInstance(StatusEffects.HEALTH_BOOST, 2000, 1), 1).build())));
+	public static final Supplier<Item> YELLOW_CANDY = registerItem("yellow_candy", () -> new Item(new Item.Properties().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.HASTE, 2000, 3), 1).build())));;
+	public static final Supplier<Item> URANIUM_INGOT = registerItem("uranium_ingot", () -> new Item(new Item.Properties()));
+	public static final Supplier<Item> ANTIMATTER = registerItem("antimatter", () -> new Item(new Item.Properties().rarity(Rarity.EPIC)) {
 		@Override
-		public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Text> components, TooltipType flag) {
+		public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Component> components, TooltipType flag) {
 			super.appendTooltip(stack, level, components, flag);
-			components.add(Text.translatable("item.antimatter.info"));
+			components.add(Component.translatable("item.antimatter.info"));
 		}
 	});
-	public static final Supplier<Item> URANIUM_ORE = registerItem("uranium_ore", () -> new BlockItem(BlockRegistry.URANIUM_ORE.get(), new Item.Settings()));
-	public static final Supplier<Item> DEEPSLATE_URANIUM_ORE = registerItem("deepslate_uranium_ore", () -> new BlockItem(BlockRegistry.DEEPSLATE_URANIUM_ORE.get(), new Item.Settings()));
-	public static final Supplier<Item> GUNPOWDER_ORE = registerItem("gunpowder_ore", () -> new BlockItem(BlockRegistry.GUNPOWDER_ORE.get(), new Item.Settings()));
-	public static final Supplier<Item> DEEPSLATE_GUNPOWDER_ORE = registerItem("deepslate_gunpowder_ore", () -> new BlockItem(BlockRegistry.DEEPSLATE_GUNPOWDER_ORE.get(), new Item.Settings()));
-	public static final Supplier<Item> CONFIGURATION_WAND = registerItem("configuration_wand", () -> new Item(new Item.Settings().maxCount(1)) {
+	public static final Supplier<Item> URANIUM_ORE = registerItem("uranium_ore", () -> new BlockItem(BlockRegistry.URANIUM_ORE.get(), new Item.Properties()));
+	public static final Supplier<Item> DEEPSLATE_URANIUM_ORE = registerItem("deepslate_uranium_ore", () -> new BlockItem(BlockRegistry.DEEPSLATE_URANIUM_ORE.get(), new Item.Properties()));
+	public static final Supplier<Item> GUNPOWDER_ORE = registerItem("gunpowder_ore", () -> new BlockItem(BlockRegistry.GUNPOWDER_ORE.get(), new Item.Properties()));
+	public static final Supplier<Item> DEEPSLATE_GUNPOWDER_ORE = registerItem("deepslate_gunpowder_ore", () -> new BlockItem(BlockRegistry.DEEPSLATE_GUNPOWDER_ORE.get(), new Item.Properties()));
+	public static final Supplier<Item> CONFIGURATION_WAND = registerItem("configuration_wand", () -> new Item(new Item.Properties().stacksTo(1)) {
 		@Override
-		public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Text> components, TooltipType flag) {
+		public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Component> components, TooltipType flag) {
 			super.appendTooltip(stack, level, components, flag);
-			components.add(Text.translatable("item.configuration_wand.info"));
+			components.add(Component.translatable("item.configuration_wand.info"));
 		}
 	});
-	public static final Supplier<Item> OBSIDIAN_RAIL = registerItem("obsidian_rail", () -> new BlockItem(BlockRegistry.OBSIDIAN_RAIL.get(), new Item.Settings()) {
+	public static final Supplier<Item> OBSIDIAN_RAIL = registerItem("obsidian_rail", () -> new BlockItem(BlockRegistry.OBSIDIAN_RAIL.get(), new Item.Properties()) {
 		@Override
-		public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Text> components, TooltipType flag) {
+		public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Component> components, TooltipType flag) {
 			super.appendTooltip(stack, level, components, flag);
-			components.add(Text.translatable("item.obsidian_rail.info"));
+			components.add(Component.translatable("item.obsidian_rail.info"));
 		}
 	});
-	public static final Supplier<Item> OBSIDIAN_POWERED_RAIL = registerItem("obsidian_powered_rail", () -> new BlockItem(BlockRegistry.OBSIDIAN_POWERED_RAIL.get(), new Item.Settings()) {
+	public static final Supplier<Item> OBSIDIAN_POWERED_RAIL = registerItem("obsidian_powered_rail", () -> new BlockItem(BlockRegistry.OBSIDIAN_POWERED_RAIL.get(), new Item.Properties()) {
 		@Override
-		public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Text> components, TooltipType flag) {
+		public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Component> components, TooltipType flag) {
 			super.appendTooltip(stack, level, components, flag);
-			components.add(Text.translatable("item.obsidian_rail.info"));
+			components.add(Component.translatable("item.obsidian_rail.info"));
 		}
 	});
-	public static final Supplier<Item> OBSIDIAN_ACTIVATOR_RAIL = registerItem("obsidian_activator_rail", () -> new BlockItem(BlockRegistry.OBSIDIAN_ACTIVATOR_RAIL.get(), new Item.Settings()) {
+	public static final Supplier<Item> OBSIDIAN_ACTIVATOR_RAIL = registerItem("obsidian_activator_rail", () -> new BlockItem(BlockRegistry.OBSIDIAN_ACTIVATOR_RAIL.get(), new Item.Properties()) {
 		@Override
-		public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Text> components, TooltipType flag) {
+		public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Component> components, TooltipType flag) {
 			super.appendTooltip(stack, level, components, flag);
-			components.add(Text.translatable("item.obsidian_rail.info"));
+			components.add(Component.translatable("item.obsidian_rail.info"));
 		}
 	});
-	public static final Supplier<Item> OBSIDIAN_DETECTOR_RAIL = registerItem("obsidian_detector_rail", () -> new BlockItem(BlockRegistry.OBSIDIAN_DETECTOR_RAIL.get(),new Item.Settings()) {
+	public static final Supplier<Item> OBSIDIAN_DETECTOR_RAIL = registerItem("obsidian_detector_rail", () -> new BlockItem(BlockRegistry.OBSIDIAN_DETECTOR_RAIL.get(),new Item.Properties()) {
 		@Override
-		public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Text> components, TooltipType flag) {
+		public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Component> components, TooltipType flag) {
 			super.appendTooltip(stack, level, components, flag);
-			components.add(Text.translatable("item.obsidian_rail.info"));
+			components.add(Component.translatable("item.obsidian_rail.info"));
 		}
 	});
 	public static final Supplier<LDynamiteItem> DEATH_RAY_RAY = LuckyTNTMod.RH.registerDynamiteItem(LuckyTNTMod.MODID, "death_ray_ray", () -> new DeathRayRayItem(), "none", false, true);
 	public static final Supplier<Item> VACUUM_CLEANER = registerItem("vacuum_cleaner", () -> new VacuumCleaner());
-	public static final Supplier<Item> TOXIC_STONE = registerItem("toxic_stone", () -> new BlockItem(BlockRegistry.TOXIC_STONE.get(), new Item.Settings()));
+	public static final Supplier<Item> TOXIC_STONE = registerItem("toxic_stone", () -> new BlockItem(BlockRegistry.TOXIC_STONE.get(), new Item.Properties()));
 	
 	public static Supplier<Item> registerItem(String name, Supplier<Item> itemSupplier) {
-		Item ritem = Registry.register(Registries.ITEM, Identifier.of(LuckyTNTMod.MODID, name), itemSupplier.get());
+		Item ritem = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, name), itemSupplier.get());
 		return () -> ritem;
 	}
 	

@@ -6,8 +6,8 @@ import luckytnt.registry.ItemRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.item.Item;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.particles.ParticleTypes;
 
 public class IceMeteorDynamiteEffect extends PrimedTNTEffect{
 
@@ -16,7 +16,7 @@ public class IceMeteorDynamiteEffect extends PrimedTNTEffect{
 		LExplosiveProjectile meteor = EntityRegistry.LITTLE_ICE_METEOR.get().create(entity.getLevel());
 		meteor.setPosition(entity.x(), entity.y() + LuckyTNTConfigValues.DROP_HEIGHT.get(), entity.z());
 		meteor.setOwner(entity.owner());
-		entity.getLevel().spawnEntity(meteor);
+		entity.getLevel().addFreshEntity(meteor);
 	}
 	
 	@Override

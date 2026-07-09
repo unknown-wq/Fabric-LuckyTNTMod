@@ -3,7 +3,7 @@ package luckytnt.tnteffects;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
 public class TrollTNTEffect extends PrimedTNTEffect{
 

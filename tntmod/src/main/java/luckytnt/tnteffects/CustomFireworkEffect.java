@@ -9,33 +9,33 @@ import luckytnt.registry.BlockRegistry;
 import luckytntlib.block.LTNTBlock;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.TntBlock;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.TntBlock;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.entity.TntEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class CustomFireworkEffect extends PrimedTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() == 40 && ent instanceof PrimedCustomFirework tnt) {
-			BlockPos pos = toBlockPos(new Vec3d(ent.x(), ent.y() - 1f, ent.z()));
-			NbtCompound tag = ent.getPersistentData();
+			BlockPos pos = toBlockPos(new Vec3(ent.x(), ent.y() - 1f, ent.z()));
+			CompoundTag tag = ent.getPersistentData();
 			tag.putInt("x", pos.getX());
 			tag.putInt("y", pos.getY());
 			tag.putInt("z", pos.getZ());
 			ent.setPersistentData(tag);
 			tnt.state = ent.getLevel().getBlockState(pos);
 		}
-		((Entity)ent).setVelocity(((Entity)ent).getVelocity().x, 0.8f, ((Entity)ent).getVelocity().z);
+		((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 0.8f, ((Entity)ent).getDeltaMovement().z);
 	}
 	
 	@Override
@@ -56,12 +56,12 @@ public class CustomFireworkEffect extends PrimedTNTEffect {
 				} else {
 					try {
 						@SuppressWarnings("rawtypes")
-						Class[] parameters = new Class[]{World.class, double.class, double.class, double.class, BlockState.class};
+						Class[] parameters = new Class[]{Level.class, double.class, double.class, double.class, BlockState.class};
 						Constructor<FallingBlockEntity> sandConstructor = FallingBlockEntity.class.getDeclaredConstructor(parameters);
 						sandConstructor.setAccessible(true);
 						FallingBlockEntity sand = sandConstructor.newInstance(ent.getLevel(), ent.getPos().x, ent.getPos().y, ent.getPos().z, state);
-						sand.setVelocity(Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f);
-						ent.getLevel().spawnEntity(sand);
+						sand.setDeltaMovement(Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f);
+						ent.getLevel().addFreshEntity(sand);
 					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 						e.printStackTrace();
 					}
@@ -69,9 +69,9 @@ public class CustomFireworkEffect extends PrimedTNTEffect {
 			}
 			BlockPos min = toBlockPos(ent.getPos()).add(2, 2, 2);
 			BlockPos max = toBlockPos(ent.getPos()).add(-2, -2, -2);
-			List<TntEntity> tnts = ent.getLevel().getNonSpectatingEntities(TntEntity.class, new Box(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
-			for(TntEntity tnt : tnts) {
-				tnt.setVelocity(Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f);
+			List<PrimedTnt> tnts = ent.getLevel().getNonSpectatingEntities(PrimedTnt.class, new Box(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
+			for(PrimedTnt tnt : tnts) {
+				tnt.setDeltaMovement(Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f);
 			}
 		}
 	}

@@ -8,22 +8,22 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.DustParticleEffect;
 import net.minecraft.server.command.CommandOutput;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.math.Vec2f;
 
 public class ExtinctionEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		if(ent.getLevel() instanceof ServerWorld sLevel) {
+		if(ent.getLevel() instanceof ServerLevel sLevel) {
 			try {
-				sLevel.getServer().getCommandManager().getDispatcher().execute("kill @e", new ServerCommandSource(CommandOutput.DUMMY, ent.getPos(), Vec2f.ZERO, sLevel, 4, "", Text.literal(""), ((Entity)ent).getServer(), ent.owner()));
+				sLevel.getServer().getCommandManager().getDispatcher().execute("kill @e", new ServerCommandSource(CommandOutput.DUMMY, ent.getPos(), Vec2f.ZERO, sLevel, 4, "", Component.literal(""), ((Entity)ent).getServer(), ent.owner()));
 			} catch (CommandSyntaxException e) {
 				e.printStackTrace();
 			}

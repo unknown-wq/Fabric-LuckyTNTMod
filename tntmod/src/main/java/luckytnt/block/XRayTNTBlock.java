@@ -2,33 +2,33 @@ package luckytnt.block;
 
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.block.LTNTBlock;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
+import net.minecraft.world.level.BlockGetter;
 
 public class XRayTNTBlock extends LTNTBlock{
 
-	public XRayTNTBlock(AbstractBlock.Settings properties) {
+	public XRayTNTBlock(BlockBehaviour.Properties properties) {
 		super(properties, EntityRegistry.XRAY_TNT, true);
 	}
 	
     @Override
-    public VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getCameraCollisionShape(BlockState state, BlockGetter world, BlockPos pos, ShapeContext context) {
     	return VoxelShapes.empty();
     }
     
     @Override
-    public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
+    public float getAmbientOcclusionLightLevel(BlockState state, BlockGetter world, BlockPos pos) {
     	return 1f;
     }
     
     @Override
-    public boolean isTransparent(BlockState state, BlockView world, BlockPos pos) {
+    public boolean isTransparent(BlockState state, BlockGetter world, BlockPos pos) {
     	return true;
     }
     

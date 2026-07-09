@@ -5,28 +5,28 @@ import java.util.List;
 import luckytnt.LuckyTNTMod;
 import luckytntlib.config.common.Config.ConfigValue;
 import luckytntlib.network.UpdateConfigValuesPacket;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 
 public class LuckyTNTUpdateConfigValuesPacket extends UpdateConfigValuesPacket {
 
-	public static final Identifier NAME = Identifier.of(LuckyTNTMod.MODID, "lucky_tnt_update_config_values");
-	public static final CustomPayload.Id<LuckyTNTUpdateConfigValuesPacket> ID = new CustomPayload.Id<>(NAME);
-    public static final PacketCodec<RegistryByteBuf, LuckyTNTUpdateConfigValuesPacket> CODEC = PacketCodec.of(UpdateConfigValuesPacket::write, LuckyTNTUpdateConfigValuesPacket::new);
+	public static final Identifier NAME = Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "lucky_tnt_update_config_values");
+	public static final CustomPacketPayload.Id<LuckyTNTUpdateConfigValuesPacket> ID = new CustomPacketPayload.Id<>(NAME);
+    public static final StreamCodec<RegistryFriendlyByteBuf, LuckyTNTUpdateConfigValuesPacket> CODEC = StreamCodec.of(UpdateConfigValuesPacket::write, LuckyTNTUpdateConfigValuesPacket::new);
 	
 	public LuckyTNTUpdateConfigValuesPacket(List<ConfigValue<?>> configValues) {
 		super(configValues);
 	}
 	
-	public LuckyTNTUpdateConfigValuesPacket(PacketByteBuf buf) {
+	public LuckyTNTUpdateConfigValuesPacket(FriendlyByteBuf buf) {
 		super(buf);
 	}
 	
 	@Override
-	public Id<? extends CustomPayload> getId() {
+	public Id<? extends CustomPacketPayload> getId() {
 		return ID;
 	}
 }

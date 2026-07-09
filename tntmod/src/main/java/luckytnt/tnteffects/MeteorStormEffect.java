@@ -6,7 +6,7 @@ import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 
 public class MeteorStormEffect extends PrimedTNTEffect {
 
@@ -17,7 +17,7 @@ public class MeteorStormEffect extends PrimedTNTEffect {
 				LExplosiveProjectile meteor = EntityRegistry.LITTLE_METEOR.get().create(ent.getLevel());
 				meteor.setOwner(ent.owner());
 				meteor.setPosition(ent.x() + 400 * Math.random() - 200, ent.y() + LuckyTNTConfigValues.DROP_HEIGHT.get() / 2 * Math.random() + LuckyTNTConfigValues.DROP_HEIGHT.get() / 2, ent.z() + 400 * Math.random() - 200);
-				ent.getLevel().spawnEntity(meteor);
+				ent.getLevel().addFreshEntity(meteor);
 			}
 		}
 	}

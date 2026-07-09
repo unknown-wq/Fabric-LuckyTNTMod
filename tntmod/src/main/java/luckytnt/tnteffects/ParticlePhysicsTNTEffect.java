@@ -5,13 +5,13 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class ParticlePhysicsTNTEffect extends PrimedTNTEffect {
 
@@ -21,11 +21,11 @@ public class ParticlePhysicsTNTEffect extends PrimedTNTEffect {
 		explosion.doBlockExplosion(1f, 1f, 1f, 1.5f, false, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				FallingBlockEntity block = FallingBlockEntity.spawnFromBlock(level, pos, state);
 				level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-				block.setVelocity(Math.random() * 2 - Math.random() * 2, 1f + Math.random() * 3, Math.random() * 2 - Math.random() * 2);
-				level.spawnEntity(block);
+				block.setDeltaMovement(Math.random() * 2 - Math.random() * 2, 1f + Math.random() * 3, Math.random() * 2 - Math.random() * 2);
+				level.addFreshEntity(block);
 			}
 		});
 	}

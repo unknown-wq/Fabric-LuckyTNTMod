@@ -5,16 +5,16 @@ import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.ParticleTypes;
 
 public class TNTFireworkEffect extends PrimedTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		Entity ent = (Entity)entity;
-		ent.setVelocity(ent.getVelocity().x, 0.8f, ent.getVelocity().z);
+		ent.setDeltaMovement(ent.getDeltaMovement().x, 0.8f, ent.getDeltaMovement().z);
 	}
 	
 	@Override
@@ -23,9 +23,9 @@ public class TNTFireworkEffect extends PrimedTNTEffect {
 			PrimedLTNT TNT = EntityRegistry.TNT.get().create(entity.getLevel());
 			TNT.setPosition(entity.getPos());
 			TNT.setOwner(entity.owner());
-			TNT.setVelocity((Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f);
+			TNT.setDeltaMovement((Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f);
 			TNT.setFuse(TNT.getFuse() / 2 + (int)(TNT.getFuse() * (Math.random() + 0.2f)));
-			entity.getLevel().spawnEntity(TNT);
+			entity.getLevel().addFreshEntity(TNT);
 		}
 	}
 	

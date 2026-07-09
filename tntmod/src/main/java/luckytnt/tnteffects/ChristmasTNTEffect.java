@@ -9,24 +9,24 @@ import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.Vec3;
 
 public class ChristmasTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		if(entity instanceof PrimedLTNT) {
-			((ServerWorld)entity.getLevel()).spawnParticles(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + 1 + Math.random() * 0.5f, entity.z() + Math.random() - 0.5f, 500, 0.5f, 0.5f, 0.5f, 0f);
+			((ServerLevel)entity.getLevel()).spawnParticles(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + 1 + Math.random() * 0.5f, entity.z() + Math.random() - 0.5f, 500, 0.5f, 0.5f, 0.5f, 0f);
 		}
 		else {			
-			((ServerWorld)entity.getLevel()).spawnParticles(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + 1 + Math.random() * 0.5f, entity.z() + Math.random() - 0.5f, 100, 0.5f, 0.5f, 0.5f, 0f);
+			((ServerLevel)entity.getLevel()).spawnParticles(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + 1 + Math.random() * 0.5f, entity.z() + Math.random() - 0.5f, 100, 0.5f, 0.5f, 0.5f, 0f);
 		}
 	}
 	
@@ -35,17 +35,17 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 		if(entity instanceof PrimedLTNT) {
 			if(entity.getTNTFuse() == 240) {
 				((Entity)entity).setNoGravity(true);
-				Vec3d flying = new Vec3d(Math.random() - Math.random(), 0, Math.random() - Math.random()).normalize().multiply(40);
-				NbtCompound tag = entity.getPersistentData();
+				Vec3 flying = new Vec3(Math.random() - Math.random(), 0, Math.random() - Math.random()).normalize().multiply(40);
+				CompoundTag tag = entity.getPersistentData();
 				tag.putDouble("flyingX", flying.x);
 				tag.putDouble("flyingY", flying.y);
 				tag.putDouble("flyingZ", flying.z);
 				entity.setPersistentData(tag);
-				Vec3d flyingPos = new Vec3d(entity.x() + flying.negate().normalize().multiply(20).x, entity.y() + 30, entity.z() + flying.negate().normalize().multiply(20).z);
+				Vec3 flyingPos = new Vec3(entity.x() + flying.negate().normalize().multiply(20).x, entity.y() + 30, entity.z() + flying.negate().normalize().multiply(20).z);
 				((Entity)entity).setPosition(flyingPos.x, flyingPos.y, flyingPos.z);
 			}
 			if(entity.getTNTFuse() <= 220) {
-				((Entity)entity).setVelocity(new Vec3d(entity.getPersistentData().getDouble("flyingX"), entity.getPersistentData().getDouble("flyingY"), entity.getPersistentData().getDouble("flyingZ")).normalize().multiply(40D / 220D));
+				((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDouble("flyingX"), entity.getPersistentData().getDouble("flyingY"), entity.getPersistentData().getDouble("flyingZ")).normalize().multiply(40D / 220D));
 				if(entity.getTNTFuse() % 10 == 0) {
 					LExplosiveProjectile present = EntityRegistry.PRESENT.get().create(entity.getLevel());
 					present.setPosition(entity.getPos());
@@ -54,12 +54,12 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 					randomX *= new Random().nextBoolean() ? 1 : -1;
 					double randomZ = Math.random();
 					randomZ *= new Random().nextBoolean() ? 1 : -1;
-					present.setVelocity(randomX, -Math.random() * 0.5f, randomZ);
-					entity.getLevel().spawnEntity(present);
+					present.setDeltaMovement(randomX, -Math.random() * 0.5f, randomZ);
+					entity.getLevel().addFreshEntity(present);
 				}
 			}
-			if(entity.getLevel() instanceof ServerWorld sLevel) {
-				for(ServerPlayerEntity player : sLevel.getPlayers()) {
+			if(entity.getLevel() instanceof ServerLevel sLevel) {
+				for(ServerPlayer player : sLevel.getPlayers()) {
 					double x = player.getX() - entity.x();
 					double y = player.getY() - entity.y();
 					double z = player.getZ() - entity.z();

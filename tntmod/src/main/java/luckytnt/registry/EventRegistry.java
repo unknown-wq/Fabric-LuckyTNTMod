@@ -7,8 +7,8 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.server.level.ServerLevel;
 
 public class EventRegistry {
 	
@@ -40,7 +40,7 @@ public class EventRegistry {
 		ServerTickEvents.START_WORLD_TICK.register(new ServerTickEvents.StartWorldTick() {
 			
 			@Override
-			public void onStartTick(ServerWorld world) {
+			public void onStartTick(ServerLevel world) {
 				LevelEvents.onLevelUpdate(world);
 			}
 		});

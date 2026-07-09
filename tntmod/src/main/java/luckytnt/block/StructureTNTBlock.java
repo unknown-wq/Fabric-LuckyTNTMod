@@ -7,32 +7,32 @@ import luckytnt.registry.ItemRegistry;
 import luckytnt.util.StructureStates;
 import luckytntlib.block.LTNTBlock;
 import luckytntlib.entity.PrimedLTNT;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.ItemActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 public class StructureTNTBlock extends LTNTBlock {
 
 	public static final EnumProperty<StructureStates> STRUCTURE = EnumProperty.of("structure", StructureStates.class);
 	
-    public StructureTNTBlock(AbstractBlock.Settings properties) {
+    public StructureTNTBlock(BlockBehaviour.Properties properties) {
         super(properties, EntityRegistry.STRUCTURE_TNT, true);
     }
 
@@ -43,7 +43,7 @@ public class StructureTNTBlock extends LTNTBlock {
     }
     
     @Override
-    public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World level, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult result) {
+    public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
     	if(stack.getItem() == Items.FLINT_AND_STEEL) {
     		explode(level, false, pos.getX(), pos.getY(), pos.getZ(), player);
     		level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
@@ -60,7 +60,7 @@ public class StructureTNTBlock extends LTNTBlock {
     	return ItemActionResult.FAIL;
     }
     
-    public void cycleThroughStructures(World level, BlockState state, BlockPos pos) {
+    public void cycleThroughStructures(Level level, BlockState state, BlockPos pos) {
     	StructureStates structure = state.get(STRUCTURE);
     	if(structure == StructureStates.PILLAGER_OUTPOST) {
     		level.setBlockState(pos, state.with(STRUCTURE, StructureStates.MANSION), 3);
@@ -108,21 +108,21 @@ public class StructureTNTBlock extends LTNTBlock {
     
     @Nullable
     @Override
-	public PrimedLTNT explode(World level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
+	public PrimedLTNT explode(Level level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
 		if(TNT != null) {
 			PrimedLTNT tnt = TNT.get().create(level);
-			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(MathHelper.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
+			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(Mth.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
 			tnt.setPosition(x + 0.5f, y, z + 0.5f);
 			tnt.setOwner(igniter);
-			if(level.getBlockState(new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z))).contains(STRUCTURE)) {
-				NbtCompound tag = tnt.getPersistentData();
-				tag.putString("structure", level.getBlockState(new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z))).get(STRUCTURE).asString());
+			if(level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).contains(STRUCTURE)) {
+				CompoundTag tag = tnt.getPersistentData();
+				tag.putString("structure", level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).get(STRUCTURE).asString());
 				tnt.setPersistentData(tag);
 			}
-			level.spawnEntity(tnt);
-			level.playSound(null, new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z)), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.MASTER, 1, 1);
-			if(level.getBlockState(new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z))).getBlock() == this) {
-				level.setBlockState(new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z)), Blocks.AIR.getDefaultState(), 3);
+			level.addFreshEntity(tnt);
+			level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.ENTITY_TNT_PRIMED, SoundSource.MASTER, 1, 1);
+			if(level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).getBlock() == this) {
+				level.setBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), Blocks.AIR.getDefaultState(), 3);
 			}
 			return tnt;
 		}

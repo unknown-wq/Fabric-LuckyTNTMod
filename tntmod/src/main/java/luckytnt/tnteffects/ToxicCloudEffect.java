@@ -8,25 +8,25 @@ import org.joml.Vector3f;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.DustParticleEffect;
 
 public class ToxicCloudEffect extends PrimedTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() == 1200 && !ent.getLevel().isClient()) {
-			NbtCompound tag = ent.getPersistentData();
+			CompoundTag tag = ent.getPersistentData();
 			tag.putDouble("size", 1D + Math.random() * 3D);
 			ent.setPersistentData(tag);
 		}
-		((Entity)ent).setVelocity(0, 0, 0);
+		((Entity)ent).setDeltaMovement(0, 0, 0);
 		((Entity)ent).setPosition(((Entity)ent).prevX, ((Entity)ent).prevY, ((Entity)ent).prevZ);
 		List<LivingEntity> list = ent.getLevel().getNonSpectatingEntities(LivingEntity.class, ((Entity)ent).getBoundingBox());
 		for(LivingEntity lent : list) {

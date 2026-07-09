@@ -1,14 +1,14 @@
 package luckytnt.effects;
 
 import luckytnt.util.mixin.HungerManagerExtension;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSources;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class ContaminatedEffect extends StatusEffect {
 	
@@ -17,8 +17,8 @@ public class ContaminatedEffect extends StatusEffect {
 	}
 
 	@Override
-	public Text getName() {
-		return Text.translatable("effect.contaminated_effect");
+	public Component getName() {
+		return Component.translatable("effect.contaminated_effect");
 	}
 	
 	@Override
@@ -30,9 +30,9 @@ public class ContaminatedEffect extends StatusEffect {
 	public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
 		StatusEffectInstance instance = entity.getActiveStatusEffects().get(RegistryEntry.of(this));
 		int duration = instance == null ? 0 : instance.getDuration();
-		DamageSources sources = entity.getWorld().getDamageSources();
+		DamageSources sources = entity.level().getDamageSources();
 		
-		if(entity instanceof PlayerEntity player && player.getHungerManager() instanceof HungerManagerExtension hunger) {
+		if(entity instanceof Player player && player.getHungerManager() instanceof HungerManagerExtension hunger) {
 			hunger.setFoodTickTimerRaw(0);
 		}
 		

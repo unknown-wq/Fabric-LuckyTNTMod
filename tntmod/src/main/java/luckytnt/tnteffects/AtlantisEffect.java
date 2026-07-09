@@ -10,30 +10,30 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.block.FluidBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.entity.passive.SquidEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.util.math.BlockBox;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.chunk.ChunkSection;
@@ -51,25 +51,25 @@ public class AtlantisEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() == 240) {
-			if(ent.getLevel() instanceof ServerWorld s_Level) {
+			if(ent.getLevel() instanceof ServerLevel s_Level) {
 	      		s_Level.setWeather(0, 10000, true, true);
 	      	}
-	      	ent.getLevel().playSound(null, ent.x(), ent.y(), ent.z(), SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.WEATHER, 1000, 1);
+	      	ent.getLevel().playSound(null, ent.x(), ent.y(), ent.z(), SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 1000, 1);
 		}
 	}
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		Registry<Biome> registry = ent.getLevel().getRegistryManager().get(RegistryKeys.BIOME);
+		Registry<Biome> registry = ent.getLevel().getRegistryManager().get(Registries.BIOME);
 		RegistryEntry<Biome> biome = registry.getEntry(registry.get(BiomeKeys.WARM_OCEAN));
 		for(double offX = -100; offX < 100; offX++) {
 			for(double offZ = -100; offZ < 100; offZ++) {
 				boolean foundBlock = false;
 				double distance = Math.sqrt(offX * offX + offZ * offZ);				
-				if(ent.getLevel() instanceof ServerWorld sLevel) {
+				if(ent.getLevel() instanceof ServerLevel sLevel) {
 					if(distance < 100) {
 						if(offX % 16 == 0 && offZ % 16 == 0) {
-							for(ChunkSection section : ent.getLevel().getChunk(toBlockPos(new Vec3d(ent.x() + offX, 0, ent.z() + offZ))).getSectionArray()) {
+							for(ChunkSection section : ent.getLevel().getChunk(toBlockPos(new Vec3(ent.x() + offX, 0, ent.z() + offZ))).getSectionArray()) {
 								ReadableContainer<RegistryEntry<Biome>> biomesRO = section.getBiomeContainer();
 								for(int i = 0; i < 4; ++i) {
 									for(int j = 0; j < 4; ++j) {
@@ -83,16 +83,16 @@ public class AtlantisEffect extends PrimedTNTEffect {
 							}
 						}
 					}
-					for(ServerPlayerEntity player : sLevel.getPlayers()) {
-						player.networkHandler.sendPacket(new ChunkDataS2CPacket(ent.getLevel().getWorldChunk(toBlockPos(new Vec3d(ent.x() + offX, 0, ent.z() + offZ))), ent.getLevel().getLightingProvider(), null, null));
+					for(ServerPlayer player : sLevel.getPlayers()) {
+						player.networkHandler.sendPacket(new ChunkDataS2CPacket(ent.getLevel().getWorldChunk(toBlockPos(new Vec3(ent.x() + offX, 0, ent.z() + offZ))), ent.getLevel().getLightingProvider(), null, null));
 					}
 					if(distance < 50) {
-						Registry<Structure> structures = ent.getLevel().getRegistryManager().get(RegistryKeys.STRUCTURE);
+						Registry<Structure> structures = ent.getLevel().getRegistryManager().get(Registries.STRUCTURE);
 						
 						Structure ocean_ruin = structures.get(StructureKeys.OCEAN_RUIN_WARM);
 						
 						for(double offY = ent.getLevel().getTopY(); offY > ent.getLevel().getBottomY(); offY--) {
-							BlockPos pos = toBlockPos(new Vec3d(ent.x() + offX, offY, ent.z() + offZ));
+							BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, offY, ent.z() + offZ));
 							BlockState state = ent.getLevel().getBlockState(pos);
 							if(!foundBlock && state.isFullCube(ent.getLevel(), pos) && !state.isAir()) {
 								if(Math.random() < 0.0005f) {
@@ -112,7 +112,7 @@ public class AtlantisEffect extends PrimedTNTEffect {
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos().add(0, 8, 0), 100, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				BlockPos posTop = pos.add(0, 1, 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				
@@ -132,7 +132,7 @@ public class AtlantisEffect extends PrimedTNTEffect {
 		for(int count = 0; count < 40; count++) {
 			Entity squid = new SquidEntity(EntityType.SQUID, ent.getLevel());
 			squid.setPosition(ent.x() + 50 * Math.random() - 50 * Math.random(), ent.y() + 8, ent.z() + 50 * Math.random() - 50 * Math.random());
-			ent.getLevel().spawnEntity(squid);
+			ent.getLevel().addFreshEntity(squid);
 		}
 	}
 	

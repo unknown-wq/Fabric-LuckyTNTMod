@@ -12,30 +12,30 @@ import luckytnt.util.NuclearBombLike;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 
 public class TsarBombaBombEffect extends PrimedTNTEffect implements NuclearBombLike {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		if(entity.getLevel() instanceof ServerWorld sworld) {
-			for(ServerWorld sw : sworld.getServer().getWorlds()) {
-				for(ServerPlayerEntity player : sw.getPlayers()) {
-					if(player.getWorld().getDimension() == sworld.getDimension() && player.distanceTo((Entity)entity) <= 150) {
+		if(entity.getLevel() instanceof ServerLevel sworld) {
+			for(ServerLevel sw : sworld.getServer().getWorlds()) {
+				for(ServerPlayer player : sw.getPlayers()) {
+					if(player.level().getDimension() == sworld.getDimension() && player.distanceTo((Entity)entity) <= 150) {
 						LuckyTNTMod.RH.sendS2CPacket(player, new HydrogenBombS2CPacket(((Entity)entity).getId()));
 					}
 				}
@@ -48,14 +48,14 @@ public class TsarBombaBombEffect extends PrimedTNTEffect implements NuclearBombL
 		
 		List<LivingEntity> list = entity.getLevel().getNonSpectatingEntities(LivingEntity.class, new Box(entity.x() - 90, entity.y() - 65, entity.z() - 90, entity.x() + 90, entity.y() + 65, entity.z() + 90));
 		for(LivingEntity living : list) {
-			living.addStatusEffect(new StatusEffectInstance(Registries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 3600, 0, true, true, true));
+			living.addStatusEffect(new StatusEffectInstance(BuiltInRegistries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 3600, 0, true, true, true));
 		}
 		
 		for(int offX = -300; offX <= 300; offX++) {
 			for(int offY = -300 / 3; offY <= 300 / 3; offY++) {
 				for(int offZ = -300; offZ <= 300; offZ++) {
 					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					BlockPos pos = toBlockPos(new Vec3d(entity.x() + offX, entity.y() + offY, entity.z() + offZ));
+					BlockPos pos = toBlockPos(new Vec3(entity.x() + offX, entity.y() + offY, entity.z() + offZ));
 					BlockState state = entity.getLevel().getBlockState(pos);
 					if(distance <= 300 && state.getBlock().getBlastResistance() <= 200) {
 						if(distance <= 150 && entity.getLevel().getBlockState(pos.down()).isSideSolidFullSquare(entity.getLevel(), pos.down(), Direction.UP) && Math.random() < 0.2D && (state.isAir() || state.getBlock().getHardness() <= 0.2f)) {

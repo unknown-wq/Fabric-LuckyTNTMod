@@ -8,16 +8,16 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.UndergroundConfiguredFeatures;
 
@@ -34,7 +34,7 @@ public class LushTNTEffect extends PrimedTNTEffect{
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), radius, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock().getBlastResistance() < 100 && (!state.isFullCube(level, pos) || state.isIn(BlockTags.LEAVES) || state.isIn(BlockTags.LOGS))) {
 					state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
@@ -44,7 +44,7 @@ public class LushTNTEffect extends PrimedTNTEffect{
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), Math.round(radius * 0.75f), new IForEachBlockExplosionEffect() {
 
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(level.getBlockState(pos.down()).isAir() && !state.isAir() && state.getBlock().getBlastResistance() < 100 && !state.isIn(BlockTags.LUSH_GROUND_REPLACEABLE)) {
 					state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlockState(pos, Blocks.STONE.getDefaultState());
@@ -55,23 +55,23 @@ public class LushTNTEffect extends PrimedTNTEffect{
 				}
 			}
 		});
-		if(entity.getLevel() instanceof ServerWorld sLevel) {
+		if(entity.getLevel() instanceof ServerLevel sLevel) {
 			ExplosionHelper.doSphericalExplosion(sLevel, entity.getPos(), Math.round(radius * 0.75f), new IForEachBlockExplosionEffect() {
 
 				@Override
-				public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if((level.getBlockState(pos.down()).isAir() && !state.isAir()) && Math.random() < 0.025f) {
-						RegistryEntry<ConfiguredFeature<?, ?>> feature = entity.getLevel().getRegistryManager().get(RegistryKeys.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.MOSS_PATCH_CEILING);
+						RegistryEntry<ConfiguredFeature<?, ?>> feature = entity.getLevel().getRegistryManager().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.MOSS_PATCH_CEILING);
 						feature.value().generate(sLevel, sLevel.getChunkManager().getChunkGenerator(), sLevel.random, pos);
 					}
 					if((!level.getBlockState(pos.down()).isAir() && state.isAir()) && Math.random() < 0.1f) {
 						RegistryEntry<ConfiguredFeature<?, ?>> feature = null;
 						if(Math.random() < 0.5f) {
-							feature = entity.getLevel().getRegistryManager().get(RegistryKeys.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.LUSH_CAVES_CLAY);
+							feature = entity.getLevel().getRegistryManager().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.LUSH_CAVES_CLAY);
 							feature.value().generate(sLevel, sLevel.getChunkManager().getChunkGenerator(), sLevel.random, pos);
 						}
 						else {
-							feature = entity.getLevel().getRegistryManager().get(RegistryKeys.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.MOSS_PATCH);
+							feature = entity.getLevel().getRegistryManager().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.MOSS_PATCH);
 							feature.value().generate(sLevel, sLevel.getChunkManager().getChunkGenerator(), sLevel.random, pos);
 						}
 					}

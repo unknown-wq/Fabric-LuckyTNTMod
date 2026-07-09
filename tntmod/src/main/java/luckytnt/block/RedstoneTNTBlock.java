@@ -2,26 +2,26 @@ package luckytnt.block;
 
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.block.LTNTBlock;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 
 public class RedstoneTNTBlock extends LTNTBlock {
 
-	public RedstoneTNTBlock(AbstractBlock.Settings properties) {
+	public RedstoneTNTBlock(BlockBehaviour.Properties properties) {
 		super(properties, EntityRegistry.REDSTONE_TNT, true);
 	}
 	
     @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+    public void onBlockAdded(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {
     }
     
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+    public void neighborUpdate(BlockState state, Level world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
     }
     
     @Override
@@ -30,7 +30,7 @@ public class RedstoneTNTBlock extends LTNTBlock {
     }
 
     @Override
-    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+    public int getWeakRedstonePower(BlockState state, BlockGetter world, BlockPos pos, Direction direction) {
         return 15;
     }
 }

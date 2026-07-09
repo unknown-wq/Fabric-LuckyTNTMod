@@ -9,20 +9,20 @@ import org.joml.Vector3f;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.world.World;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.world.level.Level;
 
 public class RainbowFireworkEffect extends PrimedTNTEffect{
 
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
 		super.baseTick(entity);
-		((Entity)entity).setVelocity(((Entity)entity).getVelocity().x, 0.8f, ((Entity)entity).getVelocity().z);
+		((Entity)entity).setDeltaMovement(((Entity)entity).getDeltaMovement().x, 0.8f, ((Entity)entity).getDeltaMovement().z);
 	}
 	
 	@Override
@@ -30,7 +30,7 @@ public class RainbowFireworkEffect extends PrimedTNTEffect{
 		for(int count = 0; count <= 300; count++) {
 			
 			@SuppressWarnings("rawtypes")
-			Class[] parameters = new Class[]{World.class, double.class, double.class, double.class, BlockState.class};
+			Class[] parameters = new Class[]{Level.class, double.class, double.class, double.class, BlockState.class};
 			Constructor<FallingBlockEntity> sandConstructor;
 			try {
 				sandConstructor = FallingBlockEntity.class.getDeclaredConstructor(parameters);
@@ -53,8 +53,8 @@ public class RainbowFireworkEffect extends PrimedTNTEffect{
 						case 11: state = Blocks.LIGHT_BLUE_CONCRETE.getDefaultState(); break;
 					}
 					FallingBlockEntity sand = sandConstructor.newInstance(entity.getLevel(), entity.getPos().x, entity.getPos().y, entity.getPos().z, state);
-					sand.setVelocity((Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f);
-					entity.getLevel().spawnEntity(sand);
+					sand.setDeltaMovement((Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f);
+					entity.getLevel().addFreshEntity(sand);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					e.printStackTrace();
 				}

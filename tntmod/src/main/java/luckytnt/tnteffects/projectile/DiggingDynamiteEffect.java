@@ -4,18 +4,18 @@ import luckytnt.registry.ItemRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 public class DiggingDynamiteEffect extends PrimedTNTEffect{
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		Vec3d direction = entity.getPos().subtract(((Entity)entity).prevX, ((Entity)entity).prevY, ((Entity)entity).prevZ).normalize();
+		Vec3 direction = entity.getPos().subtract(((Entity)entity).prevX, ((Entity)entity).prevY, ((Entity)entity).prevZ).normalize();
 		explosion: for(float length = 0; length <= 40; length += 0.25f) {
 			BlockPos pos = toBlockPos(entity.getPos().add(direction.multiply(length))); 
 			BlockState state = entity.getLevel().getBlockState(pos);

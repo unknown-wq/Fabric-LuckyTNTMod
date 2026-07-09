@@ -4,8 +4,8 @@ import luckytnt.registry.ItemRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
 
 public class FloatingDynamiteEffect extends PrimedTNTEffect{
 
@@ -18,7 +18,7 @@ public class FloatingDynamiteEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		((Entity)entity).setVelocity(((Entity)entity).getVelocity().add(0f, 0.08f, 0f));
+		((Entity)entity).setDeltaMovement(((Entity)entity).getDeltaMovement().add(0f, 0.08f, 0f));
 	}
 	
 	@Override

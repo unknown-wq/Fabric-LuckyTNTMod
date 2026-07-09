@@ -7,12 +7,12 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.resources.Identifier;
 
 @Environment(value=EnvType.CLIENT)
 public class BombRenderer extends EntityRenderer<LExplosiveProjectile>{
@@ -25,7 +25,7 @@ public class BombRenderer extends EntityRenderer<LExplosiveProjectile>{
 	}
 	
 	@Override
-	public void render(LExplosiveProjectile entity, float rotY, float partialTicks, MatrixStack stack, VertexConsumerProvider buffer, int light) {
+	public void render(LExplosiveProjectile entity, float rotY, float partialTicks, PoseStack stack, MultiBufferSource buffer, int light) {
 		stack.push();
 		stack.scale(entity.getEffect().getSize(entity), entity.getEffect().getSize(entity), entity.getEffect().getSize(entity));
 		VertexConsumer vc = buffer.getBuffer(RenderLayer.getEntityCutout(getTexture(entity)));
@@ -36,6 +36,6 @@ public class BombRenderer extends EntityRenderer<LExplosiveProjectile>{
 
 	@Override
 	public Identifier getTexture(LExplosiveProjectile entity) {
-		return Identifier.of("luckytntmod:textures/tsarbomb.png");
+		return Identifier.fromNamespaceAndPath("luckytntmod:textures/tsarbomb.png");
 	}
 }

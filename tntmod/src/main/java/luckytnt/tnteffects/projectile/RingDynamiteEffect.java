@@ -6,27 +6,27 @@ import luckytnt.registry.ItemRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.phys.Vec3;
 
 public class RingDynamiteEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		Vec3d vec = ((Entity)ent).getVelocity().normalize().multiply(4D);
+		Vec3 vec = ((Entity)ent).getDeltaMovement().normalize().multiply(4D);
 		
-		Vec3d left = (int)Math.round(vec.x) == 0 && (int)Math.round(vec.z) == 0 ? new Vec3d(1, 0, 0) : new Vec3d(vec.x * Math.cos(0.5 * Math.PI) + vec.z * Math.sin(0.5 * Math.PI), 0, -vec.x * Math.sin(0.5 * Math.PI) + vec.z * Math.cos(0.5 * Math.PI)).normalize();
-		Vec3d right = left.negate().normalize();
-		Vec3d up = left.crossProduct(vec).normalize();
-		Vec3d down = up.negate().normalize();
+		Vec3 left = (int)Math.round(vec.x) == 0 && (int)Math.round(vec.z) == 0 ? new Vec3(1, 0, 0) : new Vec3(vec.x * Math.cos(0.5 * Math.PI) + vec.z * Math.sin(0.5 * Math.PI), 0, -vec.x * Math.sin(0.5 * Math.PI) + vec.z * Math.cos(0.5 * Math.PI)).normalize();
+		Vec3 right = left.negate().normalize();
+		Vec3 up = left.crossProduct(vec).normalize();
+		Vec3 down = up.negate().normalize();
 		
-		Vec3d rightup = right.add(up).normalize();
-		Vec3d rightdown = right.add(down).normalize();
-		Vec3d leftup = left.add(up).normalize();
-		Vec3d leftdown = left.add(down).normalize();
+		Vec3 rightup = right.add(up).normalize();
+		Vec3 rightdown = right.add(down).normalize();
+		Vec3 leftup = left.add(up).normalize();
+		Vec3 leftdown = left.add(down).normalize();
 		
-		Vec3d[] array = new Vec3d[10];
+		Vec3[] array = new Vec3[10];
 		
 		array[1] = vec.add(right).normalize();
 		array[2] = vec.add(left).normalize();
@@ -41,8 +41,8 @@ public class RingDynamiteEffect extends PrimedTNTEffect {
 			LExplosiveProjectile dynamite = EntityRegistry.DYNAMITE.get().create(ent.getLevel());
 			dynamite.setOwner(ent.owner());
 			dynamite.setPosition(ent.getPos());
-			dynamite.setVelocity(array[i].multiply(2D));
-			ent.getLevel().spawnEntity(dynamite);
+			dynamite.setDeltaMovement(array[i].multiply(2D));
+			ent.getLevel().addFreshEntity(dynamite);
 		}
 	}
 	

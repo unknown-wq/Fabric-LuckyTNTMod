@@ -6,19 +6,19 @@ import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.Level;
 
 public class PulseTNTEffect extends PrimedTNTEffect{
 
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		World level = entity.getLevel();
+		Level level = entity.getLevel();
 		if(!level.isClient) {
 			if(entity.getTNTFuse() < 205) {
 				if(entity.getTNTFuse() % 20 == 0) {		      		
@@ -27,17 +27,17 @@ public class PulseTNTEffect extends PrimedTNTEffect{
 					explosion.doBlockExplosion();
 		      		
 					if(entity.getTNTFuse() > 0) {
-						level.playSound(null, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.BLOCKS, 4,(1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.2F) * 0.7F);
+						level.playSound(null, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4,(1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.2F) * 0.7F);
 					}
 					
-					NbtCompound tag = entity.getPersistentData();
+					CompoundTag tag = entity.getPersistentData();
 					tag.putInt("strength", entity.getPersistentData().getInt("strength") + 2);
 					entity.setPersistentData(tag);
 				}
 			}
 		}
 		if(entity.getTNTFuse() < 205) {
-			((Entity)entity).setVelocity(0, 0, 0);
+			((Entity)entity).setDeltaMovement(0, 0, 0);
 			((Entity)entity).setPosition(((Entity)entity).prevX, ((Entity)entity).prevY, ((Entity)entity).prevZ);
 		}
 	}

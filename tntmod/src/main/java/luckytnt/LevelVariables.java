@@ -2,13 +2,13 @@ package luckytnt;
 
 import luckytnt.network.LevelVariablesS2CPacket;
 import net.minecraft.datafixer.DataFixTypes;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.world.level.LevelAccessor;
 
 public class LevelVariables extends PersistentState {
 
@@ -21,7 +21,7 @@ public class LevelVariables extends PersistentState {
 	public static LevelVariables clientSide = new LevelVariables();
 	
 	@Override
-	public NbtCompound writeNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+	public CompoundTag writeNbt(CompoundTag tag, RegistryWrapper.WrapperLookup registryLookup) {
 		tag.putInt("doomsdayTime", doomsdayTime);
 		tag.putInt("toxicCloudsTime", toxicCloudsTime);
 		tag.putInt("iceAgeTime", iceAgeTime);
@@ -30,13 +30,13 @@ public class LevelVariables extends PersistentState {
 		return tag;
 	}
 	
-	public static LevelVariables load(NbtCompound tag) {
+	public static LevelVariables load(CompoundTag tag) {
 		LevelVariables variables = new LevelVariables();
 		variables.read(tag);
 		return variables;
 	}
 	
-	public void read(NbtCompound tag) {
+	public void read(CompoundTag tag) {
 		doomsdayTime = tag.getInt("doomsdayTime");
 		toxicCloudsTime = tag.getInt("toxicCloudsTime");
 		iceAgeTime = tag.getInt("iceAgeTime");
@@ -44,17 +44,17 @@ public class LevelVariables extends PersistentState {
 		tntRainTime = tag.getInt("tntRainTime");
 	}
 	
-	public static LevelVariables get(WorldAccess level) {
+	public static LevelVariables get(LevelAccessor level) {
 		if(level instanceof ServerWorldAccess sLevel)
 			return sLevel.toServerWorld().getServer().getOverworld().getPersistentStateManager().getOrCreate(new PersistentState.Type<LevelVariables>(() -> {return new LevelVariables();}, (f, w) -> LevelVariables.load(f), DataFixTypes.LEVEL), "ltm_level_variables");
 		else
 			return clientSide;
 	}
 	
-	public void sync(ServerWorld level) {
+	public void sync(ServerLevel level) {
 		markDirty();
-		for(ServerWorld world : level.getServer().getWorlds()) {
-			for(ServerPlayerEntity player : world.getPlayers()) {
+		for(ServerLevel world : level.getServer().getWorlds()) {
+			for(ServerPlayer player : world.getPlayers()) {
 				LuckyTNTMod.RH.sendS2CPacket(player, new LevelVariablesS2CPacket(this));
 			}
 		}

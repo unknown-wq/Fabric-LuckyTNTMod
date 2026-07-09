@@ -10,17 +10,17 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.level.Level;
 
 public class MidasTNTEffect extends PrimedTNTEffect {
 
@@ -30,14 +30,14 @@ public class MidasTNTEffect extends PrimedTNTEffect {
 			ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), ent.getPersistentData().getInt("size"), new IForEachBlockExplosionEffect() {
 				
 				@Override
-				public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if(state.getBlock().getBlastResistance() < 100 && !state.isAir() && state.getBlock() != Blocks.GOLD_BLOCK) {
 						level.setBlockState(pos, Blocks.GOLD_BLOCK.getDefaultState(), 3);
 					}
 				}
 			});
 			
-			NbtCompound tag = ent.getPersistentData();
+			CompoundTag tag = ent.getPersistentData();
 			tag.putInt("size", ent.getPersistentData().getInt("size") + 1);
 			ent.setPersistentData(tag);
 			
@@ -46,7 +46,7 @@ public class MidasTNTEffect extends PrimedTNTEffect {
 			BlockPos max = toBlockPos(ent.getPos()).add(i, i, i);
 			List<LivingEntity> list = ent.getLevel().getNonSpectatingEntities(LivingEntity.class, new Box(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
 			for(LivingEntity lent : list) {
-				lent.addStatusEffect(new StatusEffectInstance(Registries.STATUS_EFFECT.entryOf(EffectRegistry.MIDAS_TOUCH), 2000, 0));
+				lent.addStatusEffect(new StatusEffectInstance(BuiltInRegistries.STATUS_EFFECT.entryOf(EffectRegistry.MIDAS_TOUCH), 2000, 0));
 			}
 		}
 	}

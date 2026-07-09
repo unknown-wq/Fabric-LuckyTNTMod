@@ -8,43 +8,43 @@ import org.joml.Vector3f;
 import com.mojang.serialization.MapCodec;
 
 import luckytnt.registry.EffectRegistry;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.block.FallingBlock;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.loot.context.LootContextParameterSet;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.WorldView;
-import net.minecraft.world.explosion.Explosion;
+import net.minecraft.world.level.Explosion;
 
 public class NuclearWasteBlock extends FallingBlock {
 	public static final MapCodec<NuclearWasteBlock> CODEC = createCodec(NuclearWasteBlock::new);
 	
-	public NuclearWasteBlock(AbstractBlock.Settings properties) {
+	public NuclearWasteBlock(BlockBehaviour.Properties properties) {
 		super(properties);
 	}
 	
 	@Override
-	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+	public VoxelShape getOutlineShape(BlockState state, BlockGetter world, BlockPos pos, ShapeContext context) {
 		return VoxelShapes.cuboid(0, 0, 0, 1, 2d / 16d, 1);
 	}
 
@@ -58,12 +58,12 @@ public class NuclearWasteBlock extends FallingBlock {
 	}
 	
 	@Override
-	public void randomTick(BlockState state, ServerWorld level, BlockPos pos, Random random) {
+	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, Random random) {
 		super.randomTick(state, level, pos, random);
 		if(Math.random() < 0.2f) {
 			if(level.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())).getBlock().getBlastResistance() < 100) {
 				level.setBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ()), Blocks.AIR.getDefaultState(), 3);
-				level.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 1, 1);
+				level.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundSource.BLOCKS, 1, 1);
 				if(Math.random() < 0.05f) {
 					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
 					level.spawnParticles(new DustParticleEffect(new Vector3f(1f, 1f, 0.1f), 1), pos.getX(), pos.getY(), pos.getZ(), 40, 0.6f, 0.6f, 0.6f, 0);
@@ -79,11 +79,11 @@ public class NuclearWasteBlock extends FallingBlock {
 	}
 		
 	@Override
-	public void onEntityCollision(BlockState state, World level, BlockPos pos, Entity entity) {
+	public void onEntityCollision(BlockState state, Level level, BlockPos pos, Entity entity) {
 		super.onEntityCollision(state, level, pos, entity);
 		if(entity instanceof LivingEntity l_Entity) {
 			l_Entity.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 120, 4, false, true));
-			l_Entity.addStatusEffect(new StatusEffectInstance(Registries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 120, 0, false, true));
+			l_Entity.addStatusEffect(new StatusEffectInstance(BuiltInRegistries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 120, 0, false, true));
 			l_Entity.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 120, 0, false, true));
 		}
 		else if(entity instanceof ItemEntity i_Entity) {

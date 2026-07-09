@@ -1,17 +1,17 @@
 package luckytnt.network;
 
 import luckytnt.LuckyTNTMod;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 
-public class HydrogenBombS2CPacket implements CustomPayload {
+public class HydrogenBombS2CPacket implements CustomPacketPayload {
 	
-	public static final Identifier NAME = Identifier.of(LuckyTNTMod.MODID, "hydrogen_bomb_s2c");
-	public static final CustomPayload.Id<HydrogenBombS2CPacket> ID = new CustomPayload.Id<>(NAME);
-    public static final PacketCodec<RegistryByteBuf, HydrogenBombS2CPacket> CODEC = PacketCodec.of(HydrogenBombS2CPacket::write, HydrogenBombS2CPacket::new);
+	public static final Identifier NAME = Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "hydrogen_bomb_s2c");
+	public static final CustomPacketPayload.Id<HydrogenBombS2CPacket> ID = new CustomPacketPayload.Id<>(NAME);
+    public static final StreamCodec<RegistryFriendlyByteBuf, HydrogenBombS2CPacket> CODEC = StreamCodec.of(HydrogenBombS2CPacket::write, HydrogenBombS2CPacket::new);
 	
 	public final int entityId;
 	
@@ -19,16 +19,16 @@ public class HydrogenBombS2CPacket implements CustomPayload {
 		this.entityId = entityId;
 	}
 	
-	public HydrogenBombS2CPacket(PacketByteBuf buf) {
+	public HydrogenBombS2CPacket(FriendlyByteBuf buf) {
 		entityId = buf.readInt();
 	}
 	
-	public void write(PacketByteBuf buf) {
+	public void write(FriendlyByteBuf buf) {
 		buf.writeInt(entityId);
 	}
 
 	@Override
-	public Id<? extends CustomPayload> getId() {
+	public Id<? extends CustomPacketPayload> getId() {
 		return ID;
 	}
 }

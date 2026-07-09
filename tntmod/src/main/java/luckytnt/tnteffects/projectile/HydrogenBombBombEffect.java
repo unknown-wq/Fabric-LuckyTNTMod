@@ -14,30 +14,30 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class HydrogenBombBombEffect extends PrimedTNTEffect implements NuclearBombLike {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		if(ent.getLevel() instanceof ServerWorld sworld) {
-			for(ServerWorld sw : sworld.getServer().getWorlds()) {
-				for(ServerPlayerEntity player : sw.getPlayers()) {
-					if(player.getWorld().getDimension() == sworld.getDimension() && player.distanceTo((Entity)ent) <= 150) {
+		if(ent.getLevel() instanceof ServerLevel sworld) {
+			for(ServerLevel sw : sworld.getServer().getWorlds()) {
+				for(ServerPlayer player : sw.getPlayers()) {
+					if(player.level().getDimension() == sworld.getDimension() && player.distanceTo((Entity)ent) <= 150) {
 						LuckyTNTMod.RH.sendS2CPacket(player, new HydrogenBombS2CPacket(((Entity)ent).getId()));
 					}
 				}
@@ -48,10 +48,10 @@ public class HydrogenBombBombEffect extends PrimedTNTEffect implements NuclearBo
 		explosion.doEntityExplosion(25f, true);
 		explosion.doBlockExplosion(1f, 1f, 0.167f, 0.05f, false, true);
 		
-		ExplosionHelper.doModifiedSphericalExplosion(ent.getLevel(), ent.getPos(), 250, new Vec3d(1f, (2f/3f), 1f), new IForEachBlockExplosionEffect() {
+		ExplosionHelper.doModifiedSphericalExplosion(ent.getLevel(), ent.getPos(), 250, new Vec3(1f, (2f/3f), 1f), new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				BlockPos posTop = pos.add(0, 1, 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				if(distance <= 250) {
@@ -66,7 +66,7 @@ public class HydrogenBombBombEffect extends PrimedTNTEffect implements NuclearBo
 		
 		List<LivingEntity> list = ent.getLevel().getNonSpectatingEntities(LivingEntity.class, new Box(ent.x() - 90, ent.y() - 65, ent.z() - 90, ent.x() + 90, ent.y() + 65, ent.z() + 90));
 		for(LivingEntity living : list) {
-			living.addStatusEffect(new StatusEffectInstance(Registries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 4800, 0, true, true, true));
+			living.addStatusEffect(new StatusEffectInstance(BuiltInRegistries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 4800, 0, true, true, true));
 		}
 	}
 	

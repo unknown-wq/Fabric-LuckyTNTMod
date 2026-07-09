@@ -6,7 +6,7 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public class AngryMinerRenderer extends BipedEntityRenderer<AngryMiner, BipedEntityModel<AngryMiner>>{
 
@@ -17,6 +17,6 @@ public class AngryMinerRenderer extends BipedEntityRenderer<AngryMiner, BipedEnt
 
 	@Override
 	public Identifier getTexture(AngryMiner entity) {
-		return Identifier.of("luckytntmod:textures/angryminer.png");
+		return Identifier.fromNamespaceAndPath("luckytntmod:textures/angryminer.png");
 	}
 }

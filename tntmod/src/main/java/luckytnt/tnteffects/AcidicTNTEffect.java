@@ -12,19 +12,19 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSources;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class AcidicTNTEffect extends PrimedTNTEffect {
 
@@ -49,17 +49,17 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent instanceof PrimedLTNT) {
 			if(ent.getTNTFuse() <= 10) {
-				((Entity)ent).setVelocity(((Entity)ent).getVelocity().x, 0.8f, ((Entity)ent).getVelocity().z);
+				((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 0.8f, ((Entity)ent).getDeltaMovement().z);
 			}
 		} else {
 			if(ent.getTNTFuse() == 0) {
-				ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.MASTER, 1f, 1f);
+				ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundSource.MASTER, 1f, 1f);
 			}
 			if(!ent.getLevel().isClient()) {
 				ExplosionHelper.doCubicalExplosion(ent.getLevel(), ent.getPos(), 7, new IForEachBlockExplosionEffect() {
 					
 					@Override
-					public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(distance <= 5D + Math.random() * 2 && !state.isAir() && state.getBlock().getBlastResistance() <= 200) {
 							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
 						}
@@ -85,8 +85,8 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 				LExplosiveProjectile projectile = EntityRegistry.ACIDIC_PROJECTILE.get().create(ent.getLevel());
 				projectile.setPosition(ent.getPos());
 				projectile.setOwner(ent.owner());
-				projectile.setVelocity(Math.random() * 2.5f - Math.random() * 2.5f, Math.random() - Math.random(), Math.random() * 2.5f - Math.random() * 2.5f);
-				ent.getLevel().spawnEntity(projectile);
+				projectile.setDeltaMovement(Math.random() * 2.5f - Math.random() * 2.5f, Math.random() - Math.random(), Math.random() * 2.5f - Math.random() * 2.5f);
+				ent.getLevel().addFreshEntity(projectile);
 			}
 		}
 	}
@@ -94,8 +94,8 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		if(ent instanceof PrimedLTNT) {
-			Vec3d vec31 = new Vec3d(0.5D, Math.sqrt(1D - (0.5D * 0.5D)), 0);
-			Vec3d vec32 = new Vec3d(-0.5D, Math.sqrt(1D - (0.5D * 0.5D)), 0);
+			Vec3 vec31 = new Vec3(0.5D, Math.sqrt(1D - (0.5D * 0.5D)), 0);
+			Vec3 vec32 = new Vec3(-0.5D, Math.sqrt(1D - (0.5D * 0.5D)), 0);
 			for(int count = 0; count <= 10; count++) {
 				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0, 0, 0), 0.5f), ent.x() - 0.5D + 0.1D * count, ent.y() + 1.25D, ent.z(), 0, 0, 0);
 			}

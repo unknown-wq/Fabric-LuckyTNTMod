@@ -7,8 +7,8 @@ import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.core.particles.DustParticleEffect;
 
 public class EyeOfTheSaharaEffect extends PrimedTNTEffect {
 
@@ -22,7 +22,7 @@ public class EyeOfTheSaharaEffect extends PrimedTNTEffect {
 			double z = ent.z() + 80 * Math.sin(angle * Math.PI / 180);
 			double y = RingTNTEffect.getFirstMotionBlockingBlock(ent.getLevel(), x, z);
 			tnt.setPosition(x, y + 1D, z);
-			ent.getLevel().spawnEntity(tnt);
+			ent.getLevel().addFreshEntity(tnt);
 		}
 	}
 	

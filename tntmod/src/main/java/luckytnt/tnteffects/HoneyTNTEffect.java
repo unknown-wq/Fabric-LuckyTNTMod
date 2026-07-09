@@ -10,17 +10,17 @@ import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.block.BeehiveBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class HoneyTNTEffect extends PrimedTNTEffect{
 
@@ -33,9 +33,9 @@ public class HoneyTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		Noise3D noise = new Noise3D(radius * 4, radius * 4, radius * 4, 5);
-		ExplosionHelper.doModifiedSphericalExplosion(entity.getLevel(), entity.getPos(), radius, new Vec3d(1f, 1.5f, 1f), new IForEachBlockExplosionEffect() {		
+		ExplosionHelper.doModifiedSphericalExplosion(entity.getLevel(), entity.getPos(), radius, new Vec3(1f, 1.5f, 1f), new IForEachBlockExplosionEffect() {		
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock().getBlastResistance() <= 200) {
 					distance += Math.random();
 					if(distance <= radius - 2) {
@@ -47,7 +47,7 @@ public class HoneyTNTEffect extends PrimedTNTEffect{
 						if(Math.random() < 0.025f) {
 							BeeEntity bee = new BeeEntity(EntityType.BEE, level);
 							bee.setPosition(pos.getX(), pos.getY(), pos.getZ());
-							level.spawnEntity(bee);
+							level.addFreshEntity(bee);
 						}				
 					}
 					else if(distance <= radius){
@@ -56,7 +56,7 @@ public class HoneyTNTEffect extends PrimedTNTEffect{
 						int offZ = Math.round(pos.getZ() - (float)entity.z());
 						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 						level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-						if(noise.getValue(MathHelper.clamp(offX + radius, 0, radius * 4), MathHelper.clamp((int)(offY + radius * 1.5f), 0, radius * 4), MathHelper.clamp(offZ + radius, 0, radius * 4)) > 0.7f) {
+						if(noise.getValue(Mth.clamp(offX + radius, 0, radius * 4), Mth.clamp((int)(offY + radius * 1.5f), 0, radius * 4), Mth.clamp(offZ + radius, 0, radius * 4)) > 0.7f) {
 							level.setBlockState(pos, Blocks.HONEY_BLOCK.getDefaultState());
 						}
 						else {

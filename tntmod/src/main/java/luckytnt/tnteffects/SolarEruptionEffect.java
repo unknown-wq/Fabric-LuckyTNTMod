@@ -5,10 +5,10 @@ import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 
 public class SolarEruptionEffect extends PrimedTNTEffect {
 
@@ -20,10 +20,10 @@ public class SolarEruptionEffect extends PrimedTNTEffect {
 					LExplosiveProjectile tnt = EntityRegistry.SOLAR_ERUPTION_PROJECTILE.get().create(ent.getLevel());
 					tnt.setPosition(ent.getPos());
 					tnt.setOwner(ent.owner());
-					tnt.setVelocity(Math.random() * 3f - Math.random() * 3f, 5 + Math.random() * 2, Math.random() * 3f - Math.random() * 3f);		
+					tnt.setDeltaMovement(Math.random() * 3f - Math.random() * 3f, 5 + Math.random() * 2, Math.random() * 3f - Math.random() * 3f);		
 					tnt.setOnFireFor(1000);
-					ent.getLevel().spawnEntity(tnt);
-					ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.MASTER, 3, 1);
+					ent.getLevel().addFreshEntity(tnt);
+					ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.ENTITY_TNT_PRIMED, SoundSource.MASTER, 3, 1);
 				}
 			}
 		}

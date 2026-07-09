@@ -10,26 +10,26 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class EasterEggEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
 		super.baseTick(entity);
-		if(((Entity)entity).isOnGround() && entity.getPersistentData().getInt("level") > 0) {
+		if(((Entity)entity).onGround() && entity.getPersistentData().getInt("level") > 0) {
 			serverExplosion(entity);
-			World level = entity.getLevel();
-			entity.getLevel().playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+			Level level = entity.getLevel();
+			entity.getLevel().playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
 			entity.destroy();
 		}
 	}
@@ -41,7 +41,7 @@ public class EasterEggEffect extends PrimedTNTEffect{
 		explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
 		explosion.doBlockExplosion(new IForEachBlockExplosionEffect() {		
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(Math.random() < 0.66f && !state.isAir()) {
 					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
 					if(Math.random() < 0.5f) {
@@ -61,11 +61,11 @@ public class EasterEggEffect extends PrimedTNTEffect{
 				PrimedLTNT tnt = EntityRegistry.EASTER_EGG.get().create(entity.getLevel());
 				tnt.setPosition(entity.getPos());
 				tnt.setOwner(entity.owner());
-				tnt.setVelocity(Math.random() * 2 - 1, 1 + Math.random(), Math.random() * 2 - 1);
-				NbtCompound tag = tnt.getPersistentData();
+				tnt.setDeltaMovement(Math.random() * 2 - 1, 1 + Math.random(), Math.random() * 2 - 1);
+				CompoundTag tag = tnt.getPersistentData();
 				tag.putInt("level", level + 1);
 				tnt.setPersistentData(tag);
-				entity.getLevel().spawnEntity(tnt);
+				entity.getLevel().addFreshEntity(tnt);
 			}
 		}
 	}

@@ -3,13 +3,13 @@ package luckytnt.tnteffects;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 
 public class LightningTNTEffect extends PrimedTNTEffect{
 
@@ -18,14 +18,14 @@ public class LightningTNTEffect extends PrimedTNTEffect{
 		double x = entity.getPos().x;
 		double z = entity.getPos().z;
 		if(entity.getTNTFuse() < 120) {
-			if(entity.getLevel() instanceof ServerWorld) {
+			if(entity.getLevel() instanceof ServerLevel) {
 				double offX = Math.random() * 40 - 20;
 				double offZ = Math.random() * 40 - 20;
 				for(int offY = 320; offY > -64; offY--) {
-					if(!entity.getLevel().getBlockState(new BlockPos(MathHelper.floor(x + offX), offY, MathHelper.floor(z + offZ))).isAir()) {
+					if(!entity.getLevel().getBlockState(new BlockPos(Mth.floor(x + offX), offY, Mth.floor(z + offZ))).isAir()) {
 						Entity lighting = new LightningEntity(EntityType.LIGHTNING_BOLT, entity.getLevel());
 						lighting.setPosition(x + offX, offY, z + offZ);
-						entity.getLevel().spawnEntity(lighting);
+						entity.getLevel().addFreshEntity(lighting);
 						break;
 					}
 				}

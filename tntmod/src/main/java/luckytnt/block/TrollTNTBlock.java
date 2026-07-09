@@ -3,20 +3,20 @@ package luckytnt.block;
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.block.LTNTBlock;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class TrollTNTBlock extends LTNTBlock{
    
-	public TrollTNTBlock(AbstractBlock.Settings properties) {
+	public TrollTNTBlock(BlockBehaviour.Properties properties) {
         super(properties, EntityRegistry.TROLL_TNT, false);
     }
 
 	@Override
-	public BlockState onBreak(World level, BlockPos pos, BlockState state, PlayerEntity player) {
+	public BlockState onBreak(Level level, BlockPos pos, BlockState state, Player player) {
     	if(level.getBlockState(pos.up()).getBlock().getBlastResistance() < 200) {
     		level.setBlockState(pos.up(), BlockRegistry.TROLL_TNT.get().getDefaultState(), 3);
     	}

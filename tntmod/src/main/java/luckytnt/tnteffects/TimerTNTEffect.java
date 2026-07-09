@@ -5,8 +5,8 @@ import org.joml.Vector3f;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.core.particles.DustParticleEffect;
 
 public class TimerTNTEffect extends PrimedTNTEffect{
 	

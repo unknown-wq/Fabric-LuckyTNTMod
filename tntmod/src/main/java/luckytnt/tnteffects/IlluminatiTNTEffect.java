@@ -4,11 +4,11 @@ import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 public class IlluminatiTNTEffect extends PrimedTNTEffect {
 
@@ -22,21 +22,21 @@ public class IlluminatiTNTEffect extends PrimedTNTEffect {
 		BlockPos D = pos.add(-60, -60, 60);
 		BlockPos E = pos.add(0, 60, 0);
 		
-		Vec3d EA = new Vec3d(A.getX() - E.getX(), A.getY() - E.getY(), A.getZ() - E.getZ());
-		Vec3d EB = new Vec3d(B.getX() - E.getX(), B.getY() - E.getY(), B.getZ() - E.getZ());
-		Vec3d EC = new Vec3d(C.getX() - E.getX(), C.getY() - E.getY(), C.getZ() - E.getZ());
-		Vec3d ED = new Vec3d(D.getX() - E.getX(), D.getY() - E.getY(), D.getZ() - E.getZ());
+		Vec3 EA = new Vec3(A.getX() - E.getX(), A.getY() - E.getY(), A.getZ() - E.getZ());
+		Vec3 EB = new Vec3(B.getX() - E.getX(), B.getY() - E.getY(), B.getZ() - E.getZ());
+		Vec3 EC = new Vec3(C.getX() - E.getX(), C.getY() - E.getY(), C.getZ() - E.getZ());
+		Vec3 ED = new Vec3(D.getX() - E.getX(), D.getY() - E.getY(), D.getZ() - E.getZ());
 		
-		Vec3d NEAB = EB.crossProduct(EA);
-		Vec3d NEAD = EA.crossProduct(ED);
-		Vec3d NEDC = ED.crossProduct(EC);
-		Vec3d NECB = EC.crossProduct(EB);
-		Vec3d NABCD = new Vec3d(0, -1, 0);
+		Vec3 NEAB = EB.crossProduct(EA);
+		Vec3 NEAD = EA.crossProduct(ED);
+		Vec3 NEDC = ED.crossProduct(EC);
+		Vec3 NECB = EC.crossProduct(EB);
+		Vec3 NABCD = new Vec3(0, -1, 0);
 		
 		for (int offX = -70; offX <= 70; offX++) {
 			for (int offY = -70; offY <= 70; offY++) {
 				for (int offZ = -70; offZ <= 70; offZ++) {
-					Vec3d vec = new Vec3d(Math.round(ent.x() + offX), Math.round(ent.y() + offY), Math.round(ent.z() + offZ));
+					Vec3 vec = new Vec3(Math.round(ent.x() + offX), Math.round(ent.y() + offY), Math.round(ent.z() + offZ));
 
 					if (distance(vec, NEAB, E) <= 0 && distance(vec, NEAD, E) <= 0 && distance(vec, NEDC, E) <= 0 && distance(vec, NECB, E) <= 0 && distance(vec, NABCD, A) <= 0) {
 						BlockPos pos5 = toBlockPos(ent.getPos()).add(offX, offY, offZ);
@@ -60,10 +60,10 @@ public class IlluminatiTNTEffect extends PrimedTNTEffect {
 			ent.getLevel().addParticle(ParticleTypes.FLAME, ent.x() + 0.5D, ent.y() + 1D, ent.z() - 0.5D + i, 0, 0, 0);
 		}
 		
-		Vec3d vec1 = new Vec3d(0.5D, 1D, 0.5D);
-		Vec3d vec2 = new Vec3d(-0.5D, 1D, 0.5D);
-		Vec3d vec3 = new Vec3d(0.5D, 1D, -0.5D);
-		Vec3d vec4 = new Vec3d(-0.5D, 1D, -0.5D);
+		Vec3 vec1 = new Vec3(0.5D, 1D, 0.5D);
+		Vec3 vec2 = new Vec3(-0.5D, 1D, 0.5D);
+		Vec3 vec3 = new Vec3(0.5D, 1D, -0.5D);
+		Vec3 vec4 = new Vec3(-0.5D, 1D, -0.5D);
 		
 		for(double i = 0D; i < vec1.length(); i += vec1.length() / 5D) {
 			ent.getLevel().addParticle(ParticleTypes.FLAME, ent.x() - 0.5D + vec1.x * i, ent.y() + 1D + vec1.y * i, ent.z() - 0.5D + vec1.z * i, 0, 0, 0);
@@ -83,7 +83,7 @@ public class IlluminatiTNTEffect extends PrimedTNTEffect {
 		return BlockRegistry.ILLUMINATI_TNT.get();
 	}
 	
-	public double distance(Vec3d point, Vec3d normal, BlockPos pointOnSide) {
+	public double distance(Vec3 point, Vec3 normal, BlockPos pointOnSide) {
 		return TetrahedronTNTEffect.distance(point, normal, pointOnSide);
 	}
 }

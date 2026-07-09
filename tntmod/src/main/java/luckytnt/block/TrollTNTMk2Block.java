@@ -6,37 +6,37 @@ import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.block.LTNTBlock;
 import luckytntlib.entity.PrimedLTNT;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.mob.PiglinBrain;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stat.Stats;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.ItemActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.event.GameEvent;
 
 public class TrollTNTMk2Block extends LTNTBlock{
 
-	public TrollTNTMk2Block(AbstractBlock.Settings properties) {
+	public TrollTNTMk2Block(BlockBehaviour.Properties properties) {
 		super(properties, EntityRegistry.TROLL_TNT_MK2, false);
 	}
 	
 	@Override
-	public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+	public void onBlockAdded(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {
 		if (oldState.isOf(state.getBlock())) {
 			return;
 		}
@@ -47,7 +47,7 @@ public class TrollTNTMk2Block extends LTNTBlock{
 	}
 
 	@Override
-	public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+	public void neighborUpdate(BlockState state, Level world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
 		if (world.isReceivingRedstonePower(pos)) {
 			placeSurroundingBlocks(world, pos.getX(), pos.getY(), pos.getZ());
 			world.removeBlock(pos, false);
@@ -55,7 +55,7 @@ public class TrollTNTMk2Block extends LTNTBlock{
 	}
 
 	@Override
-	public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+	public BlockState onBreak(Level world, BlockPos pos, BlockState state, Player player) {
 		if (!world.isClient()) {
 			explode(world, false, pos.getX(), pos.getY(), pos.getZ(), null);
 		}
@@ -69,14 +69,14 @@ public class TrollTNTMk2Block extends LTNTBlock{
 	}
 	
 	@Nullable
-	public PrimedLTNT explode(World level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
+	public PrimedLTNT explode(Level level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
 		if(TNT != null) {
 			PrimedLTNT tnt = TNT.get().create(level);
-			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(MathHelper.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
+			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(Mth.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
 			tnt.setPosition(x + 0.5f, y, z + 0.5f);
 			tnt.setOwner(igniter);
-			level.spawnEntity(tnt);
-			level.playSound(null, new BlockPos((int)x, (int)y, (int)z), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.MASTER, 1, 1);
+			level.addFreshEntity(tnt);
+			level.playSound(null, new BlockPos((int)x, (int)y, (int)z), SoundEvents.ENTITY_TNT_PRIMED, SoundSource.MASTER, 1, 1);
 			if(level.getBlockState(new BlockPos((int)x, (int)y, (int)z)).getBlock() == this) {
 				level.setBlockState(new BlockPos((int)x, (int)y, (int)z), Blocks.AIR.getDefaultState(), 3);
 			}
@@ -86,8 +86,8 @@ public class TrollTNTMk2Block extends LTNTBlock{
 	}
 	
 	@Override
-	public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult result) {
-		ItemStack itemStack = player.getStackInHand(hand);
+	public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+		ItemStack itemStack = player.getItemInHand(hand);
 		if (itemStack.isOf(Items.FLINT_AND_STEEL) || itemStack.isOf(Items.FIRE_CHARGE)) {
 			placeSurroundingBlocks(world, pos.getX(), pos.getY(), pos.getZ());
 			world.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL_AND_REDRAW);
@@ -96,7 +96,7 @@ public class TrollTNTMk2Block extends LTNTBlock{
 				if (itemStack.isOf(Items.FLINT_AND_STEEL)) {
 					itemStack.damage(1, player, LivingEntity.getSlotForHand(hand));
 				} else {
-					itemStack.decrement(1);
+					itemStack.shrink(1);
 				}
 			}
 			player.incrementStat(Stats.USED.getOrCreateStat(item));
@@ -106,7 +106,7 @@ public class TrollTNTMk2Block extends LTNTBlock{
 	}
 
 	@Override
-	public void onProjectileHit(World world, BlockState state, BlockHitResult hit, ProjectileEntity projectile) {
+	public void onProjectileHit(Level world, BlockState state, BlockHitResult hit, Projectile projectile) {
 		if (!world.isClient) {
 			BlockPos blockPos = hit.getBlockPos();
 			if (projectile.isOnFire() && projectile.canModifyAt(world, blockPos)) {
@@ -116,8 +116,8 @@ public class TrollTNTMk2Block extends LTNTBlock{
 		}
 	}
 	
-	public void placeSurroundingBlocks(World level, double x, double y, double z) {
-		BlockPos pos = new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z));
+	public void placeSurroundingBlocks(Level level, double x, double y, double z) {
+		BlockPos pos = new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z));
     	if(level.getBlockState(pos.up()).getBlock().getBlastResistance() < 200) {
     		level.setBlockState(pos.up(), BlockRegistry.TROLL_TNT_MK2.get().getDefaultState(), 3);
     	}

@@ -4,16 +4,16 @@ import luckytntlib.block.LTNTBlock;
 import luckytntlib.util.IExplosiveEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.TntMinecartEntityRenderer;
 import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 
 @Environment(value=EnvType.CLIENT)
 public class BouncingTNTRenderer extends EntityRenderer<Entity>{
@@ -24,16 +24,16 @@ public class BouncingTNTRenderer extends EntityRenderer<Entity>{
 		this.blockRenderer = context.getBlockRenderManager();
 	}
 	
-	public void render(Entity entity, float yaw, float partialTicks, MatrixStack posestack, VertexConsumerProvider buffer, int light) {
+	public void render(Entity entity, float yaw, float partialTicks, PoseStack posestack, MultiBufferSource buffer, int light) {
     	if(entity instanceof IExplosiveEntity ent) {
 			posestack.push();
 	        posestack.translate(0, 0, 0);	        
-	        float scaleMul = (float)MathHelper.clamp(entity.getVelocity().length() * 1.5f, 0.85f, 1.35f);
+	        float scaleMul = (float)Mth.clamp(entity.getDeltaMovement().length() * 1.5f, 0.85f, 1.35f);
 	        posestack.scale(1 / scaleMul, scaleMul, 1 / scaleMul);	        
 	        int i = ent.getTNTFuse();
 	        if ((float)i - partialTicks + 1.0F < 10.0F && ent.getEffect().getBlock() instanceof LTNTBlock) {
 	           float f = 1.0F - ((float)i - partialTicks + 1.0F) / 10.0F;
-	           f = MathHelper.clamp(f, 0.0F, 1.0F);
+	           f = Mth.clamp(f, 0.0F, 1.0F);
 	           f *= f;
 	           f *= f;
 	           float f1 = 1.0F + f * 0.3F;

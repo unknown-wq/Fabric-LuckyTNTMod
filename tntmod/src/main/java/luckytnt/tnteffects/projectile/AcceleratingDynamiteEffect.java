@@ -4,26 +4,26 @@ import luckytnt.registry.ItemRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 
 public class AcceleratingDynamiteEffect extends PrimedTNTEffect{
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), (int)Math.round(2f * MathHelper.clamp(entity.getPersistentData().getDouble("speed"), 1f, 20f)));
+		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), (int)Math.round(2f * Mth.clamp(entity.getPersistentData().getDouble("speed"), 1f, 20f)));
 		explosion.doEntityExplosion(1.5f, true);
 		explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
 	}
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		((Entity)entity).setVelocity(((Entity)entity).getVelocity().add(((Entity)entity).getVelocity().multiply(0.05f)));
-		if(((Entity)entity).getVelocity().length() > entity.getPersistentData().getDouble("speed")) {
-			NbtCompound nbt = entity.getPersistentData();
-			nbt.putDouble("speed", ((Entity)entity).getVelocity().length());
+		((Entity)entity).setDeltaMovement(((Entity)entity).getDeltaMovement().add(((Entity)entity).getDeltaMovement().multiply(0.05f)));
+		if(((Entity)entity).getDeltaMovement().length() > entity.getPersistentData().getDouble("speed")) {
+			CompoundTag nbt = entity.getPersistentData();
+			nbt.putDouble("speed", ((Entity)entity).getDeltaMovement().length());
 			entity.setPersistentData(nbt);
 		}
 	}

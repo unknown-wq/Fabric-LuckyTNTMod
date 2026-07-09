@@ -12,15 +12,15 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class ResetTNTEffect extends PrimedTNTEffect {
 
@@ -41,11 +41,11 @@ public class ResetTNTEffect extends PrimedTNTEffect {
 				}
 			}
 			
-			for(Pair<Vec3d, Entity> pair : ent.entities) {
-	    		if(pair.getSecond().isAlive() && !(pair.getSecond() instanceof PlayerEntity)) {
+			for(Pair<Vec3, Entity> pair : ent.entities) {
+	    		if(pair.getSecond().isAlive() && !(pair.getSecond() instanceof Player)) {
 	    			pair.getSecond().setPosition(pair.getFirst());
-	    		} else if(pair.getSecond() instanceof PlayerEntity pla) {
-	    			if(pla instanceof ServerPlayerEntity player) {
+	    		} else if(pair.getSecond() instanceof Player pla) {
+	    			if(pla instanceof ServerPlayer player) {
 	    				player.requestTeleport(pair.getFirst().x, pair.getFirst().y, pair.getFirst().z);
 	    			}
 	    		}
@@ -58,7 +58,7 @@ public class ResetTNTEffect extends PrimedTNTEffect {
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 100, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(!(state.getBlock() instanceof LTNTBlock)) {
 					ent.blocks.add(Pair.of(pos, state));
 				}
@@ -72,7 +72,7 @@ public class ResetTNTEffect extends PrimedTNTEffect {
 
     	for(int i = 0; i < list.size(); i++) {
     		Entity entity = list.get(i);
-    		ent.entities.add(Pair.of(new Vec3d(entity.getX(), entity.getY(), entity.getZ()), entity));
+    		ent.entities.add(Pair.of(new Vec3(entity.getX(), entity.getY(), entity.getZ()), entity));
     	}
 	}
 	

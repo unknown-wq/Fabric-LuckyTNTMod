@@ -8,18 +8,18 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.structure.StructureTemplate;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.resources.Identifier;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 
 public class HyperionEffect extends PrimedTNTEffect {
 
@@ -30,7 +30,7 @@ public class HyperionEffect extends PrimedTNTEffect {
 			
 			@SuppressWarnings("resource")
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.isSideSolidFullSquare(level, pos, Direction.UP) && state.getBlock().getBlastResistance() < 100 && !state.isAir() && (level.getBlockState(pos.up()).isAir() || level.getBlockState(pos.up()).getBlock().getHardness() <= 0.2f)) {
 					level.setBlockState(pos, Blocks.GRASS_BLOCK.getDefaultState());
 					if(Math.random() < 0.015f) {
@@ -44,9 +44,9 @@ public class HyperionEffect extends PrimedTNTEffect {
 							case 4: string = "giant_birchtree"; break;
 							case 5: string = "giant_jungletree"; break;
 						}
-						StructureTemplate template = ((ServerWorld)entity.getLevel()).getStructureTemplateManager().getTemplateOrBlank(Identifier.of(LuckyTNTMod.MODID, string));
+						StructureTemplate template = ((ServerLevel)entity.getLevel()).getStructureTemplateManager().getTemplateOrBlank(Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, string));
 						if(template != null) {
-							template.place((ServerWorld)entity.getLevel(), pos.add(-5, 0, -5), pos.add(-5, 0, -5), new StructurePlacementData(), entity.getLevel().random, 3);
+							template.place((ServerLevel)entity.getLevel(), pos.add(-5, 0, -5), pos.add(-5, 0, -5), new StructurePlacementData(), entity.getLevel().random, 3);
 						}
 					}
 				}

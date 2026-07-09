@@ -6,16 +6,16 @@ import luckytnt.registry.BlockRegistry;
 import luckytnt.util.Materials;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.block.FluidBlock;
 import net.minecraft.block.WetSpongeBlock;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 
 public class WastelandTNTEffect extends PrimedTNTEffect {
 	
@@ -50,7 +50,7 @@ public class WastelandTNTEffect extends PrimedTNTEffect {
 				for(double offY = -radius; offY <= radius; offY++) {
 					for(double offZ = -radius; offZ <= radius; offZ++) {
 						double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-						BlockPos pos = new BlockPos(MathHelper.floor(ent.x() + offX), MathHelper.floor(ent.y() + offY), MathHelper.floor(ent.z() + offZ));
+						BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY), Mth.floor(ent.z() + offZ));
 						BlockState state = ent.getLevel().getBlockState(pos);
 						
 						if(distance <= radius) {

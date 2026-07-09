@@ -7,9 +7,9 @@ import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.registry.tag.BiomeTags;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.gen.GenerationStep;
 
 public class BiomeModificationRegistry {
@@ -19,10 +19,10 @@ public class BiomeModificationRegistry {
 	};
 
 	public static void init() {
-		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.UNDERGROUND_ORES, RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LuckyTNTMod.MODID, "gunpowder_ores")));
-		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.UNDERGROUND_ORES, RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LuckyTNTMod.MODID, "uranium_ores")));
+		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.UNDERGROUND_ORES, RegistryKey.of(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "gunpowder_ores")));
+		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.UNDERGROUND_ORES, RegistryKey.of(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "uranium_ores")));
 		
-		BiomeModifications.addFeature(GENERAL, GenerationStep.Feature.SURFACE_STRUCTURES, RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LuckyTNTMod.MODID, "graves")));
-		BiomeModifications.addFeature(GENERAL, GenerationStep.Feature.SURFACE_STRUCTURES, RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LuckyTNTMod.MODID, "altar")));
+		BiomeModifications.addFeature(GENERAL, GenerationStep.Feature.SURFACE_STRUCTURES, RegistryKey.of(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "graves")));
+		BiomeModifications.addFeature(GENERAL, GenerationStep.Feature.SURFACE_STRUCTURES, RegistryKey.of(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "altar")));
 	}
 }

@@ -6,7 +6,7 @@ import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 
 public class AirStrikeEffect extends PrimedTNTEffect{
 
@@ -17,7 +17,7 @@ public class AirStrikeEffect extends PrimedTNTEffect{
 				LExplosiveProjectile bomb = EntityRegistry.BOMB.get().create(entity.getLevel());
 				bomb.setPosition(entity.getPos().add(Math.random() * 100 - 50, LuckyTNTConfigValues.DROP_HEIGHT.get() + Math.random() * 50, Math.random() * 100 - 50));
 				bomb.setOwner(entity.owner());
-				entity.getLevel().spawnEntity(bomb);
+				entity.getLevel().addFreshEntity(bomb);
 			}
 		}
 	}

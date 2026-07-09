@@ -6,30 +6,30 @@ import luckytnt.registry.SoundRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.core.BlockPos;
 
 public class DeathRayEffect extends PrimedTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() == 480) {
-			NbtCompound tag = ent.getPersistentData();
+			CompoundTag tag = ent.getPersistentData();
 			tag.putInt("explosionSize", 1);
 			tag.putInt("particleSize", 1);
 			ent.setPersistentData(tag);
-			ent.getLevel().playSound(null, ent.x(), ent.y(), ent.z(), SoundRegistry.DEATH_RAY.get(), SoundCategory.HOSTILE, 20, 1);
-			((Entity)ent).setVelocity(0, 0, 0);
+			ent.getLevel().playSound(null, ent.x(), ent.y(), ent.z(), SoundRegistry.DEATH_RAY.get(), SoundSource.HOSTILE, 20, 1);
+			((Entity)ent).setDeltaMovement(0, 0, 0);
 		}
 		
 		if(ent.getTNTFuse() < 80) {
-			((Entity)ent).setVelocity(0, 0, 0);
+			((Entity)ent).setDeltaMovement(0, 0, 0);
 			((Entity)ent).setPosition(((Entity)ent).prevX, ((Entity)ent).prevY, ((Entity)ent).prevZ);
 			
 			int size = ent.getPersistentData().getInt("explosionSize");
@@ -58,7 +58,7 @@ public class DeathRayEffect extends PrimedTNTEffect {
 				}
 			}
 			
-			NbtCompound tag = ent.getPersistentData();
+			CompoundTag tag = ent.getPersistentData();
 			tag.putInt("explosionSize", ent.getPersistentData().getInt("explosionSize") + 1);
 			ent.setPersistentData(tag);
 		}
@@ -73,7 +73,7 @@ public class DeathRayEffect extends PrimedTNTEffect {
 			for(int count = 0; count < 200; count++) {
 				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.5f, 0f, 2f), 10f), true, ent.x() + Math.random() - Math.random(), ent.y() + 135f - Math.random() * ent.getPersistentData().getInt("particleSize"), ent.z() + Math.random() - Math.random(), 0, 0, 0);
 			}
-			NbtCompound tag = ent.getPersistentData();
+			CompoundTag tag = ent.getPersistentData();
 			tag.putInt("particleSize", ent.getPersistentData().getInt("particleSize") + 2);
 			ent.setPersistentData(tag);
 		}
