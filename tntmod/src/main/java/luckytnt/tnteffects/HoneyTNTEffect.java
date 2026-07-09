@@ -9,12 +9,12 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.BeehiveBlock;
+import net.minecraft.world.level.block.BeehiveBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.passive.BeeEntity;
+import net.minecraft.world.entity.animal.bee.Bee;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -45,7 +45,7 @@ public class HoneyTNTEffect extends PrimedTNTEffect{
 							level.setBlockState(pos, Blocks.BEE_NEST.getDefaultState().with(BeehiveBlock.FACING, getRandomDirectionHorizontal()).with(BeehiveBlock.HONEY_LEVEL, new Random().nextInt(6)));
 						}
 						if(Math.random() < 0.025f) {
-							BeeEntity bee = new BeeEntity(EntityType.BEE, level);
+							Bee bee = new Bee(EntityTypes.BEE, level);
 							bee.setPosition(pos.getX(), pos.getY(), pos.getZ());
 							level.addFreshEntity(bee);
 						}				

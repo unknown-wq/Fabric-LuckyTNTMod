@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.mob.GhastEntity;
+import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
@@ -58,7 +58,7 @@ public class HellfireTNTEffect extends PrimedTNTEffect{
 			}
 		});
 		for(int i = 0; i < ghastCount; i++) {
-			GhastEntity ghast = new GhastEntity(EntityType.GHAST, entity.getLevel());
+			Ghast ghast = new Ghast(EntityTypes.GHAST, entity.getLevel());
 			ghast.setPosition(entity.getPos().add(0, 20 + Math.random() * 20, 0));
 			entity.getLevel().playSound(ghast, ghast.getBlockPos(), SoundEvents.ENTITY_GHAST_HURT, SoundSource.HOSTILE, 3f, 1f);
 			entity.getLevel().addFreshEntity(ghast);

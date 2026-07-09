@@ -9,7 +9,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.FluidBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.block.PlantBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -28,7 +28,7 @@ public class FreezeTNTEffect extends PrimedTNTEffect{
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if((state.getBlock().getBlastResistance() < 100 || state.getBlock() instanceof FluidBlock) && !(state.getBlock() instanceof PlantBlock) && !state.isAir()) {
+				if((state.getBlock().getBlastResistance() < 100 || state.getBlock() instanceof LiquidBlock) && !(state.getBlock() instanceof PlantBlock) && !state.isAir()) {
 					state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlockState(pos, Blocks.ICE.getDefaultState());
 				}

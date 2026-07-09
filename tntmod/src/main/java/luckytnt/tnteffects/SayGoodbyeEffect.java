@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.registry.entry.RegistryEntry.Reference;
+import net.minecraft.core.Holder.Reference;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.resources.Identifier;

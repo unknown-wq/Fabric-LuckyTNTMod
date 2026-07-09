@@ -10,7 +10,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.FluidBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
@@ -29,7 +29,7 @@ public class SolarEruptionProjectileEffect extends PrimedTNTEffect {
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if((ent.y() - pos.getY()) >= 0 && (ent.y() - pos.getY()) <= 3) {
-					if((state.getBlock().getBlastResistance() < 100 || state.getBlock() instanceof FluidBlock || state.isAir()) && Materials.isStone(state)) {
+					if((state.getBlock().getBlastResistance() < 100 || state.getBlock() instanceof LiquidBlock || state.isAir()) && Materials.isStone(state)) {
 						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlockState(pos, Blocks.LAVA.getDefaultState(), 3);
 					}

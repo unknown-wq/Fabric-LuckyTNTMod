@@ -12,7 +12,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.entity.projectile.thrown.SnowballEntity;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
 import net.minecraft.core.particles.DustParticleEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,42 +49,42 @@ public class SnowstormTNTEffect extends PrimedTNTEffect {
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() % 4 == 0) {
 			Vec3 vec31 = new Vec3(0.5D, 1D, 0D).normalize();
-			SnowballEntity ball1 = new SnowballEntity(ent.getLevel(), ent.x() + 0.5D, ent.y() + 1D, ent.z());
+			Snowball ball1 = new Snowball(ent.getLevel(), ent.x() + 0.5D, ent.y() + 1D, ent.z());
 			ball1.setDeltaMovement(vec31.x, vec31.y, vec31.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball1);
 			
 			Vec3 vec32 = new Vec3(-0.5D, 1D, 0D).normalize();
-			SnowballEntity ball2 = new SnowballEntity(ent.getLevel(), ent.x() - 0.5D, ent.y() + 1D, ent.z());
+			Snowball ball2 = new Snowball(ent.getLevel(), ent.x() - 0.5D, ent.y() + 1D, ent.z());
 			ball2.setDeltaMovement(vec32.x, vec32.y, vec32.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball2);
 			
 			Vec3 vec33 = new Vec3(0D, 1D, 0.5D).normalize();
-			SnowballEntity ball3 = new SnowballEntity(ent.getLevel(), ent.x(), ent.y() + 1D, ent.z() + 0.5D);
+			Snowball ball3 = new Snowball(ent.getLevel(), ent.x(), ent.y() + 1D, ent.z() + 0.5D);
 			ball3.setDeltaMovement(vec33.x, vec33.y, vec33.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball3);
 			
 			Vec3 vec34 = new Vec3(0D, 1D, -0.5D).normalize();
-			SnowballEntity ball4 = new SnowballEntity(ent.getLevel(), ent.x(), ent.y() + 1D, ent.z() - 0.5D);
+			Snowball ball4 = new Snowball(ent.getLevel(), ent.x(), ent.y() + 1D, ent.z() - 0.5D);
 			ball4.setDeltaMovement(vec34.x, vec34.y, vec34.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball4);
 			
 			Vec3 vec35 = new Vec3(0.5D, 1D, 0.5D).normalize();
-			SnowballEntity ball5 = new SnowballEntity(ent.getLevel(), ent.x() + 0.5D, ent.y() + 1D, ent.z() + 0.5D);
+			Snowball ball5 = new Snowball(ent.getLevel(), ent.x() + 0.5D, ent.y() + 1D, ent.z() + 0.5D);
 			ball5.setDeltaMovement(vec35.x, vec35.y, vec35.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball5);
 			
 			Vec3 vec36 = new Vec3(-0.5D, 1D, 0.5D).normalize();
-			SnowballEntity ball6 = new SnowballEntity(ent.getLevel(), ent.x() - 0.5D, ent.y() + 1D, ent.z() + 0.5D);
+			Snowball ball6 = new Snowball(ent.getLevel(), ent.x() - 0.5D, ent.y() + 1D, ent.z() + 0.5D);
 			ball6.setDeltaMovement(vec36.x, vec36.y, vec36.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball6);
 			
 			Vec3 vec37 = new Vec3(0.5D, 1D, -0.5D).normalize();
-			SnowballEntity ball7 = new SnowballEntity(ent.getLevel(), ent.x() + 0.5D, ent.y() + 1D, ent.z() - 0.5D);
+			Snowball ball7 = new Snowball(ent.getLevel(), ent.x() + 0.5D, ent.y() + 1D, ent.z() - 0.5D);
 			ball7.setDeltaMovement(vec37.x, vec37.y, vec37.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball7);
 			
 			Vec3 vec38 = new Vec3(-0.5D, 1D, -0.5D).normalize();
-			SnowballEntity ball8 = new SnowballEntity(ent.getLevel(), ent.x() - 0.5D, ent.y() + 1D, ent.z() - 0.5D);
+			Snowball ball8 = new Snowball(ent.getLevel(), ent.x() - 0.5D, ent.y() + 1D, ent.z() - 0.5D);
 			ball8.setDeltaMovement(vec38.x, vec38.y, vec38.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball8);
 		}

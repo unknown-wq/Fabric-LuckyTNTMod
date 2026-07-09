@@ -12,10 +12,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.core.particles.DustParticleEffect;
 import net.minecraft.server.command.CommandOutput;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.world.phys.Vec2;
 
 public class ExtinctionEffect extends PrimedTNTEffect {
 
@@ -23,7 +23,7 @@ public class ExtinctionEffect extends PrimedTNTEffect {
 	public void serverExplosion(IExplosiveEntity ent) {
 		if(ent.getLevel() instanceof ServerLevel sLevel) {
 			try {
-				sLevel.getServer().getCommandManager().getDispatcher().execute("kill @e", new ServerCommandSource(CommandOutput.DUMMY, ent.getPos(), Vec2f.ZERO, sLevel, 4, "", Component.literal(""), ((Entity)ent).getServer(), ent.owner()));
+				sLevel.getServer().getCommandManager().getDispatcher().execute("kill @e", new CommandSourceStack(CommandOutput.DUMMY, ent.getPos(), Vec2.ZERO, sLevel, 4, "", Component.literal(""), ((Entity)ent).getServer(), ent.owner()));
 			} catch (CommandSyntaxException e) {
 				e.printStackTrace();
 			}

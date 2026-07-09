@@ -31,10 +31,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
-import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.PalettedContainer;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeKeys;
+import net.minecraft.world.level.chunk.ChunkSection;
+import net.minecraft.world.level.chunk.PalettedContainer;
 
 public class LevelEvents {
 
@@ -84,7 +84,7 @@ public class LevelEvents {
 								double offZ = Math.random() * 200 - Math.random() * 200;
 								for(double offY = 320; offY > -64; offY--) {
 									if(!level.getBlockState(new BlockPos(Mth.floor(x + offX), Mth.floor(offY), Mth.floor(z + offZ))).isAir()) {
-										Entity lighting = new LightningBolt(EntityType.LIGHTNING_BOLT,  level);
+										Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT,  level);
 										lighting.setPosition(x + offX, offY, z + offZ);
 										level.addFreshEntity(lighting);
 										break;

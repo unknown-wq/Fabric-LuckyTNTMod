@@ -1,7 +1,7 @@
 package luckytnt.registry;
 
 import net.fabricmc.fabric.impl.blockrenderlayer.BlockRenderLayerMapImpl;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
 
 public class RenderLayerRegistry {
 

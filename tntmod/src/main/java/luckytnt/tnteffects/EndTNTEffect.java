@@ -46,7 +46,7 @@ public class EndTNTEffect extends PrimedTNTEffect {
 							}
 						}
 						if(Math.random() < 0.025f) {
-							EndermanEntity enderman = EntityType.ENDERMAN.create(level);
+							EndermanEntity enderman = EntityTypes.ENDERMAN.create(level);
 							enderman.setPosition(new Vec3(pos.getX(), pos.getY() + 1f, pos.getZ()));
 							level.addFreshEntity(enderman);
 						}

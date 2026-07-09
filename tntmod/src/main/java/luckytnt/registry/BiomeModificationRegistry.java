@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.gen.GenerationStep;
+import net.minecraft.world.level.levelgen.GenerationStep;
 
 public class BiomeModificationRegistry {
 	

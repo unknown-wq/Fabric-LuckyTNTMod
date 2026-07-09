@@ -14,8 +14,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.core.particles.DustParticleEffect;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -84,7 +84,7 @@ public class StoneColdEffect extends PrimedTNTEffect {
 		
 		List<LivingEntity> entities = ent.getLevel().getNonSpectatingEntities(LivingEntity.class, new Box(ent.x() - 90, ent.y() - 90, ent.z() - 90, ent.x() + 90, ent.y() + 90, ent.z() + 90));
 		for(LivingEntity lEnt : entities) {
-			lEnt.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 800, 2));
+			lEnt.addStatusEffect(new MobEffectInstance(MobEffects.SLOWNESS, 800, 2));
 		}
 	}
 	

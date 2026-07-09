@@ -10,8 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.mob.WitherSkeletonEntity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,9 +44,9 @@ public class WitheringTNTEffect extends PrimedTNTEffect {
 		for(int i = 0; i < strength * 2f; i++) {
 			int offX = (int)Math.round(Math.random() * strength * 2f - strength);
 			int offZ = (int)Math.round(Math.random() * strength * 2f - strength);
-			WitherSkeletonEntity skeleton = new WitherSkeletonEntity(EntityType.WITHER_SKELETON, entity.getLevel());
+			WitherSkeleton skeleton = new WitherSkeleton(EntityTypes.WITHER_SKELETON, entity.getLevel());
 			if(entity.getLevel() instanceof ServerLevel sl) {
-				skeleton.initialize(sl, entity.getLevel().getLocalDifficulty(toBlockPos(entity.getPos())), SpawnReason.MOB_SUMMONED, null);
+				skeleton.initialize(sl, entity.getLevel().getLocalDifficulty(toBlockPos(entity.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
 			}
 			for(int y = entity.getLevel().getTopY(); y >= entity.getLevel().getBottomY(); y--) {
 				BlockPos pos = new BlockPos(Mth.floor(entity.x() + offX), y, Mth.floor(entity.z() + offZ));

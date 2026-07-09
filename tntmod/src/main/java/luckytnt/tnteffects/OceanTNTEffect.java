@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.passive.SquidEntity;
+import net.minecraft.world.entity.animal.squid.Squid;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -54,7 +54,7 @@ public class OceanTNTEffect extends PrimedTNTEffect {
 		});
 		
 		for(int i = 0; i < squidCound; i++) {
-			SquidEntity squid = new SquidEntity(EntityType.SQUID, entity.getLevel());
+			Squid squid = new Squid(EntityTypes.SQUID, entity.getLevel());
 			squid.setPosition(entity.x() + (Math.random() * radius * 2 - radius), entity.y(), entity.z() + (Math.random() * radius * 2 - radius));
 			entity.getLevel().addFreshEntity(squid);
 		}

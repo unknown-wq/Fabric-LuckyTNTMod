@@ -13,33 +13,33 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.FluidBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.passive.SquidEntity;
-import net.minecraft.fluid.Fluids;
+import net.minecraft.world.entity.animal.squid.Squid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.structure.StructureStart;
-import net.minecraft.util.math.BlockBox;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
-import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.PalettedContainer;
-import net.minecraft.world.chunk.ReadableContainer;
-import net.minecraft.world.gen.structure.Structure;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeKeys;
+import net.minecraft.world.level.chunk.ChunkSection;
+import net.minecraft.world.level.chunk.PalettedContainer;
+import net.minecraft.world.level.chunk.ReadableContainer;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.gen.structure.StructureKeys;
 
 public class AtlantisEffect extends PrimedTNTEffect {
@@ -117,7 +117,7 @@ public class AtlantisEffect extends PrimedTNTEffect {
 				BlockState stateTop = level.getBlockState(posTop);
 				
 				if(((ent.y() + 8) - pos.getY()) >= 0 && ((ent.y() + 8) - pos.getY()) <= 50) {
-					if((state.getBlock().getBlastResistance() < 0 || state.getBlock() instanceof FluidBlock || state.isAir()) && !Materials.isStone(state)) {
+					if((state.getBlock().getBlastResistance() < 0 || state.getBlock() instanceof LiquidBlock || state.isAir()) && !Materials.isStone(state)) {
 						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlockState(pos, Blocks.WATER.getDefaultState(), 3);
 					}
@@ -130,7 +130,7 @@ public class AtlantisEffect extends PrimedTNTEffect {
 		});
 		
 		for(int count = 0; count < 40; count++) {
-			Entity squid = new SquidEntity(EntityType.SQUID, ent.getLevel());
+			Entity squid = new Squid(EntityTypes.SQUID, ent.getLevel());
 			squid.setPosition(ent.x() + 50 * Math.random() - 50 * Math.random(), ent.y() + 8, ent.z() + 50 * Math.random() - 50 * Math.random());
 			ent.getLevel().addFreshEntity(squid);
 		}

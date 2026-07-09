@@ -9,7 +9,7 @@ import luckytnt.commands.RandomTNTCommand;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.Commands.RegistrationEnvironment;
+
 import net.minecraft.commands.CommandSourceStack;
 
 public class CommandRegistry {
@@ -17,8 +17,8 @@ public class CommandRegistry {
 	private static final CommandRegistrationCallback LTMDISASTER = new CommandRegistrationCallback() {
 		
 		@Override
-		public void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, RegistrationEnvironment environment) {
-			dispatcher.register(Commands.literal("ltmdisaster").requires(s -> s.hasPermissionLevel(2)).executes(LTMDisastersCommand::executeGetActiveDisasters)
+		public void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
+			dispatcher.register(Commands.literal("ltmdisaster").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS)).executes(LTMDisastersCommand::executeGetActiveDisasters)
 					.then(Commands.literal("clear").executes(LTMDisastersCommand::executeClear))
 					.then(Commands.literal("doomsday").executes(LTMDisastersCommand::executeDoomsday))
 					.then(Commands.literal("toxic_clouds").executes(LTMDisastersCommand::executeToxicClouds))
@@ -31,8 +31,8 @@ public class CommandRegistry {
 	private static final CommandRegistrationCallback RANDOMTNT = new CommandRegistrationCallback() {
 		
 		@Override
-		public void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, RegistrationEnvironment environment) {
-			dispatcher.register(Commands.literal("randomtnt").requires(s -> s.hasPermissionLevel(2))
+		public void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
+			dispatcher.register(Commands.literal("randomtnt").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
 					
 					.then(Commands.literal("normal_tnt")
 					.then(Commands.argument("amount", IntegerArgumentType.integer(1)).executes((p) -> {

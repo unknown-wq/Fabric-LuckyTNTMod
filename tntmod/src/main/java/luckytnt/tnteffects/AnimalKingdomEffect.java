@@ -10,71 +10,71 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.mob.BlazeEntity;
-import net.minecraft.entity.mob.CaveSpiderEntity;
-import net.minecraft.entity.mob.CreeperEntity;
-import net.minecraft.entity.mob.DrownedEntity;
-import net.minecraft.entity.mob.ElderGuardianEntity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.monster.Blaze;
+import net.minecraft.world.entity.monster.spider.CaveSpider;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.zombie.Drowned;
+import net.minecraft.world.entity.monster.ElderGuardian;
 import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.entity.mob.EndermiteEntity;
-import net.minecraft.entity.mob.EvokerEntity;
-import net.minecraft.entity.mob.GhastEntity;
-import net.minecraft.entity.mob.GiantEntity;
-import net.minecraft.entity.mob.GuardianEntity;
-import net.minecraft.entity.mob.HoglinEntity;
-import net.minecraft.entity.mob.HuskEntity;
-import net.minecraft.entity.mob.MagmaCubeEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.PhantomEntity;
-import net.minecraft.entity.mob.PiglinBruteEntity;
-import net.minecraft.entity.mob.PiglinEntity;
-import net.minecraft.entity.mob.PillagerEntity;
-import net.minecraft.entity.mob.RavagerEntity;
-import net.minecraft.entity.mob.ShulkerEntity;
-import net.minecraft.entity.mob.SilverfishEntity;
-import net.minecraft.entity.mob.SkeletonEntity;
-import net.minecraft.entity.mob.SkeletonHorseEntity;
-import net.minecraft.entity.mob.SlimeEntity;
-import net.minecraft.entity.mob.SpiderEntity;
-import net.minecraft.entity.mob.StrayEntity;
-import net.minecraft.entity.mob.VexEntity;
-import net.minecraft.entity.mob.VindicatorEntity;
-import net.minecraft.entity.mob.WitchEntity;
-import net.minecraft.entity.mob.WitherSkeletonEntity;
-import net.minecraft.entity.mob.ZoglinEntity;
-import net.minecraft.entity.mob.ZombieEntity;
-import net.minecraft.entity.mob.ZombieHorseEntity;
-import net.minecraft.entity.mob.ZombieVillagerEntity;
-import net.minecraft.entity.mob.ZombifiedPiglinEntity;
-import net.minecraft.entity.passive.AllayEntity;
-import net.minecraft.entity.passive.AxolotlEntity;
-import net.minecraft.entity.passive.BatEntity;
-import net.minecraft.entity.passive.BeeEntity;
-import net.minecraft.entity.passive.CatEntity;
-import net.minecraft.entity.passive.ChickenEntity;
-import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.entity.passive.DonkeyEntity;
-import net.minecraft.entity.passive.FoxEntity;
-import net.minecraft.entity.passive.FrogEntity;
-import net.minecraft.entity.passive.GoatEntity;
-import net.minecraft.entity.passive.HorseEntity;
-import net.minecraft.entity.passive.IronGolemEntity;
-import net.minecraft.entity.passive.LlamaEntity;
+import net.minecraft.world.entity.monster.Endermite;
+import net.minecraft.world.entity.monster.illager.Evoker;
+import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.monster.Giant;
+import net.minecraft.world.entity.monster.Guardian;
+import net.minecraft.world.entity.monster.hoglin.Hoglin;
+import net.minecraft.world.entity.monster.zombie.Husk;
+import net.minecraft.world.entity.monster.cubemob.MagmaCube;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Phantom;
+import net.minecraft.world.entity.monster.piglin.PiglinBrute;
+import net.minecraft.world.entity.monster.piglin.Piglin;
+import net.minecraft.world.entity.monster.illager.Pillager;
+import net.minecraft.world.entity.monster.Ravager;
+import net.minecraft.world.entity.monster.Shulker;
+import net.minecraft.world.entity.monster.Silverfish;
+import net.minecraft.world.entity.monster.skeleton.Skeleton;
+import net.minecraft.world.entity.animal.equine.SkeletonHorse;
+import net.minecraft.world.entity.monster.cubemob.Slime;
+import net.minecraft.world.entity.monster.spider.Spider;
+import net.minecraft.world.entity.monster.skeleton.Stray;
+import net.minecraft.world.entity.monster.Vex;
+import net.minecraft.world.entity.monster.illager.Vindicator;
+import net.minecraft.world.entity.monster.Witch;
+import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
+import net.minecraft.world.entity.monster.Zoglin;
+import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.animal.equine.ZombieHorse;
+import net.minecraft.world.entity.monster.zombie.ZombieVillager;
+import net.minecraft.world.entity.monster.zombie.ZombifiedPiglin;
+import net.minecraft.world.entity.animal.allay.Allay;
+import net.minecraft.world.entity.animal.axolotl.Axolotl;
+import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.entity.animal.bee.Bee;
+import net.minecraft.world.entity.animal.feline.Cat;
+import net.minecraft.world.entity.animal.chicken.Chicken;
+import net.minecraft.world.entity.animal.cow.Cow;
+import net.minecraft.world.entity.animal.equine.Donkey;
+import net.minecraft.world.entity.animal.fox.Fox;
+import net.minecraft.world.entity.animal.frog.Frog;
+import net.minecraft.world.entity.animal.goat.Goat;
+import net.minecraft.world.entity.animal.equine.Horse;
+import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.animal.equine.Llama;
 import net.minecraft.entity.passive.MooshroomEntity;
-import net.minecraft.entity.passive.MuleEntity;
-import net.minecraft.entity.passive.OcelotEntity;
-import net.minecraft.entity.passive.PandaEntity;
-import net.minecraft.entity.passive.ParrotEntity;
-import net.minecraft.entity.passive.PigEntity;
-import net.minecraft.entity.passive.PolarBearEntity;
-import net.minecraft.entity.passive.RabbitEntity;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.entity.passive.SnowGolemEntity;
-import net.minecraft.entity.passive.StriderEntity;
-import net.minecraft.entity.passive.TurtleEntity;
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.entity.passive.WolfEntity;
+import net.minecraft.world.entity.animal.equine.Mule;
+import net.minecraft.world.entity.animal.feline.Ocelot;
+import net.minecraft.world.entity.animal.panda.Panda;
+import net.minecraft.world.entity.animal.parrot.Parrot;
+import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.animal.polarbear.PolarBear;
+import net.minecraft.world.entity.animal.rabbit.Rabbit;
+import net.minecraft.world.entity.animal.sheep.Sheep;
+import net.minecraft.world.entity.animal.golem.SnowGolem;
+import net.minecraft.world.entity.monster.Strider;
+import net.minecraft.world.entity.animal.turtle.Turtle;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -84,261 +84,261 @@ public class AnimalKingdomEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		List<MobEntity> list = new ArrayList<>();
+		List<Mob> list = new ArrayList<>();
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new AllayEntity(EntityType.ALLAY, ent.getLevel());
+			Mob mob = new Allay(EntityTypes.ALLAY, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new AxolotlEntity(EntityType.AXOLOTL, ent.getLevel());
+			Mob mob = new Axolotl(EntityTypes.AXOLOTL, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new BatEntity(EntityType.BAT, ent.getLevel());
+			Mob mob = new Bat(EntityTypes.BAT, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new BeeEntity(EntityType.BEE, ent.getLevel());
+			Mob mob = new Bee(EntityTypes.BEE, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new BlazeEntity(EntityType.BLAZE, ent.getLevel());
+			Mob mob = new Blaze(EntityTypes.BLAZE, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new CatEntity(EntityType.CAT, ent.getLevel());
+			Mob mob = new Cat(EntityTypes.CAT, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new CaveSpiderEntity(EntityType.CAVE_SPIDER, ent.getLevel());
+			Mob mob = new CaveSpider(EntityTypes.CAVE_SPIDER, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new ChickenEntity(EntityType.CHICKEN, ent.getLevel());
+			Mob mob = new Chicken(EntityTypes.CHICKEN, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new CowEntity(EntityType.COW, ent.getLevel());
+			Mob mob = new Cow(EntityTypes.COW, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new CreeperEntity(EntityType.CREEPER, ent.getLevel());
+			Mob mob = new Creeper(EntityTypes.CREEPER, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new DonkeyEntity(EntityType.DONKEY, ent.getLevel());
+			Mob mob = new Donkey(EntityTypes.DONKEY, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new DrownedEntity(EntityType.DROWNED, ent.getLevel());
+			Mob mob = new Drowned(EntityTypes.DROWNED, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 2 + new Random().nextInt(2); i++) {
-			MobEntity mob = new ElderGuardianEntity(EntityType.ELDER_GUARDIAN, ent.getLevel());
+			Mob mob = new ElderGuardian(EntityTypes.ELDER_GUARDIAN, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new EndermanEntity(EntityType.ENDERMAN, ent.getLevel());
+			Mob mob = new EndermanEntity(EntityTypes.ENDERMAN, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new EndermiteEntity(EntityType.ENDERMITE, ent.getLevel());
+			Mob mob = new Endermite(EntityTypes.ENDERMITE, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 2 + new Random().nextInt(2); i++) {
-			MobEntity mob = new EvokerEntity(EntityType.EVOKER, ent.getLevel());
+			Mob mob = new Evoker(EntityTypes.EVOKER, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new FoxEntity(EntityType.FOX, ent.getLevel());
+			Mob mob = new Fox(EntityTypes.FOX, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new FrogEntity(EntityType.FROG, ent.getLevel());
+			Mob mob = new Frog(EntityTypes.FROG, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new GhastEntity(EntityType.GHAST, ent.getLevel());
+			Mob mob = new Ghast(EntityTypes.GHAST, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new GiantEntity(EntityType.GIANT, ent.getLevel());
+			Mob mob = new Giant(EntityTypes.GIANT, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new GoatEntity(EntityType.GOAT, ent.getLevel());
+			Mob mob = new Goat(EntityTypes.GOAT, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new GuardianEntity(EntityType.GUARDIAN, ent.getLevel());
+			Mob mob = new Guardian(EntityTypes.GUARDIAN, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 2 + new Random().nextInt(2); i++) {
-			MobEntity mob = new HoglinEntity(EntityType.HOGLIN, ent.getLevel());
+			Mob mob = new Hoglin(EntityTypes.HOGLIN, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new HorseEntity(EntityType.HORSE, ent.getLevel());
+			Mob mob = new Horse(EntityTypes.HORSE, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new HuskEntity(EntityType.HUSK, ent.getLevel());
+			Mob mob = new Husk(EntityTypes.HUSK, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new IronGolemEntity(EntityType.IRON_GOLEM, ent.getLevel());
+			Mob mob = new IronGolem(EntityTypes.IRON_GOLEM, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new LlamaEntity(EntityType.LLAMA, ent.getLevel());
+			Mob mob = new Llama(EntityTypes.LLAMA, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new MagmaCubeEntity(EntityType.MAGMA_CUBE, ent.getLevel());
+			Mob mob = new MagmaCube(EntityTypes.MAGMA_CUBE, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new MooshroomEntity(EntityType.MOOSHROOM, ent.getLevel());
+			Mob mob = new MooshroomEntity(EntityTypes.MOOSHROOM, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new MuleEntity(EntityType.MULE, ent.getLevel());
+			Mob mob = new Mule(EntityTypes.MULE, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new OcelotEntity(EntityType.OCELOT, ent.getLevel());
+			Mob mob = new Ocelot(EntityTypes.OCELOT, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new PandaEntity(EntityType.PANDA, ent.getLevel());
+			Mob mob = new Panda(EntityTypes.PANDA, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new ParrotEntity(EntityType.PARROT, ent.getLevel());
+			Mob mob = new Parrot(EntityTypes.PARROT, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new PhantomEntity(EntityType.PHANTOM, ent.getLevel());
+			Mob mob = new Phantom(EntityTypes.PHANTOM, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new PigEntity(EntityType.PIG, ent.getLevel());
+			Mob mob = new Pig(EntityTypes.PIG, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new PiglinEntity(EntityType.PIGLIN, ent.getLevel());
+			Mob mob = new Piglin(EntityTypes.PIGLIN, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new PiglinBruteEntity(EntityType.PIGLIN_BRUTE, ent.getLevel());
+			Mob mob = new PiglinBrute(EntityTypes.PIGLIN_BRUTE, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new PillagerEntity(EntityType.PILLAGER, ent.getLevel());
+			Mob mob = new Pillager(EntityTypes.PILLAGER, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new PolarBearEntity(EntityType.POLAR_BEAR, ent.getLevel());
+			Mob mob = new PolarBear(EntityTypes.POLAR_BEAR, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new RabbitEntity(EntityType.RABBIT, ent.getLevel());
+			Mob mob = new Rabbit(EntityTypes.RABBIT, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 2; i++) {
-			MobEntity mob = new RavagerEntity(EntityType.RAVAGER, ent.getLevel());
+			Mob mob = new Ravager(EntityTypes.RAVAGER, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new SheepEntity(EntityType.SHEEP, ent.getLevel());
+			Mob mob = new Sheep(EntityTypes.SHEEP, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new ShulkerEntity(EntityType.SHULKER, ent.getLevel());
+			Mob mob = new Shulker(EntityTypes.SHULKER, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new SilverfishEntity(EntityType.SILVERFISH, ent.getLevel());
+			Mob mob = new Silverfish(EntityTypes.SILVERFISH, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new SkeletonEntity(EntityType.SKELETON, ent.getLevel());
+			Mob mob = new Skeleton(EntityTypes.SKELETON, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new SkeletonHorseEntity(EntityType.SKELETON_HORSE, ent.getLevel());
+			Mob mob = new SkeletonHorse(EntityTypes.SKELETON_HORSE, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new SlimeEntity(EntityType.SLIME, ent.getLevel());
+			Mob mob = new Slime(EntityTypes.SLIME, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new SnowGolemEntity(EntityType.SNOW_GOLEM, ent.getLevel());
+			Mob mob = new SnowGolem(EntityTypes.SNOW_GOLEM, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new SpiderEntity(EntityType.SPIDER, ent.getLevel());
+			Mob mob = new Spider(EntityTypes.SPIDER, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new StrayEntity(EntityType.STRAY, ent.getLevel());
+			Mob mob = new Stray(EntityTypes.STRAY, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new StriderEntity(EntityType.STRIDER, ent.getLevel());
+			Mob mob = new Strider(EntityTypes.STRIDER, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new TurtleEntity(EntityType.TURTLE, ent.getLevel());
+			Mob mob = new Turtle(EntityTypes.TURTLE, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new VexEntity(EntityType.VEX, ent.getLevel());
+			Mob mob = new Vex(EntityTypes.VEX, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new VillagerEntity(EntityType.VILLAGER, ent.getLevel());
+			Mob mob = new Villager(EntityTypes.VILLAGER, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new VindicatorEntity(EntityType.VINDICATOR, ent.getLevel());
+			Mob mob = new Vindicator(EntityTypes.VINDICATOR, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new WitchEntity(EntityType.WITCH, ent.getLevel());
+			Mob mob = new Witch(EntityTypes.WITCH, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new WitherSkeletonEntity(EntityType.WITHER_SKELETON, ent.getLevel());
+			Mob mob = new WitherSkeleton(EntityTypes.WITHER_SKELETON, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new WolfEntity(EntityType.WOLF, ent.getLevel());
+			Mob mob = new Wolf(EntityTypes.WOLF, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new ZoglinEntity(EntityType.ZOGLIN, ent.getLevel());
+			Mob mob = new Zoglin(EntityTypes.ZOGLIN, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new ZombieEntity(EntityType.ZOMBIE, ent.getLevel());
+			Mob mob = new Zombie(EntityTypes.ZOMBIE, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new ZombieHorseEntity(EntityType.ZOMBIE_HORSE, ent.getLevel());
+			Mob mob = new ZombieHorse(EntityTypes.ZOMBIE_HORSE, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new ZombieVillagerEntity(EntityType.ZOMBIE_VILLAGER, ent.getLevel());
+			Mob mob = new ZombieVillager(EntityTypes.ZOMBIE_VILLAGER, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			MobEntity mob = new ZombifiedPiglinEntity(EntityType.ZOMBIFIED_PIGLIN, ent.getLevel());
+			Mob mob = new ZombifiedPiglin(EntityTypes.ZOMBIFIED_PIGLIN, ent.getLevel());
 			list.add(mob);
 		}
 		
-		for(MobEntity mob : list) {
+		for(Mob mob : list) {
 			int offX = new Random().nextInt(101) - 50;
 			int offZ = new Random().nextInt(101) - 50;
 			for(int y = ent.getLevel().getTopY(); y > ent.getLevel().getBottomY(); y--) {
@@ -347,7 +347,7 @@ public class AnimalKingdomEffect extends PrimedTNTEffect {
 				if(Block.isFaceFullSquare(ent.getLevel().getBlockState(pos.down()).getCollisionShape(ent.getLevel(), pos.down()), Direction.UP) && !Block.isFaceFullSquare(state.getCollisionShape(ent.getLevel(), pos), Direction.UP)) {
 					mob.setPosition(pos.getX(), pos.getY(), pos.getZ());
 					if(ent.getLevel() instanceof ServerLevel sl) {
-						mob.initialize(sl, ent.getLevel().getLocalDifficulty(pos), SpawnReason.MOB_SUMMONED, null);
+						mob.initialize(sl, ent.getLevel().getLocalDifficulty(pos), EntitySpawnReason.MOB_SUMMONED, null);
 					}
 					ent.getLevel().addFreshEntity(mob);
 					break;

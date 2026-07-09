@@ -11,10 +11,10 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.FluidBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.mob.GhastEntity;
+import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,7 +29,7 @@ public class FieryHellEffect extends PrimedTNTEffect {
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if((Math.round(ent.y()) - pos.getY()) >= 0 && (Math.round(ent.y()) - pos.getY()) <= 20) {
-					if((state.getBlock().getBlastResistance() < 100 || state.getBlock() instanceof FluidBlock || state.isAir()) && !Materials.isStone(state)) {
+					if((state.getBlock().getBlastResistance() < 100 || state.getBlock() instanceof LiquidBlock || state.isAir()) && !Materials.isStone(state)) {
 						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlockState(pos, Blocks.LAVA.getDefaultState(), 3);
 					} 
@@ -64,7 +64,7 @@ public class FieryHellEffect extends PrimedTNTEffect {
 		EntityRegistry.TNT_X20_EFFECT.build().serverExplosion(ent);
 		
 		for(int count = 0; count < 15; count++) {
-			Entity ghast = new GhastEntity(EntityType.GHAST, ent.getLevel());
+			Entity ghast = new Ghast(EntityTypes.GHAST, ent.getLevel());
 			ghast.setPosition(ent.x() + 20 * Math.random() - 20 * Math.random(), ent.y() + 50 / 2 * Math.random() + 50 / 2, ent.z() + 20 * Math.random() - 20 * Math.random());
 			ent.getLevel().addFreshEntity(ghast);
 		}

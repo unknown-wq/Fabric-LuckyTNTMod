@@ -15,13 +15,13 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.FarmlandBlock;
-import net.minecraft.block.FluidBlock;
-import net.minecraft.block.GrassBlock;
-import net.minecraft.block.MyceliumBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.GrassBlock;
+import net.minecraft.world.level.block.MyceliumBlock;
 import net.minecraft.core.particles.DustParticleEffect;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.state.property.Properties;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -151,22 +151,22 @@ public class PlantationTNTEffect extends PrimedTNTEffect {
 	
 	public void placeWater(BlockPos pos, IExplosiveEntity ent) {
 		boolean placed = false; 
-		if(!ent.getLevel().getBlockState(pos.north()).isFullCube(ent.getLevel(), pos.north()) && !(ent.getLevel().getBlockState(pos.north()).getBlock() instanceof FarmlandBlock) && !(ent.getLevel().getBlockState(pos.north()).getBlock() instanceof FluidBlock)) {
+		if(!ent.getLevel().getBlockState(pos.north()).isFullCube(ent.getLevel(), pos.north()) && !(ent.getLevel().getBlockState(pos.north()).getBlock() instanceof FarmlandBlock) && !(ent.getLevel().getBlockState(pos.north()).getBlock() instanceof LiquidBlock)) {
 			placeCropsAndFarmland(pos.north(), false, ent);
 		} 
-		if(!ent.getLevel().getBlockState(pos.south()).isFullCube(ent.getLevel(), pos.south()) && !(ent.getLevel().getBlockState(pos.south()).getBlock() instanceof FarmlandBlock) && !(ent.getLevel().getBlockState(pos.south()).getBlock() instanceof FluidBlock)) {
+		if(!ent.getLevel().getBlockState(pos.south()).isFullCube(ent.getLevel(), pos.south()) && !(ent.getLevel().getBlockState(pos.south()).getBlock() instanceof FarmlandBlock) && !(ent.getLevel().getBlockState(pos.south()).getBlock() instanceof LiquidBlock)) {
 			placeCropsAndFarmland(pos.south(), false, ent);
 		} 
-		if(!ent.getLevel().getBlockState(pos.east()).isFullCube(ent.getLevel(), pos.east()) && !(ent.getLevel().getBlockState(pos.east()).getBlock() instanceof FarmlandBlock) && !(ent.getLevel().getBlockState(pos.east()).getBlock() instanceof FluidBlock)) {
+		if(!ent.getLevel().getBlockState(pos.east()).isFullCube(ent.getLevel(), pos.east()) && !(ent.getLevel().getBlockState(pos.east()).getBlock() instanceof FarmlandBlock) && !(ent.getLevel().getBlockState(pos.east()).getBlock() instanceof LiquidBlock)) {
 			placeCropsAndFarmland(pos.east(), false, ent);
 		} 
-		if(!ent.getLevel().getBlockState(pos.west()).isFullCube(ent.getLevel(), pos.west()) && !(ent.getLevel().getBlockState(pos.west()).getBlock() instanceof FarmlandBlock) && !(ent.getLevel().getBlockState(pos.west()).getBlock() instanceof FluidBlock)) {
+		if(!ent.getLevel().getBlockState(pos.west()).isFullCube(ent.getLevel(), pos.west()) && !(ent.getLevel().getBlockState(pos.west()).getBlock() instanceof FarmlandBlock) && !(ent.getLevel().getBlockState(pos.west()).getBlock() instanceof LiquidBlock)) {
 			placeCropsAndFarmland(pos.west(), false, ent);
 		}
-		if((ent.getLevel().getBlockState(pos.north()).isFullCube(ent.getLevel(), pos.north()) || ent.getLevel().getBlockState(pos.north()).getBlock() instanceof FarmlandBlock || ent.getLevel().getBlockState(pos.north()).getBlock() instanceof FluidBlock) 
-			&& (ent.getLevel().getBlockState(pos.south()).isFullCube(ent.getLevel(), pos.south()) || ent.getLevel().getBlockState(pos.south()).getBlock() instanceof FarmlandBlock || ent.getLevel().getBlockState(pos.south()).getBlock() instanceof FluidBlock) 
-			&& (ent.getLevel().getBlockState(pos.east()).isFullCube(ent.getLevel(), pos.east()) || ent.getLevel().getBlockState(pos.east()).getBlock() instanceof FarmlandBlock || ent.getLevel().getBlockState(pos.east()).getBlock() instanceof FluidBlock) 
-			&& (ent.getLevel().getBlockState(pos.west()).isFullCube(ent.getLevel(), pos.west()) || ent.getLevel().getBlockState(pos.west()).getBlock() instanceof FarmlandBlock || ent.getLevel().getBlockState(pos.west()).getBlock() instanceof FluidBlock)) 
+		if((ent.getLevel().getBlockState(pos.north()).isFullCube(ent.getLevel(), pos.north()) || ent.getLevel().getBlockState(pos.north()).getBlock() instanceof FarmlandBlock || ent.getLevel().getBlockState(pos.north()).getBlock() instanceof LiquidBlock) 
+			&& (ent.getLevel().getBlockState(pos.south()).isFullCube(ent.getLevel(), pos.south()) || ent.getLevel().getBlockState(pos.south()).getBlock() instanceof FarmlandBlock || ent.getLevel().getBlockState(pos.south()).getBlock() instanceof LiquidBlock) 
+			&& (ent.getLevel().getBlockState(pos.east()).isFullCube(ent.getLevel(), pos.east()) || ent.getLevel().getBlockState(pos.east()).getBlock() instanceof FarmlandBlock || ent.getLevel().getBlockState(pos.east()).getBlock() instanceof LiquidBlock) 
+			&& (ent.getLevel().getBlockState(pos.west()).isFullCube(ent.getLevel(), pos.west()) || ent.getLevel().getBlockState(pos.west()).getBlock() instanceof FarmlandBlock || ent.getLevel().getBlockState(pos.west()).getBlock() instanceof LiquidBlock)) 
 		{
 			ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 			ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);

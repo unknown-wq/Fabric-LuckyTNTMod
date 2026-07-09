@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.DustParticleEffect;
 
@@ -30,9 +30,9 @@ public class ToxicCloudEffect extends PrimedTNTEffect {
 		((Entity)ent).setPosition(((Entity)ent).prevX, ((Entity)ent).prevY, ((Entity)ent).prevZ);
 		List<LivingEntity> list = ent.getLevel().getNonSpectatingEntities(LivingEntity.class, ((Entity)ent).getBoundingBox());
 		for(LivingEntity lent : list) {
-			lent.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 80, 4));
-			lent.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 400, 0));
-			lent.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 80, 2));
+			lent.addStatusEffect(new MobEffectInstance(MobEffects.POISON, 80, 4));
+			lent.addStatusEffect(new MobEffectInstance(MobEffects.NAUSEA, 400, 0));
+			lent.addStatusEffect(new MobEffectInstance(MobEffects.SLOWNESS, 80, 2));
 		}
 	}
 	

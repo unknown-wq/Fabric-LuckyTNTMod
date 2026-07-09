@@ -22,12 +22,12 @@ import net.minecraft.block.CoralParentBlock;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.core.particles.DustParticleEffect;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.DyeColor;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.util.Mth;
@@ -146,20 +146,20 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 		}
 		
 		for(int i = 0; i <= 60 + new Random().nextInt(21); i++) {
-			SheepEntity sheep = new SheepEntity(EntityType.SHEEP, ent.getLevel());
+			Sheep sheep = new Sheep(EntityTypes.SHEEP, ent.getLevel());
 			
 			int x = new Random().nextInt(151) - 75;
 			int z = new Random().nextInt(151) - 75;
 			
 			sheep.setPosition(ent.x() + x, LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1, ent.z() + z);
-			sheep.initialize((ServerLevel)ent.getLevel(), ent.getLevel().getLocalDifficulty(toBlockPos(ent.getPos())), SpawnReason.MOB_SUMMONED, null);
+			sheep.initialize((ServerLevel)ent.getLevel(), ent.getLevel().getLocalDifficulty(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
 			ent.getLevel().addFreshEntity(sheep);
 		}
 		
 		BlockPos min = toBlockPos(ent.getPos()).add(100, 100, 100);
 		BlockPos max = toBlockPos(ent.getPos()).add(-100, -100, -100);
-		List<SheepEntity> list = ent.getLevel().getNonSpectatingEntities(SheepEntity.class, new Box(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
-		for(SheepEntity sheep : list) {
+		List<Sheep> list = ent.getLevel().getNonSpectatingEntities(Sheep.class, new Box(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
+		for(Sheep sheep : list) {
 			sheep.setColor(randomColor());
 		}
 	}

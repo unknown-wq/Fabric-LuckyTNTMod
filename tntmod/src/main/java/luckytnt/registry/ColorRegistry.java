@@ -4,11 +4,11 @@ import net.fabricmc.fabric.impl.client.rendering.ColorProviderRegistryImpl;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.color.block.BlockColorProvider;
 import net.minecraft.client.color.item.ItemColorProvider;
-import net.minecraft.client.color.world.BiomeColors;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.BlockRenderView;
-import net.minecraft.world.biome.GrassColors;
+import net.minecraft.world.level.biome.GrassColors;
 
 public class ColorRegistry {
 	

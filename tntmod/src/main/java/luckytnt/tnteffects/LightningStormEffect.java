@@ -9,7 +9,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.LightningEntity;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
@@ -28,7 +28,7 @@ public class LightningStormEffect extends PrimedTNTEffect {
 					double offZ = Math.random() * 150D - 75D;
 					for(int offY = ent.getLevel().getTopY(); offY > ent.getLevel().getBottomY(); offY--) {
 						if(!ent.getLevel().getBlockState(new BlockPos(Mth.floor(ent.x() + offX), offY, Mth.floor(ent.z() + offZ))).isAir()) {
-							Entity lighting = new LightningEntity(EntityType.LIGHTNING_BOLT, ent.getLevel());
+							Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, ent.getLevel());
 							lighting.setPosition(ent.x() + offX, offY, ent.z() + offZ);
 							ent.getLevel().addFreshEntity(lighting);
 							break;
@@ -45,7 +45,7 @@ public class LightningStormEffect extends PrimedTNTEffect {
 		for(LivingEntity lent : ents) {
 			for(int offY = ent.getLevel().getTopY(); offY > ent.getLevel().getBottomY(); offY--) {
 				if(!ent.getLevel().getBlockState(new BlockPos(Mth.floor(lent.getX()), offY, Mth.floor(lent.getZ()))).isAir()) {
-					Entity lighting = new LightningEntity(EntityType.LIGHTNING_BOLT,  ent.getLevel());
+					Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT,  ent.getLevel());
 					lighting.setPosition(lent.getX(), offY, lent.getZ());
 					ent.getLevel().addFreshEntity(lighting);
 					

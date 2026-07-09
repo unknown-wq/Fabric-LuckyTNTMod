@@ -9,8 +9,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.ParticleTypes;
@@ -46,14 +46,14 @@ public class EntityFireworkEffect extends PrimedTNTEffect {
 	public void serverExplosion(IExplosiveEntity ent) {
 		EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(Identifier.fromNamespaceAndPath(ent.getPersistentData().getString("type")));
 		if(type == null) {
-			type = EntityType.PIG;
+			type = EntityTypes.PIG;
 		}
 		for(int count = 0; count < 300; count++) {
 			Entity lent = type.create(ent.getLevel());	
 			lent.setPosition(ent.x(), ent.y(), ent.z());
 			lent.setDeltaMovement(Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f);
-			if(lent instanceof MobEntity mob && ent.getLevel() instanceof ServerLevel sLevel) {
-				mob.initialize(sLevel, sLevel.getLocalDifficulty(toBlockPos(ent.getPos())), SpawnReason.MOB_SUMMONED, null);
+			if(lent instanceof Mob mob && ent.getLevel() instanceof ServerLevel sLevel) {
+				mob.initialize(sLevel, sLevel.getLocalDifficulty(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
 			}
 			ent.getLevel().addFreshEntity(lent);
 		}

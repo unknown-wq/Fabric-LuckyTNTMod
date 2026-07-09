@@ -11,19 +11,19 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.entity.projectile.DragonFireballEntity;
-import net.minecraft.entity.projectile.FireballEntity;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
+import net.minecraft.world.entity.projectile.hurtingprojectile.DragonFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.Fireball;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
-import net.minecraft.entity.projectile.SpectralArrowEntity;
-import net.minecraft.entity.projectile.thrown.EggEntity;
-import net.minecraft.entity.projectile.thrown.PotionEntity;
-import net.minecraft.entity.projectile.thrown.SnowballEntity;
-import net.minecraft.entity.vehicle.BoatEntity;
-import net.minecraft.entity.vehicle.ChestBoatEntity;
+import net.minecraft.world.entity.projectile.arrow.SpectralArrow;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEgg;
+import net.minecraft.entity.projectile.thrown.ThrownPotion;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
+import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.boat.ChestBoat;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.EggItem;
@@ -57,11 +57,11 @@ public class ItemFireworkEffect extends PrimedTNTEffect {
 			if(item != null) { 
 				if(item instanceof BoatItem boatitem) {
 					boolean hasChest = false;
-					BoatEntity.Type type = BoatEntity.Type.OAK;
+					Boat.Type type = Boat.Type.OAK;
 					try {
 						for(Field field : BoatItem.class.getDeclaredFields()) {
 							field.setAccessible(true);
-							if(field.get(boatitem) instanceof BoatEntity.Type t) {
+							if(field.get(boatitem) instanceof Boat.Type t) {
 								type = t;
 							} else if(field.get(boatitem) instanceof Boolean b) {
 								hasChest = b;
@@ -71,9 +71,9 @@ public class ItemFireworkEffect extends PrimedTNTEffect {
 						e.printStackTrace();
 					}
 					for(int i = 0; i < 300; i++) {
-						BoatEntity boat = new BoatEntity(ent.getLevel(), ent.x(), ent.y(), ent.z());
+						Boat boat = new Boat(ent.getLevel(), ent.x(), ent.y(), ent.z());
 						if(hasChest) {
-							boat = new ChestBoatEntity(ent.getLevel(), ent.x(), ent.y(), ent.z());
+							boat = new ChestBoat(ent.getLevel(), ent.x(), ent.y(), ent.z());
 						}
 						boat.setVariant(type);
 						boat.setDeltaMovement(Math.random() * 6D - 3D, Math.random() * 6D - 3D, Math.random() * 6D - 3D);
@@ -90,19 +90,19 @@ public class ItemFireworkEffect extends PrimedTNTEffect {
 						double x = Math.cos(theta) * radius;
 						double z = Math.sin(theta) * radius;
 						
-						FireballEntity fireball = new FireballEntity(ent.getLevel(), ent.owner(), new Vec3((ent.x() + x * 15) - ent.x(), (ent.y() + y * 15) - ent.y(), (ent.z() + z * 15) - ent.z()).normalize().multiply(0.5D), 1);
+						Fireball fireball = new Fireball(ent.getLevel(), ent.owner(), new Vec3((ent.x() + x * 15) - ent.x(), (ent.y() + y * 15) - ent.y(), (ent.z() + z * 15) - ent.z()).normalize().multiply(0.5D), 1);
 						fireball.setPosition(ent.x() + x * 15, ent.y() + y * 15, ent.z() + z * 15);
 						ent.getLevel().addFreshEntity(fireball);
 					}
 				} else if(item == Items.DRAGON_BREATH) {
 					for(int i = 0; i < 300; i++) {
-						DragonFireballEntity fireball = new DragonFireballEntity(ent.getLevel(), ent.owner(), new Vec3(Math.random() - 0.5f, Math.random() - 0.5f, Math.random() - 0.5f));
+						DragonFireball fireball = new DragonFireball(ent.getLevel(), ent.owner(), new Vec3(Math.random() - 0.5f, Math.random() - 0.5f, Math.random() - 0.5f));
 						fireball.setPosition(ent.getPos());
 						ent.getLevel().addFreshEntity(fireball);
 					}
 				} else if(item instanceof ThrowablePotionItem) {
 					for(int i = 0; i < 300; i++) {
-						PotionEntity potion = new PotionEntity(ent.getLevel(), ent.x(), ent.y(), ent.z());
+						ThrownPotion potion = new ThrownPotion(ent.getLevel(), ent.x(), ent.y(), ent.z());
 						potion.setItem(stack != null ? stack : new ItemStack(item));
 						potion.setDeltaMovement(Math.random() * 3D - 1.5D, Math.random() * 3D - 1.5D, Math.random() * 3D - 1.5D);
 						ent.getLevel().addFreshEntity(potion);
@@ -110,13 +110,13 @@ public class ItemFireworkEffect extends PrimedTNTEffect {
 				} else if(item instanceof ArrowItem) {
 					for(int count = 0; count < 300; count++) {
 						if(item instanceof SpectralArrowItem) {
-							AbstractArrow arrow = new SpectralArrowEntity(ent.getLevel(), ent.x(), ent.y(), ent.z(), new ItemStack(Items.SPECTRAL_ARROW), null);
+							AbstractArrow arrow = new SpectralArrow(ent.getLevel(), ent.x(), ent.y(), ent.z(), new ItemStack(Items.SPECTRAL_ARROW), null);
 							arrow.setDeltaMovement(Math.random() * 6f - 3f, Math.random() * 6f - 3f, Math.random() * 6f - 3f);
 							ent.getLevel().addFreshEntity(arrow);
 						} else {
-							ArrowEntity arrow = new ArrowEntity(ent.getLevel(), ent.x(), ent.y(), ent.z(), stack != null ? stack : new ItemStack(Items.ARROW), null);
+							Arrow arrow = new Arrow(ent.getLevel(), ent.x(), ent.y(), ent.z(), stack != null ? stack : new ItemStack(Items.ARROW), null);
 							PotionContentsComponent potions = stack != null ? stack.getOrDefault(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent.DEFAULT) : PotionContentsComponent.DEFAULT;
-							for(StatusEffectInstance effect : potions.getEffects()) {
+							for(MobEffectInstance effect : potions.getEffects()) {
 								arrow.addEffect(effect);
 							}
 							arrow.setDeltaMovement(Math.random() * 6f - 3f, Math.random() * 6f - 3f, Math.random() * 6f - 3f);
@@ -125,13 +125,13 @@ public class ItemFireworkEffect extends PrimedTNTEffect {
 					}
 				} else if(item instanceof EggItem) {
 					for(int count = 0; count < 300; count++) {
-						EggEntity egg = new EggEntity(ent.getLevel(), ent.x(), ent.y(), ent.z());
+						ThrownEgg egg = new ThrownEgg(ent.getLevel(), ent.x(), ent.y(), ent.z());
 						egg.setDeltaMovement(Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f);
 						ent.getLevel().addFreshEntity(egg);
 					}
 				} else if(item instanceof SnowballItem) {
 					for(int count = 0; count < 300; count++) {
-						SnowballEntity ball = new SnowballEntity(ent.getLevel(), ent.x(), ent.y(), ent.z());
+						Snowball ball = new Snowball(ent.getLevel(), ent.x(), ent.y(), ent.z());
 						ball.setDeltaMovement(Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f);
 						ent.getLevel().addFreshEntity(ball);
 					}

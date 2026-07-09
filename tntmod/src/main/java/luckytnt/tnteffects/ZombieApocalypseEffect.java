@@ -7,9 +7,9 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.mob.ZombieEntity;
-import net.minecraft.entity.mob.ZombieHorseEntity;
-import net.minecraft.entity.mob.ZombieVillagerEntity;
+import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.animal.equine.ZombieHorse;
+import net.minecraft.world.entity.monster.zombie.ZombieVillager;
 import net.minecraft.core.particles.DustParticleEffect;
 import net.minecraft.server.level.ServerLevel;
 
@@ -18,17 +18,17 @@ public class ZombieApocalypseEffect extends PrimedTNTEffect{
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		for(int count = 0; count <= 30 + Math.random() * 15; count++) {
-			ZombieEntity zombie = new ZombieEntity(EntityType.ZOMBIE, entity.getLevel());
+			Zombie zombie = new Zombie(EntityTypes.ZOMBIE, entity.getLevel());
 			zombie.setPosition(entity.getPos());
 			entity.getLevel().addFreshEntity(zombie);
 		}
 		for(int count = 0; count <= 10 + Math.random() * 5; count++) {
-			ZombieHorseEntity zombie = new ZombieHorseEntity(EntityType.ZOMBIE_HORSE, entity.getLevel());
+			ZombieHorse zombie = new ZombieHorse(EntityTypes.ZOMBIE_HORSE, entity.getLevel());
 			zombie.setPosition(entity.getPos());
 			entity.getLevel().addFreshEntity(zombie);
 		}
 		for(int count = 0; count <= 15 + Math.random() * 10; count++) {
-			ZombieVillagerEntity zombie = new ZombieVillagerEntity(EntityType.ZOMBIE_VILLAGER, entity.getLevel());
+			ZombieVillager zombie = new ZombieVillager(EntityTypes.ZOMBIE_VILLAGER, entity.getLevel());
 			zombie.setPosition(entity.getPos());
 			entity.getLevel().addFreshEntity(zombie);
 		}

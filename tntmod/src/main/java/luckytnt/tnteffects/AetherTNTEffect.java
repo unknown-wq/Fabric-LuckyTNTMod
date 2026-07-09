@@ -17,16 +17,16 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.particles.DustParticleEffect;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.state.property.Properties;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.VegetationConfiguredFeatures;
 
 public class AetherTNTEffect extends PrimedTNTEffect {

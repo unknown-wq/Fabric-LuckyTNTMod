@@ -11,12 +11,12 @@ import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.FluidBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.core.Holder;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
@@ -25,12 +25,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
-import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.PalettedContainer;
-import net.minecraft.world.chunk.ReadableContainer;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeKeys;
+import net.minecraft.world.level.chunk.ChunkSection;
+import net.minecraft.world.level.chunk.PalettedContainer;
+import net.minecraft.world.level.chunk.ReadableContainer;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.VegetationConfiguredFeatures;
 
 public class JungleTNTEffect extends PrimedTNTEffect {
@@ -128,7 +128,7 @@ public class JungleTNTEffect extends PrimedTNTEffect {
 						for(double offY = 320; offY > -64; offY--) {
 							BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY), Mth.floor(ent.z() + offZ));
 							BlockState state = ent.getLevel().getBlockState(pos);
-							if(!foundBlock && state.isFullCube(ent.getLevel(), pos) && !state.isAir() && !(ent.getLevel().getBlockState(pos.up()).getBlock() instanceof FluidBlock)) {
+							if(!foundBlock && state.isFullCube(ent.getLevel(), pos) && !state.isAir() && !(ent.getLevel().getBlockState(pos.up()).getBlock() instanceof LiquidBlock)) {
 								if(offX % 30 == 0 && offZ % 30 == 0) {
 									patch_melon.generate((ServerLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkManager().getChunkGenerator(), Random.create(), pos.up());
 								}

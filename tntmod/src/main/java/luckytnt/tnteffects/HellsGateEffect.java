@@ -10,9 +10,9 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.FluidBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -34,7 +34,7 @@ public class HellsGateEffect extends PrimedTNTEffect{
 						level.setBlockState(posTop, Blocks.OBSIDIAN.getDefaultState(), 3);
 					} else if(state.isIn(BlockTags.LEAVES)) {
 						level.setBlockState(posTop, Blocks.NETHER_BRICKS.getDefaultState(), 3);
-					} else if(state.getBlock() instanceof FluidBlock) {
+					} else if(state.getBlock() instanceof LiquidBlock) {
 						level.setBlockState(posTop, Blocks.LAVA.getDefaultState(), 3);
 					} else {
 						level.setBlockState(posTop, Blocks.NETHERRACK.getDefaultState(), 3);

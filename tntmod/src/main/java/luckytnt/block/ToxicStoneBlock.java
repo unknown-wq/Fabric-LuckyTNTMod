@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.tick.TickPriority;
+import net.minecraft.world.ticks.TickPriority;
 
 public class ToxicStoneBlock extends Block {
 	private int timer = 100;
