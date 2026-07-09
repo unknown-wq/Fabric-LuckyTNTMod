@@ -17,11 +17,6 @@ public class MidasTouchEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isInstantenous() {
-		return false;
-	}
-
-	@Override
 	public boolean shouldApplyEffectTickThisTick(int tickCount, int amplifier) {
 		return true;
 	}

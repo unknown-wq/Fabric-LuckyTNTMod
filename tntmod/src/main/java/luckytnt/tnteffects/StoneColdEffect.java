@@ -30,9 +30,14 @@ public class StoneColdEffect extends PrimedTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
+		// TODO(port-26.2): DISABLED — advance-time-of-day. 26.2 rewrote the time system
+		// (ServerClockManager/WorldClock); ServerLevel.setTimeOfDay/getTimeOfDay are gone with no
+		// clean drop-in. The rest of the freezing effect is preserved.
+		/*
 		if(ent.getLevel() instanceof ServerLevel s_Level) {
 			s_Level.setTimeOfDay(s_Level.getTimeOfDay() + 200);
 		}
+		*/
 		for(int count = 0; count < 7; count++) {
 			double offX = Math.random() * 15 - Math.random() * 15;
 			double offY = Math.random() * 15 - Math.random() * 15;

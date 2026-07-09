@@ -33,7 +33,10 @@ public class ZombieApocalypseEffect extends PrimedTNTEffect{
 			zombie.setPos(entity.getPos());
 			entity.getLevel().addFreshEntity(zombie);
 		}
-		((ServerLevel)entity.getLevel()).setTimeOfDay(18000);
+		// TODO(port-26.2): DISABLED — set-time-to-night. 26.2 rewrote the time system
+		// (ServerClockManager/WorldClock/ClockTimeMarker); ServerLevel.setTimeOfDay is gone and the
+		// replacement needs a Holder<WorldClock> with no clean drop-in. Zombie spawning is preserved.
+		/* ((ServerLevel)entity.getLevel()).setTimeOfDay(18000); */
 	}
 	
 	@Override

@@ -21,7 +21,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -77,11 +77,11 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 			String string = "";
 			int rand = new Random().nextInt(5);
 			switch(rand) {
-				case 0: string = Shape.SPHERE.asString(); break;
-				case 1: string = Shape.SPHERE.asString(); break;
-				case 2: string = Shape.STAR.asString(); break;
-				case 3: string = Shape.STAR.asString(); break;
-				case 4: string = Shape.CREEPER.asString(); break;
+				case 0: string = Shape.SPHERE.getSerializedName(); break;
+				case 1: string = Shape.SPHERE.getSerializedName(); break;
+				case 2: string = Shape.STAR.getSerializedName(); break;
+				case 3: string = Shape.STAR.getSerializedName(); break;
+				case 4: string = Shape.CREEPER.getSerializedName(); break;
 				default: break;
 			}
 			CompoundTag tag = ent.getPersistentData();
@@ -173,13 +173,13 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 		return template;
 	}
 	
-	public static enum Shape implements StringIdentifiable {
+	public static enum Shape implements StringRepresentable {
 		SPHERE("sphere"),
 		STAR("star"),
 		CREEPER("creeper");
 		
 		@SuppressWarnings("deprecation")
-		private static final StringIdentifiable.EnumCodec<Shape> CODEC = StringIdentifiable.createCodec(Shape::values);
+		private static final StringRepresentable.EnumCodec<Shape> CODEC = StringRepresentable.fromEnum(Shape::values);
 		private final String name;
 		
 		private Shape(String name) {
@@ -187,14 +187,14 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 		}
 
 		@Override
-		public String asString() {
+		public String getSerializedName() {
 			return name;
 		}
 		
 		@SuppressWarnings("deprecation")
 		@Nullable
 		public static Shape byName(@Nullable String name) {
-			return CODEC.byId(name);
+			return CODEC.byName(name);
 		}
 		
 	}

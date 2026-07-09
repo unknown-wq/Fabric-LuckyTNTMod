@@ -28,15 +28,15 @@ public class NetworkRegistry {
 			
 			Config.writeToValues(tag, LuckyTNTConfigValues.CONFIG.getConfigValues());
 			
-			LuckyTNTConfigValues.CONFIG.save(context.server().getWorld(Level.OVERWORLD));
+			LuckyTNTConfigValues.CONFIG.save(context.server().getLevel(Level.OVERWORLD));
 		}
 	};
 	private static final PlayPayloadHandler<LuckyTNTClientReadyC2SPacket> READY_C2S = new PlayPayloadHandler<LuckyTNTClientReadyC2SPacket>() {
 		
 		@Override
 		public void receive(LuckyTNTClientReadyC2SPacket payload, Context context) {
-			for(ServerLevel world : context.server().getWorlds()) {
-				for(ServerPlayer entity : world.getPlayers()) {
+			for(ServerLevel world : context.server().getAllLevels()) {
+				for(ServerPlayer entity : world.players()) {
 					LuckyTNTMod.RH.sendS2CPacket(entity, new LuckyTNTUpdateConfigValuesPacket(LuckyTNTConfigValues.CONFIG.getConfigValues()));
 				}
 			}
@@ -44,12 +44,12 @@ public class NetworkRegistry {
 	};
 
 	public static void init() {
-		PayloadTypeRegistry.playC2S().register(LuckyTNTUpdateConfigValuesPacket.ID, LuckyTNTUpdateConfigValuesPacket.CODEC);
-		PayloadTypeRegistry.playC2S().register(LuckyTNTClientReadyC2SPacket.ID, LuckyTNTClientReadyC2SPacket.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(LuckyTNTUpdateConfigValuesPacket.ID, LuckyTNTUpdateConfigValuesPacket.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(LuckyTNTClientReadyC2SPacket.ID, LuckyTNTClientReadyC2SPacket.CODEC);
 
-		PayloadTypeRegistry.playS2C().register(LuckyTNTUpdateConfigValuesPacket.ID, LuckyTNTUpdateConfigValuesPacket.CODEC);
-		PayloadTypeRegistry.playS2C().register(HydrogenBombS2CPacket.ID, HydrogenBombS2CPacket.CODEC);
-		PayloadTypeRegistry.playS2C().register(LevelVariablesS2CPacket.ID, LevelVariablesS2CPacket.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(LuckyTNTUpdateConfigValuesPacket.ID, LuckyTNTUpdateConfigValuesPacket.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(HydrogenBombS2CPacket.ID, HydrogenBombS2CPacket.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(LevelVariablesS2CPacket.ID, LevelVariablesS2CPacket.CODEC);
 		
 		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 			ClientNetworkRegistry.init();
