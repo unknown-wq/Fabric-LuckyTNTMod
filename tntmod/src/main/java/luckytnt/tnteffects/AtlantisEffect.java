@@ -18,7 +18,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.squid.Squid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
+// TODO(port-26.2): DISABLED — see serverExplosion; chunk/structure imports removed
+// import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -35,12 +36,12 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeKeys;
-import net.minecraft.world.level.chunk.ChunkSection;
-import net.minecraft.world.level.chunk.PalettedContainer;
-import net.minecraft.world.level.chunk.ReadableContainer;
-import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.gen.structure.StructureKeys;
+// import net.minecraft.world.level.biome.BiomeKeys;
+// import net.minecraft.world.level.chunk.ChunkSection;
+// import net.minecraft.world.level.chunk.PalettedContainer;
+// import net.minecraft.world.level.chunk.ReadableContainer;
+// import net.minecraft.world.level.levelgen.structure.Structure;
+// import net.minecraft.world.gen.structure.StructureKeys;
 import net.minecraft.world.entity.EntityTypes;
 
 public class AtlantisEffect extends PrimedTNTEffect {
@@ -53,14 +54,20 @@ public class AtlantisEffect extends PrimedTNTEffect {
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() == 240) {
 			if(ent.getLevel() instanceof ServerLevel s_Level) {
-	      		s_Level.setWeather(0, 10000, true, true);
+	      		s_Level.getServer().setWeatherParameters(0, 10000, true, true);
 	      	}
-	      	ent.getLevel().playSound(null, ent.x(), ent.y(), ent.z(), SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 1000, 1);
+	      	ent.getLevel().playSound(null, ent.x(), ent.y(), ent.z(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 1000, 1);
 		}
 	}
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
+		// TODO(port-26.2): DISABLED — biome overwrite (PalettedContainer.swapUnsafe), chunk
+		// resync (ChunkDataS2CPacket), and Ocean Ruin structure generation
+		// (Structure.createStructureStart / StructureStart.place with 26.2-rewritten
+		// signatures, ChunkSection/ReadableContainer/StructureKeys/BlockBox renamed/removed).
+		// Kept the portable water/sand terraforming + squid spawning below.
+		/*
 		Registry<Biome> registry = ent.getLevel().registryAccess().get(Registries.BIOME);
 		Holder<Biome> biome = registry.getEntry(registry.get(BiomeKeys.WARM_OCEAN));
 		for(double offX = -100; offX < 100; offX++) {
@@ -107,6 +114,7 @@ public class AtlantisEffect extends PrimedTNTEffect {
 				}
 			}
 		}
+		*/
 		
 		JungleTNTEffect.replaceNonSolidBlockOrVegetationWithAir(ent, 100, 100, true);
 		
@@ -114,7 +122,7 @@ public class AtlantisEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posTop = pos.add(0, 1, 0);
+				BlockPos posTop = pos.offset(0, 1, 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				
 				if(((ent.y() + 8) - pos.getY()) >= 0 && ((ent.y() + 8) - pos.getY()) <= 50) {

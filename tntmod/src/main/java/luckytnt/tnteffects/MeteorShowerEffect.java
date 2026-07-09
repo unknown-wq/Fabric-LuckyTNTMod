@@ -1,5 +1,7 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import luckytnt.config.LuckyTNTConfigValues;
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
@@ -14,7 +16,7 @@ public class MeteorShowerEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity) {
 		if(entity.getTNTFuse() <= 640 && entity.getTNTFuse() % 10 == 0) {
 			for(int count = 0; count <= 5; count++) {
-				LExplosiveProjectile meteor = EntityRegistry.MINI_METEOR.get().create(entity.getLevel());
+				LExplosiveProjectile meteor = EntityRegistry.MINI_METEOR.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				meteor.setOwner(entity.owner());
 				meteor.setPos(entity.getPos().add(Math.random() * 400 - 200, LuckyTNTConfigValues.DROP_HEIGHT.get() + Math.random() * 50, Math.random() * 400 - 200));
 				entity.getLevel().addFreshEntity(meteor);

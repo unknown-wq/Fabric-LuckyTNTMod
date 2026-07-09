@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import java.util.Random;
 
 import org.joml.Math;
@@ -59,9 +61,9 @@ public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 			entity.setPersistentData(tag);
 		}
 		if(entity.getTNTFuse() <= 220 && entity.getTNTFuse() > 60) {
-			((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDouble("vecx"), 0, entity.getPersistentData().getDouble("vecz")).normalize().multiply(0.25f));
+			((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDoubleOr("vecx", 0), 0, entity.getPersistentData().getDoubleOr("vecz", 0)).normalize().multiply(0.25f));
 			if(entity.getTNTFuse() % 20 == 0) {
-				LExplosiveProjectile dynamite = EntityRegistry.CHRISTMAS_DYNAMITE_PROJECTILE.get().create(entity.getLevel());
+				LExplosiveProjectile dynamite = EntityRegistry.CHRISTMAS_DYNAMITE_PROJECTILE.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				dynamite.setPos(entity.getPos());
 				dynamite.setOwner(entity.owner());
 				double randomX = Math.random();
@@ -80,7 +82,7 @@ public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
 		for(int i = 0; i < 7; i++) {
-			entity.getLevel().addParticle(ParticleTypes.WAX_OFF, true, entity.x() + Math.random() - 0.5f, entity.y() + Math.random() - 0.5f, entity.z() + Math.random() - 0.5f, 0, 0, 0);
+			entity.getLevel().addParticle(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + Math.random() - 0.5f, entity.z() + Math.random() - 0.5f, 0, 0, 0);
 		}
 	}
 	

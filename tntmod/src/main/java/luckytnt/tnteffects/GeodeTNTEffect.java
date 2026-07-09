@@ -22,7 +22,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.UndergroundConfiguredFeatures;
+import net.minecraft.data.worldgen.features.CaveFeatures;
 
 public class GeodeTNTEffect extends PrimedTNTEffect{
 
@@ -35,18 +35,18 @@ public class GeodeTNTEffect extends PrimedTNTEffect{
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				blocks.put(pos, state);
 				state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-				level.setBlock(pos, Blocks.STONE.defaultBlockState());
+				level.setBlockAndUpdate(pos, Blocks.STONE.defaultBlockState());
 			}
 		});
 		if(entity.getLevel() instanceof ServerLevel sLevel) {
-			Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.AMETHYST_GEODE);
-			feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), toBlockPos(entity.getPos()));
+			Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.AMETHYST_GEODE);
+			feature.value().place(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), toBlockPos(entity.getPos()));
 		}
 		for(int i = blocks.size() - 1; i > 0; i--) {
 			List<BlockPos> poses = new ArrayList<>(blocks.keySet());
 			BlockPos pos = poses.get(i);
 			if(entity.getLevel().getBlockState(pos).is(Blocks.STONE)) {
-				entity.getLevel().setBlock(pos, blocks.get(pos));
+				entity.getLevel().setBlockAndUpdate(pos, blocks.get(pos));
 			}
 		}
 	}

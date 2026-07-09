@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.server.level.ServerLevel;
+
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
@@ -33,14 +35,14 @@ public class IceMeteorEffect extends PrimedTNTEffect{
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(!state.isAir()) {
 					if(distance <= (strength - strength / 8) && state.getBlock().getExplosionResistance() <= 100) {
-						state.getBlock().wasExploded(level, pos, explosion);
+						state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 					else if(Math.random() < 0.6f && state.getBlock().getExplosionResistance() <= 100) {
-						state.getBlock().wasExploded(level, pos, explosion);
+						state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						if(Math.random() < 0.25f) {
-							level.setBlock(pos, Math.random() < 0.5f ? Blocks.BLUE_ICE.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState());
+							level.setBlockAndUpdate(pos, Math.random() < 0.5f ? Blocks.BLUE_ICE.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState());
 						}
 					}
 				}

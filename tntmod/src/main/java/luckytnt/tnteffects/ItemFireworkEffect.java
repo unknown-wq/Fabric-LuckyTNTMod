@@ -52,7 +52,7 @@ public class ItemFireworkEffect extends PrimedTNTEffect {
 			ItemStack stack = ent.stack == null ? ItemStack.EMPTY : ent.stack;
 			stack.setCount(1);
 			if(item == null) {
-				item = Item.byRawId(ent.getPersistentData().getInt("itemID"));
+				item = Item.byId(ent.getPersistentData().getIntOr("itemID", 0));
 			}
 			if(item != null) { 
 				if(item instanceof BoatItem boatitem) {

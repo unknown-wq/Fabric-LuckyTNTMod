@@ -68,7 +68,7 @@ public class ResetTNTEffect extends PrimedTNTEffect {
 	
 	public void saveEntities(PrimedResetTNT ent) {
 		ent.entities = Lists.newArrayList();
-		List<Entity> list = ent.getLevel().getOtherEntities(ent, new AABB(ent.x() - 100, ent.y() - 100, ent.z() - 100, ent.x() + 100, ent.y() + 100, ent.z() + 100));
+		List<Entity> list = ent.getLevel().getEntities(ent, new AABB(ent.x() - 100, ent.y() - 100, ent.z() - 100, ent.x() + 100, ent.y() + 100, ent.z() + 100));
 
     	for(int i = 0; i < list.size(); i++) {
     		Entity entity = list.get(i);

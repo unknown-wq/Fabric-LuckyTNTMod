@@ -8,6 +8,7 @@ import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.player.Player;
@@ -51,13 +52,15 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 			} else if(magnitude <= 2) {
 				if(!(target instanceof Player)) {
 					CompoundTag tag = ent.getPersistentData();
-					tag.putInt("amount", ent.getPersistentData().getInt("amount") + 1);
+					tag.putInt("amount", ent.getPersistentData().getIntOr("amount", 0) + 1);
 					ent.setPersistentData(tag);
         			target.discard();
 				} else if(target instanceof Player) {
-					DamageSources sources = ent.getLevel().getDamageSources();
-					
-					target.damage(sources.outOfWorld(), 4f);
+					DamageSources sources = ent.getLevel().damageSources();
+
+					if(ent.getLevel() instanceof ServerLevel sLevel) {
+						target.hurtServer(sLevel, sources.fellOutOfWorld(), 4f);
+					}
 					Vec3 vec3d = new Vec3(target.getX() - ent.x(), target.getY() - ent.y(), target.getZ() - ent.z()).normalize().multiply(10);
 					target.setDeltaMovement(vec3d);
 				}
@@ -67,7 +70,7 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		int amount = ent.getPersistentData().getInt("amount");
+		int amount = ent.getPersistentData().getIntOr("amount", 0);
 		if(amount < 0) {
 			amount = 0;
 		}
@@ -87,7 +90,7 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 	
 	@Override
 	public float getSize(IExplosiveEntity ent) {
-		int amount = ent.getPersistentData().getInt("amount");
+		int amount = ent.getPersistentData().getIntOr("amount", 0);
 		if(amount < 0) {
 			amount = 0;
 		}

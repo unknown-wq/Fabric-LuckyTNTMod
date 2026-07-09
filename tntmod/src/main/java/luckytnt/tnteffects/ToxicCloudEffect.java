@@ -38,15 +38,15 @@ public class ToxicCloudEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		ImprovedExplosion explosion = new ImprovedExplosion(ent.getLevel(), (Entity)ent, ent.getPos(), (int)Math.round(ent.getPersistentData().getDouble("size") * 5D));
+		ImprovedExplosion explosion = new ImprovedExplosion(ent.getLevel(), (Entity)ent, ent.getPos(), (int)Math.round(ent.getPersistentData().getDoubleOr("size", 0d) * 5D));
 		explosion.doEntityExplosion(2f, true);
 		explosion.doBlockExplosion(1f, 1f, 1f, 1.1f, true, false);
 	}
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
-		for(int count = 0; count < ent.getPersistentData().getDouble("size") * 5; count++) {
-			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.7f*255)<<16)|((int)(1f*255)<<8)|(int)(0.5f*255), 10f), true, ent.x() + ent.getPersistentData().getDouble("size") * 1.5f * Math.random() - ent.getPersistentData().getDouble("size") * 1.5f * Math.random(), ent.y() + ent.getPersistentData().getDouble("size") * 1.5f * Math.random() - ent.getPersistentData().getDouble("size") * 1.5f * Math.random(), ent.z() + ent.getPersistentData().getDouble("size") * 1.5f * Math.random() - ent.getPersistentData().getDouble("size") * 1.5f * Math.random(), 0, 0, 0);
+		for(int count = 0; count < ent.getPersistentData().getDoubleOr("size", 0d) * 5; count++) {
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.7f*255)<<16)|((int)(1f*255)<<8)|(int)(0.5f*255), 10f), true, ent.x() + ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random() - ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random(), ent.y() + ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random() - ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random(), ent.z() + ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random() - ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random(), 0, 0, 0);
 		}
 	}
 	

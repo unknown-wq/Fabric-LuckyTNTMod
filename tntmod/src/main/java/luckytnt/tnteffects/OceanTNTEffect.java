@@ -48,7 +48,7 @@ public class OceanTNTEffect extends PrimedTNTEffect {
 				if(pos.getY() <= entity.getPos().y) {
 					if((!state.isFaceSturdy(level, pos, Direction.UP) && state.getBlock().getExplosionResistance() < 100) || state.getBlock().getExplosionResistance() < 4) {
 						state.getBlock().wasExploded(level, pos, dummyExplosion);
-						level.setBlock(pos, Blocks.WATER.defaultBlockState());
+						level.setBlockAndUpdate(pos, Blocks.WATER.defaultBlockState());
 					}
 				}
 			}

@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.server.level.ServerLevel;
+
 import luckytnt.registry.ItemRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
@@ -20,7 +22,7 @@ public class DiggingDynamiteEffect extends PrimedTNTEffect{
 			BlockPos pos = toBlockPos(entity.getPos().add(direction.multiply(length))); 
 			BlockState state = entity.getLevel().getBlockState(pos);
 			if(state.getBlock().getExplosionResistance() < 100) {
-				state.getBlock().wasExploded(entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+				state.getBlock().wasExploded((ServerLevel) entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 				entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 			}
 			else {

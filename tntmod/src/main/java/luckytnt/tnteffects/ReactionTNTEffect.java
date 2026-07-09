@@ -21,7 +21,7 @@ public class ReactionTNTEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
 		if(!level.isClientSide() && entity.getTNTFuse() < 100) {
-			if(entity.getPersistentData().getInt("nextExplosion") == 0) {
+			if(entity.getPersistentData().getIntOr("nextExplosion", 0) == 0) {
 				Vec3 randomPos = new Vec3(Math.random() * 40 - 20, Math.random() * 20 - 10, Math.random() * 40 - 20);
 				float explosionSize = 10 + level.getRandom().nextFloat() * 10;
 				ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos().add(randomPos), Math.round(explosionSize));
@@ -33,7 +33,7 @@ public class ReactionTNTEffect extends PrimedTNTEffect{
 				entity.setPersistentData(tag);
 			}
 			CompoundTag tag = entity.getPersistentData();
-			tag.putInt("nextExplosion", entity.getPersistentData().getInt("nextExplosion") - 1);
+			tag.putInt("nextExplosion", entity.getPersistentData().getIntOr("nextExplosion", 0) - 1);
 			entity.setPersistentData(tag);
 		}
 	}

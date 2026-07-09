@@ -16,11 +16,11 @@ public class IlluminatiTNTEffect extends PrimedTNTEffect {
 	public void serverExplosion(IExplosiveEntity ent) {
 		BlockPos pos = toBlockPos(ent.getPos());
 		
-		BlockPos A = pos.add(-60, -60, -60);
-		BlockPos B = pos.add(60, -60, -60);
-		BlockPos C = pos.add(60, -60, 60);
-		BlockPos D = pos.add(-60, -60, 60);
-		BlockPos E = pos.add(0, 60, 0);
+		BlockPos A = pos.offset(-60, -60, -60);
+		BlockPos B = pos.offset(60, -60, -60);
+		BlockPos C = pos.offset(60, -60, 60);
+		BlockPos D = pos.offset(-60, -60, 60);
+		BlockPos E = pos.offset(0, 60, 0);
 		
 		Vec3 EA = new Vec3(A.getX() - E.getX(), A.getY() - E.getY(), A.getZ() - E.getZ());
 		Vec3 EB = new Vec3(B.getX() - E.getX(), B.getY() - E.getY(), B.getZ() - E.getZ());

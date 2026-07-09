@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 
 import luckytnt.registry.EntityRegistry;
 import luckytnt.registry.ItemRegistry;
@@ -38,7 +40,7 @@ public class RingDynamiteEffect extends PrimedTNTEffect {
 		array[8] = vec.add(leftup).normalize();
 		
 		for(int i = 1; i <= 8; i++) {
-			LExplosiveProjectile dynamite = EntityRegistry.DYNAMITE.get().create(ent.getLevel());
+			LExplosiveProjectile dynamite = EntityRegistry.DYNAMITE.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			dynamite.setOwner(ent.owner());
 			dynamite.setPos(ent.getPos());
 			dynamite.setDeltaMovement(array[i].multiply(2D));

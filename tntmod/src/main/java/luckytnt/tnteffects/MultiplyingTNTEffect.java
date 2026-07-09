@@ -1,5 +1,7 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
@@ -18,9 +20,9 @@ public class MultiplyingTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
 		super.baseTick(entity);
-		if(((Entity)entity).onGround() && entity.getPersistentData().getInt("level") > 0) {
+		if(((Entity)entity).onGround() && entity.getPersistentData().getIntOr("level", 0) > 0) {
 			serverExplosion(entity);
-			if(entity.getPersistentData().getInt("level") == 4) {
+			if(entity.getPersistentData().getIntOr("level", 0) == 4) {
 				Level level = entity.getLevel();
 				entity.getLevel().playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
 			}
@@ -29,7 +31,7 @@ public class MultiplyingTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		int level = entity.getPersistentData().getInt("level");
+		int level = entity.getPersistentData().getIntOr("level", 0);
 		if(level == 4) {
 			ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), 10);
 			explosion.doEntityExplosion(1f, true);
@@ -37,7 +39,7 @@ public class MultiplyingTNTEffect extends PrimedTNTEffect{
 		}
 		else if(level == 0) {
 			for(int count = 0; count < 4; count++) {
-				PrimedLTNT tnt = EntityRegistry.MULTIPLYING_TNT.get().create(entity.getLevel());
+				PrimedLTNT tnt = EntityRegistry.MULTIPLYING_TNT.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				tnt.setPos(entity.getPos());
 				tnt.setOwner(entity.owner());
 				tnt.setDeltaMovement(Math.random() * 2 - 1, 1 + Math.random(), Math.random() * 2 - 1);
@@ -49,7 +51,7 @@ public class MultiplyingTNTEffect extends PrimedTNTEffect{
 		}
 		else {
 			for(int count = 0; count < level * 2; count++) {
-				PrimedLTNT tnt = EntityRegistry.MULTIPLYING_TNT.get().create(entity.getLevel());
+				PrimedLTNT tnt = EntityRegistry.MULTIPLYING_TNT.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				tnt.setPos(entity.getPos());
 				tnt.setOwner(entity.owner());
 				tnt.setDeltaMovement(Math.random() * 2 - 1, 1 + Math.random(), Math.random() * 2 - 1);
@@ -69,6 +71,6 @@ public class MultiplyingTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public int getDefaultFuse(IExplosiveEntity entity) {
-		return entity.getPersistentData().getInt("level") == 4 ? 100000 : 120;
+		return entity.getPersistentData().getIntOr("level", 0) == 4 ? 100000 : 120;
 	}
 }

@@ -39,7 +39,7 @@ public class NuclearTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doEntityExplosion(Entity entity, double distance) {
 				if(entity instanceof LivingEntity living) {
-					living.addStatusEffect(new MobEffectInstance(BuiltInRegistries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 48 * strength));
+					living.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getOrThrow(EffectRegistry.CONTAMINATED), 48 * strength));
 				}
 			}
 		});
@@ -59,7 +59,7 @@ public class NuclearTNTEffect extends PrimedTNTEffect{
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				BlockState stateAbove = level.getBlockState(pos.above());
 				if(stateAbove.isAir() && !state.isAir() && Math.random() < 0.33f) {
-					level.setBlock(pos.above(), BlockRegistry.NUCLEAR_WASTE.get().defaultBlockState());
+					level.setBlockAndUpdate(pos.above(), BlockRegistry.NUCLEAR_WASTE.get().defaultBlockState());
 				}
 			}
 		});

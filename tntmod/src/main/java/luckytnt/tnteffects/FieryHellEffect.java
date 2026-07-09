@@ -42,7 +42,7 @@ public class FieryHellEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posTop = pos.add(0, 1, 0);
+				BlockPos posTop = pos.offset(0, 1, 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				
 				if(state.getBlock().getExplosionResistance() < 100 && !state.isAir()) {

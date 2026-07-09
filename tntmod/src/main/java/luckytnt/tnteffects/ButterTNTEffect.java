@@ -21,7 +21,7 @@ public class ButterTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock().getExplosionResistance() < 100 && !state.isAir()) {
-					level.setBlock(pos, Blocks.GOLD_BLOCK.defaultBlockState());
+					level.setBlockAndUpdate(pos, Blocks.GOLD_BLOCK.defaultBlockState());
 				}
 			}
 		});

@@ -1,5 +1,7 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import java.util.Random;
 
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
@@ -28,10 +30,10 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		if(ent.getPersistentData().getInt("type") == 0) {
+		if(ent.getPersistentData().getIntOr("type", 0) == 0) {
 			for(int count = 0; count < 10; count++) {
 				Vec3 vel = ((Entity)ent).getRotationVec(1).normalize();
-				PrimedLTNT firework = EntityRegistry.NEW_YEARS_FIREWORK.get().create(ent.getLevel());
+				PrimedLTNT firework = EntityRegistry.NEW_YEARS_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				firework.setTNTFuse(40);
 				firework.setPos(ent.getPos());
 				firework.setDeltaMovement(vel.multiply(2));
@@ -43,7 +45,7 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 			}
 		} else {
 			Block block = getRandomConcrete();
-			Shape shape = Shape.byName(ent.getPersistentData().getString("shape"));
+			Shape shape = Shape.byName(ent.getPersistentData().getStringOr("shape", ""));
 			switch(shape) {
 				case SPHERE: 	if(Math.random() < 0.75) {
 									double phi = Math.PI * (3D - Math.sqrt(5D));
@@ -71,7 +73,7 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 0.8f, ((Entity)ent).getDeltaMovement().z);
-		if(ent.getPersistentData().getString("shape").equals("")) {
+		if(ent.getPersistentData().getStringOr("shape", "").equals("")) {
 			String string = "";
 			int rand = new Random().nextInt(5);
 			switch(rand) {
@@ -101,7 +103,7 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 		if(ent.getLevel() instanceof ServerLevel sl) {
 			for(ServerPlayer player : sl.getPlayers()) {
 				if(player.distanceTo((Entity)ent) <= 100f) {
-					player.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(block));
+					player.connection.send(new ClientboundSetEntityMotionPacket(block));
 				}
 			}
 		}

@@ -27,7 +27,7 @@ public class UltralightDynamiteEffect extends PrimedTNTEffect{
 			tag.putDouble("vecz", ((Entity)entity).getDeltaMovement().z);
 			entity.setPersistentData(tag);
 		}
-		((Entity)entity).setDeltaMovement(entity.getPersistentData().getDouble("vecx"), entity.getPersistentData().getDouble("vecy"), entity.getPersistentData().getDouble("vecz"));
+		((Entity)entity).setDeltaMovement(entity.getPersistentData().getDoubleOr("vecx", 0), entity.getPersistentData().getDoubleOr("vecy", 0), entity.getPersistentData().getDoubleOr("vecz", 0));
 	}
 	
 	@Override

@@ -23,7 +23,7 @@ public class ShatterproofDynamiteEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.isCollisionShapeFullBlock(level, pos) && state.getBlock().getExplosionResistance() < 1200) {
-					level.setBlock(pos, Blocks.OBSIDIAN.defaultBlockState());
+					level.setBlockAndUpdate(pos, Blocks.OBSIDIAN.defaultBlockState());
 				}
 			}
 		});

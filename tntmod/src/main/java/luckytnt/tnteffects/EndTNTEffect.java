@@ -41,10 +41,10 @@ public class EndTNTEffect extends PrimedTNTEffect {
 				if(distance <= 25) {
 					if(Math.random() < 0.9f) {
 						state.getBlock().wasExploded(level, pos, endExplosion);
-						level.setBlock(pos, Blocks.END_STONE.defaultBlockState());
+						level.setBlockAndUpdate(pos, Blocks.END_STONE.defaultBlockState());
 						if(Math.random() < 0.1f) {
 							if(level.getBlockState(pos.above()).isAir()) {
-								level.setBlock(pos.above(), Blocks.CHORUS_FLOWER.defaultBlockState());
+								level.setBlockAndUpdate(pos.above(), Blocks.CHORUS_FLOWER.defaultBlockState());
 							}
 						}
 						if(Math.random() < 0.025f) {

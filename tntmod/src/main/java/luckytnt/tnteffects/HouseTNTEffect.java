@@ -8,7 +8,7 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.structure.StructurePlacementData;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.resources.Identifier;
 
@@ -34,9 +34,9 @@ public class HouseTNTEffect extends PrimedTNTEffect{
 	@SuppressWarnings("resource")
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		StructureTemplate template = ((ServerLevel)entity.getLevel()).getStructureManager().getTemplateOrBlank(Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, house));
+		StructureTemplate template = ((ServerLevel)entity.getLevel()).getStructureManager().getOrCreate(Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, house));
 		if(template != null) {
-			template.place((ServerLevel)entity.getLevel(), toBlockPos(entity.getPos()).add(offX, 0, offZ), toBlockPos(entity.getPos()).add(offX, 0, offZ), new StructurePlacementData(), entity.getLevel().getRandom(), 3);
+			template.placeInWorld((ServerLevel)entity.getLevel(), toBlockPos(entity.getPos()).offset(offX, 0, offZ), toBlockPos(entity.getPos()).offset(offX, 0, offZ), new StructurePlaceSettings(), entity.getLevel().getRandom(), 3);
 		}
 	}
 }

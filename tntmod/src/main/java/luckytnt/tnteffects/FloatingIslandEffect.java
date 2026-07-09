@@ -26,8 +26,8 @@ public class FloatingIslandEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(distance <= 20 && Math.abs(pos.getY() - entity.getPos().y) <= 15 && state.getBlock().getExplosionResistance() <= 100) {
-					if(level.getBlockState(pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0)).getBlock().getExplosionResistance() <= 100) {
-						level.setBlock(pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0), state);
+					if(level.getBlockState(pos.offset(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0)).getBlock().getExplosionResistance() <= 100) {
+						level.setBlockAndUpdate(pos.offset(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0), state);
 					}
 				}
 			}

@@ -23,12 +23,12 @@ public class PulsarTNTEffect extends PrimedTNTEffect {
 		}
 		if(ent.getTNTFuse() < 305) {
 			if(ent.getTNTFuse() % 30 == 0 && !ent.getLevel().isClientSide()) {
-				ImprovedExplosion explosion = new ImprovedExplosion(ent.getLevel(), (Entity)ent, ent.getPos(), Mth.floor(ent.getPersistentData().getFloat("size")));
+				ImprovedExplosion explosion = new ImprovedExplosion(ent.getLevel(), (Entity)ent, ent.getPos(), Mth.floor(ent.getPersistentData().getFloatOr("size", 0f)));
 				explosion.doEntityExplosion(4f, true);
-				explosion.doBlockExplosion(1f, ent.getPersistentData().getFloat("size") > 45f ? 1.3f : 1f, 1f, ent.getPersistentData().getFloat("size") <= 80f ? 1.25f : 0.05f, false, ent.getPersistentData().getFloat("size") > 80f ? true : false);
+				explosion.doBlockExplosion(1f, ent.getPersistentData().getFloatOr("size", 0f) > 45f ? 1.3f : 1f, 1f, ent.getPersistentData().getFloatOr("size", 0f) <= 80f ? 1.25f : 0.05f, false, ent.getPersistentData().getFloatOr("size", 0f) > 80f ? true : false);
 			
 				CompoundTag tag = ent.getPersistentData();
-				tag.putFloat("size", ent.getPersistentData().getFloat("size") + 7f);
+				tag.putFloat("size", ent.getPersistentData().getFloatOr("size", 0f) + 7f);
 				ent.setPersistentData(tag);
 			}
 			((Entity)ent).setDeltaMovement(0, 0, 0);

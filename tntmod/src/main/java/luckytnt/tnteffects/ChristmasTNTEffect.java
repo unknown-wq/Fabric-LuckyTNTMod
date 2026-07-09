@@ -78,7 +78,7 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 		if(entity instanceof PrimedLTNT) {
 			if(entity.getTNTFuse() < 230) {
 				for(int i = 0; i <= 10; i++) {
-					entity.getLevel().addParticle(ParticleTypes.WAX_OFF, true, entity.x() + Math.random() - 0.5f, entity.y() + 1f + Math.random() * 0.5f, entity.z() + Math.random() - 0.5f, 0, 0, 0);
+					entity.getLevel().addParticle(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + 1f + Math.random() * 0.5f, entity.z() + Math.random() - 0.5f, 0, 0, 0);
 				}
 			}
 			else {

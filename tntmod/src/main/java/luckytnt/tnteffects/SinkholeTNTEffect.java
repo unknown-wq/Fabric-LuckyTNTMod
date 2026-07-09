@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.server.level.ServerLevel;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
@@ -30,9 +31,9 @@ public class SinkholeTNTEffect extends PrimedTNTEffect {
 				for(int offY = -33; offY <= 33; offY++) {
 					for(int offZ = -33; offZ <= 33; offZ++) {
 						double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ) + Math.random() * 4D - 2D;
-						BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY + ent.getPersistentData().getInt("depth")), Mth.floor(ent.z() + offZ));
+						BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY + ent.getPersistentData().getIntOr("depth", 0)), Mth.floor(ent.z() + offZ));
 						if(distance <= 30 && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() < 200) {
-							ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 							ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
@@ -40,7 +41,7 @@ public class SinkholeTNTEffect extends PrimedTNTEffect {
 			}
 			
 			CompoundTag tag = ent.getPersistentData();
-			tag.putInt("depth", ent.getPersistentData().getInt("depth") - 1);
+			tag.putInt("depth", ent.getPersistentData().getIntOr("depth", 0) - 1);
 			ent.setPersistentData(tag);
 		}
 	}

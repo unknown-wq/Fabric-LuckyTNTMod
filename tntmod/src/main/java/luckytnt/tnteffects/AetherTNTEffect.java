@@ -27,7 +27,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.VegetationConfiguredFeatures;
+import net.minecraft.data.worldgen.features.VegetationFeatures;
 
 public class AetherTNTEffect extends PrimedTNTEffect {
 
@@ -38,8 +38,8 @@ public class AetherTNTEffect extends PrimedTNTEffect {
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200 && (ent.y() - pos.getY()) <= 35) {
-					if(state.is(BlockTags.LOGS) && state.contains(BlockStateProperties.AXIS)) {
-						level.setBlock(pos.above(LuckyTNTConfigValues.ISLAND_HEIGHT.get() * 2), Blocks.DARK_OAK_LOG.defaultBlockState().setValue(BlockStateProperties.AXIS, state.get(BlockStateProperties.AXIS)), 3);
+					if(state.is(BlockTags.LOGS) && state.hasProperty(BlockStateProperties.AXIS)) {
+						level.setBlock(pos.above(LuckyTNTConfigValues.ISLAND_HEIGHT.get() * 2), Blocks.DARK_OAK_LOG.defaultBlockState().setValue(BlockStateProperties.AXIS, state.getValue(BlockStateProperties.AXIS)), 3);
 					} else if(state.is(BlockTags.LEAVES)) {
 						if(Math.random() < 0.9D) {
 							level.setBlock(pos.above(LuckyTNTConfigValues.ISLAND_HEIGHT.get() * 2), Blocks.AZALEA_LEAVES.defaultBlockState(), 3);
@@ -60,13 +60,13 @@ public class AetherTNTEffect extends PrimedTNTEffect {
 				double z = ent.z() + offZ;
 				if(distance <= 100) {
 					BlockPos pos = new BlockPos(Mth.floor(x), LevelEvents.getTopBlock(ent.getLevel(), x, z, true), Mth.floor(z)).above();
-					Registry<ConfiguredFeature<?, ?>> features = ent.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE);
+					Registry<ConfiguredFeature<?, ?>> features = ent.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE);
 					double random = Math.random();
-					
+
 					if(random > 0.1D && random <= 0.1125D) {
-						features.get(VegetationConfiguredFeatures.FOREST_FLOWERS).generate((WorldGenLevel) ent.getLevel(), ((ServerLevel) ent.getLevel()).getChunkSource().getChunkGenerator(), Random.create(), pos);
+						features.getValue(VegetationFeatures.FOREST_FLOWERS).place((WorldGenLevel) ent.getLevel(), ((ServerLevel) ent.getLevel()).getChunkSource().getChunkGenerator(), RandomSource.create(), pos);
 					} else if(random > 0.15D && random <= 0.1625D) {
-						features.get(VegetationConfiguredFeatures.FLOWER_FLOWER_FOREST).generate((WorldGenLevel) ent.getLevel(), ((ServerLevel) ent.getLevel()).getChunkSource().getChunkGenerator(), Random.create(), pos);
+						features.getValue(VegetationFeatures.FLOWER_FLOWER_FOREST).place((WorldGenLevel) ent.getLevel(), ((ServerLevel) ent.getLevel()).getChunkSource().getChunkGenerator(), RandomSource.create(), pos);
 					}
 				}
 			}

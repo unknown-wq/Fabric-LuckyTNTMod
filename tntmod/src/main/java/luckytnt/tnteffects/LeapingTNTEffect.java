@@ -15,7 +15,7 @@ public class LeapingTNTEffect extends PrimedTNTEffect{
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		if(entity.getPersistentData().getInt("bounces") < 24) {
+		if(entity.getPersistentData().getIntOr("bounces", 0) < 24) {
 			ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), 10);
 			explosion.doEntityExplosion(1.5f, true);
 			explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
@@ -30,19 +30,19 @@ public class LeapingTNTEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity) {
 		if(((Entity)entity).onGround()) {
 			CompoundTag tag = entity.getPersistentData();
-			tag.putInt("bounces", entity.getPersistentData().getInt("bounces") + 1);
+			tag.putInt("bounces", entity.getPersistentData().getIntOr("bounces", 0) + 1);
 			entity.setPersistentData(tag);
 			((Entity)entity).setDeltaMovement(Math.random() * 1.5D - Math.random() * 1.5D, Math.random() * 2f, Math.random() * 1.5D - Math.random() * 1.5D);
 			entity.getLevel().playSound(null, entity.x(), entity.y(), entity.z(), SoundEvents.ENTITY_SLIME_JUMP, SoundSource.MASTER, 1, 1);
 			entity.getLevel().playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (entity.getLevel().getRandom().nextFloat() - entity.getLevel().getRandom().nextFloat()) * 0.2f) * 0.7f);
 			
-			if(entity.getPersistentData().getInt("bounces") >= 24) {
+			if(entity.getPersistentData().getIntOr("bounces", 0) >= 24) {
 				if(entity.getLevel() instanceof ServerLevel) {
 					serverExplosion(entity);
 				}
 				entity.destroy();
 			}
-			if(entity.getPersistentData().getInt("bounces") >= 1 && entity.getPersistentData().getInt("bounces") < 24 && entity.getLevel() instanceof ServerLevel) {
+			if(entity.getPersistentData().getIntOr("bounces", 0) >= 1 && entity.getPersistentData().getIntOr("bounces", 0) < 24 && entity.getLevel() instanceof ServerLevel) {
 				serverExplosion(entity);
 			}
 		}

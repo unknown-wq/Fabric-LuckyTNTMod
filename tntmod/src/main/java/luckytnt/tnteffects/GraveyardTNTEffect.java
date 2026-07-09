@@ -23,7 +23,7 @@ public class GraveyardTNTEffect extends PrimedTNTEffect {
 					BlockPos pos = toBlockPos(new Vec3(entity.x() + offX, entity.y() + offY - 10, entity.z() + offZ));
 					if(distance <= 20 && entity.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100 && !entity.getLevel().getBlockState(pos).isCollisionShapeFullBlock(entity.getLevel(), pos)) {
 						entity.getLevel().getBlockState(pos).getBlock().wasExploded(entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-						entity.getLevel().setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState());
+						entity.getLevel().setBlockAndUpdate(pos, Blocks.GRASS_BLOCK.defaultBlockState());
 					}
 				}
 			}

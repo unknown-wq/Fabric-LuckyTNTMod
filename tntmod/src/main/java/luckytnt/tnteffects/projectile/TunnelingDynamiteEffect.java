@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.server.level.ServerLevel;
+
 
 import luckytnt.registry.ItemRegistry;
 import luckytntlib.util.IExplosiveEntity;
@@ -28,7 +30,7 @@ public class TunnelingDynamiteEffect extends PrimedTNTEffect{
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if(distance < 4) {
 						if(state.getBlock().getExplosionResistance() < 100) {
-							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+							state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}

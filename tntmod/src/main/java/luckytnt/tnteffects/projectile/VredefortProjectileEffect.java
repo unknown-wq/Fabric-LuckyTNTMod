@@ -1,5 +1,9 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.world.entity.EntitySpawnReason;
+
 
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
@@ -28,23 +32,23 @@ public class VredefortProjectileEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posDown = pos.add(0, -1, 0);
+				BlockPos posDown = pos.offset(0, -1, 0);
 				BlockState stateDown = level.getBlockState(posDown);
 				
 				if(state.getBlock().getExplosionResistance() < 800 && distance < 120) {
 					if(distance >= 115) {
 						if(Math.random() < 0.6f) {
-							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 					else if(distance < 115) {
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}	
-					if(Block.isFaceSturdy(stateDown.getCollisionShape(level, posDown), Direction.UP)) {
+					if(Block.isFaceFull(stateDown.getCollisionShape(level, posDown), Direction.UP)) {
 						if(Math.random() < 0.05f && state.getBlock().getExplosionResistance() < 800) {
-							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 							level.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);
 						}
 					}
@@ -54,14 +58,14 @@ public class VredefortProjectileEffect extends PrimedTNTEffect {
 		});
 		
 		for(int count = 0; count < 300; count++) {
-			LExplosiveProjectile projectile = EntityRegistry.SOLAR_ERUPTION_PROJECTILE.get().create(ent.getLevel());
+			LExplosiveProjectile projectile = EntityRegistry.SOLAR_ERUPTION_PROJECTILE.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			projectile.setPos(ent.getPos());
 			projectile.setOwner(ent.owner());
 			projectile.setDeltaMovement(Math.random() * 4 - Math.random() * 4, 3 + Math.random() * 2, Math.random() * 4 - Math.random() * 4);
 			ent.getLevel().addFreshEntity(projectile);
 		}
 		for(int count = 0; count < 6; count++) {
-			LExplosiveProjectile projectile = EntityRegistry.LITTLE_METEOR.get().create(ent.getLevel());
+			LExplosiveProjectile projectile = EntityRegistry.LITTLE_METEOR.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			projectile.setPos(ent.getPos());
 			projectile.setOwner(ent.owner());
 			projectile.setDeltaMovement(Math.random() * 2 - Math.random() * 2, 3 + Math.random() * 2, Math.random() * 2 - Math.random() * 2);

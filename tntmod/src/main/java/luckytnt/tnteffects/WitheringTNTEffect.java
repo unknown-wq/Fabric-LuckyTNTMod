@@ -37,7 +37,7 @@ public class WitheringTNTEffect extends PrimedTNTEffect {
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.isCollisionShapeFullBlock(level, pos)) {
-					state.getBlock().wasExploded(level, pos, explosion);
+					state.getBlock().wasExploded((ServerLevel)level, pos, explosion);
 					level.setBlockAndUpdate(pos, Math.random() < 0.5f ? Blocks.SOUL_SAND.defaultBlockState() : Blocks.SOUL_SOIL.defaultBlockState());
 				}
 			}
@@ -47,12 +47,12 @@ public class WitheringTNTEffect extends PrimedTNTEffect {
 			int offZ = (int)Math.round(Math.random() * strength * 2f - strength);
 			WitherSkeleton skeleton = new WitherSkeleton(EntityTypes.WITHER_SKELETON, entity.getLevel());
 			if(entity.getLevel() instanceof ServerLevel sl) {
-				skeleton.finalizeSpawn(sl, entity.getLevel().getLocalDifficulty(toBlockPos(entity.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
+				skeleton.finalizeSpawn(sl, sl.getCurrentDifficultyAt(toBlockPos(entity.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
 			}
 			for(int y = entity.getLevel().getMaxY(); y >= entity.getLevel().getMinY(); y--) {
 				BlockPos pos = new BlockPos(Mth.floor(entity.x() + offX), y, Mth.floor(entity.z() + offZ));
 				BlockState state = entity.getLevel().getBlockState(pos);
-				if(!Block.isFaceSturdy(state.getCollisionShape(entity.getLevel(), pos), Direction.UP) && Block.isFaceSturdy(entity.getLevel().getBlockState(pos.below()).getCollisionShape(entity.getLevel(), pos.below()), Direction.UP)) {
+				if(!Block.isFaceFull(state.getCollisionShape(entity.getLevel(), pos), Direction.UP) && Block.isFaceFull(entity.getLevel().getBlockState(pos.below()).getCollisionShape(entity.getLevel(), pos.below()), Direction.UP)) {
 					skeleton.setPos(pos.getX() + 0.5f, y, pos.getZ() + 0.5f);
 					break;
 				}

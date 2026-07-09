@@ -19,7 +19,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.UndergroundConfiguredFeatures;
+import net.minecraft.data.worldgen.features.CaveFeatures;
 
 public class LushTNTEffect extends PrimedTNTEffect{
 
@@ -47,11 +47,11 @@ public class LushTNTEffect extends PrimedTNTEffect{
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(level.getBlockState(pos.below()).isAir() && !state.isAir() && state.getBlock().getExplosionResistance() < 100 && !state.is(BlockTags.LUSH_GROUND_REPLACEABLE)) {
 					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlock(pos, Blocks.STONE.defaultBlockState());
+					level.setBlockAndUpdate(pos, Blocks.STONE.defaultBlockState());
 				}
 				else if(level.getBlockState(pos.below()).getBlock().getExplosionResistance() < 100 && !level.getBlockState(pos.below()).isAir() && state.isAir() && !level.getBlockState(pos.below()).is(BlockTags.LUSH_GROUND_REPLACEABLE)) {
 					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlock(pos.below(), Blocks.STONE.defaultBlockState());
+					level.setBlockAndUpdate(pos.below(), Blocks.STONE.defaultBlockState());
 				}
 			}
 		});
@@ -61,18 +61,18 @@ public class LushTNTEffect extends PrimedTNTEffect{
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if((level.getBlockState(pos.below()).isAir() && !state.isAir()) && Math.random() < 0.025f) {
-						Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.MOSS_PATCH_CEILING);
-						feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
+						Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.MOSS_PATCH_CEILING);
+						feature.value().place(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 					}
 					if((!level.getBlockState(pos.below()).isAir() && state.isAir()) && Math.random() < 0.1f) {
 						Holder<ConfiguredFeature<?, ?>> feature = null;
 						if(Math.random() < 0.5f) {
-							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.LUSH_CAVES_CLAY);
-							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
+							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.LUSH_CAVES_CLAY);
+							feature.value().place(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 						}
 						else {
-							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.MOSS_PATCH);
-							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
+							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.MOSS_PATCH);
+							feature.value().place(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 						}
 					}
 				}

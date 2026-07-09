@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 
 import luckytnt.registry.EntityRegistry;
 import luckytnt.registry.ItemRegistry;
@@ -27,7 +29,7 @@ public class EruptingDynamiteEffect extends PrimedTNTEffect{
 			if(ent.getTNTFuse() == 0) {
 				ent.destroy();
 			}
-			if(ent.inGround() || ent.getPersistentData().getBoolean("hitBefore")) {
+			if(ent.inGround() || ent.getPersistentData().getBooleanOr("hitBefore", false)) {
 				explosionTick(ent);
 				ent.setTNTFuse(ent.getTNTFuse() - 1);
 			}
@@ -41,11 +43,11 @@ public class EruptingDynamiteEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
 		if(entity.getTNTFuse() < 15 && entity.getTNTFuse() % 3 == 0) {
-			LExplosiveProjectile erupting_tnt = EntityRegistry.ERUPTING_PROJECTILE.get().create(level);
+			LExplosiveProjectile erupting_tnt = EntityRegistry.ERUPTING_PROJECTILE.get().create(level, EntitySpawnReason.MOB_SUMMONED);
 			erupting_tnt.setPos(entity.getPos());
 			erupting_tnt.setOwner(entity.owner());
-			erupting_tnt.setDeltaMovement((Math.random() * 2D - 1D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 2D - 1D) * 0.1f, 2f + level.getRandom().nextFloat(), 0f);	
-			erupting_tnt.setOnFireFor(1000);
+			erupting_tnt.shoot((Math.random() * 2D - 1D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 2D - 1D) * 0.1f, 2f + level.getRandom().nextFloat(), 0f);	
+			erupting_tnt.igniteForSeconds(1000);
 			level.addFreshEntity(erupting_tnt);
 			level.playSound(null, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.MASTER, 3, 1);
 		}

@@ -26,32 +26,32 @@ import net.minecraft.world.level.Level;
 
 public class PresentBlock extends Block {
 	
-	public static final EnumProperty FACING = HorizontalDirectionalBlock.FACING;
-	public static final IntegerProperty TYPE = IntegerProperty.of("type", 0, 4);
-	
+	public static final EnumProperty<net.minecraft.core.Direction> FACING = HorizontalDirectionalBlock.FACING;
+	public static final IntegerProperty TYPE = IntegerProperty.create("type", 0, 4);
+
 	public PresentBlock(BlockBehaviour.Properties properties) {
 		super(properties);
-	}	
+	}
 
 	@Override
-    public void appendProperties(StateDefinition.Builder<Block, BlockState> definition) {
-    	super.appendProperties(definition);
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> definition) {
+    	super.createBlockStateDefinition(definition);
     	definition.add(FACING);
     	definition.add(TYPE);
     }
-	
+
 	@Override
-    public BlockState getPlacementState(BlockPlaceContext ctx) {
-    	return getDefaultState();
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+    	return defaultBlockState();
     }
-	
+
 	@Override
-	public List<ItemStack> getDroppedStacks(BlockState state, LootParams.Builder builder) {
+	public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
 		return Collections.singletonList(ItemStack.EMPTY);
 	}
-	
+
 	@Override
-	public BlockState onBreak(Level level, BlockPos pos, BlockState state, Player player) {
+	public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
 		if(!player.isCreative()) {
 			Random random = new Random();
 			Item item = Items.COAL;
@@ -99,6 +99,6 @@ public class PresentBlock extends Block {
 				level.addParticle(ParticleTypes.CLOUD, pos.getX() + 0.5f + Math.random() * 2 - 1f, pos.getY() + 0.5f + Math.random() * 2 - 1f, pos.getZ() + 0.5f + Math.random() * 2 - 1f, 0, 0, 0);
 			}
 		}
-		return super.onBreak(level, pos, state, player);
+		return super.playerWillDestroy(level, pos, state, player);
 	}
 }

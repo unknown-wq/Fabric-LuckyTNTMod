@@ -39,7 +39,7 @@ public class DeathRayEffect extends PrimedTNTEffect {
 					for(int offZ = -size; offZ <= size; offZ++) {
 						double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
 						if(distance <= size && distance > size - 3) {
-							BlockPos pos = new BlockPos((int)ent.getPos().x, (int)ent.getPos().y, (int)ent.getPos().z).add(offX, offY, offZ);
+							BlockPos pos = new BlockPos((int)ent.getPos().x, (int)ent.getPos().y, (int)ent.getPos().z).offset(offX, offY, offZ);
 							BlockState state = ent.getLevel().getBlockState(pos);
 							if(distance >= 75) {
 								if(state.getBlock().getExplosionResistance() < 2000 && !state.isAir()) {
@@ -67,11 +67,11 @@ public class DeathRayEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() > 120) {
-			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.8f*255)<<16)|((int)(0f*255)<<8)|(int)(0f*255), 1f), true, ent.x(), ent.y(), ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.8f*255)<<16)|((int)(0f*255)<<8)|(int)(0f*255), 1f), ent.x(), ent.y(), ent.z(), 0, 0, 0);
 		}
 		if(ent.getTNTFuse() < 140) {
 			for(int count = 0; count < 200; count++) {
-				ent.getLevel().addParticle(new DustParticleOptions(((int)(0.5f*255)<<16)|((int)(0f*255)<<8)|(int)(2f*255), 10f), true, ent.x() + Math.random() - Math.random(), ent.y() + 135f - Math.random() * ent.getPersistentData().getIntOr("particleSize", 0), ent.z() + Math.random() - Math.random(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(((int)(0.5f*255)<<16)|((int)(0f*255)<<8)|(int)(2f*255), 10f), ent.x() + Math.random() - Math.random(), ent.y() + 135f - Math.random() * ent.getPersistentData().getIntOr("particleSize", 0), ent.z() + Math.random() - Math.random(), 0, 0, 0);
 			}
 			CompoundTag tag = ent.getPersistentData();
 			tag.putInt("particleSize", ent.getPersistentData().getIntOr("particleSize", 0) + 2);

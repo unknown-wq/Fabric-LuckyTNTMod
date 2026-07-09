@@ -27,7 +27,7 @@ public class MidasTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() < 80 && ent.getTNTFuse() % 2 == 0 && !ent.getLevel().isClientSide()) {
-			ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), ent.getPersistentData().getInt("size"), new IForEachBlockExplosionEffect() {
+			ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), ent.getPersistentData().getIntOr("size", 0), new IForEachBlockExplosionEffect() {
 				
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
@@ -38,15 +38,15 @@ public class MidasTNTEffect extends PrimedTNTEffect {
 			});
 			
 			CompoundTag tag = ent.getPersistentData();
-			tag.putInt("size", ent.getPersistentData().getInt("size") + 1);
+			tag.putInt("size", ent.getPersistentData().getIntOr("size", 0) + 1);
 			ent.setPersistentData(tag);
 			
-			int i = ent.getPersistentData().getInt("size");
-			BlockPos min = toBlockPos(ent.getPos()).add(-i, -i, -i);
-			BlockPos max = toBlockPos(ent.getPos()).add(i, i, i);
+			int i = ent.getPersistentData().getIntOr("size", 0);
+			BlockPos min = toBlockPos(ent.getPos()).offset(-i, -i, -i);
+			BlockPos max = toBlockPos(ent.getPos()).offset(i, i, i);
 			List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
 			for(LivingEntity lent : list) {
-				lent.addStatusEffect(new MobEffectInstance(BuiltInRegistries.STATUS_EFFECT.entryOf(EffectRegistry.MIDAS_TOUCH), 2000, 0));
+				lent.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getOrThrow(EffectRegistry.MIDAS_TOUCH), 2000, 0));
 			}
 		}
 	}

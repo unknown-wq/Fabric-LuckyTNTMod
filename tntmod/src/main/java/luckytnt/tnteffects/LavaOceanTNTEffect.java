@@ -35,7 +35,7 @@ public class LavaOceanTNTEffect extends PrimedTNTEffect{
 				if(pos.getY() <= entity.getPos().y) {
 					if((!state.isFaceSturdy(level, pos, Direction.UP) && state.getBlock().getExplosionResistance() < 100) || state.getBlock().getExplosionResistance() < 4) {
 						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-						level.setBlock(pos, Blocks.LAVA.defaultBlockState());
+						level.setBlockAndUpdate(pos, Blocks.LAVA.defaultBlockState());
 					}
 				}
 			}

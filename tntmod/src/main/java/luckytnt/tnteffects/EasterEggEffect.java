@@ -46,10 +46,10 @@ public class EasterEggEffect extends PrimedTNTEffect{
 				if(Math.random() < 0.66f && !state.isAir()) {
 					state.getBlock().wasExploded(level, pos, explosion);
 					if(Math.random() < 0.5f) {
-						entity.getLevel().setBlock(pos, Blocks.MELON.defaultBlockState());
+						entity.getLevel().setBlockAndUpdate(pos, Blocks.MELON.defaultBlockState());
 					}
 					else {
-						entity.getLevel().setBlock(pos, Blocks.PUMPKIN.defaultBlockState());
+						entity.getLevel().setBlockAndUpdate(pos, Blocks.PUMPKIN.defaultBlockState());
 					}
 				}
 			}

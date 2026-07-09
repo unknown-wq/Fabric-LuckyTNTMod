@@ -25,6 +25,8 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.BlockHitResult;
@@ -33,44 +35,44 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 public class GotthardTunnelBlock extends LTNTBlock {
-	public static final EnumProperty FACING = HorizontalDirectionalBlock.FACING;
-	public static final BooleanProperty STREETS = BooleanProperty.of("streets");
+	public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty STREETS = BooleanProperty.create("streets");
 
 	public GotthardTunnelBlock(BlockBehaviour.Properties properties) {
 		super(properties, EntityRegistry.GOTTHARD_TUNNEL, false);
 	}
 
 	@Override
-    public void appendProperties(StateDefinition.Builder<Block, BlockState> definition) {
-    	super.appendProperties(definition);
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> definition) {
+    	super.createBlockStateDefinition(definition);
     	definition.add(FACING);
     	definition.add(STREETS);
     }
-	
+
 	@Override
-    public BlockState getPlacementState(BlockPlaceContext context) {
-    	return getDefaultState().setValue(FACING, context.getHorizontalPlayerFacing()).setValue(STREETS, false);
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+    	return defaultBlockState().setValue(FACING, context.getHorizontalDirection()).setValue(STREETS, false);
     }
-	
+
 	@Override
 	public PrimedLTNT explode(Level level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
 		if(TNT != null) {
 			BlockState state = level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)));
-			PrimedLTNT tnt = EntityRegistry.GOTTHARD_TUNNEL.get().create(level);
+			PrimedLTNT tnt = EntityRegistry.GOTTHARD_TUNNEL.get().create(level, EntitySpawnReason.TRIGGERED);
 			tnt.setFuse(40);
 			tnt.setPos(x + 0.5f, y, z + 0.5f);
 			tnt.setOwner(igniter);
 			tnt.setTNTFuse(200);
 			CompoundTag tag = tnt.getPersistentData();
-			if(state.contains(FACING)) {
-				tag.putString("direction", state.get(FACING).getName());
+			if(state.hasProperty(FACING)) {
+				tag.putString("direction", state.getValue(FACING).getName());
 			}
-			if(state.contains(STREETS)) {
-				tag.putBoolean("streets", state.get(STREETS));
+			if(state.hasProperty(STREETS)) {
+				tag.putBoolean("streets", state.getValue(STREETS));
 			}
 			tnt.setPersistentData(tag);
 			level.addFreshEntity(tnt);
-			level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.ENTITY_TNT_PRIMED, SoundSource.MASTER, 1, 1);
+			level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.TNT_PRIMED, SoundSource.MASTER, 1, 1);
 			if(level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).getBlock() == this) {
 				level.setBlock(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), Blocks.AIR.defaultBlockState(), 3);
 			}
@@ -87,17 +89,17 @@ public class GotthardTunnelBlock extends LTNTBlock {
 			Item item = itemstack.getItem();
 			if (!player.isCreative()) {
 				if (itemstack.is(Items.FLINT_AND_STEEL)) {
-					itemstack.damage(1, player, LivingEntity.getSlotForHand(hand));
+					itemstack.hurtAndBreak(1, player, hand);
 				} else {
 					itemstack.shrink(1);
 				}
 			}
 
-			player.incrementStat(Stats.USED.getOrCreateStat(item));
-			return InteractionResult.success(level.isClientSide());
+			player.awardStat(Stats.ITEM_USED.get(item));
+			return InteractionResult.SUCCESS;
 		} else if(itemstack.is(ItemRegistry.CONFIGURATION_WAND.get())) {
-			if(state.contains(STREETS)) {
-    			if(state.get(STREETS)) {
+			if(state.hasProperty(STREETS)) {
+    			if(state.getValue(STREETS)) {
     				level.setBlock(pos, state.setValue(STREETS, false), 3);
     			} else {
     				level.setBlock(pos, state.setValue(STREETS, true), 3);
@@ -105,7 +107,7 @@ public class GotthardTunnelBlock extends LTNTBlock {
     		}
     		return InteractionResult.SUCCESS;
 		} else {
-			return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+			return InteractionResult.TRY_WITH_EMPTY_HAND;
 		}
 	}
 }

@@ -30,31 +30,32 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Explosion;
 
 public class NuclearWasteBlock extends FallingBlock {
-	public static final MapCodec<NuclearWasteBlock> CODEC = createCodec(NuclearWasteBlock::new);
+	public static final MapCodec<NuclearWasteBlock> CODEC = simpleCodec(NuclearWasteBlock::new);
 	
 	public NuclearWasteBlock(BlockBehaviour.Properties properties) {
 		super(properties);
 	}
 	
 	@Override
-	public VoxelShape getOutlineShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-		return VoxelShapes.cuboid(0, 0, 0, 1, 2d / 16d, 1);
+	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+		return Shapes.box(0, 0, 0, 1, 2d / 16d, 1);
 	}
 
 	@Override
-	public boolean canPlaceAt(BlockState state, LevelReader level, BlockPos pos) {
+	public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
 		BlockPos posDown = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
-		if(Block.isFaceSturdy(level.getBlockState(posDown).getCollisionShape(level, posDown), Direction.UP) || level.getBlockState(posDown).isAir()){
+		if(Block.isFaceFull(level.getBlockState(posDown).getCollisionShape(level, posDown), Direction.UP) || level.getBlockState(posDown).isAir()){
 			return true;
 		}
-		return super.canPlaceAt(state, level, pos);
+		return super.canSurvive(state, level, pos);
 	}
 	
 	@Override
@@ -63,7 +64,7 @@ public class NuclearWasteBlock extends FallingBlock {
 		if(Math.random() < 0.2f) {
 			if(level.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())).getBlock().getExplosionResistance() < 100) {
 				level.setBlock(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ()), Blocks.AIR.defaultBlockState(), 3);
-				level.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundSource.BLOCKS, 1, 1);
+				level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1, 1);
 				if(Math.random() < 0.05f) {
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					level.sendParticles(new DustParticleOptions(((int)(1f*255)<<16)|((int)(1f*255)<<8)|(int)(0.1f*255), 1), pos.getX(), pos.getY(), pos.getZ(), 40, 0.6f, 0.6f, 0.6f, 0);
@@ -74,20 +75,20 @@ public class NuclearWasteBlock extends FallingBlock {
 	}
 	
 	@Override
-	public List<ItemStack> getDroppedStacks(BlockState state, LootParams.Builder builder) {
+	public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
 		return Collections.singletonList(ItemStack.EMPTY);
 	}
-		
+
 	@Override
-	public void onEntityCollision(BlockState state, Level level, BlockPos pos, Entity entity) {
-		super.onEntityCollision(state, level, pos, entity);
+	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+		super.entityInside(state, level, pos, entity, effectApplier, isPrecise);
 		if(entity instanceof LivingEntity l_Entity) {
-			l_Entity.addStatusEffect(new MobEffectInstance(MobEffects.POISON, 120, 4, false, true));
-			l_Entity.addStatusEffect(new MobEffectInstance(BuiltInRegistries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 120, 0, false, true));
-			l_Entity.addStatusEffect(new MobEffectInstance(MobEffects.NAUSEA, 120, 0, false, true));
+			l_Entity.addEffect(new MobEffectInstance(MobEffects.POISON, 120, 4, false, true));
+			l_Entity.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getOrThrow(EffectRegistry.CONTAMINATED), 120, 0, false, true));
+			l_Entity.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 120, 0, false, true));
 		}
-		else if(entity instanceof ItemEntity i_Entity) {
-			i_Entity.damage(Explosion.createDamageSource(level, entity), 100);
+		else if(entity instanceof ItemEntity i_Entity && level instanceof ServerLevel serverLevel) {
+			i_Entity.hurtServer(serverLevel, serverLevel.damageSources().explosion(null, null), 100);
 		}
 	}
 

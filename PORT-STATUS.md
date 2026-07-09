@@ -19,10 +19,18 @@ already ported — do not touch it.
 - [x] Step 0 — toolchain, build files (`build.gradle`/`gradle.properties`/`settings.gradle`/`fabric.mod.json`/`mixins.json`), `port-rename.sh` first pass, genSources
 - [ ] Agent A — registry/* , block/* , item/* , entity/* compile
 - [ ] Agent B — 7 mixins re-verified against `/opt/mc-src/`
-- [ ] Agent C — client renderers (render-state/`submit`), HUD overlay, config GUI
+- [x] Agent C — client renderers (render-state/`submit`), HUD overlay, config GUI (edits done; pending central compile)
 - [ ] Agent D — sweeper: tnteffects/*, feature/*, data JSON, full `build`
 - [ ] runServer smoke test reaches `Done (…)!` with no `/ERROR]` lines
 
 ## Disabled content (§9)
 
-_Nothing disabled yet._ Every cut goes here: file, what, why.
+- `registry/RenderLayerRegistry.java` — **init() body disabled** (kept in `/* */`). Fabric's
+  `BlockRenderLayerMap`/`BlockRenderLayerMapImpl` API was removed in 26.x. Block render types
+  are now declared in the block model JSON via `"render_type"` (e.g. `minecraft:cutout_mipped`).
+  Affected blocks (need `render_type` in their data JSON — Agent D): CUSTOM_FIREWORK, XRAY_TNT,
+  OBSIDIAN_ACTIVATOR_RAIL, OBSIDIAN_DETECTOR_RAIL, OBSIDIAN_POWERED_RAIL, OBSIDIAN_RAIL.
+- `registry/ColorRegistry.java` — **item color provider dropped** (block grass tint kept via
+  `BlockColorRegistry.register(List.of(BlockTintSources.grass()), CUSTOM_FIREWORK)`). 26.2 has no
+  item `ColorProvider` API; item tints are now driven by item model JSON. Only the CUSTOM_FIREWORK
+  block item lost its grass tint (cosmetic, non-blocking).

@@ -19,9 +19,9 @@ public class SquaringTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
 		super.baseTick(entity);
-		if(((Entity)entity).onGround() && entity.getPersistentData().getInt("level") > 0) {
+		if(((Entity)entity).onGround() && entity.getPersistentData().getIntOr("level", 0) > 0) {
 			serverExplosion(entity);
-			if(entity.getPersistentData().getInt("level") == 5) {
+			if(entity.getPersistentData().getIntOr("level", 0) == 5) {
 				Level level = entity.getLevel();
 				entity.getLevel().playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
 			}
@@ -30,7 +30,7 @@ public class SquaringTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		int level = entity.getPersistentData().getInt("level");
+		int level = entity.getPersistentData().getIntOr("level", 0);
 		if(level == 5) {
 			ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), 15);
 			explosion.doEntityExplosion(1.5f, true);
@@ -68,6 +68,6 @@ public class SquaringTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public int getDefaultFuse(IExplosiveEntity entity) {
-		return entity.getPersistentData().getInt("level") == 5 ? 100000 : 200;
+		return entity.getPersistentData().getIntOr("level", 0) == 5 ? 100000 : 200;
 	}
 }

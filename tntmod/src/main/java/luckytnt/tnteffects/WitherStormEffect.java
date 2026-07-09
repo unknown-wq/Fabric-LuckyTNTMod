@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.entity.boss.WitherEntity;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
@@ -40,17 +40,17 @@ public class WitherStormEffect extends PrimedTNTEffect {
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock().getExplosionResistance() < 100 && !state.isAir()) {
 					if(Math.random() < 0.7D) {
-						state.getBlock().wasExploded(level, pos, explosion);
+						state.getBlock().wasExploded((ServerLevel)level, pos, explosion);
 						level.setBlock(pos, Blocks.SOUL_SAND.defaultBlockState(), 3);
 					} else {
-						state.getBlock().wasExploded(level, pos, explosion);
+						state.getBlock().wasExploded((ServerLevel)level, pos, explosion);
 						level.setBlock(pos, Blocks.SOUL_SOIL.defaultBlockState(), 3);
 					}
 				}
 			}
 		});
 		
-		WitherEntity wither = new WitherEntity(EntityTypes.WITHER, ent.getLevel());
+		WitherBoss wither = new WitherBoss(EntityTypes.WITHER, ent.getLevel());
 		wither.setPos(ent.getPos());
 		ent.getLevel().addFreshEntity(wither);
 		
@@ -59,12 +59,12 @@ public class WitherStormEffect extends PrimedTNTEffect {
 			int offZ = (int)Math.round(Math.random() * 140D - 70D);
 			WitherSkeleton skeleton = new WitherSkeleton(EntityTypes.WITHER_SKELETON, ent.getLevel());
 			if(ent.getLevel() instanceof ServerLevel sl) {
-				skeleton.finalizeSpawn(sl, ent.getLevel().getLocalDifficulty(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
+				skeleton.finalizeSpawn(sl, sl.getCurrentDifficultyAt(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
 			}
 			for(int y = ent.getLevel().getMaxY(); y >= ent.getLevel().getMinY(); y--) {
 				BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), y, Mth.floor(ent.z() + offZ));
 				BlockState state = ent.getLevel().getBlockState(pos);
-				if(!Block.isFaceSturdy(state.getCollisionShape(ent.getLevel(), pos), Direction.UP) && Block.isFaceSturdy(ent.getLevel().getBlockState(pos.below()).getCollisionShape(ent.getLevel(), pos.below()), Direction.UP)) {
+				if(!Block.isFaceFull(state.getCollisionShape(ent.getLevel(), pos), Direction.UP) && Block.isFaceFull(ent.getLevel().getBlockState(pos.below()).getCollisionShape(ent.getLevel(), pos.below()), Direction.UP)) {
 					skeleton.setPos(pos.getX() + 0.5D, y, pos.getZ() + 0.5D);
 					break;
 				}

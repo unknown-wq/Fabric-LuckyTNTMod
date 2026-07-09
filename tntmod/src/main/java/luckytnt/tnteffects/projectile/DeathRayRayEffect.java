@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.server.level.ServerLevel;
+
 
 import org.joml.Vector3f;
 
@@ -34,10 +36,10 @@ public class DeathRayRayEffect extends PrimedTNTEffect{
 						ItemEntity antimatter = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ItemRegistry.ANTIMATTER.get()));
 						level.addFreshEntity(antimatter);
 					}
-					level.setBlock(pos, Blocks.AIR.defaultBlockState());
+					level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 				}
 				else {
-					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}
@@ -52,14 +54,14 @@ public class DeathRayRayEffect extends PrimedTNTEffect{
 			@Override
 			public void doEntityExplosion(Entity ent, double distance) {
 				if(!ent.equals(entity.owner())) {
-					DamageSources sources = ent.level().getDamageSources();
+					DamageSources sources = ent.level().damageSources();
 					if(ent instanceof ItemEntity itemEntity) {
-						if(!itemEntity.getStack().getItem().equals(ItemRegistry.ANTIMATTER.get())) {
-							ent.damage(sources.explosion(explosion), 1);
+						if(!itemEntity.getItem().getItem().equals(ItemRegistry.ANTIMATTER.get())) {
+							ent.hurtServer((ServerLevel) ent.level(), sources.explosion(explosion), 1);
 						}
 					}
 					else {
-						ent.damage(sources.explosion(explosion), 200);
+						ent.hurtServer((ServerLevel) ent.level(), sources.explosion(explosion), 200);
 					}
 				}
 			}

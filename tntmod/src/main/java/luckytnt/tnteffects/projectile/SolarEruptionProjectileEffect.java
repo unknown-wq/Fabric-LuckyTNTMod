@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.server.level.ServerLevel;
+
 
 import luckytnt.util.Materials;
 import luckytntlib.util.IExplosiveEntity;
@@ -30,7 +32,7 @@ public class SolarEruptionProjectileEffect extends PrimedTNTEffect {
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if((ent.y() - pos.getY()) >= 0 && (ent.y() - pos.getY()) <= 3) {
 					if((state.getBlock().getExplosionResistance() < 100 || state.getBlock() instanceof LiquidBlock || state.isAir()) && Materials.isStone(state)) {
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
 					}
 				}
@@ -40,7 +42,7 @@ public class SolarEruptionProjectileEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
-		ent.getLevel().addParticle(ParticleTypes.LARGE_SMOKE, true, ent.x(), ent.y() + 0.5f, ent.z(), 0, 0.1f, 0);
+		ent.getLevel().addParticle(ParticleTypes.LARGE_SMOKE, ent.x(), ent.y() + 0.5f, ent.z(), 0, 0.1f, 0);
 	}
 	
 	@Override

@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.server.level.ServerLevel;
 import java.util.Random;
 
 import luckytnt.registry.BlockRegistry;
@@ -60,7 +61,7 @@ public class RedstoneTNTEffect extends PrimedTNTEffect{
 					case 16: replace = Blocks.COMPARATOR.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, getRandomDirectionHorizontal()).setValue(BlockStateProperties.COMPARATOR_MODE, Math.random() < 0.5f ? ComparatorMode.COMPARE : ComparatorMode.SUBTRACT); break;
 				}
 				Block block = state.getBlock();
-				block.wasExploded(entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+				block.wasExploded((ServerLevel)entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 				entity.getLevel().setBlock(pos, replace, 3);
 			}
 		});

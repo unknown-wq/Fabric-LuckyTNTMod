@@ -13,7 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.AABB;
@@ -32,16 +32,16 @@ public class HomingDynamiteEffect extends PrimedTNTEffect{
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		if(entity.getTNTFuse() < 390) {
-			Entity target = entity.getLevel().getEntityById(entity.getPersistentData().getInt("targetID"));
+			Entity target = entity.getLevel().getEntity(entity.getPersistentData().getIntOr("targetID", 0));
 			if(target == null) {
 				target = setTarget(entity);
 			}
 			else {
-				Vec3 movement = target.getPosition(1f).subtract(entity.getPos()).normalize();
+				Vec3 movement = target.position().subtract(entity.getPos()).normalize();
 				((Entity)entity).setDeltaMovement(movement);
 				if(entity.getLevel() instanceof ServerLevel server) {
-					for(ServerPlayer splayer : server.getPlayers()) {
-						splayer.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(((Entity)entity).getId(), ((Entity)entity).getDeltaMovement()));
+					for(ServerPlayer splayer : server.players()) {
+						splayer.connection.send(new ClientboundSetEntityMotionPacket((Entity)entity));
 					}
 				}
 			}
@@ -55,7 +55,7 @@ public class HomingDynamiteEffect extends PrimedTNTEffect{
 		List<Player> players = level.getEntitiesOfClass(Player.class, new AABB(entity.getPos().add(-100, -100, -100), entity.getPos().add(100, 100, 100)));
 		double distance = Math.sqrt(20000);
 		for(Player player : players) {
-			double entityDistance = entity.getPos().distanceTo(player.getPosition(1f));
+			double entityDistance = entity.getPos().distanceTo(player.position());
 			if(!player.equals(entity.owner()) && entityDistance <= distance) {
 				CompoundTag tag = entity.getPersistentData();
 				tag.putInt("targetID", player.getId());
@@ -68,7 +68,7 @@ public class HomingDynamiteEffect extends PrimedTNTEffect{
 			distance = Math.sqrt(20000);
 			List<LivingEntity> livingEntities = level.getEntitiesOfClass(LivingEntity.class, new AABB(entity.getPos().add(-100, -100, -100), entity.getPos().add(100, 100, 100)));
 			for(LivingEntity ent : livingEntities) {
-				double entityDistance = entity.getPos().distanceTo(ent.getPosition(1f));
+				double entityDistance = entity.getPos().distanceTo(ent.position());
 				if(!ent.equals(entity.owner()) && entityDistance <= distance) {
 					CompoundTag tag = entity.getPersistentData();
 					tag.putInt("targetID", ent.getId());

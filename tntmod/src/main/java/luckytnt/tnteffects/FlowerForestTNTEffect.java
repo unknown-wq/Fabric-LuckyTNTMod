@@ -14,25 +14,18 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.GrassBlock;
 import net.minecraft.world.level.block.MyceliumBlock;
-import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
-import net.minecraft.core.Registry;
+// TODO(port-26.2): DISABLED — biome-swap + chunk-resync + feature-gen use heavily-changed 26.2 internals
+// import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.core.Holder;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeKeys;
-import net.minecraft.world.level.chunk.ChunkSection;
-import net.minecraft.world.level.chunk.PalettedContainer;
-import net.minecraft.world.level.chunk.ReadableContainer;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.VegetationConfiguredFeatures;
+// import net.minecraft.world.level.biome.BiomeKeys;
+// import net.minecraft.world.level.chunk.ChunkSection;
+// import net.minecraft.world.level.chunk.ReadableContainer;
+// import net.minecraft.world.gen.feature.VegetationConfiguredFeatures;
 
 public class FlowerForestTNTEffect extends PrimedTNTEffect {
 
@@ -64,7 +57,13 @@ public class FlowerForestTNTEffect extends PrimedTNTEffect {
 				}
 			}
 		}
-		
+
+		// TODO(port-26.2): DISABLED — biome overwrite via PalettedContainer.swapUnsafe, chunk
+		// resync via ChunkDataS2CPacket, and ConfiguredFeature.generate all use 26.2-changed
+		// internals (ChunkSection->LevelChunkSection, ReadableContainer->PalettedContainerRO,
+		// networkHandler->connection, getWorldChunk/getLightingProvider renamed). Kept the
+		// portable cylindrical explosion + grass placement above; disabled the rest.
+		/*
 		Registry<Biome> registry = ent.getLevel().registryAccess().get(Registries.BIOME);
 		Holder<Biome> biome = registry.entryOf(BiomeKeys.FLOWER_FOREST);
 		for(double offX = -75; offX < 75; offX++) {
@@ -112,6 +111,7 @@ public class FlowerForestTNTEffect extends PrimedTNTEffect {
 				}
 			}
 		}
+		*/
 	}
 	
 	@Override

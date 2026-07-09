@@ -22,7 +22,7 @@ public class PulseTNTEffect extends PrimedTNTEffect{
 		if(!level.isClientSide()) {
 			if(entity.getTNTFuse() < 205) {
 				if(entity.getTNTFuse() % 20 == 0) {		      		
-					ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), entity.getPersistentData().getInt("strength"));
+					ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), entity.getPersistentData().getIntOr("strength", 0));
 					explosion.doEntityExplosion(1.5f, true);
 					explosion.doBlockExplosion();
 		      		
@@ -31,7 +31,7 @@ public class PulseTNTEffect extends PrimedTNTEffect{
 					}
 					
 					CompoundTag tag = entity.getPersistentData();
-					tag.putInt("strength", entity.getPersistentData().getInt("strength") + 2);
+					tag.putInt("strength", entity.getPersistentData().getIntOr("strength", 0) + 2);
 					entity.setPersistentData(tag);
 				}
 			}

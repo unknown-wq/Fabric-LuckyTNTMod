@@ -18,7 +18,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.CoralParentBlock;
+import net.minecraft.world.level.block.BaseCoralPlantTypeBlock;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.entity.EntityType;
@@ -97,7 +97,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 					}
 				}
 				
-				if((state.is(Blocks.WATER) || state.is(Blocks.BUBBLE_COLUMN) || state.getBlock() instanceof CoralParentBlock) && state.getBlock().getExplosionResistance() <= 200) {
+				if((state.is(Blocks.WATER) || state.is(Blocks.BUBBLE_COLUMN) || state.getBlock() instanceof BaseCoralPlantTypeBlock) && state.getBlock().getExplosionResistance() <= 200) {
 					blocks.add(Pair.of(pos, Blocks.BLUE_STAINED_GLASS));
 				}
 				
@@ -153,7 +153,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 			int z = new Random().nextInt(151) - 75;
 			
 			sheep.setPos(ent.x() + x, LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1, ent.z() + z);
-			sheep.finalizeSpawn((ServerLevel)ent.getLevel(), ent.getLevel().getLocalDifficulty(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
+			sheep.finalizeSpawn((ServerLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getCurrentDifficultyAt(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
 			ent.getLevel().addFreshEntity(sheep);
 		}
 		

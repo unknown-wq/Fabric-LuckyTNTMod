@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.server.level.ServerLevel;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
@@ -24,7 +25,7 @@ public class SilkTouchTNTEffect extends PrimedTNTEffect {
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock().getExplosionResistance() < 100 && !state.isAir() && Math.abs(ent.y() - pos.getY()) <= 5) {
 					Block block = state.getBlock();
-					block.wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+					block.wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					ItemEntity item = new ItemEntity(level, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, new ItemStack(block));
 					level.addFreshEntity(item);

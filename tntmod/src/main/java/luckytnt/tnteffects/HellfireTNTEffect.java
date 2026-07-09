@@ -44,16 +44,16 @@ public class HellfireTNTEffect extends PrimedTNTEffect{
 				if(distance <= 25) {
 					if(Math.random() < 0.9f) {
 						state.getBlock().wasExploded(level, pos, netherExplosion);
-						level.setBlock(pos, Blocks.NETHERRACK.defaultBlockState());
+						level.setBlockAndUpdate(pos, Blocks.NETHERRACK.defaultBlockState());
 						if(Math.random() < 0.1f) {
 							if(level.getBlockState(pos.above()).isAir()) {
-								level.setBlock(pos.above(), AbstractFireBlock.getState(level, pos.above()));
+								level.setBlockAndUpdate(pos.above(), AbstractFireBlock.getState(level, pos.above()));
 							}
 						}
 					}
 					else if(Math.random() < 0.3f) {
 						state.getBlock().wasExploded(level, pos, netherExplosion);
-						level.setBlock(pos, Blocks.LAVA.defaultBlockState());
+						level.setBlockAndUpdate(pos, Blocks.LAVA.defaultBlockState());
 					}
 				}
 			}

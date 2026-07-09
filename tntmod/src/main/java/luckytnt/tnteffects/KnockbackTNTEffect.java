@@ -27,9 +27,9 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 			List<LivingEntity> ents = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() - 75, ent.y() - 75, ent.z() - 75, ent.x() + 75, ent.y() + 75, ent.z() + 75));
 			for (LivingEntity lent : ents) {
 				if(lent instanceof LuckyTNTEntityExtension elent) {
-					if (elent.getAdditionalPersistentData().getInt("knockbacktime") > 0) {
+					if (elent.getAdditionalPersistentData().getIntOr("knockbacktime", 0) > 0) {
 						CompoundTag tag = elent.getAdditionalPersistentData();
-						tag.putInt("knockbacktime", elent.getAdditionalPersistentData().getInt("knockbacktime") - 1);
+						tag.putInt("knockbacktime", elent.getAdditionalPersistentData().getIntOr("knockbacktime", 0) - 1);
 						elent.setAdditionalPersistentData(tag);
 					}
 				}
@@ -38,7 +38,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 				double z = ent.z() - lent.getZ();
 				double distance = Math.sqrt(x * x + y * y + z * z) + 0.1D;
 				Vec3 vec = new Vec3(x, y, z).normalize().multiply(1D / (distance * 0.2D) + 0.5D).add(0, 0.1D, 0);
-				if (distance > 2.1D && distance <= 75D && lent instanceof LuckyTNTEntityExtension elent && elent.getAdditionalPersistentData().getInt("knockbacktime") <= 0) {
+				if (distance > 2.1D && distance <= 75D && lent instanceof LuckyTNTEntityExtension elent && elent.getAdditionalPersistentData().getIntOr("knockbacktime", 0) <= 0) {
 					if (lent instanceof Player player) {
 						if (!player.isCreative()) {
 							lent.setDeltaMovement(vec);

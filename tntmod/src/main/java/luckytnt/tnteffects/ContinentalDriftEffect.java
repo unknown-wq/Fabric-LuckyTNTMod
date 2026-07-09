@@ -54,16 +54,16 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 		
 		if(ent.getTNTFuse() <= 400 && (ent.getTNTFuse() % 60 == 0 || ent.getTNTFuse() == 400) && !ent.getLevel().isClientSide()) {
 			BlockPos origin = toBlockPos(new Vec3(ent.getPersistentData().getDoubleOr("x", 0), ent.getPersistentData().getDoubleOr("y", 0), ent.getPersistentData().getDoubleOr("z", 0)));
-			BlockPos start = origin.add(toBlockPos(new Vec3(ent.getPersistentData().getDoubleOr("vecx", 0) * -80, 0, ent.getPersistentData().getDoubleOr("vecz", 0) * -80)));
+			BlockPos start = origin.offset(toBlockPos(new Vec3(ent.getPersistentData().getDoubleOr("vecx", 0) * -80, 0, ent.getPersistentData().getDoubleOr("vecz", 0) * -80)));
 			Vec3 vec = new Vec3(ent.getPersistentData().getDoubleOr("vecx", 0), 0, ent.getPersistentData().getDoubleOr("vecz", 0));
 			Vec3 vec2 = new Vec3(ent.getPersistentData().getDoubleOr("vecx2", 0), 0, ent.getPersistentData().getDoubleOr("vecz2", 0));
-			BlockPos start2 = start.add(toBlockPos(new Vec3(vec.x * ent.getPersistentData().getIntOr("second", 0), 0, vec.z * ent.getPersistentData().getIntOr("second", 0)))).add(toBlockPos(new Vec3(vec2.x * 8, 0, vec2.z * 8)));
+			BlockPos start2 = start.offset(toBlockPos(new Vec3(vec.x * ent.getPersistentData().getIntOr("second", 0), 0, vec.z * ent.getPersistentData().getIntOr("second", 0)))).offset(toBlockPos(new Vec3(vec2.x * 8, 0, vec2.z * 8)));
 			
 			for(double i = 0; i < 160D; i += 1D) {
 				for(int offX = -10; offX <= 10; offX++) {
 					for(int offZ = -10; offZ <= 10; offZ++) {
 						double distance = Math.sqrt(offX * offX + offZ * offZ);
-						BlockPos pos = start.add(toBlockPos(new Vec3(i * vec.x + offX, 0, i * vec.z + offZ)));
+						BlockPos pos = start.offset(toBlockPos(new Vec3(i * vec.x + offX, 0, i * vec.z + offZ)));
 						if(distance <= 7) {
 							if(Math.random() > 0.1D) {
 								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
@@ -96,7 +96,7 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 				for(int offX = -10; offX <= 10; offX++) {
 					for(int offZ = -10; offZ <= 10; offZ++) {
 						double distance = Math.sqrt(offX * offX + offZ * offZ);
-						BlockPos pos = start2.add(toBlockPos(new Vec3(i * vec2.x + offX, 0, i * vec2.z + offZ)));
+						BlockPos pos = start2.offset(toBlockPos(new Vec3(i * vec2.x + offX, 0, i * vec2.z + offZ)));
 						if(distance <= 7) {
 							if(Math.random() > 0.1D) {
 								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());

@@ -6,14 +6,14 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.Join;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 
 public class ClientEventRegistry {
 
 	private static final Join PLAYER_JOIN_CLIENT = new Join() {
 		
 		@Override
-		public void onPlayReady(ClientPlayNetworkHandler handler, PacketSender sender, Minecraft client) {
+		public void onPlayReady(ClientPacketListener handler, PacketSender sender, Minecraft client) {
 			LuckyTNTMod.RH.sendC2SPacket(new LuckyTNTClientReadyC2SPacket());
 		}
 	};

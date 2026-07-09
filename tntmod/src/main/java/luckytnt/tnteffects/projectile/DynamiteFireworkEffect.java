@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import luckytnt.registry.EntityRegistry;
 import luckytnt.registry.ItemRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
@@ -14,7 +16,7 @@ public class DynamiteFireworkEffect extends PrimedTNTEffect{
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		for(int count = 0; count <= 300; count++) {
-			LExplosiveProjectile dynamite = EntityRegistry.DYNAMITE.get().create(entity.getLevel());
+			LExplosiveProjectile dynamite = EntityRegistry.DYNAMITE.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			dynamite.setPos(entity.getPos());
 			dynamite.setOwner(dynamite.owner());
 			dynamite.setDeltaMovement(Math.random() * 2f - 1f, Math.random() * 2f - 1f, Math.random() * 2f - 1f);

@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import luckytnt.registry.EntityRegistry;
 import luckytnt.registry.ItemRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
@@ -17,7 +19,7 @@ public class ClusterDynamiteEffect extends PrimedTNTEffect{
 		if(entity instanceof LExplosiveProjectile dynamite) {
 			if(!dynamite.inGround()) {
 				for(int count = 0; count < 75; count++) {
-					LExplosiveProjectile shrapnel = EntityRegistry.SHRAPNEL.get().create(entity.getLevel());
+					LExplosiveProjectile shrapnel = EntityRegistry.SHRAPNEL.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					shrapnel.setPos(entity.getPos());
 					shrapnel.setOwner(entity.owner());
 					shrapnel.setDeltaMovement(dynamite.getDeltaMovement().add(new Vec3(Math.random() - Math.random(), Math.random() - Math.random(), Math.random() - Math.random()).multiply(0.4f)));
@@ -29,7 +31,7 @@ public class ClusterDynamiteEffect extends PrimedTNTEffect{
 				explosion.doEntityExplosion(1f, true);
 				explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
 				for(int count = 0; count < 50; count++) {
-					LExplosiveProjectile shrapnel = EntityRegistry.SHRAPNEL.get().create(entity.getLevel());
+					LExplosiveProjectile shrapnel = EntityRegistry.SHRAPNEL.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					shrapnel.setPos(entity.getPos());
 					shrapnel.setOwner(entity.owner());
 					shrapnel.setDeltaMovement(dynamite.getDeltaMovement().add(Math.random() * 2f - 1f, Math.random() * 2f - 1f, Math.random() * 2f - 1f).multiply(-1f));

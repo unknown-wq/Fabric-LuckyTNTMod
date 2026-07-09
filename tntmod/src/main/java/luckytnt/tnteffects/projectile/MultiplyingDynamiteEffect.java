@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 
 import luckytnt.registry.EntityRegistry;
 import luckytnt.registry.ItemRegistry;
@@ -21,7 +23,7 @@ public class MultiplyingDynamiteEffect extends PrimedTNTEffect{
 	public void baseTick(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
 		if(entity instanceof LExplosiveProjectile ent) {
-			if(ent.inGround() && ent.getPersistentData().getInt("level") >= 3 && level instanceof ServerLevel) {
+			if(ent.inGround() && ent.getPersistentData().getIntOr("level", 0) >= 3 && level instanceof ServerLevel) {
 				serverExplosion(ent);
 				ent.destroy();
 			}
@@ -29,7 +31,7 @@ public class MultiplyingDynamiteEffect extends PrimedTNTEffect{
 				serverExplosion(ent);
 				ent.destroy();
 			}
-			if(ent.getPersistentData().getInt("level") < 3) {
+			if(ent.getPersistentData().getIntOr("level", 0) < 3) {
 				explosionTick(ent);
 				ent.setTNTFuse(ent.getTNTFuse() - 1);
 			}
@@ -42,14 +44,14 @@ public class MultiplyingDynamiteEffect extends PrimedTNTEffect{
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
-		if(entity.getPersistentData().getInt("level") < 3) {	
+		if(entity.getPersistentData().getIntOr("level", 0) < 3) {	
 			for(int count = 0; count < 4; count++) {
-				LExplosiveProjectile dynamite = EntityRegistry.MULTIPLYING_DYNAMITE.get().create(entity.getLevel());
+				LExplosiveProjectile dynamite = EntityRegistry.MULTIPLYING_DYNAMITE.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				dynamite.setPos(entity.getPos());
 				dynamite.setOwner(entity.owner());
 				dynamite.setDeltaMovement(((Entity)entity).getDeltaMovement().add(Math.random() * 0.5f - 0.25f, Math.random() * 0.5f - 0.25f, Math.random() * 0.5f - 0.25f));
 				CompoundTag tag = dynamite.getPersistentData();
-				tag.putInt("level", entity.getPersistentData().getInt("level") + 1);
+				tag.putInt("level", entity.getPersistentData().getIntOr("level", 0) + 1);
 				dynamite.setPersistentData(tag);
 				entity.getLevel().addFreshEntity(dynamite);
 			}
@@ -64,7 +66,7 @@ public class MultiplyingDynamiteEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		if(entity.getPersistentData().getInt("level") < 3) {
+		if(entity.getPersistentData().getIntOr("level", 0) < 3) {
 			((Entity)entity).setDeltaMovement(((Entity)entity).getDeltaMovement().add(0f, 0.08f, 0f));
 		}
 	}

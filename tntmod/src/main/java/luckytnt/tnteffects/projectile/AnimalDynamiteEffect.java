@@ -23,7 +23,7 @@ public class AnimalDynamiteEffect extends PrimedTNTEffect{
 				Entity ent = entType.create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				ent.setPos(entity.getPos());
 				if (entity.getLevel() instanceof ServerLevel sLevel && ent instanceof Mob mob) {
-					mob.finalizeSpawn(sLevel, entity.getLevel().getLocalDifficulty(toBlockPos(entity.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
+					mob.finalizeSpawn(sLevel, sLevel.getCurrentDifficultyAt(toBlockPos(entity.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
 				}
 				entity.getLevel().addFreshEntity(ent);
 			}

@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import luckytnt.registry.EntityRegistry;
 import luckytnt.registry.ItemRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
@@ -21,16 +23,16 @@ public class SpiralDynamiteEffect extends PrimedTNTEffect{
 		if(entity.getTNTFuse() < 30) {
 			if(entity.getTNTFuse() % 3 == 0) {
 				ent.setXRot(180f);
-				ent.setYRot(entity.getPersistentData().getFloat("angle") + 30f);
+				ent.setYRot(entity.getPersistentData().getFloatOr("angle", 0f) + 30f);
 				CompoundTag tag = entity.getPersistentData();
 				tag.putFloat("angle", ent.getYRot());
-				tag.putFloat("spiral_power", Mth.clamp(entity.getPersistentData().getFloat("spiral_power") + 0.12f, 0.2f, Float.MAX_VALUE));
+				tag.putFloat("spiral_power", Mth.clamp(entity.getPersistentData().getFloatOr("spiral_power", 0f) + 0.12f, 0.2f, Float.MAX_VALUE));
 				entity.setPersistentData(tag);
-				LExplosiveProjectile spiral_tnt = EntityRegistry.SPIRAL_PROJECTILE.get().create(entity.getLevel());
+				LExplosiveProjectile spiral_tnt = EntityRegistry.SPIRAL_PROJECTILE.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				spiral_tnt.setPos(entity.x(), entity.y(), entity.z());
 				spiral_tnt.setOwner(entity.owner());
-				spiral_tnt.setDeltaMovement(ent.getRotationVector().x, ent.getRotationVector().y, ent.getRotationVector().z, entity.getPersistentData().getFloat("spiral_power"), 0);
-				entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.BLOCK_DISPENSER_LAUNCH, SoundSource.MASTER, 3, 1);
+				spiral_tnt.shoot(ent.getLookAngle().x, ent.getLookAngle().y, ent.getLookAngle().z, entity.getPersistentData().getFloatOr("spiral_power", 0f), 0);
+				entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.DISPENSER_LAUNCH, SoundSource.MASTER, 3, 1);
 				entity.getLevel().addFreshEntity(spiral_tnt);
 			}
 		}

@@ -15,7 +15,7 @@ public class ChristmasTNTBlock extends LTNTBlock{
 	public static final BooleanProperty ONLY_PRESENT = BooleanProperty.create("only_present");
 
 	public ChristmasTNTBlock() {
-		super(BlockBehaviour.Properties.of().mapColor(MapColor.FIRE).sound(SoundType.GRASS), EntityRegistry.CHRISTMAS_TNT, false);
+		super(BlockBehaviour.Properties.of().mapColor(MapColor.FIRE).sound(SoundType.GRASS).setId(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.Identifier.fromNamespaceAndPath(luckytnt.LuckyTNTMod.MODID, "christmas_tnt"))), EntityRegistry.CHRISTMAS_TNT, false);
         registerDefaultState(defaultBlockState().setValue(ONLY_PRESENT, false));
 	}
 

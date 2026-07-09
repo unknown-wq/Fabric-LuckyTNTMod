@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.server.level.ServerLevel;
 import org.joml.Vector3f;
 
 import luckytnt.registry.BlockRegistry;
@@ -24,7 +25,7 @@ public class UnbreakableTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock().getExplosionResistance() <= 2000 && !state.isAir()) {
-					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlock(pos, Blocks.BEDROCK.defaultBlockState(), 3);
 				}
 			}

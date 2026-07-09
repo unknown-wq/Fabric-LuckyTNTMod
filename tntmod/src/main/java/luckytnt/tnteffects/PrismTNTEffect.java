@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.server.level.ServerLevel;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
@@ -26,7 +27,7 @@ public class PrismTNTEffect extends PrimedTNTEffect {
 				for(int offZ = 0; offZ < tri; offZ++) {
 					BlockPos pos1 = new BlockPos(pos.getX() + offX, pos.getY() + offY, pos.getZ() + offZ);
 					if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
-						ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						ent.getLevel().getBlockState(pos1).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}

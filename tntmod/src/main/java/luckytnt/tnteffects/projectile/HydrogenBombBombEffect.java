@@ -35,9 +35,9 @@ public class HydrogenBombBombEffect extends PrimedTNTEffect implements NuclearBo
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
 		if(ent.getLevel() instanceof ServerLevel sworld) {
-			for(ServerLevel sw : sworld.getServer().getWorlds()) {
+			for(ServerLevel sw : sworld.getServer().getAllLevels()) {
 				for(ServerPlayer player : sw.getPlayers()) {
-					if(player.level().getDimension() == sworld.getDimension() && player.distanceTo((Entity)ent) <= 150) {
+					if(player.level().dimension() == sworld.dimension() && player.distanceTo((Entity)ent) <= 150) {
 						LuckyTNTMod.RH.sendS2CPacket(player, new HydrogenBombS2CPacket(((Entity)ent).getId()));
 					}
 				}
@@ -52,11 +52,11 @@ public class HydrogenBombBombEffect extends PrimedTNTEffect implements NuclearBo
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posTop = pos.add(0, 1, 0);
+				BlockPos posTop = pos.offset(0, 1, 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				if(distance <= 250) {
 					if(Math.random() < 0.25f) {
-						if(Block.isFaceSturdy(state.getCollisionShape(level, pos), Direction.UP) && !state.isAir() && !Block.isFaceSturdy(stateTop.getCollisionShape(level, posTop), Direction.UP) && stateTop.getBlock().getExplosionResistance() < 200) {
+						if(Block.isFaceFull(state.getCollisionShape(level, pos), Direction.UP) && !state.isAir() && !Block.isFaceFull(stateTop.getCollisionShape(level, posTop), Direction.UP) && stateTop.getBlock().getExplosionResistance() < 200) {
 							level.setBlock(posTop, BlockRegistry.NUCLEAR_WASTE.get().defaultBlockState(), 3);
 						}
 					}
@@ -66,38 +66,38 @@ public class HydrogenBombBombEffect extends PrimedTNTEffect implements NuclearBo
 		
 		List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() - 90, ent.y() - 65, ent.z() - 90, ent.x() + 90, ent.y() + 65, ent.z() + 90));
 		for(LivingEntity living : list) {
-			living.addStatusEffect(new MobEffectInstance(BuiltInRegistries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 4800, 0, true, true, true));
+			living.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getOrThrow(EffectRegistry.CONTAMINATED), 4800, 0, true, true, true));
 		}
 	}
 	
 	@Override
 	public void displayMushroomCloud(IExplosiveEntity ent) {
 		for(int count = 0; count < 3000; count++) {
-			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), true, ent.x() + Math.random() * 120 - Math.random() * 120, ent.y() + Math.random() * 6 - Math.random() * 6, ent.z() + Math.random() * 120 - Math.random() * 120, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), ent.x() + Math.random() * 120 - Math.random() * 120, ent.y() + Math.random() * 6 - Math.random() * 6, ent.z() + Math.random() * 120 - Math.random() * 120, 0, 0, 0);
 		}
 		for(int count = 0; count < 2000; count++) {
-			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), true, ent.x() + Math.random() * 40 - Math.random() * 40, ent.y() + 6 + Math.random() * 6 - Math.random() * 6, ent.z() + Math.random() * 40 - Math.random() * 40, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), ent.x() + Math.random() * 40 - Math.random() * 40, ent.y() + 6 + Math.random() * 6 - Math.random() * 6, ent.z() + Math.random() * 40 - Math.random() * 40, 0, 0, 0);
 		}
 		for(int count = 0; count < 1600; count++) {
-			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), true, ent.x() + Math.random() * 20 - Math.random() * 20, ent.y() + Math.random() * 6 - Math.random() * 6, ent.z() + Math.random() * 20 - Math.random() * 20, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), ent.x() + Math.random() * 20 - Math.random() * 20, ent.y() + Math.random() * 6 - Math.random() * 6, ent.z() + Math.random() * 20 - Math.random() * 20, 0, 0, 0);
 		}
 		for(int count = 0; count < 1200; count++) {
-			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), true, ent.x() + Math.random() * 12 - Math.random() * 12, ent.y() + 8 + Math.random() * 6 - Math.random() * 6, ent.z() + Math.random() * 12 - Math.random() * 12, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), ent.x() + Math.random() * 12 - Math.random() * 12, ent.y() + 8 + Math.random() * 6 - Math.random() * 6, ent.z() + Math.random() * 12 - Math.random() * 12, 0, 0, 0);
 		}
 		for(int count = 0; count < 1200; count++) {
-			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), true, ent.x() + Math.random() * 4 - Math.random() * 4, ent.y() + 30 + Math.random() * 24 - Math.random() * 24, ent.z() + Math.random() * 4 - Math.random() * 4, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), ent.x() + Math.random() * 4 - Math.random() * 4, ent.y() + 30 + Math.random() * 24 - Math.random() * 24, ent.z() + Math.random() * 4 - Math.random() * 4, 0, 0, 0);
 		}
 		for(int count = 0; count < 1200; count++) {
-			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), true, ent.x() + Math.random() * 12 - Math.random() * 12, ent.y() + 44 + Math.random() * 6 - Math.random() * 6, ent.z() + Math.random() * 12 - Math.random() * 12, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), ent.x() + Math.random() * 12 - Math.random() * 12, ent.y() + 44 + Math.random() * 6 - Math.random() * 6, ent.z() + Math.random() * 12 - Math.random() * 12, 0, 0, 0);
 		}
 		for(int count = 0; count < 1200; count++) {
-			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), true, ent.x() + Math.random() * 12 - Math.random() * 12, ent.y() + 58 + Math.random() * 6 - Math.random() * 6, ent.z() + Math.random() * 12 - Math.random() * 12, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), ent.x() + Math.random() * 12 - Math.random() * 12, ent.y() + 58 + Math.random() * 6 - Math.random() * 6, ent.z() + Math.random() * 12 - Math.random() * 12, 0, 0, 0);
 		}
 		for(int count = 0; count < 4000; count++) {
-			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), true, ent.x() + Math.random() * 24 - Math.random() * 24, ent.y() + 48 + Math.random() * 12 - Math.random() * 12, ent.z() + Math.random() * 24 - Math.random() * 24, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(2f*255)<<8)|(int)(0f*255), 10f), ent.x() + Math.random() * 24 - Math.random() * 24, ent.y() + 48 + Math.random() * 12 - Math.random() * 12, ent.z() + Math.random() * 24 - Math.random() * 24, 0, 0, 0);
 		}
 		for(int count = 0; count < 4000; count++) {
-			ent.getLevel().addParticle(ParticleTypes.LARGE_SMOKE, true, ent.x() + Math.random() * 4 - Math.random() * 4, ent.y() + 44 + Math.random() * 4 - Math.random() * 4, ent.z() + Math.random() * 4 - Math.random() * 4, Math.random() * 4 - Math.random() * 4, Math.random() * 4 - Math.random() * 4, Math.random() * 4 - Math.random() * 4);
+			ent.getLevel().addParticle(ParticleTypes.LARGE_SMOKE, ent.x() + Math.random() * 4 - Math.random() * 4, ent.y() + 44 + Math.random() * 4 - Math.random() * 4, ent.z() + Math.random() * 4 - Math.random() * 4, Math.random() * 4 - Math.random() * 4, Math.random() * 4 - Math.random() * 4, Math.random() * 4 - Math.random() * 4);
 		}
 	}
 	

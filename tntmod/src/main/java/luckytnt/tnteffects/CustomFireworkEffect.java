@@ -67,8 +67,8 @@ public class CustomFireworkEffect extends PrimedTNTEffect {
 					}
 				}
 			}
-			BlockPos min = toBlockPos(ent.getPos()).add(2, 2, 2);
-			BlockPos max = toBlockPos(ent.getPos()).add(-2, -2, -2);
+			BlockPos min = toBlockPos(ent.getPos()).offset(2, 2, 2);
+			BlockPos max = toBlockPos(ent.getPos()).offset(-2, -2, -2);
 			List<PrimedTnt> tnts = ent.getLevel().getEntitiesOfClass(PrimedTnt.class, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
 			for(PrimedTnt tnt : tnts) {
 				tnt.setDeltaMovement(Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f);

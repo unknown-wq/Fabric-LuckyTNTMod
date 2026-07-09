@@ -1,23 +1,23 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.server.level.ServerLevel;
 import luckytnt.block.TunnelingTNTBlock;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
+import luckytntlib.util.explosions.ImprovedExplosion;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Explosion;
 
 public class TunnelingTNTEffect extends PrimedTNTEffect{
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		Direction direction = Direction.byName(entity.getPersistentData().getString("direction")) != null ? Direction.byName(entity.getPersistentData().getString("direction")) : Direction.EAST;
+		Direction direction = Direction.byName(entity.getPersistentData().getStringOr("direction", "")) != null ? Direction.byName(entity.getPersistentData().getStringOr("direction", "")) : Direction.EAST;
 		switch(direction) {
 			case NORTH: for(double offX = -4; offX <= 4; offX++) {
 							for(double offY = -4; offY <= 4; offY++) {
@@ -27,7 +27,7 @@ public class TunnelingTNTEffect extends PrimedTNTEffect{
 									BlockState state = entity.getLevel().getBlockState(pos);
 									if(distance < 4 && state.getBlock().getExplosionResistance() < 100) {
 										Block block = state.getBlock();
-										block.wasExploded(entity.getLevel(), pos, new Explosion(entity.getLevel(), (Entity) entity, entity.x(), entity.y(), entity.z(), 0, false, Explosion.DestructionType.DESTROY_WITH_DECAY));
+										block.wasExploded((ServerLevel)entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 										entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 									}
 								}
@@ -42,7 +42,7 @@ public class TunnelingTNTEffect extends PrimedTNTEffect{
 									BlockState state = entity.getLevel().getBlockState(pos);
 									if(distance < 4 && state.getBlock().getExplosionResistance() < 100) {
 										Block block = state.getBlock();
-										block.wasExploded(entity.getLevel(), pos, new Explosion(entity.getLevel(), (Entity) entity, entity.x(), entity.y(), entity.z(), 0, false, Explosion.DestructionType.DESTROY_WITH_DECAY));
+										block.wasExploded((ServerLevel)entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 										entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 									}
 								}
@@ -57,7 +57,7 @@ public class TunnelingTNTEffect extends PrimedTNTEffect{
 									BlockState state = entity.getLevel().getBlockState(pos);
 									if(distance < 4 && state.getBlock().getExplosionResistance() < 100) {
 										Block block = state.getBlock();
-										block.wasExploded(entity.getLevel(), pos, new Explosion(entity.getLevel(), (Entity) entity, entity.x(), entity.y(), entity.z(), 0, false, Explosion.DestructionType.DESTROY_WITH_DECAY));
+										block.wasExploded((ServerLevel)entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 										entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 									}
 								}
@@ -72,7 +72,7 @@ public class TunnelingTNTEffect extends PrimedTNTEffect{
 									BlockState state = entity.getLevel().getBlockState(pos);
 									if(distance < 4 && state.getBlock().getExplosionResistance() < 100) {
 										Block block = state.getBlock();
-										block.wasExploded(entity.getLevel(), pos, new Explosion(entity.getLevel(), (Entity) entity, entity.x(), entity.y(), entity.z(), 0, false, Explosion.DestructionType.DESTROY_WITH_DECAY));
+										block.wasExploded((ServerLevel)entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 										entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 									}
 								}
@@ -85,7 +85,7 @@ public class TunnelingTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public BlockState getBlockState(IExplosiveEntity entity) {
-		return BlockRegistry.TUNNELING_TNT.get().defaultBlockState().setValue(TunnelingTNTBlock.FACING, Direction.byName(entity.getPersistentData().getString("direction")) != null ? Direction.byName(entity.getPersistentData().getString("direction")) : Direction.EAST);
+		return BlockRegistry.TUNNELING_TNT.get().defaultBlockState().setValue(TunnelingTNTBlock.FACING, Direction.byName(entity.getPersistentData().getStringOr("direction", "")) != null ? Direction.byName(entity.getPersistentData().getStringOr("direction", "")) : Direction.EAST);
 	}
 	
 	@Override

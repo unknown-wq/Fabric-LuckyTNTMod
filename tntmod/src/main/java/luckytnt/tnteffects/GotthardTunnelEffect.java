@@ -20,8 +20,8 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		boolean streets = ent.getPersistentData().getBoolean("streets");
-		Direction dir = Direction.byName(ent.getPersistentData().getString("direction")) != null ? Direction.byName(ent.getPersistentData().getString("direction")) : Direction.NORTH;
+		boolean streets = ent.getPersistentData().getBooleanOr("streets", false);
+		Direction dir = Direction.byName(ent.getPersistentData().getStringOr("direction", "")) != null ? Direction.byName(ent.getPersistentData().getStringOr("direction", "")) : Direction.NORTH;
 		switch(dir) {
 			case NORTH: for(int offZ = 0; offZ >= dir.getStepZ() * 200; offZ--) {
 							for(int offX = -10; offX <= 10; offX++) {
@@ -106,10 +106,10 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 	@Override
 	public BlockState getBlockState(IExplosiveEntity ent) {
 		Direction dir = Direction.NORTH;
-		if(!ent.getPersistentData().getString("direction").equals("")) {
-			dir = Direction.byName(ent.getPersistentData().getString("direction"));
+		if(!ent.getPersistentData().getStringOr("direction", "").equals("")) {
+			dir = Direction.byName(ent.getPersistentData().getStringOr("direction", ""));
 		} 
-		return BlockRegistry.GOTTHARD_TUNNEL.get().defaultBlockState().setValue(GotthardTunnelBlock.STREETS, ent.getPersistentData().getBoolean("streets")).setValue(GotthardTunnelBlock.FACING, dir);
+		return BlockRegistry.GOTTHARD_TUNNEL.get().defaultBlockState().setValue(GotthardTunnelBlock.STREETS, ent.getPersistentData().getBooleanOr("streets", false)).setValue(GotthardTunnelBlock.FACING, dir);
 	}
 	
 	@Override

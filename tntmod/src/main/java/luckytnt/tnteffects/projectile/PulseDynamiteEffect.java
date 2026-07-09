@@ -31,7 +31,7 @@ public class PulseDynamiteEffect extends PrimedTNTEffect{
 			if(ent.getTNTFuse() == 0) {
 				ent.destroy();
 			}
-			if(ent.inGround() || ent.getPersistentData().getBoolean("hitBefore")) {
+			if(ent.inGround() || ent.getPersistentData().getBooleanOr("hitBefore", false)) {
 				explosionTick(ent);
 				ent.setTNTFuse(ent.getTNTFuse() - 1);
 			}
@@ -46,15 +46,15 @@ public class PulseDynamiteEffect extends PrimedTNTEffect{
 		Level level = entity.getLevel();
 		if (entity.getTNTFuse() <= 185) {
 			((Entity)entity).setDeltaMovement(0, 0, 0);
-			((Entity)entity).setPos(((Entity) entity).getPosition(0f));
+			((Entity)entity).setPos(((Entity) entity).position());
 			if (entity.getTNTFuse() % 20 == 0) {
 				if (entity.getLevel() instanceof ServerLevel) {
-					ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), entity.getPersistentData().getInt("strength"));
+					ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), entity.getPersistentData().getIntOr("strength", 0));
 					explosion.doEntityExplosion(1f, true);
 					explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
 					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
 					CompoundTag tag = entity.getPersistentData();
-					tag.putInt("strength", entity.getPersistentData().getInt("strength") + 1);
+					tag.putInt("strength", entity.getPersistentData().getIntOr("strength", 0) + 1);
 					entity.setPersistentData(tag);
 				}
 			}

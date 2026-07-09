@@ -11,19 +11,18 @@ import luckytntlib.client.gui.widget.CenteredStringWidget;
 import luckytntlib.config.common.Config;
 import luckytntlib.config.common.Config.ConfigValue;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
-import net.minecraft.client.gui.widget.GridWidget;
-import net.minecraft.client.gui.widget.GridWidget.Adder;
-import net.minecraft.client.gui.widget.Positioner;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.gui.widget.ThreePartsLayoutWidget;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
+import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 public class ConfigScreen extends Screen {
-	
+
 	int island_height_initial_value = 0;
 	int drop_height_initial_value = 0;
 	int maximum_disaster_time_initial_value = 0;
@@ -35,89 +34,89 @@ public class ConfigScreen extends Screen {
 	AdvancedSlider dropped_slider = null;
 	AdvancedSlider average_disaster_time_silder = null;
 	AdvancedSlider average_disaster_strength_slider = null;
-	
+
 	Button season_events_always_active = null;
-	Button render_contaminated_overlay = null;	
+	Button render_contaminated_overlay = null;
 	Button present_drop_destroy = null;
-	
-	ThreePartsLayoutWidget layout = new ThreePartsLayoutWidget(this, 20, 40);
-	
+
+	HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, 20, 40);
+
 	public ConfigScreen() {
 		super(Component.translatable("luckytntmod.config.title"));
 	}
-	
+
 	@Override
-	public void init() {
-		DirectionalLayoutWidget linear = layout.addHeader(DirectionalLayoutWidget.vertical());
-		linear.add(new TextWidget(title, textRenderer), Positioner::alignHorizontalCenter);
-		
-		GridWidget grid = new GridWidget();
-		grid.getMainPositioner().marginX(4).marginBottom(4).alignHorizontalCenter();
-		
-		Adder rows = grid.createAdder(3);
-		
-		rows.add(island_slider = new AdvancedSlider(0, 0, 100, 20, Component.empty(), Component.empty(), 20, 160, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), true));
-		rows.add(new CenteredStringWidget(Component.translatable("luckytntmod.config.island_offset"), textRenderer));
-		rows.add(new Button.Builder(Component.translatable("luckytntmod.config.reset"), Button -> resetIntValue(LuckyTNTConfigValues.ISLAND_HEIGHT, 50, island_slider)).width(100).build());
+	protected void init() {
+		LinearLayout linear = layout.addToHeader(LinearLayout.vertical());
+		linear.addChild(new StringWidget(title, font), LayoutSettings::alignHorizontallyCenter);
+
+		GridLayout grid = new GridLayout();
+		grid.defaultCellSetting().paddingHorizontal(4).paddingBottom(4).alignHorizontallyCenter();
+
+		GridLayout.RowHelper rows = grid.createRowHelper(3);
+
+		rows.addChild(island_slider = new AdvancedSlider(0, 0, 100, 20, Component.empty(), Component.empty(), 20, 160, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), true));
+		rows.addChild(new CenteredStringWidget(Component.translatable("luckytntmod.config.island_offset"), font));
+		rows.addChild(Button.builder(Component.translatable("luckytntmod.config.reset"), button -> resetIntValue(LuckyTNTConfigValues.ISLAND_HEIGHT, 50, island_slider)).width(100).build());
 		island_height_initial_value = LuckyTNTConfigValues.ISLAND_HEIGHT.get();
-		
-		rows.add(dropped_slider = new AdvancedSlider(0, 0, 100, 20, Component.empty(), Component.empty(), 60, 400, LuckyTNTConfigValues.DROP_HEIGHT.get(), true));
-		rows.add(new CenteredStringWidget(Component.translatable("luckytntmod.config.drop_offset"), textRenderer));
-		rows.add(new Button.Builder(Component.translatable("luckytntmod.config.reset"), Button -> resetIntValue(LuckyTNTConfigValues.DROP_HEIGHT, 200, dropped_slider)).width(100).build());
+
+		rows.addChild(dropped_slider = new AdvancedSlider(0, 0, 100, 20, Component.empty(), Component.empty(), 60, 400, LuckyTNTConfigValues.DROP_HEIGHT.get(), true));
+		rows.addChild(new CenteredStringWidget(Component.translatable("luckytntmod.config.drop_offset"), font));
+		rows.addChild(Button.builder(Component.translatable("luckytntmod.config.reset"), button -> resetIntValue(LuckyTNTConfigValues.DROP_HEIGHT, 200, dropped_slider)).width(100).build());
 		drop_height_initial_value = LuckyTNTConfigValues.DROP_HEIGHT.get();
-		
-		rows.add(average_disaster_time_silder = new AdvancedSlider(0, 0, 100, 20, Component.empty(), Component.empty(), 2, 24, LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get(), true));
-		rows.add(new CenteredStringWidget(Component.translatable("luckytntmod.config.maximum_time"), textRenderer));
-		rows.add(new Button.Builder(Component.translatable("luckytntmod.config.reset"), Button -> resetIntValue(LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME, 12, average_disaster_time_silder)).width(100).build());
+
+		rows.addChild(average_disaster_time_silder = new AdvancedSlider(0, 0, 100, 20, Component.empty(), Component.empty(), 2, 24, LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get(), true));
+		rows.addChild(new CenteredStringWidget(Component.translatable("luckytntmod.config.maximum_time"), font));
+		rows.addChild(Button.builder(Component.translatable("luckytntmod.config.reset"), button -> resetIntValue(LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME, 12, average_disaster_time_silder)).width(100).build());
 		maximum_disaster_time_initial_value = LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get();
-		
-		rows.add(average_disaster_strength_slider = new AdvancedSlider(0, 0, 100, 20, Component.empty(), Component.empty(), 1d, 10d, LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get().doubleValue(), true));
-		rows.add(new CenteredStringWidget(Component.translatable("luckytntmod.config.average_intensity"), textRenderer));
-		rows.add(new Button.Builder(Component.translatable("luckytntmod.config.reset"), Button -> resetDoubleValue(LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY, 1d, average_disaster_strength_slider)).width(100).build());
+
+		rows.addChild(average_disaster_strength_slider = new AdvancedSlider(0, 0, 100, 20, Component.empty(), Component.empty(), 1d, 10d, LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get().doubleValue(), true));
+		rows.addChild(new CenteredStringWidget(Component.translatable("luckytntmod.config.average_intensity"), font));
+		rows.addChild(Button.builder(Component.translatable("luckytntmod.config.reset"), button -> resetDoubleValue(LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY, 1d, average_disaster_strength_slider)).width(100).build());
 		average_disaster_length_initial_value = LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get();
-		
-		rows.add(season_events_always_active = new Button.Builder(LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE.get().booleanValue() ? CommonComponents.ON : CommonComponents.OFF, Button -> nextBooleanValue(LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE, season_events_always_active)).width(100).build());
-		rows.add(new CenteredStringWidget(Component.translatable("luckytntmod.config.event_always_active"), textRenderer));
-		rows.add(new Button.Builder(Component.translatable("luckytntmod.config.reset"), Button -> resetBooleanValue(LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE, false, season_events_always_active)).width(100).build());
+
+		rows.addChild(season_events_always_active = Button.builder(LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE.get().booleanValue() ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF, button -> nextBooleanValue(LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE, season_events_always_active)).width(100).build());
+		rows.addChild(new CenteredStringWidget(Component.translatable("luckytntmod.config.event_always_active"), font));
+		rows.addChild(Button.builder(Component.translatable("luckytntmod.config.reset"), button -> resetBooleanValue(LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE, false, season_events_always_active)).width(100).build());
 		season_events_always_active_initial_value = LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE.get();
-		
-		rows.add(render_contaminated_overlay = new Button.Builder(LuckyTNTConfigValues.RENDER_CONTAMINATED_OVERLAY.get().booleanValue() ? CommonComponents.ON : CommonComponents.OFF, Button -> nextBooleanValue(LuckyTNTConfigValues.RENDER_CONTAMINATED_OVERLAY, render_contaminated_overlay)).width(100).build());
-		rows.add(new CenteredStringWidget(Component.translatable("luckytntmod.config.render_overlay"), textRenderer));
-		rows.add(new Button.Builder(Component.translatable("luckytntmod.config.reset"), Button -> resetBooleanValue(LuckyTNTConfigValues.RENDER_CONTAMINATED_OVERLAY, true, render_contaminated_overlay)).width(100).build());
-		
-		rows.add(present_drop_destroy = new Button.Builder(LuckyTNTConfigValues.PRESENT_DROP_DESTROY_BLOCKS.get().booleanValue() ? CommonComponents.ON : CommonComponents.OFF, Button -> nextBooleanValue(LuckyTNTConfigValues.PRESENT_DROP_DESTROY_BLOCKS, present_drop_destroy)).width(100).build());
-		rows.add(new CenteredStringWidget(Component.translatable("luckytntmod.config.present_drop"), textRenderer));
-		rows.add(new Button.Builder(Component.translatable("luckytntmod.config.reset"), Button -> resetBooleanValue(LuckyTNTConfigValues.PRESENT_DROP_DESTROY_BLOCKS, true, present_drop_destroy)).width(100).build());
+
+		rows.addChild(render_contaminated_overlay = Button.builder(LuckyTNTConfigValues.RENDER_CONTAMINATED_OVERLAY.get().booleanValue() ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF, button -> nextBooleanValue(LuckyTNTConfigValues.RENDER_CONTAMINATED_OVERLAY, render_contaminated_overlay)).width(100).build());
+		rows.addChild(new CenteredStringWidget(Component.translatable("luckytntmod.config.render_overlay"), font));
+		rows.addChild(Button.builder(Component.translatable("luckytntmod.config.reset"), button -> resetBooleanValue(LuckyTNTConfigValues.RENDER_CONTAMINATED_OVERLAY, true, render_contaminated_overlay)).width(100).build());
+
+		rows.addChild(present_drop_destroy = Button.builder(LuckyTNTConfigValues.PRESENT_DROP_DESTROY_BLOCKS.get().booleanValue() ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF, button -> nextBooleanValue(LuckyTNTConfigValues.PRESENT_DROP_DESTROY_BLOCKS, present_drop_destroy)).width(100).build());
+		rows.addChild(new CenteredStringWidget(Component.translatable("luckytntmod.config.present_drop"), font));
+		rows.addChild(Button.builder(Component.translatable("luckytntmod.config.reset"), button -> resetBooleanValue(LuckyTNTConfigValues.PRESENT_DROP_DESTROY_BLOCKS, true, present_drop_destroy)).width(100).build());
 		present_drop_destroy_blocks_initial_value = LuckyTNTConfigValues.PRESENT_DROP_DESTROY_BLOCKS.get();
-		
-		Button deactivated = new Button.Builder(Component.translatable("luckytntmod.config.back"), Button -> deactivatedButtonAction()).width(100).build();
-		Button done = new Button.Builder(CommonComponents.DONE, Button -> close()).width(100).build();
-		Button next = new Button.Builder(Component.translatable("luckytntmod.config.next"), Button -> nextPage()).width(100).build();
-		
+
+		Button deactivated = Button.builder(Component.translatable("luckytntmod.config.back"), button -> deactivatedButtonAction()).width(100).build();
+		Button done = Button.builder(CommonComponents.GUI_DONE, button -> onClose()).width(100).build();
+		Button next = Button.builder(Component.translatable("luckytntmod.config.next"), button -> nextPage()).width(100).build();
+
 		deactivated.active = false;
-		
-		GridWidget grid2 = new GridWidget();
-		grid2.getMainPositioner().marginX(20).marginBottom(4).alignHorizontalCenter();
-		
-		Adder rows2 = grid2.createAdder(3);
-		
-		rows2.add(deactivated);
-		rows2.add(done);
-		rows2.add(next);
-		
-		layout.addBody(grid);
-		layout.addFooter(grid2);
-		layout.forEachChild(this::addDrawableChild);
-		initTabNavigation();
+
+		GridLayout grid2 = new GridLayout();
+		grid2.defaultCellSetting().paddingHorizontal(20).paddingBottom(4).alignHorizontallyCenter();
+
+		GridLayout.RowHelper rows2 = grid2.createRowHelper(3);
+
+		rows2.addChild(deactivated);
+		rows2.addChild(done);
+		rows2.addChild(next);
+
+		layout.addToContents(grid);
+		layout.addToFooter(grid2);
+		layout.visitWidgets(this::addRenderableWidget);
+		repositionElements();
 	}
-	
+
 	@Override
-    public void initTabNavigation() {
-        layout.refreshPositions();
-    }
-	
+	protected void repositionElements() {
+		layout.arrangeElements();
+	}
+
 	@Override
-	public void close() {
+	public void onClose() {
 		if(island_slider != null) {
 			LuckyTNTConfigValues.ISLAND_HEIGHT.set(island_slider.getValueInt());
 		}
@@ -130,7 +129,7 @@ public class ConfigScreen extends Screen {
 		if(average_disaster_strength_slider != null) {
 			LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.set(average_disaster_strength_slider.getValue());
 		}
-		
+
 		List<ConfigValue<?>> values = new ArrayList<>();
 		if(LuckyTNTConfigValues.ISLAND_HEIGHT.get() != island_height_initial_value) {
 			values.add(LuckyTNTConfigValues.ISLAND_HEIGHT);
@@ -153,31 +152,31 @@ public class ConfigScreen extends Screen {
 		if(!values.isEmpty()) {
 			LuckyTNTMod.RH.sendC2SPacket(new LuckyTNTUpdateConfigValuesPacket(values));
 		}
-		
-		LuckyTNTConfigValues.CLIENT_CONFIG.save(client.world);
-		
-		super.close();
+
+		LuckyTNTConfigValues.CLIENT_CONFIG.save(minecraft.level);
+
+		super.onClose();
 	}
-	
+
 	public static void deactivatedButtonAction() {
 	}
-	
+
 	public void nextPage() {
-		close();
-		Minecraft.getInstance().setScreen(new ConfigScreen2());
+		onClose();
+		Minecraft.getInstance().gui.setScreen(new ConfigScreen2());
 	}
-	
+
 	public void resetIntValue(Config.IntValue config, int newValue, AdvancedSlider slider) {
 		config.set(newValue);
 		slider.setSliderValue(newValue);
 	}
-	
+
 	public void resetDoubleValue(Config.DoubleValue config, double newValue, AdvancedSlider slider) {
 		config.set(newValue);
 		slider.setSliderValue(newValue);
 	}
-	
-	public void nextBooleanValue(Config.BooleanValue config, Button Button) {
+
+	public void nextBooleanValue(Config.BooleanValue config, Button button) {
 		boolean value = config.get().booleanValue();
 		if(value) {
 			value = false;
@@ -185,11 +184,11 @@ public class ConfigScreen extends Screen {
 			value = true;
 		}
 		config.set(value);
-		Button.setMessage(value ? CommonComponents.ON : CommonComponents.OFF);
+		button.setMessage(value ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF);
 	}
-	
-	public void resetBooleanValue(Config.BooleanValue config, boolean defaultValue, Button Button) {
+
+	public void resetBooleanValue(Config.BooleanValue config, boolean defaultValue, Button button) {
 		config.set(defaultValue);
-		Button.setMessage(defaultValue ? CommonComponents.ON : CommonComponents.OFF);
+		button.setMessage(defaultValue ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF);
 	}
 }

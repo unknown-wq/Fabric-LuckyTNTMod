@@ -16,7 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.UndergroundConfiguredFeatures;
+import net.minecraft.data.worldgen.features.CaveFeatures;
 
 public class SculkTNTEffect extends PrimedTNTEffect {
 	
@@ -33,7 +33,7 @@ public class SculkTNTEffect extends PrimedTNTEffect {
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock().getExplosionResistance() < 100 && (!state.isCollisionShapeFullBlock(level, pos) || state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS))) {
-					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}
@@ -43,11 +43,11 @@ public class SculkTNTEffect extends PrimedTNTEffect {
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(level.getBlockState(pos.below()).isAir() && !state.isAir() && state.getBlock().getExplosionResistance() < 100 && !state.is(BlockTags.LUSH_GROUND_REPLACEABLE)) {
-					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlockAndUpdate(pos, Blocks.STONE.defaultBlockState());
 				}
 				else if(level.getBlockState(pos.below()).getBlock().getExplosionResistance() < 100 && !level.getBlockState(pos.below()).isAir() && state.isAir() && !level.getBlockState(pos.below()).is(BlockTags.LUSH_GROUND_REPLACEABLE)) {
-					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlockAndUpdate(pos.below(), Blocks.STONE.defaultBlockState());
 				}
 			}
@@ -58,17 +58,17 @@ public class SculkTNTEffect extends PrimedTNTEffect {
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if((level.getBlockState(pos.below()).isAir() && !state.isAir()) && Math.random() < 0.025f) {
-						Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.SCULK_PATCH_DEEP_DARK);
-						feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos.below());
+						Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.SCULK_PATCH_DEEP_DARK);
+						feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos.below());
 					}
 					if((!level.getBlockState(pos.below()).isAir() && state.isAir()) && Math.random() < 0.03f) {
 						Holder<ConfiguredFeature<?, ?>> feature = null;
 						if(Math.random() < 0.5f) {
-							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.SCULK_PATCH_DEEP_DARK);
-							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
+							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.SCULK_PATCH_DEEP_DARK);
+							feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
 						} else {
-							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.SCULK_PATCH_ANCIENT_CITY);
-							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
+							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.SCULK_PATCH_ANCIENT_CITY);
+							feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
 						}
 					}
 				}

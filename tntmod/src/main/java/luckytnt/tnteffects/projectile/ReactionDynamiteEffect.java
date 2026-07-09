@@ -31,7 +31,7 @@ public class ReactionDynamiteEffect extends PrimedTNTEffect{
 			if(ent.getTNTFuse() == 0) {
 				ent.destroy();
 			}
-			if(ent.inGround() || ent.getPersistentData().getBoolean("hitBefore")) {
+			if(ent.inGround() || ent.getPersistentData().getBooleanOr("hitBefore", false)) {
 				explosionTick(ent);
 				ent.setTNTFuse(ent.getTNTFuse() - 1);
 			}
@@ -45,7 +45,7 @@ public class ReactionDynamiteEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity){
 		Level level = entity.getLevel();
 		if(!level.isClientSide()) {
-			if(entity.getPersistentData().getInt("nextExplosion") == 0) {
+			if(entity.getPersistentData().getIntOr("nextExplosion", 0) == 0) {
 				Vec3 randomPos = new Vec3(Math.random() * 20 - 10, Math.random() * 10 - 5, Math.random() * 20 - 10);
 				float explosionSize = 5 + level.getRandom().nextFloat() * 5;
 				ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos().add(randomPos), Math.round(explosionSize));
@@ -57,7 +57,7 @@ public class ReactionDynamiteEffect extends PrimedTNTEffect{
 				entity.setPersistentData(tag);
 			}
 			CompoundTag tag = entity.getPersistentData();
-			tag.putInt("nextExplosion", entity.getPersistentData().getInt("nextExplosion") - 1);
+			tag.putInt("nextExplosion", entity.getPersistentData().getIntOr("nextExplosion", 0) - 1);
 			entity.setPersistentData(tag);
 		}
 	}

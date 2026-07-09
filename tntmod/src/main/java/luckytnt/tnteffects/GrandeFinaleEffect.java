@@ -1,5 +1,7 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
@@ -30,13 +32,13 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() % (int)(1 + Math.random() * 50) == 0) {
-			PrimedLTNT entity = EntityRegistry.SAND_FIREWORK.get().create(ent.getLevel());
+			PrimedLTNT entity = EntityRegistry.SAND_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			int random = new Random().nextInt(4);
 			switch(random){
-				case 0: entity = EntityRegistry.SAND_FIREWORK.get().create(ent.getLevel()); break;
-				case 1: entity = EntityRegistry.GRAVEL_FIREWORK.get().create(ent.getLevel()); break;
-				case 2: entity = EntityRegistry.RAINBOW_FIREWORK.get().create(ent.getLevel());; break;
-				case 3: entity = EntityRegistry.NEW_YEARS_FIREWORK.get().create(ent.getLevel());
+				case 0: entity = EntityRegistry.SAND_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED); break;
+				case 1: entity = EntityRegistry.GRAVEL_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED); break;
+				case 2: entity = EntityRegistry.RAINBOW_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);; break;
+				case 3: entity = EntityRegistry.NEW_YEARS_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 						CompoundTag tag = entity.getPersistentData();
 						tag.putInt("type", 1);
 						entity.setPersistentData(tag); break;
@@ -49,7 +51,7 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 			ent.getLevel().addFreshEntity(entity);
 		}
 		ent.getLevel().setBlock(toBlockPos(ent.getPos()), Blocks.AIR.defaultBlockState(), 3);
-		ent.getLevel().setBlock(toBlockPos(ent.getPos()).add(0, 1, 0), Blocks.AIR.defaultBlockState(), 3);
+		ent.getLevel().setBlock(toBlockPos(ent.getPos()).offset(0, 1, 0), Blocks.AIR.defaultBlockState(), 3);
 		if(ent.getTNTFuse() <= 40) {
 			((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 1.6f, ((Entity)ent).getDeltaMovement().z);
 			ent.getLevel().addParticle(ParticleTypes.LARGE_SMOKE, ent.x(), ent.y(), ent.z(), 0, -0.5f, 0);
@@ -88,7 +90,7 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 					}
 				}
 				for(int count = 0; count < 500; count++) {
-					PrimedLTNT tnt = EntityRegistry.TNT.get().create(ent.getLevel());
+					PrimedLTNT tnt = EntityRegistry.TNT.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					tnt.setOwner(ent.owner());
 					tnt.setPos(ent.getPos());
 					tnt.setTNTFuse(80 + (int)(Math.random() * 100));

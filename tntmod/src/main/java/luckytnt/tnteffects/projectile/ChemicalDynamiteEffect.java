@@ -26,7 +26,7 @@ public class ChemicalDynamiteEffect extends PrimedTNTEffect{
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if(state.getBlock().getExplosionResistance() < 100 && distance + Math.random() <= 4) {
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+						state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}

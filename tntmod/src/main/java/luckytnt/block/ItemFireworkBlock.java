@@ -46,11 +46,11 @@ public class ItemFireworkBlock extends LTNTBlock implements EntityBlock {
 				tnt.item = block.item;
 				tnt.stack = block.stack;
 				CompoundTag tag = tnt.getPersistentData();
-				tag.putInt("itemID", block.getPersistentData().getInt("itemID"));
+				tag.putInt("itemID", block.getPersistentData().getIntOr("itemID", 0));
 				tnt.setPersistentData(tag);
 			}
 			level.addFreshEntity(tnt);
-			level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.ENTITY_TNT_PRIMED, SoundSource.MASTER, 1, 1);
+			level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.TNT_PRIMED, SoundSource.MASTER, 1, 1);
 			if(level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).getBlock() == this) {
 				level.setBlock(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), Blocks.AIR.defaultBlockState(), 3);
 			}
@@ -60,21 +60,21 @@ public class ItemFireworkBlock extends LTNTBlock implements EntityBlock {
 	}
 
 	@Override
-	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-		return EntityRegistry.ITEM_FIREWORK_BLOCK_ENTITY.get().instantiate(pos, state);
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return EntityRegistry.ITEM_FIREWORK_BLOCK_ENTITY.get().create(pos, state);
 	}
 
 	@Override
 	public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
 		Item item = stack.getItem();
-		if(stack != ItemStack.EMPTY && item != Items.FLINT_AND_STEEL && level.getBlockEntity(pos) != null && level.getBlockEntity(pos) instanceof ItemFireworkBlockEntity block) {
+		if(!stack.isEmpty() && item != Items.FLINT_AND_STEEL && level.getBlockEntity(pos) != null && level.getBlockEntity(pos) instanceof ItemFireworkBlockEntity block) {
 			block.item = item;
 			block.stack = stack.copy();
-			block.getPersistentData().putInt("itemID", Item.getRawId(item));
+			block.getPersistentData().putInt("itemID", Item.getId(item));
 			if(!player.isCreative()) {
 				stack.shrink(1);
 			}
-			player.incrementStat(Stats.USED.getOrCreateStat(item));
+			player.awardStat(Stats.ITEM_USED.get(item));
 			return InteractionResult.SUCCESS;
 		}
 		return super.useItemOn(stack, state, level, pos, player, hand, result);

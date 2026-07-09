@@ -33,7 +33,7 @@ public class EndGateEffect extends PrimedTNTEffect{
 		
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posTop = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
+				BlockPos posTop = pos.offset(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				
 				if(state.getBlock().getExplosionResistance() < 200 && stateTop.isAir() && !state.isAir() && Math.abs(entity.y() - pos.getY()) <= 20) {
@@ -55,9 +55,9 @@ public class EndGateEffect extends PrimedTNTEffect{
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posTop = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
+				BlockPos posTop = pos.offset(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
 				BlockState stateTop = level.getBlockState(posTop);
-				BlockPos posAbove = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get() + 1, 0);
+				BlockPos posAbove = pos.offset(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get() + 1, 0);
 				BlockState stateAbove = level.getBlockState(posAbove);
 				
 				if(stateAbove.isAir() && Math.random() <= 0.05D && stateTop.getBlock() == Blocks.END_STONE) {

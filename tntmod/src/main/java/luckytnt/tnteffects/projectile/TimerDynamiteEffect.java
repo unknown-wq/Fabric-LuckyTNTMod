@@ -34,7 +34,7 @@ public class TimerDynamiteEffect extends PrimedTNTEffect{
 				}
 				ent.destroy();
 			}
-			if(ent.inGround() || ent.getPersistentData().getBoolean("hitBefore")) {
+			if(ent.inGround() || ent.getPersistentData().getBooleanOr("hitBefore", false)) {
 				explosionTick(ent);
 				ent.setTNTFuse(ent.getTNTFuse() - 1);
 			}

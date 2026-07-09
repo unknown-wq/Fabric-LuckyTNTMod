@@ -43,7 +43,7 @@ public class HoneyTNTEffect extends PrimedTNTEffect{
 						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						if(distance >= radius - 3 && Math.random() < 0.05f) {
-							level.setBlock(pos, Blocks.BEE_NEST.defaultBlockState().setValue(BeehiveBlock.FACING, getRandomDirectionHorizontal()).setValue(BeehiveBlock.HONEY_LEVEL, new Random().nextInt(6)));
+							level.setBlockAndUpdate(pos, Blocks.BEE_NEST.defaultBlockState().setValue(BeehiveBlock.FACING, getRandomDirectionHorizontal()).setValue(BeehiveBlock.HONEY_LEVEL, new Random().nextInt(6)));
 						}
 						if(Math.random() < 0.025f) {
 							Bee bee = new Bee(EntityTypes.BEE, level);
@@ -58,10 +58,10 @@ public class HoneyTNTEffect extends PrimedTNTEffect{
 						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						if(noise.getValue(Mth.clamp(offX + radius, 0, radius * 4), Mth.clamp((int)(offY + radius * 1.5f), 0, radius * 4), Mth.clamp(offZ + radius, 0, radius * 4)) > 0.7f) {
-							level.setBlock(pos, Blocks.HONEY_BLOCK.defaultBlockState());
+							level.setBlockAndUpdate(pos, Blocks.HONEY_BLOCK.defaultBlockState());
 						}
 						else {
-							level.setBlock(pos, Blocks.HONEYCOMB_BLOCK.defaultBlockState());
+							level.setBlockAndUpdate(pos, Blocks.HONEYCOMB_BLOCK.defaultBlockState());
 						}
 					}
 				}

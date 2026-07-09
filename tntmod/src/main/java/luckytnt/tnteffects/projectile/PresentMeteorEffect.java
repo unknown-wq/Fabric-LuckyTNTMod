@@ -13,7 +13,7 @@ import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.SnowBlock;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.ParticleTypes;
@@ -36,14 +36,14 @@ public class PresentMeteorEffect extends PrimedTNTEffect {
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if(distance <= (35) && state.getBlock().getExplosionResistance() <= 100) {
-						state.getBlock().wasExploded(level, pos, explosion);
+						state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 					else if(!state.isAir() && Math.random() < 0.6f && state.getBlock().getExplosionResistance() <= 100) {
-						state.getBlock().wasExploded(level, pos, explosion);
+						state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						if(Math.random() < 0.25f) {
-							level.setBlock(pos, Math.random() < 0.5f ? Blocks.BLUE_ICE.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState());
+							level.setBlockAndUpdate(pos, Math.random() < 0.5f ? Blocks.BLUE_ICE.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState());
 						}
 					}
 				}
@@ -60,10 +60,10 @@ public class PresentMeteorEffect extends PrimedTNTEffect {
 						case 2: dir = Direction.SOUTH; break;
 						case 3: dir = Direction.WEST; break;
 					}
-					level.setBlock(pos, BlockRegistry.PRESENT.get().defaultBlockState().setValue(PresentBlock.FACING, dir).setValue(PresentBlock.TYPE, random.nextInt(4)));
+					level.setBlockAndUpdate(pos, BlockRegistry.PRESENT.get().defaultBlockState().setValue(PresentBlock.FACING, dir).setValue(PresentBlock.TYPE, random.nextInt(4)));
 				}
 				else if(BlockSurviveChecks.canSnowPlaceAt(state, level, pos) && (distance < 60 || Math.random() < 0.7f)) {
-					level.setBlock(pos, Blocks.SNOW.defaultBlockState().setValue(SnowBlock.LAYERS, random.nextInt(1, 3)));
+					level.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, random.nextInt(1, 3)));
 				}
 			}
 		});
@@ -81,12 +81,12 @@ public class PresentMeteorEffect extends PrimedTNTEffect {
 
 	@Override
 	public BlockState getBlockState(IExplosiveEntity entity) {
-		if(!entity.getPersistentData().getBoolean("has_present")) {
+		if(!entity.getPersistentData().getBooleanOr("has_present", false)) {
 			CompoundTag tag = entity.getPersistentData();
 			tag.putBoolean("has_present", true);
 			tag.putInt("type", new Random().nextInt(4));
 			entity.setPersistentData(tag);
 		}
-		return BlockRegistry.PRESENT.get().defaultBlockState().setValue(PresentBlock.TYPE, entity.getPersistentData().getInt("type"));
+		return BlockRegistry.PRESENT.get().defaultBlockState().setValue(PresentBlock.TYPE, entity.getPersistentData().getIntOr("type", 0));
 	}
 }

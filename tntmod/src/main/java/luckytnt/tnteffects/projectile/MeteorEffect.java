@@ -1,12 +1,14 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.server.level.ServerLevel;
+
 
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.AbstractFireBlock;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -35,14 +37,14 @@ public class MeteorEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(distance <= (strength - strength / 8) && state.getBlock().getExplosionResistance() <= 100) {
-					state.getBlock().wasExploded(level, pos, explosion);
+					state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 				else if(Math.random() < 0.6f && state.getBlock().getExplosionResistance() <= 100) {
-					state.getBlock().wasExploded(level, pos, explosion);
+					state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					if(Math.random() < 0.25f && level.getBlockState(pos.below()).isFaceSturdy(level, pos, Direction.UP)) {
-						level.setBlock(pos, AbstractFireBlock.getState(level, pos));
+						level.setBlockAndUpdate(pos, BaseFireBlock.getState(level, pos));
 					}
 				}
 			}

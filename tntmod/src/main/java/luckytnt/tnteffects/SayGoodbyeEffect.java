@@ -12,7 +12,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.Holder.Reference;
 import net.minecraft.server.level.ServerLevel;
@@ -31,9 +31,9 @@ public class SayGoodbyeEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {		
-		Player ent = entity.getLevel().getClosestPlayer((Entity)entity, 60);
+		Player ent = entity.getLevel().getNearestPlayer((Entity)entity, 60);
 		if(ent != null) {
-			Reference<DamageType> type = entity.getLevel().registryAccess().get(Registries.DAMAGE_TYPE).entryOf(RegistryKey.of(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "say_goodbye")));
+			Reference<DamageType> type = entity.getLevel().registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(ResourceKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "say_goodbye")));
 			DamageSource source = new DamageSource(type, (Entity)entity, entity.owner());
 			
 			ImprovedExplosion explosion = new ImprovedExplosion(ent.level(), (Entity) entity, source, ent.getX(), ent.getY(), ent.getZ(), 20);

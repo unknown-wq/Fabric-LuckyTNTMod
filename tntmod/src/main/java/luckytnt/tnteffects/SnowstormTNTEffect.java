@@ -1,6 +1,7 @@
 package luckytnt.tnteffects;
 
 
+import net.minecraft.server.level.ServerLevel;
 import org.joml.Vector3f;
 
 import luckytnt.registry.BlockRegistry;
@@ -27,8 +28,8 @@ public class SnowstormTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(distance <= 10 && state.getBlock().getExplosionResistance() < 200 && Block.isFaceSturdy(state.getCollisionShape(level, pos), Direction.UP)) {
-					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+				if(distance <= 10 && state.getBlock().getExplosionResistance() < 200 && Block.isFaceFull(state.getCollisionShape(level, pos), Direction.UP)) {
+					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 					level.setBlock(pos, Blocks.BLUE_ICE.defaultBlockState(), 3);
 				} else if(distance > 10 && state.getBlock().getExplosionResistance() < 200 && state.getBlock() == Blocks.WATER) {
 					level.setBlock(pos, Blocks.ICE.defaultBlockState(), 3);

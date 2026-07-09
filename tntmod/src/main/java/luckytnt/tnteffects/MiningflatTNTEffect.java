@@ -39,7 +39,7 @@ public class MiningflatTNTEffect extends PrimedTNTEffect{
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						if(pos.getY() - Math.round(entity.y()) == 0) {
 							if(Math.random() < 0.05f && Block.sideCoversSmallSquare(level, pos.below(), Direction.UP)) {
-								level.setBlock(pos, Blocks.TORCH.defaultBlockState());
+								level.setBlockAndUpdate(pos, Blocks.TORCH.defaultBlockState());
 							}
 						}
 					}

@@ -17,7 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.UndergroundConfiguredFeatures;
+import net.minecraft.data.worldgen.features.CaveFeatures;
 
 public class DripstoneTNTEffect extends PrimedTNTEffect{
 
@@ -45,11 +45,11 @@ public class DripstoneTNTEffect extends PrimedTNTEffect{
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(level.getBlockState(pos.below()).isAir() && !state.isAir() && state.getBlock().getExplosionResistance() < 100 && !state.is(BlockTags.DRIPSTONE_REPLACEABLE_BLOCKS)) {
 					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlock(pos, Blocks.STONE.defaultBlockState());
+					level.setBlockAndUpdate(pos, Blocks.STONE.defaultBlockState());
 				}
 				else if(level.getBlockState(pos.below()).getBlock().getExplosionResistance() < 100 && !level.getBlockState(pos.below()).isAir() && state.isAir() && !level.getBlockState(pos.below()).is(BlockTags.DRIPSTONE_REPLACEABLE_BLOCKS)) {
 					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlock(pos.below(), Blocks.STONE.defaultBlockState());
+					level.setBlockAndUpdate(pos.below(), Blocks.STONE.defaultBlockState());
 				}
 			}
 		});
@@ -61,12 +61,12 @@ public class DripstoneTNTEffect extends PrimedTNTEffect{
 					if(((level.getBlockState(pos.below()).isAir() && !state.isAir()) || (!level.getBlockState(pos.below()).isAir() && state.isAir())) && Math.random() < 0.1f) {
 						Holder<ConfiguredFeature<?, ?>> feature = null;
 						if(Math.random() < 0.9f) {
-							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.DRIPSTONE_CLUSTER);
-							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
+							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).get(CaveFeatures.DRIPSTONE_CLUSTER).orElseThrow();
+							feature.value().place(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 						}
 						else {
-							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.LARGE_DRIPSTONE);
-							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
+							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).get(CaveFeatures.LARGE_DRIPSTONE).orElseThrow();
+							feature.value().place(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 						}
 					}
 				}

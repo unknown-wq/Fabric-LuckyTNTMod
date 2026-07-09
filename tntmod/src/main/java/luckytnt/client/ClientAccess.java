@@ -25,7 +25,7 @@ public class ClientAccess {
 	
 	public static void displayHydrogenBombParticles(int id) {
 		Minecraft minecraft = Minecraft.getInstance();
-		Entity ent = minecraft.world.getEntityById(id);
+		Entity ent = minecraft.level == null ? null : minecraft.level.getEntity(id);
 		if(ent != null) {
 			if(ent instanceof IExplosiveEntity ient) {
 				if(ient.getEffect() instanceof NuclearBombLike effect) {

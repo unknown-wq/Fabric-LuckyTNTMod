@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.structure.StructurePlacementData;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.resources.Identifier;
 import net.minecraft.core.BlockPos;
@@ -34,8 +34,8 @@ public class GroveTNTEffect extends PrimedTNTEffect {
 			@SuppressWarnings("resource")
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.isFaceSturdy(level, pos, Direction.UP) && state.getBlock().getExplosionResistance() < 100 && !state.isAir() && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.above()).getBlock().getHardness() <= 0.2f)) {
-					level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState());
+				if(state.isFaceSturdy(level, pos, Direction.UP) && state.getBlock().getExplosionResistance() < 100 && !state.isAir() && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.above()).getBlock().defaultDestroyTime() <= 0.2f)) {
+					level.setBlockAndUpdate(pos, Blocks.GRASS_BLOCK.defaultBlockState());
 					if(Math.random() < 0.2f) {
 						int random = level.getRandom().nextInt(6);
 						String string = "";
@@ -47,9 +47,9 @@ public class GroveTNTEffect extends PrimedTNTEffect {
 							case 4: string = "birchtree"; break;
 							case 5: string = "jungletree"; break;
 						}
-						StructureTemplate template = ((ServerLevel)entity.getLevel()).getStructureManager().getTemplateOrBlank(Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, string));
+						StructureTemplate template = ((ServerLevel)entity.getLevel()).getStructureManager().getOrCreate(Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, string));
 						if(template != null) {
-							template.place((ServerLevel)entity.getLevel(), pos.add(-1, 0, -1), pos.add(-1, 0, -1), new StructurePlacementData(), entity.getLevel().getRandom(), 3);
+							template.placeInWorld((ServerLevel)entity.getLevel(), pos.offset(-1, 0, -1), pos.offset(-1, 0, -1), new StructurePlaceSettings(), entity.getLevel().getRandom(), 3);
 						}
 					}
 				}

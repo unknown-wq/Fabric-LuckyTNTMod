@@ -146,10 +146,10 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 							state.getBlock().wasExploded(level, pos, explosion);
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							if(Math.random() < 0.5f) {
-								ent.getLevel().setBlock(pos, Blocks.MELON.defaultBlockState());
+								ent.getLevel().setBlockAndUpdate(pos, Blocks.MELON.defaultBlockState());
 							}
 							else {
-								ent.getLevel().setBlock(pos, Blocks.PUMPKIN.defaultBlockState());
+								ent.getLevel().setBlockAndUpdate(pos, Blocks.PUMPKIN.defaultBlockState());
 							}
 						}
 					}
@@ -261,10 +261,10 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 							state.getBlock().wasExploded(level, pos, explosion);
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							if(Math.random() < 0.5f) {
-								ent.getLevel().setBlock(pos, Blocks.MELON.defaultBlockState());
+								ent.getLevel().setBlockAndUpdate(pos, Blocks.MELON.defaultBlockState());
 							}
 							else {
-								ent.getLevel().setBlock(pos, Blocks.PUMPKIN.defaultBlockState());
+								ent.getLevel().setBlockAndUpdate(pos, Blocks.PUMPKIN.defaultBlockState());
 							}
 						}
 					}
@@ -337,10 +337,10 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 							state.getBlock().wasExploded(level, pos, explosion);
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							if(Math.random() < 0.5f) {
-								ent.getLevel().setBlock(pos, Blocks.MELON.defaultBlockState());
+								ent.getLevel().setBlockAndUpdate(pos, Blocks.MELON.defaultBlockState());
 							}
 							else {
-								ent.getLevel().setBlock(pos, Blocks.PUMPKIN.defaultBlockState());
+								ent.getLevel().setBlockAndUpdate(pos, Blocks.PUMPKIN.defaultBlockState());
 							}
 						}
 					}

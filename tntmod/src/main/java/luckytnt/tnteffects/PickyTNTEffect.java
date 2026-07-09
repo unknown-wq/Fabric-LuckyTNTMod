@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.RaycastContext;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 
 public class PickyTNTEffect extends PrimedTNTEffect{
@@ -37,7 +37,7 @@ public class PickyTNTEffect extends PrimedTNTEffect{
 			template = entity.getLevel().getBlockState(toBlockPos(entity.getPos()).below()).getBlock();
 		}
 		else {
-			BlockHitResult result = entity.getLevel().raycast(new RaycastContext(entity.getPos(), entity.getPos().add(((Entity)entity).getDeltaMovement().normalize().multiply(0.5f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, (Entity)entity));
+			BlockHitResult result = entity.getLevel().clip(new ClipContext(entity.getPos(), entity.getPos().add(((Entity)entity).getDeltaMovement().normalize().multiply(0.5f)), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, (Entity)entity));
 			if(result != null) {
 				template = entity.getLevel().getBlockState(result.getBlockPos()).getBlock();
 			}
