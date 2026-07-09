@@ -24,8 +24,8 @@ public class StructureTNTEffect extends PrimedTNTEffect {
 		String value = ent.getPersistentData().getStringOr("structure", "");
 		if(ent.getLevel() instanceof ServerLevel sLevel) {
 			DynamicRegistryManager rAccess = sLevel.registryAccess();
-			ChunkGenerator chunkGenerator = sLevel.getChunkSource().getChunkGenerator();
-			BiomeSource biomeSource = sLevel.getChunkSource().getChunkGenerator().getBiomeSource();
+			ChunkGenerator chunkGenerator = sLevel.getChunkSource().getChunkSource().getGenerator();
+			BiomeSource biomeSource = sLevel.getChunkSource().getChunkSource().getGenerator().getBiomeSource();
 			StructureTemplateManager sManager = sLevel.getStructureManager();
 			StructureAccessor sFManager = sLevel.getStructureAccessor();
 			BlockBox bb = new BlockBox((int)ent.x() - 150, (int)ent.y() - 150, (int)ent.z() - 150, (int)ent.x() + 150, (int)ent.y() + 150, (int)ent.z() + 150);

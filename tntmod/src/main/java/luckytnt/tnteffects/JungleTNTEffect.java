@@ -136,12 +136,12 @@ public class JungleTNTEffect extends PrimedTNTEffect {
 							BlockState state = ent.getLevel().getBlockState(pos);
 							if(!foundBlock && state.isCollisionShapeFullBlock(ent.getLevel(), pos) && !state.isAir() && !(ent.getLevel().getBlockState(pos.above()).getBlock() instanceof LiquidBlock)) {
 								if(offX % 30 == 0 && offZ % 30 == 0) {
-									patch_melon.generate((ServerLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), Random.create(), pos.above());
+									patch_melon.generate((ServerLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), Random.create(), pos.above());
 								}
 								int random = new java.util.Random().nextInt(3);
 								switch(random) {
-									case 0: trees_jungle.generate((ServerLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), Random.create(), pos.above()); break;
-									case 1:	patch_grass_jungle.generate((ServerLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), Random.create(), pos.above()); break;
+									case 0: trees_jungle.generate((ServerLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), Random.create(), pos.above()); break;
+									case 1:	patch_grass_jungle.generate((ServerLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), Random.create(), pos.above()); break;
 								}
 								foundBlock = true;
 							}

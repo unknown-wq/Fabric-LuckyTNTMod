@@ -143,50 +143,50 @@ public class NetherTNTEffect extends PrimedTNTEffect {
 					
 					if(biome == 0) {
 						if(Math.random() < 0.02D) {
-							registry.get(NetherConfiguredFeatures.PATCH_CRIMSON_ROOTS).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), ent.getLevel().getRandom(), posAbove);
+							registry.get(NetherConfiguredFeatures.PATCH_CRIMSON_ROOTS).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), ent.getLevel().getRandom(), posAbove);
 						}
 						if(Math.random() < 0.04D) {
-							registry.get(TreeConfiguredFeatures.CRIMSON_FUNGUS).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), ent.getLevel().getRandom(), posAbove);
+							registry.get(TreeConfiguredFeatures.CRIMSON_FUNGUS).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), ent.getLevel().getRandom(), posAbove);
 						}
 						if(Math.random() < 0.02D) {
-							registry.get(NetherConfiguredFeatures.CRIMSON_FOREST_VEGETATION_BONEMEAL).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), ent.getLevel().getRandom(), posAbove);
+							registry.get(NetherConfiguredFeatures.CRIMSON_FOREST_VEGETATION_BONEMEAL).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), ent.getLevel().getRandom(), posAbove);
 						}
 					}
 					
 					if(biome == 1) {
 						if(Math.random() < 0.02D) {
-							registry.get(NetherConfiguredFeatures.NETHER_SPROUTS_BONEMEAL).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), ent.getLevel().getRandom(), posAbove);
+							registry.get(NetherConfiguredFeatures.NETHER_SPROUTS_BONEMEAL).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), ent.getLevel().getRandom(), posAbove);
 						}
 						if(Math.random() < 0.01D) {
-							registry.get(NetherConfiguredFeatures.TWISTING_VINES_BONEMEAL).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), ent.getLevel().getRandom(), posAbove);
+							registry.get(NetherConfiguredFeatures.TWISTING_VINES_BONEMEAL).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), ent.getLevel().getRandom(), posAbove);
 						}
 						if(Math.random() < 0.04D) {
-							registry.get(TreeConfiguredFeatures.WARPED_FUNGUS).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), ent.getLevel().getRandom(), posAbove);
+							registry.get(TreeConfiguredFeatures.WARPED_FUNGUS).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), ent.getLevel().getRandom(), posAbove);
 						}
 						if(Math.random() < 0.02D) {
-							registry.get(NetherConfiguredFeatures.WARPED_FOREST_VEGETATION_BONEMEAL).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), ent.getLevel().getRandom(), posAbove);
+							registry.get(NetherConfiguredFeatures.WARPED_FOREST_VEGETATION_BONEMEAL).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), ent.getLevel().getRandom(), posAbove);
 						}
 					}
 					
 					if(biome == 2) {
 						if(Math.random() < 0.025D) {
 							DiskFeatureConfig config = new DiskFeatureConfig(PredicatedStateProvider.of(Blocks.SOUL_SOIL), BlockPredicate.matchingBlocks(List.of(Blocks.NETHERRACK, Blocks.SOUL_SAND, Blocks.SOUL_SOIL)), UniformIntProvider.create(3, 6), 2);
-							Feature.DISK.generateIfValid(config, (WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), ent.getLevel().getRandom(), pos);
+							Feature.DISK.generateIfValid(config, (WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), ent.getLevel().getRandom(), pos);
 						}
 						if(Math.random() < 0.01D) {
-							registry.get(NetherConfiguredFeatures.PATCH_SOUL_FIRE).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), ent.getLevel().getRandom(), posAbove);
+							registry.get(NetherConfiguredFeatures.PATCH_SOUL_FIRE).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), ent.getLevel().getRandom(), posAbove);
 						}
 						if(Math.random() < 0.001D) {
 							Structure structure = new NetherFossil(null, ConstantHeightProvider.create(YOffset.fixed(pos.getY())), level);
-							StructureStart start = structure.createStructureStart(ent.getLevel().registryAccess(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator().getBiomeSource(), ((ServerLevel)ent.getLevel()).getChunkSource().getNoiseConfig(), ((ServerLevel)ent.getLevel()).getStructureManager(), ((ServerLevel)ent.getLevel()).getSeed(), new ChunkPos(posAbove), 20, level, holder -> true);
-							start.place((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getStructureAccessor(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), ent.getLevel().getRandom(), new BlockBox(pos.getX() - 150, pos.getY() - 150, pos.getZ() - 150, pos.getX() + 150, pos.getY() + 150, pos.getZ() + 150), new ChunkPos(posAbove));
+							StructureStart start = structure.createStructureStart(ent.getLevel().registryAccess(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator().getBiomeSource(), ((ServerLevel)ent.getLevel()).getChunkSource().getNoiseConfig(), ((ServerLevel)ent.getLevel()).getStructureManager(), ((ServerLevel)ent.getLevel()).getSeed(), new ChunkPos(posAbove), 20, level, holder -> true);
+							start.place((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getStructureAccessor(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), ent.getLevel().getRandom(), new BlockBox(pos.getX() - 150, pos.getY() - 150, pos.getZ() - 150, pos.getX() + 150, pos.getY() + 150, pos.getZ() + 150), new ChunkPos(posAbove));
 						}
 					}
 				}
 				
 				if(stateBelow.isAir() && state.getBlock() == Blocks.NETHERRACK && pos.getY() >= 10 && Math.random() < 0.005D) {
 					Registry<ConfiguredFeature<?, ?>> registry = ent.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE);
-					registry.get(NetherConfiguredFeatures.GLOWSTONE_EXTRA).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), ent.getLevel().getRandom(), posBelow);
+					registry.get(NetherConfiguredFeatures.GLOWSTONE_EXTRA).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), ent.getLevel().getRandom(), posBelow);
 				}
 			}
 		});

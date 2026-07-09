@@ -104,8 +104,8 @@ public class AtlantisEffect extends PrimedTNTEffect {
 							BlockState state = ent.getLevel().getBlockState(pos);
 							if(!foundBlock && state.isCollisionShapeFullBlock(ent.getLevel(), pos) && !state.isAir()) {
 								if(Math.random() < 0.0005f) {
-									StructureStart start = ocean_ruin.createStructureStart(sLevel.registryAccess(), sLevel.getChunkSource().getChunkGenerator(), sLevel.getChunkSource().getChunkGenerator().getBiomeSource(), sLevel.getChunkSource().getNoiseConfig(), sLevel.getStructureManager(), sLevel.getSeed(), new ChunkPos(pos), 20, ent.getLevel(), predicate);
-									start.place(sLevel, sLevel.getStructureAccessor(), sLevel.getChunkSource().getChunkGenerator(), Random.create(), new BlockBox((int)ent.x() - 150, (int)ent.y() - 150, (int)ent.z() - 150, (int)ent.x() + 150, (int)ent.y() + 150, (int)ent.z() + 150), new ChunkPos(pos));
+									StructureStart start = ocean_ruin.createStructureStart(sLevel.registryAccess(), sLevel.getChunkSource().getChunkSource().getGenerator(), sLevel.getChunkSource().getChunkSource().getGenerator().getBiomeSource(), sLevel.getChunkSource().getNoiseConfig(), sLevel.getStructureManager(), sLevel.getSeed(), new ChunkPos(pos), 20, ent.getLevel(), predicate);
+									start.place(sLevel, sLevel.getStructureAccessor(), sLevel.getChunkSource().getChunkSource().getGenerator(), Random.create(), new BlockBox((int)ent.x() - 150, (int)ent.y() - 150, (int)ent.z() - 150, (int)ent.x() + 150, (int)ent.y() + 150, (int)ent.z() + 150), new ChunkPos(pos));
 								}
 								foundBlock = true;
 							}
