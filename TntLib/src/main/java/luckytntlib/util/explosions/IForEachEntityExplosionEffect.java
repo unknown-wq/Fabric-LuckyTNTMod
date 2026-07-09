@@ -1,6 +1,6 @@
 package luckytntlib.util.explosions;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
 /**
  * An IForEachEntityExplosionEffect is used to affect individual entities gotten by an {@link ImprovedExplosion} in different ways.

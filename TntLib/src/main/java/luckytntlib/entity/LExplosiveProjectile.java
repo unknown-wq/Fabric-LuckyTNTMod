@@ -3,61 +3,63 @@ package luckytntlib.entity;
 import org.jetbrains.annotations.Nullable;
 
 import luckytntlib.util.IExplosiveEntity;
+import luckytntlib.util.LTNTDataSerializers;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.FlyingItemEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ItemSupplier;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 
 /**
- * The LExplosiveProjectile is an extension of Minecraft's {@link PersistentProjectileEntity} 
+ * The LExplosiveProjectile is an extension of Minecraft's {@link AbstractArrow}
  * and represents a projectile that holds a {@link PrimedTNTEffect}.
  * Unlike a {@link PrimedLTNT} a LExplosiveProjectile has access to other types of logic specifically designed
  * for entities that travel through the world with high speeds and hit blocks or entities, while still retaining the abilities of a TNT
  * through its {@link PrimedTNTEffect}.
- * It implements {@link IExplosiveEntity} and {@link FlyingItemEntity}.
+ * It implements {@link IExplosiveEntity} and {@link ItemSupplier}.
  */
-public class LExplosiveProjectile extends PersistentProjectileEntity implements IExplosiveEntity, FlyingItemEntity{
-	
-	private static final TrackedData<Integer> DATA_FUSE_ID = DataTracker.registerData(LExplosiveProjectile.class, TrackedDataHandlerRegistry.INTEGER);
-	private static final TrackedData<NbtCompound> PERSISTENT_DATA = DataTracker.registerData(LExplosiveProjectile.class, TrackedDataHandlerRegistry.NBT_COMPOUND);
+public class LExplosiveProjectile extends AbstractArrow implements IExplosiveEntity, ItemSupplier{
+
+	private static final EntityDataAccessor<Integer> DATA_FUSE_ID = SynchedEntityData.defineId(LExplosiveProjectile.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<CompoundTag> PERSISTENT_DATA = SynchedEntityData.defineId(LExplosiveProjectile.class, LTNTDataSerializers.COMPOUND_TAG);
 	@Nullable
 	private LivingEntity thrower;
 	private boolean hitEntity = false;
 	private PrimedTNTEffect effect;
-	
-	public LExplosiveProjectile(EntityType<LExplosiveProjectile> type, World level, PrimedTNTEffect effect) {
+
+	public LExplosiveProjectile(EntityType<LExplosiveProjectile> type, Level level, PrimedTNTEffect effect) {
 		super(type, 0, 0, 0, level, new ItemStack(Items.CARROT), null);
 		setTNTFuse(effect.getDefaultFuse(this));
-		pickupType = PersistentProjectileEntity.PickupPermission.DISALLOWED;
+		pickup = AbstractArrow.Pickup.DISALLOWED;
 		this.effect = effect;
-		setStack(getDefaultItemStack());
 	}
-	
+
 	@Override
-	public void onBlockHit(BlockHitResult hitResult) {
-		Vec3d pos = hitResult.getPos().subtract(this.getX(), this.getY(), this.getZ());
-		setVelocity(pos);
-		Vec3d pos2 = pos.normalize().multiply((double) 0.05F);
+	public void onHitBlock(BlockHitResult hitResult) {
+		Vec3 pos = hitResult.getLocation().subtract(this.getX(), this.getY(), this.getZ());
+		setDeltaMovement(pos);
+		Vec3 pos2 = pos.normalize().scale((double) 0.05F);
 		setPos(this.getX() - pos2.x, this.getY() - pos2.y, this.getZ() - pos2.z);
-	    inGround = true;
+		setInGround(true);
 	}
-	
+
 	@Override
-	public void onEntityHit(EntityHitResult hitResult) {
-		if(hitResult.getEntity() instanceof PlayerEntity player) {
+	public void onHitEntity(EntityHitResult hitResult) {
+		if(hitResult.getEntity() instanceof Player player) {
 			if(!(player.isCreative() || player.isSpectator())) {
 				hitEntity = true;
 			}
@@ -66,97 +68,92 @@ public class LExplosiveProjectile extends PersistentProjectileEntity implements 
 			hitEntity = true;
 		}
 	}
-	
+
 	@Override
 	public void tick() {
 		super.tick();
 		effect.baseTick(this);
 	}
-	
+
 	@Override
-	public void initDataTracker(DataTracker.Builder builder) {
-		builder.add(DATA_FUSE_ID, -1);
-		builder.add(PERSISTENT_DATA, new NbtCompound());
-		super.initDataTracker(builder);
+	public void defineSynchedData(SynchedEntityData.Builder builder) {
+		builder.define(DATA_FUSE_ID, -1);
+		builder.define(PERSISTENT_DATA, new CompoundTag());
+		super.defineSynchedData(builder);
 	}
-	
+
 	@Override
-	public void writeCustomDataToNbt(NbtCompound tag) {
+	public void addAdditionalSaveData(ValueOutput output) {
 		if(thrower != null) {
-			tag.putInt("throwerID", thrower.getId());
+			output.putInt("throwerID", thrower.getId());
 		}
-		tag.putShort("Fuse", (short)getTNTFuse());
-		tag.put("PersistentData", getPersistentData());
-		super.writeCustomDataToNbt(tag);
+		output.putShort("Fuse", (short)getTNTFuse());
+		output.store("PersistentData", CompoundTag.CODEC, getPersistentData());
+		super.addAdditionalSaveData(output);
 	}
-	
+
 	@Override
-	public void readCustomDataFromNbt(NbtCompound tag) {
-		if(getWorld().getEntityById(tag.getInt("throwerID")) instanceof LivingEntity lEnt) {
+	public void readAdditionalSaveData(ValueInput input) {
+		if(level().getEntity(input.getIntOr("throwerID", 0)) instanceof LivingEntity lEnt) {
 			thrower = lEnt;
 		}
-		setTNTFuse(tag.getShort("Fuse"));
-		setPersistentData(tag.getCompound("PersistentData"));
-		super.readCustomDataFromNbt(tag);
+		setTNTFuse(input.getShortOr("Fuse", (short)0));
+		setPersistentData(input.read("PersistentData", CompoundTag.CODEC).orElse(new CompoundTag()));
+		super.readAdditionalSaveData(input);
 	}
-	
+
 	public PrimedTNTEffect getEffect() {
 		return effect;
 	}
-	
+
 	public boolean inGround() {
-		return inGround;
+		return isInGround();
 	}
-	
+
 	public boolean hitEntity() {
 		return hitEntity;
 	}
-	
+
 	@Override
 	public void setTNTFuse(int fuse) {
-		dataTracker.set(DATA_FUSE_ID, fuse);
+		entityData.set(DATA_FUSE_ID, fuse);
 	}
-	
+
 	public void setOwner(@Nullable LivingEntity thrower) {
 		this.thrower = thrower;
 	}
-	
+
 	@Override
-	public void setOwner(Entity entity) {
+	public void setOwner(@Nullable Entity entity) {
 		thrower = entity instanceof LivingEntity ? (LivingEntity) entity : thrower;
 	}
-	
+
 	@Override
 	@Nullable
 	public LivingEntity getOwner() {
 		return thrower;
 	}
-	
-	@Override
-	public ItemStack asItemStack() {
-		return getStack();
-	}
-	
+
 	@Override
 	public int getTNTFuse() {
-		return dataTracker.get(DATA_FUSE_ID);
+		return entityData.get(DATA_FUSE_ID);
 	}
-	
+
 	@Override
-	public Vec3d getPos() {
-		return getLerpedPos(1);
+	public Vec3 getPos() {
+		return position();
 	}
 
 	@Override
 	public void destroy() {
 		discard();
 	}
-	
+
 	@Override
-	public World getLevel() {
-		return getWorld();
+	public Level getLevel() {
+		return level();
 	}
-	
+
 	@Override
 	public double x() {
 		return getX();
@@ -171,29 +168,29 @@ public class LExplosiveProjectile extends PersistentProjectileEntity implements 
 	public double z() {
 		return getZ();
 	}
-	
+
 	@Override
-	public ItemStack getStack() {
+	public ItemStack getItem() {
 		return effect == null ? new ItemStack(Items.CARROT) : effect.getItemStack();
 	}
-	
+
 	@Override
 	public LivingEntity owner() {
 		return getOwner();
 	}
-	
+
 	@Override
-	public NbtCompound getPersistentData() {
-		return dataTracker.get(PERSISTENT_DATA);
+	public CompoundTag getPersistentData() {
+		return entityData.get(PERSISTENT_DATA);
 	}
 
 	@Override
-	public void setPersistentData(NbtCompound tag) {
-		dataTracker.set(PERSISTENT_DATA, tag, true);
+	public void setPersistentData(CompoundTag tag) {
+		entityData.set(PERSISTENT_DATA, tag, true);
 	}
 
 	@Override
-	protected ItemStack getDefaultItemStack() {
+	protected ItemStack getDefaultPickupItem() {
 		return new ItemStack(Items.CARROT);
 	}
 }

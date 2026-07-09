@@ -14,41 +14,41 @@ import org.jetbrains.annotations.Nullable;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
-import net.minecraft.nbt.NbtByte;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtDouble;
-import net.minecraft.nbt.NbtInt;
-import net.minecraft.nbt.NbtString;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.nbt.ByteTag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 /**
- * The Config class provides the ability to store some values as extra configuration for your mod. 
+ * The Config class provides the ability to store some values as extra configuration for your mod.
  * <p>
- * This class is only the base class for the different types of configs 
- * 
+ * This class is only the base class for the different types of configs
+ *
  * @see ClientConfig
  * @see ServerConfig
  */
 public abstract class Config {
-	
+
 	protected final String modid;
 	protected final List<ConfigValue<?>> configValues;
 	protected final Optional<UpdatePacketCreator> packetCreator;
-	
+
 	/**
 	 * Creates a new Config
 	 * @param modid  the name for the file the data will be stored to. Should be the name of the mod the values are meant for
 	 * @param configValues  a list of all values that should be stored within this config
-	 * @param packetCreator  the {@link Optional} that can hold the packet that will automatically update the values on the clients if the instance of this config is a {@link ServerConfig} when {@link Config#save(World)} is called
+	 * @param packetCreator  the {@link Optional} that can hold the packet that will automatically update the values on the clients if the instance of this config is a {@link ServerConfig} when {@link Config#save(Level)} is called
 	 */
 	protected Config(String modid, List<ConfigValue<?>> configValues, Optional<UpdatePacketCreator> packetCreator) {
 		this.modid = modid;
 		this.configValues = configValues;
 		this.packetCreator = packetCreator;
 	}
-	
+
 	/**
 	 * Should be called right after the Config is created.
 	 * <p>
@@ -56,16 +56,16 @@ public abstract class Config {
 	 * If a file exists already it will load the saved values from that {@link File}
 	 */
 	public abstract void init();
-	
+
 	/**
 	 * Saves the currently stored values of the {@link ConfigValue}s to a {@link File}. <br>
 	 * Should be called after any changes to the values.
-	 * 
+	 *
 	 * @param world  used to ensure that the file saving will only be initiated from the server. Only neccessary if the instance of the config is a {@link ServerConfig}
-	 * 
+	 *
 	 */
-	public abstract void save(@Nullable World world);
-	
+	public abstract void save(@Nullable Level world);
+
 	/**
 	 * Saves the values to a {@link File}
 	 * @param file  the {@link File} the {@link ConfigValue}s will be stored to
@@ -73,13 +73,13 @@ public abstract class Config {
 	protected void createConfigFile(File file) {
 		try {
 			file.createNewFile();
-			
+
 			FileWriter writer = new FileWriter(file);
 			JsonWriter json = new JsonWriter(writer);
-			
+
 			json.setIndent("\t");
 			json.beginObject();
-			
+
 			for(ConfigValue<?> value : configValues) {
 				if(value instanceof IntValue intval) {
 					json.name(value.getName()).value(intval.get());
@@ -91,9 +91,9 @@ public abstract class Config {
 					json.name(value.getName()).value(eval.getNameOfValue());
 				}
 			}
-			
+
 			json.endObject();
-			
+
 			json.close();
 			writer.close();
 		} catch (IOException e) {
@@ -110,12 +110,12 @@ public abstract class Config {
 		try {
 			FileReader reader = new FileReader(file);
 			JsonReader json = new JsonReader(reader);
-			
+
 			json.beginObject();
-			
+
 			while(json.hasNext()) {
 				String name = json.nextName();
-				
+
 				for(ConfigValue<?> value : configValues) {
 					if(value.getName().equals(name)) {
 						if(value instanceof IntValue intval) {
@@ -130,33 +130,33 @@ public abstract class Config {
 					}
 				}
 			}
-			
+
 			json.endObject();
-			
+
 			json.close();
 			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * @return {@link Config#configValues}
 	 */
 	public List<ConfigValue<?>> getConfigValues() {
 		return configValues;
 	}
-	
+
 	/**
-	 * Writes the data from a {@link List} of {@link ConfigValue}s to a {@link NbtCompound}. <br>
-	 * Mainly used by {@link CustomPayload}s to serialize the data
-	 * 
-	 * @param values  the values that will be written to a new {@link NbtCompound}
-	 * @return a {@link NbtCompound} that contains all values that were given to this method via <code>values</code>
+	 * Writes the data from a {@link List} of {@link ConfigValue}s to a {@link CompoundTag}. <br>
+	 * Mainly used by {@link CustomPacketPayload}s to serialize the data
+	 *
+	 * @param values  the values that will be written to a new {@link CompoundTag}
+	 * @return a {@link CompoundTag} that contains all values that were given to this method via <code>values</code>
 	 */
-	public static NbtCompound valuesToNbtCompound(List<ConfigValue<?>> values) {
-		NbtCompound tag = new NbtCompound();
-		
+	public static CompoundTag valuesToNbtCompound(List<ConfigValue<?>> values) {
+		CompoundTag tag = new CompoundTag();
+
 		for(ConfigValue<?> value : values) {
 			if(value instanceof IntValue intval) {
 				tag.putInt(value.getName(), intval.get().intValue());
@@ -168,29 +168,29 @@ public abstract class Config {
 				tag.putString(value.getName(), eval.getNameOfValue());
 			}
 		}
-		
+
 		return tag;
 	}
 
 	@SuppressWarnings("unchecked")
 	/**
-	 * Writes the data from a {@link NbtCompound} to a {@link List} of {@link ConfigValue}s. <br>
-	 * Mainly used for handling {@link Packet}s
-	 * 
-	 * @param tag  a {@link NbtCompound} that contains the values 
+	 * Writes the data from a {@link CompoundTag} to a {@link List} of {@link ConfigValue}s. <br>
+	 * Mainly used for handling {@link CustomPacketPayload}s
+	 *
+	 * @param tag  a {@link CompoundTag} that contains the values
 	 * @param values  the {@link List} of {@link ConfigValue}s the data from <code>tag</code> will be written to
 	 */
-	public static void writeToValues(NbtCompound tag, List<ConfigValue<?>> values) {
+	public static void writeToValues(CompoundTag tag, List<ConfigValue<?>> values) {
 		for(ConfigValue<?> value : values) {
 			if(tag.contains(value.getName())) {
-				if(value instanceof IntValue intval && tag.get(value.getName()) instanceof NbtInt nbt) {
+				if(value instanceof IntValue intval && tag.get(value.getName()) instanceof IntTag nbt) {
 					intval.set(nbt.intValue());
-				} else if(value instanceof DoubleValue dval && tag.get(value.getName()) instanceof NbtDouble nbt) {
+				} else if(value instanceof DoubleValue dval && tag.get(value.getName()) instanceof DoubleTag nbt) {
 					dval.set(nbt.doubleValue());
-				} else if(value instanceof BooleanValue bval && tag.get(value.getName()) instanceof NbtByte nbt) {
+				} else if(value instanceof BooleanValue bval && tag.get(value.getName()) instanceof ByteTag nbt) {
 					bval.set(nbt.byteValue() == 0 ? false : true);
-				} else if(value instanceof EnumValue eval && tag.get(value.getName()) instanceof NbtString nbt) {
-					eval.set(eval.getValueByName(nbt.asString()));
+				} else if(value instanceof EnumValue eval && tag.get(value.getName()) instanceof StringTag nbt) {
+					eval.set(eval.getValueByName(nbt.asString().orElse("")));
 				}
 			}
 		}
@@ -200,14 +200,14 @@ public abstract class Config {
 	 * A Builder used to either create a {@link ServerConfig} or a {@link ClientConfig}.
 	 */
 	public static class Builder {
-		
+
 		private String id = "";
 		private List<ConfigValue<?>> values = new ArrayList<>();
 		private Optional<UpdatePacketCreator> packetCreator = Optional.empty();
-		
+
 		private Builder() {
 		}
-		
+
 		/**
 		 * Creates a new Builder with a name
 		 * @param modid  the name the config {@link File} will have
@@ -218,24 +218,24 @@ public abstract class Config {
 			builder.id = modid;
 			return builder;
 		}
-		
+
 		public Builder addConfigValue(ConfigValue<?> value) {
 			values.add(value);
 			return this;
 		}
-		
+
 		/**
 		 * Optional. <br>
-		 * Can be used to determine a packet that will be automatically send when calling {@link Config#save(World)} if the {@link Config} is a {@link ServerConfig}
-		 *  
-		 * @param creator  a {@link UpdatePacketCreator} 
+		 * Can be used to determine a packet that will be automatically send when calling {@link Config#save(Level)} if the {@link Config} is a {@link ServerConfig}
+		 *
+		 * @param creator  a {@link UpdatePacketCreator}
 		 * @return  a {@link Builder}
 		 */
 		public Builder setPacketCreator(UpdatePacketCreator creator) {
 			packetCreator = Optional.of(creator);
 			return this;
 		}
-		
+
 		/**
 		 * Builds the specified data into a <code>new</code> {@link ServerConfig}
 		 * @return a <code>new</code> {@link ServerConfig}
@@ -243,7 +243,7 @@ public abstract class Config {
 		public ServerConfig buildServer() {
 			return new ServerConfig(id, values, packetCreator);
 		}
-		
+
 		/**
 		 * Builds the specified data into a <code>new</code> {@link ClientConfig}
 		 * @return a <code>new</code> {@link ClientConfig}
@@ -252,17 +252,17 @@ public abstract class Config {
 			return new ClientConfig(id, values, packetCreator);
 		}
 	}
-	
+
 	/**
 	 * Represents the base class for config values that will be stored by a {@link Config}
 	 * @param <T> the type of value that should be saved with a ConfigValue
 	 */
 	public static abstract class ConfigValue<T> implements Supplier<T> {
-		
+
 		protected final T defaultValue;
 		protected T value;
 		protected final String name;
-		
+
 		/**
 		 * Creates a new ConfigValue
 		 * @param defaultValue  the value this ConfigValue will represent if the value is not set or edited
@@ -272,9 +272,9 @@ public abstract class Config {
 			this.defaultValue = defaultValue;
 			this.name = name;
 		}
-		
+
 		/**
-		 * Sets the value 
+		 * Sets the value
 		 * @param value  the new value
 		 */
 		public void set(T value) {
@@ -285,13 +285,13 @@ public abstract class Config {
 		/**
 		 * Returns {@link ConfigValue#value} if it's not <code>null</code>. <br>
 		 * Otherwise returns {@link ConfigValue#defaultValue}
-		 * 
+		 *
 		 * @return the stored value or the default value
 		 */
 		public T get() {
 			return value != null ? value : defaultValue;
 		}
-		
+
 		/**
 		 * Returns {@link ConfigValue#defaultValue}
 		 * @return the default value
@@ -308,29 +308,29 @@ public abstract class Config {
 			return name;
 		}
 	}
-	
+
 	/**
 	 * IntValue is a extension of {@link ConfigValue} that can store {@link Integer}
 	 */
 	public static class IntValue extends ConfigValue<Integer> {
-		
+
 		protected final int minValue;
 		protected final int maxValue;
-		
+
 		/**
 		 * Creates a new IntValue
 		 * @param defaultValue  the default value
 		 * @param minValue  the minimum value this {@link ConfigValue} should be able to have
 		 * @param maxValue  the maximum value this {@link ConfigValue} should be able to have
 		 * @param name  the name of this {@link ConfigValue}
-		 * 
+		 *
 		 * @throws IllegalAccessException if <code>minValue</code> is bigger than <code>maxValue</code>, <code>minValue</code> is bigger than <code>defaultValue</code> or <code>maxValue</code> is smaller than <code>defaultValue</code>
 		 */
 		public IntValue(int defaultValue, int minValue, int maxValue, String name) {
 			super(defaultValue, name);
 			this.minValue = minValue;
 			this.maxValue = maxValue;
-			
+
 			if(defaultValue > maxValue || defaultValue < minValue || minValue > maxValue) {
 				throw new IllegalArgumentException("Value bounds are arbitrary for Config Value \"" + name + "\"");
 			}
@@ -343,32 +343,32 @@ public abstract class Config {
 		 * @param value  the new value
 		 */
 		public void set(Integer value) {
-			this.value = MathHelper.clamp(value, minValue, maxValue);
+			this.value = Mth.clamp(value, minValue, maxValue);
 		}
 	}
-	
+
 	/**
 	 * DoubleValue is a extension of {@link ConfigValue} that can store {@link Double}
 	 */
 	public static class DoubleValue extends ConfigValue<Double> {
-		
+
 		protected final double minValue;
 		protected final double maxValue;
-		
+
 		/**
 		 * Creates a new DoubleValue
 		 * @param defaultValue  the default value
 		 * @param minValue  the minimum value this {@link ConfigValue} should be able to have
 		 * @param maxValue  the maximum value this {@link ConfigValue} should be able to have
 		 * @param name  the name of this {@link ConfigValue}
-		 * 
+		 *
 		 * @throws IllegalAccessException if <code>minValue</code> is bigger than <code>maxValue</code>, <code>minValue</code> is bigger than <code>defaultValue</code> or <code>maxValue</code> is smaller than <code>defaultValue</code>
 		 */
 		public DoubleValue(double defaultValue, double minValue, double maxValue, String name) {
 			super(defaultValue, name);
 			this.minValue = minValue;
 			this.maxValue = maxValue;
-			
+
 			if(defaultValue > maxValue || defaultValue < minValue || minValue > maxValue) {
 				throw new IllegalArgumentException("Value bounds are arbitrary for Config Value \"" + name + "\"");
 			}
@@ -381,15 +381,15 @@ public abstract class Config {
 		 * @param value  the new value
 		 */
 		public void set(Double value) {
-			this.value = MathHelper.clamp(value, minValue, maxValue);
+			this.value = Mth.clamp(value, minValue, maxValue);
 		}
 	}
-	
+
 	/**
 	 * BooleanValue is a extension of {@link ConfigValue} that can store {@link Boolean}
 	 */
 	public static class BooleanValue extends ConfigValue<Boolean> {
-		
+
 		/**
 		 * Creates a new BooleanValue
 		 * @param defaultValue  the default value
@@ -399,15 +399,15 @@ public abstract class Config {
 			super(defaultValue, name);
 		}
 	}
-	
+
 	/**
 	 * EnumValue is a extension of {@link ConfigValue} that can store the values of an {@link Enum}. <br>
 	 * The {@link Enum} has to implement {@link StringRepresentable}.
 	 */
 	public static class EnumValue<T extends Enum<T> & StringRepresentable> extends ConfigValue<T> {
-		
+
 		protected T[] values;
-		
+
 		/**
 		 * Creates a new EnumValue
 		 * @param defaultValue  the default value
@@ -418,7 +418,7 @@ public abstract class Config {
 			super(defaultValue, name);
 			this.values = values;
 		}
-		
+
 		/**
 		 * Gets the name of the current enum value
 		 * @return the name of the current enum value
@@ -426,7 +426,7 @@ public abstract class Config {
 		public String getNameOfValue() {
 			return get().getString();
 		}
-		
+
 		/**
 		 * Gets the enum value that has the <code>name</code> given to this method
 		 * @param name  the name of the value you want to have
@@ -441,9 +441,9 @@ public abstract class Config {
 			return defaultValue;
 		}
 	}
-	
+
 	@FunctionalInterface
 	public interface UpdatePacketCreator {
-		public CustomPayload getPacket(List<ConfigValue<?>> configValues);
+		public CustomPacketPayload getPacket(List<ConfigValue<?>> configValues);
 	}
 }

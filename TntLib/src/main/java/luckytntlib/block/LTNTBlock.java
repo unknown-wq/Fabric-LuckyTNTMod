@@ -8,41 +8,41 @@ import java.util.function.Supplier;
 import org.jetbrains.annotations.Nullable;
 
 import luckytntlib.entity.PrimedLTNT;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.TntBlock;
-import net.minecraft.block.dispenser.DispenserBehavior;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.TntEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.mob.PiglinBrain;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.loot.context.LootContextParameterSet;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
-import net.minecraft.world.explosion.Explosion;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.entity.monster.piglin.PiglinAi;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.TntBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.phys.BlockHitResult;
 
 /**
- * The {@link LTNTBlock} is an extension of the {@link TntBlock} and it spawns a {@link PrimedLTNT} instead of a {@link TntEntity}.
- * If a {@link DispenserBehavior} has been registered dispensers can also spawn the TNT.
+ * The {@link LTNTBlock} is an extension of the {@link TntBlock} and it spawns a {@link PrimedLTNT} instead of a {@link PrimedTnt}.
+ * If a dispense behavior has been registered dispensers can also spawn the TNT.
  */
 public class LTNTBlock extends TntBlock {
 
@@ -50,63 +50,61 @@ public class LTNTBlock extends TntBlock {
 	protected Supplier<EntityType<PrimedLTNT>> TNT;
 	protected Random random = new Random();
 	protected boolean randomizedFuseUponExploded = true;
-	
-	public LTNTBlock(AbstractBlock.Settings properties, @Nullable Supplier<EntityType<PrimedLTNT>> TNT, boolean randomizedFuseUponExploded) {
+
+	public LTNTBlock(BlockBehaviour.Properties properties, @Nullable Supplier<EntityType<PrimedLTNT>> TNT, boolean randomizedFuseUponExploded) {
 		super(properties);
 		this.TNT = TNT;
 		this.randomizedFuseUponExploded = randomizedFuseUponExploded;
 	}
-	
+
 	@Override
-	public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-		if (oldState.isOf(state.getBlock())) {
+	protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+		if (oldState.is(state.getBlock())) {
 			return;
 		}
-		if (world.isReceivingRedstonePower(pos)) {
-			explode(world, false, pos.getX(), pos.getY(), pos.getZ(), null);
-			world.removeBlock(pos, false);
+		if (level.hasNeighborSignal(pos)) {
+			explode(level, false, pos.getX(), pos.getY(), pos.getZ(), null);
+			level.removeBlock(pos, false);
 		}
 	}
 
 	@Override
-	public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-		if (world.isReceivingRedstonePower(pos)) {
-			explode(world, false, pos.getX(), pos.getY(), pos.getZ(), null);
-			world.removeBlock(pos, false);
+	protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, @Nullable net.minecraft.world.level.redstone.Orientation orientation, boolean movedByPiston) {
+		if (level.hasNeighborSignal(pos)) {
+			explode(level, false, pos.getX(), pos.getY(), pos.getZ(), null);
+			level.removeBlock(pos, false);
 		}
 	}
 
 	@Override
-	public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-		if (!world.isClient() && !player.isCreative() && state.get(UNSTABLE).booleanValue()) {
-			explode(world, false, pos.getX(), pos.getY(), pos.getZ(), null);
+	public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+		if (!level.isClientSide() && !player.getAbilities().instabuild && state.getValue(UNSTABLE)) {
+			explode(level, false, pos.getX(), pos.getY(), pos.getZ(), null);
 		}
-		
-		spawnBreakParticles(world, player, pos, state);
-        if (state.isIn(BlockTags.GUARDED_BY_PIGLINS)) {
-            PiglinBrain.onGuardedBlockInteracted(player, false);
-        }
-        world.emitGameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Emitter.of(player, state));
-        return state;
+
+		spawnDestroyParticles(level, player, pos, state);
+		if (state.is(BlockTags.GUARDED_BY_PIGLINS) && level instanceof ServerLevel serverLevel) {
+			PiglinAi.angerNearbyPiglins(serverLevel, player, false);
+		}
+		level.gameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Context.of(player, state));
+		return state;
 	}
-	
+
 	@Override
-	public float getBlastResistance() {
+	public float getExplosionResistance() {
 		return 0f;
 	}
-	
+
 	@Override
-	public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+	protected List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
 		return Collections.singletonList(new ItemStack(this));
 	}
-	
+
 	@Override
-	public void onDestroyedByExplosion(World level, BlockPos pos, Explosion explosion) {
-		if(!level.isClient()) {
-			explode(level, true, pos.getX(), pos.getY(), pos.getZ(), explosion.getCausingEntity());
-		}
+	public void wasExploded(ServerLevel level, BlockPos pos, Explosion explosion) {
+		explode(level, true, pos.getX(), pos.getY(), pos.getZ(), explosion.getIndirectSourceEntity());
 	}
-	
+
 	/**
 	 * Spawns a new {@link PrimedLTNT} held by this block
 	 * @param level  the current level
@@ -119,54 +117,54 @@ public class LTNTBlock extends TntBlock {
 	 * @throws NullPointerException
 	 */
 	@Nullable
-	public PrimedLTNT explode(World level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
+	public PrimedLTNT explode(Level level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
 		if(TNT != null) {
-			PrimedLTNT tnt = TNT.get().create(level);
-			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(MathHelper.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
-			tnt.setPosition(x + 0.5f, y, z + 0.5f);
+			PrimedLTNT tnt = TNT.get().create(level, EntitySpawnReason.TRIGGERED);
+			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(Mth.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
+			tnt.setPos(x + 0.5f, y, z + 0.5f);
 			tnt.setOwner(igniter);
-			level.spawnEntity(tnt);
-			level.playSound(null, new BlockPos((int)x, (int)y, (int)z), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.MASTER, 1, 1);
+			level.addFreshEntity(tnt);
+			level.playSound(null, new BlockPos((int)x, (int)y, (int)z), SoundEvents.TNT_PRIMED, SoundSource.MASTER, 1, 1);
 			if(level.getBlockState(new BlockPos((int)x, (int)y, (int)z)).getBlock() == this) {
-				level.setBlockState(new BlockPos((int)x, (int)y, (int)z), Blocks.AIR.getDefaultState(), 3);
+				level.setBlock(new BlockPos((int)x, (int)y, (int)z), Blocks.AIR.defaultBlockState(), 3);
 			}
 			return tnt;
 		}
 		throw new NullPointerException("TNT entity type is null");
 	}
-	
+
 	@Override
-	public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-		ItemStack itemStack = player.getStackInHand(hand);
-		if (itemStack.isOf(Items.FLINT_AND_STEEL) || itemStack.isOf(Items.FIRE_CHARGE)) {
+	protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		ItemStack itemStack = player.getItemInHand(hand);
+		if (itemStack.is(Items.FLINT_AND_STEEL) || itemStack.is(Items.FIRE_CHARGE)) {
 			explode(world, false, pos.getX(), pos.getY(), pos.getZ(), player);
-			world.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL_AND_REDRAW);
+			world.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
 			Item item = itemStack.getItem();
-			if (!player.isCreative()) {
-				if (itemStack.isOf(Items.FLINT_AND_STEEL)) {
-					itemStack.damage(1, player, hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+			if (!player.getAbilities().instabuild) {
+				if (itemStack.is(Items.FLINT_AND_STEEL)) {
+					itemStack.hurtAndBreak(1, player, hand.asEquipmentSlot());
 				} else {
-					itemStack.decrement(1);
+					itemStack.consume(1, player);
 				}
 			}
-			player.incrementStat(Stats.USED.getOrCreateStat(item));
-			return ItemActionResult.success(world.isClient);
+			player.awardStat(Stats.ITEM_USED.get(item));
+			return InteractionResult.SUCCESS;
 		}
-		return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		return InteractionResult.TRY_WITH_EMPTY_HAND;
 	}
 
 	@Override
-	public void onProjectileHit(World world, BlockState state, BlockHitResult hit, ProjectileEntity projectile) {
-		if (!world.isClient) {
+	protected void onProjectileHit(Level world, BlockState state, BlockHitResult hit, Projectile projectile) {
+		if (world instanceof ServerLevel serverLevel) {
 			BlockPos blockPos = hit.getBlockPos();
 			Entity entity = projectile.getOwner();
-			if (projectile.isOnFire() && projectile.canModifyAt(world, blockPos)) {
+			if (projectile.isOnFire() && projectile.mayInteract(serverLevel, blockPos)) {
 				explode(world, false, blockPos.getX(), blockPos.getY(), blockPos.getZ(), entity instanceof LivingEntity ? (LivingEntity) entity : null);
 				world.removeBlock(blockPos, false);
 			}
 		}
 	}
-	
+
 	public boolean randomizedFuseUponExploded() {
 		return randomizedFuseUponExploded;
 	}

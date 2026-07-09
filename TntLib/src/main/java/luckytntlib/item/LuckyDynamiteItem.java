@@ -5,13 +5,13 @@ import java.util.function.Supplier;
 
 import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.registry.RegistryHelper;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * The LuckyDynamiteItem is an extension of the {@link LDynamiteItem} and serves the simple purpose of spawning a random
@@ -21,22 +21,22 @@ import net.minecraft.world.World;
 public class LuckyDynamiteItem extends LDynamiteItem{
 
 	public List<Supplier<LDynamiteItem>> dynamites;
-	
-	public LuckyDynamiteItem(Item.Settings properties, List<Supplier<LDynamiteItem>> dynamites) {
+
+	public LuckyDynamiteItem(Item.Properties properties, List<Supplier<LDynamiteItem>> dynamites) {
 		super(properties, null);
 		this.dynamites = dynamites;
 	}
-	
+
 	@Override
-	public void usageTick(World level, LivingEntity player, ItemStack stack, int count) {
-		if(player instanceof ServerPlayerEntity sPlayer) {
-			shoot(level, player.getX(), player.getY() + player.getStandingEyeHeight(), player.getZ(), player.getRotationVec(1), 2, player);		
+	public void onUseTick(Level level, LivingEntity player, ItemStack stack, int count) {
+		if(player instanceof ServerPlayer sPlayer) {
+			shoot(level, player.getX(), player.getY() + player.getEyeHeight(), player.getZ(), player.getViewVector(1), 2, player);
 			if(!sPlayer.isCreative()) {
-				stack.decrement(1);
+				stack.shrink(1);
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets a random {@link LDynamiteItem} from the list held by this item and calls its shoot method.
 	 * Can not shoot another {@link LuckyDynamiteItem}.
@@ -50,7 +50,7 @@ public class LuckyDynamiteItem extends LDynamiteItem{
 	 * @return {@link LExplosiveProjectile}
 	 */
 	@Override
-	public LExplosiveProjectile shoot(World level, double x, double y, double z, Vec3d direction, float power, LivingEntity thrower) {
+	public LExplosiveProjectile shoot(Level level, double x, double y, double z, Vec3 direction, float power, LivingEntity thrower) {
 		int rand = random.nextInt(dynamites.size());
 		return dynamites.get(rand).get().shoot(level, x, y, z, direction, power, thrower);
 	}

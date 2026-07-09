@@ -7,19 +7,19 @@ import java.util.function.Supplier;
 
 import luckytntlib.LuckyTNTLib;
 import luckytntlib.item.TNTConfigItem;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 
 public class ItemRegistry {
-	
+
 	public static final Supplier<Item> CONFIG_ITEM = registerItem("tnt_config", new TNTConfigItem());
 
 	public static Supplier<Item> registerItem(String name, Item item) {
-		Item ritem = Registry.register(Registries.ITEM, Identifier.of(LuckyTNTLib.MODID, name), item);
+		Item ritem = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(LuckyTNTLib.MODID, name), item);
 		return () -> ritem;
 	}
-	
+
 	public static void init() {}
 }

@@ -7,9 +7,9 @@ import java.util.function.Supplier;
 import luckytntlib.block.LTNTBlock;
 import luckytntlib.item.LTNTMinecartItem;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 
 /**
  * The LuckyTNTMinecart is an extension of the {@link LTNTMinecart}
@@ -18,8 +18,8 @@ import net.minecraft.world.World;
 public class LuckyTNTMinecart extends LTNTMinecart{
 
 	private List<Supplier<LTNTMinecartItem>> minecarts;
-	
-	public LuckyTNTMinecart(EntityType<LTNTMinecart> type, World level, Supplier<LTNTBlock> defaultRender, Supplier<Supplier<LTNTMinecartItem>> pickItem, List<Supplier<LTNTMinecartItem>> minecarts) {
+
+	public LuckyTNTMinecart(EntityType<LTNTMinecart> type, Level level, Supplier<LTNTBlock> defaultRender, Supplier<Supplier<LTNTMinecartItem>> pickItem, List<Supplier<LTNTMinecartItem>> minecarts) {
 		super(type, level, null, pickItem, false);
 		effect = new PrimedTNTEffect() {
 			@Override
@@ -30,13 +30,13 @@ public class LuckyTNTMinecart extends LTNTMinecart{
 		this.minecarts = minecarts;
 		setTNTFuse(-1);
 	}
-	
+
 	@Override
 	public void fuse() {
-		LTNTMinecart minecart = minecarts.get(new Random().nextInt(minecarts.size())).get().createMinecart(getWorld(), getX(), getY(), getZ(), placer);
-		minecart.setYaw(getYaw());
-		minecart.setVelocity(getVelocity());
-		getWorld().spawnEntity(minecart);
+		LTNTMinecart minecart = minecarts.get(new Random().nextInt(minecarts.size())).get().createMinecart(level(), getX(), getY(), getZ(), placer);
+		minecart.setYRot(getYRot());
+		minecart.setDeltaMovement(getDeltaMovement());
+		level().addFreshEntity(minecart);
 		minecart.fuse();
 		discard();
 	}

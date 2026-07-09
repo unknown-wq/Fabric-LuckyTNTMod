@@ -5,35 +5,35 @@ import java.util.List;
 import luckytntlib.LuckyTNTLib;
 import luckytntlib.config.common.Config;
 import luckytntlib.config.common.Config.ConfigValue;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 
-public class UpdateConfigValuesPacket implements CustomPayload {
-	
-	public static final Identifier NAME = Identifier.of(LuckyTNTLib.MODID, "update_config_values");
-	public static final CustomPayload.Id<UpdateConfigValuesPacket> ID = new CustomPayload.Id<>(NAME);
-    public static final PacketCodec<RegistryByteBuf, UpdateConfigValuesPacket> CODEC = PacketCodec.of(UpdateConfigValuesPacket::write, UpdateConfigValuesPacket::new);
-	
-	public final NbtCompound data;
+public class UpdateConfigValuesPacket implements CustomPacketPayload {
+
+	public static final Identifier NAME = Identifier.fromNamespaceAndPath(LuckyTNTLib.MODID, "update_config_values");
+	public static final CustomPacketPayload.Type<UpdateConfigValuesPacket> ID = new CustomPacketPayload.Type<>(NAME);
+	public static final StreamCodec<RegistryFriendlyByteBuf, UpdateConfigValuesPacket> CODEC = StreamCodec.ofMember(UpdateConfigValuesPacket::write, UpdateConfigValuesPacket::new);
+
+	public final CompoundTag data;
 
 	public UpdateConfigValuesPacket(List<ConfigValue<?>> configValues) {
 		data = Config.valuesToNbtCompound(configValues);
 	}
-	
-	public UpdateConfigValuesPacket(PacketByteBuf buf) {
+
+	public UpdateConfigValuesPacket(RegistryFriendlyByteBuf buf) {
 		data = buf.readNbt();
 	}
-	
-	public void write(PacketByteBuf buf) {
+
+	public void write(FriendlyByteBuf buf) {
 		buf.writeNbt(data);
 	}
 
 	@Override
-	public Id<? extends CustomPayload> getId() {
+	public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 }

@@ -5,50 +5,50 @@ import luckytntlib.entity.LTNTMinecart;
 import luckytntlib.entity.LivingPrimedLTNT;
 import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.IExplosiveEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Extensions of this class serve as a way to define how a TNT, Minecart or Dynamite behaves.
  * <p>
- * It controls what a TNT does upon exploding, what particles it displays, what Block/Item gets rendered 
+ * It controls what a TNT does upon exploding, what particles it displays, what Block/Item gets rendered
  * and general logic like conditions for exploding.
  */
-public abstract class PrimedTNTEffect{	
+public abstract class PrimedTNTEffect{
 	/**
-	 * 
-	 * This void is the heart of the PrimedTNTEffect. It's executed every tick on both the logical client and the logical server side 
+	 *
+	 * This void is the heart of the PrimedTNTEffect. It's executed every tick on both the logical client and the logical server side
 	 * and is slightly different for every entity implementing {@link IExplosiveEntity} provided by this library.
 	 * <p>
 	 * Its default implementation works for all Explosives with little complexity in their behavior.
 	 * <p>
-	 * Override this method if you want to change the way your TNT behaves on a basic level 
+	 * Override this method if you want to change the way your TNT behaves on a basic level
 	 * or if you want to add logic for your own entity implementing {@link IExplosiveEntity}
 	 * @param entity  the {@link IExplosiveEntity} this PrimedTNTEffect belongs to.
 	 */
 	public void baseTick(IExplosiveEntity entity) {
-		World level = entity.getLevel();
+		Level level = entity.getLevel();
 		/**
 		 * Default logic implementation for TNT and TNT Minecarts
 		 */
 		if(entity instanceof PrimedLTNT || entity instanceof LivingPrimedLTNT || entity instanceof LTNTMinecart) {
 			if(entity.getTNTFuse() <= 0) {
-				if(entity.getLevel() instanceof ServerWorld) {
+				if(entity.getLevel() instanceof ServerLevel) {
 					if(playsSound()) {
-						level.playSound((Entity)entity, new BlockPos(toBlockPos(entity.getPos())), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+						level.playSound((Entity)entity, new BlockPos(toBlockPos(entity.getPos())), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
 					}
 					serverExplosion(entity);
 				}
@@ -61,14 +61,14 @@ public abstract class PrimedTNTEffect{
 		 * Default logic implementation for Explosive Projectiles
 		 */
 		else if(entity instanceof LExplosiveProjectile ent) {
-			if((ent.inGround() || ent.hitEntity()) && entity.getLevel() instanceof ServerWorld) {
+			if((ent.inGround() || ent.hitEntity()) && entity.getLevel() instanceof ServerLevel) {
 				if(explodesOnImpact()) {
 					ent.setTNTFuse(0);
 				}
 				if(ent.getTNTFuse() == 0) {
-					if(ent.getWorld() instanceof ServerWorld) {
+					if(ent.level() instanceof ServerLevel) {
 						if(playsSound()) {
-							level.playSound((Entity)entity, new BlockPos(toBlockPos(entity.getPos())), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+							level.playSound((Entity)entity, new BlockPos(toBlockPos(entity.getPos())), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
 						}
 						serverExplosion(entity);
 					}
@@ -76,9 +76,9 @@ public abstract class PrimedTNTEffect{
 				}
 			}
 			else if(airFuse() && entity.getTNTFuse() == 0) {
-				if(ent.getWorld() instanceof ServerWorld) {
+				if(ent.level() instanceof ServerLevel) {
 					if(playsSound()) {
-						level.playSound((Entity)entity, new BlockPos(toBlockPos(entity.getPos())), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+						level.playSound((Entity)entity, new BlockPos(toBlockPos(entity.getPos())), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
 					}
 					serverExplosion(entity);
 				}
@@ -90,11 +90,11 @@ public abstract class PrimedTNTEffect{
 			}
 		}
 
-		if(level.isClient) {
+		if(level.isClientSide()) {
 			spawnParticles(entity);
 		}
 	}
-	
+
 	/**
 	 * This void is executed on the logical client side by {@link PrimedTNTEffect#baseTick(IExplosiveEntity)} every tick.
 	 * <p>
@@ -104,23 +104,23 @@ public abstract class PrimedTNTEffect{
 	public void spawnParticles(IExplosiveEntity entity) {
 		entity.getLevel().addParticle(ParticleTypes.SMOKE, entity.x(), entity.y() + 0.5f, entity.z(), 0, 0, 0);
 	}
-	
+
 	/**
 	 * This void is executed on the logical server side by {@link PrimedTNTEffect#baseTick(IExplosiveEntity)} once the fuse hits 0 or another condition, like a projectile hitting a block, is met.
 	 * <p>
 	 * @implNote Due to the immediate removal of the entity after the execution of this method, synchronization inconsistencies arise and a clientExplosion is not supported. If you require one you need to override {@link PrimedTNTEffect#baseTick(IExplosiveEntity)} or create your own independent function
 	 * @param entity  the {@link IExplosiveEntity} this PrimedTNTEffect belongs to.
 	 */
-	public void serverExplosion(IExplosiveEntity entity) {	
+	public void serverExplosion(IExplosiveEntity entity) {
 	}
-	
+
 	/**
 	 * This void is executed on both logical sides by {@link PrimedTNTEffect#baseTick(IExplosiveEntity)} every tick.
 	 * @param entity  the {@link IExplosiveEntity} this PrimedTNTEffect belongs to.
 	 */
-	public void explosionTick(IExplosiveEntity entity) {		
+	public void explosionTick(IExplosiveEntity entity) {
 	}
-	
+
 	/**
 	 * @param entity  the {@link IExplosiveEntity} this PrimedTNTEffect belongs to.
 	 * @implNote defaults to 80 (4 seconds)
@@ -129,7 +129,7 @@ public abstract class PrimedTNTEffect{
 	public int getDefaultFuse(IExplosiveEntity entity) {
 		return 80;
 	}
-	
+
 	/**
 	 * @param entity  the {@link IExplosiveEntity} this PrimedTNTEffect belongs to.
 	 * @implNote defaults to 1f
@@ -138,7 +138,7 @@ public abstract class PrimedTNTEffect{
 	public float getSize(IExplosiveEntity entity) {
 		return 1f;
 	}
-	
+
 	/**
 	 * @implNote defaults to true
 	 * @return Whether or not this TNT plays an explosion sound when executing {@link PrimedTNTEffect#serverExplosion(IExplosiveEntity)}.
@@ -146,7 +146,7 @@ public abstract class PrimedTNTEffect{
 	public boolean playsSound() {
 		return true;
 	}
-	
+
 	/**
 	 * @implNote Only used by {@link LExplosiveProjectile}!
 	 * @implNote defaults to true
@@ -155,7 +155,7 @@ public abstract class PrimedTNTEffect{
 	public boolean explodesOnImpact() {
 		return true;
 	}
-	
+
 	/**
 	 * @implNote Only used by {@link LExplosiveProjectile}!
 	 * @implNote defaults to false
@@ -164,16 +164,16 @@ public abstract class PrimedTNTEffect{
 	public boolean airFuse() {
 		return false;
 	}
-	
+
 	/**
-	 * Gets the Itemstack that is rendererd!	 
+	 * Gets the Itemstack that is rendererd!
 	 * @implNote Useless if no Item is rendered or this method is not called
 	 * @return {@link ItemStack} to render.
 	 */
 	public ItemStack getItemStack() {
 		return new ItemStack(getItem());
 	}
-	
+
 	/**
 	 * Gets the Item that is rendererd!
 	 * @implNote Useless if no Item is rendered or this method is not called
@@ -182,7 +182,7 @@ public abstract class PrimedTNTEffect{
 	public Item getItem() {
 		return Items.AIR;
 	}
-	
+
 	/**
 	 * Gets the Blockstate that is rendered!
 	 * @implNote Useless if no Block is rendered or this method is not called
@@ -190,9 +190,9 @@ public abstract class PrimedTNTEffect{
 	 * @return {@link BlockState} to render.
 	 */
 	public BlockState getBlockState(IExplosiveEntity entity) {
-		return getBlock().getDefaultState();
+		return getBlock().defaultBlockState();
 	}
-	
+
 	/**
 	 * Gets the Block that is rendered!
 	 * @implNote Useless if no Block is rendered or this method is not called.
@@ -201,13 +201,13 @@ public abstract class PrimedTNTEffect{
 	public Block getBlock() {
 		return Blocks.TNT;
 	}
-	
+
 	/**
 	 * Converts a vector, idealy the position vector to a BlockPos
 	 * @param vec  the vector converted
-	 * @return {@link BlockPos} 
+	 * @return {@link BlockPos}
 	 */
-	public BlockPos toBlockPos(Vec3d vec) {
-		return new BlockPos(MathHelper.floor(vec.x), MathHelper.floor(vec.y), MathHelper.floor(vec.z));
+	public BlockPos toBlockPos(Vec3 vec) {
+		return new BlockPos(Mth.floor(vec.x), Mth.floor(vec.y), Mth.floor(vec.z));
 	}
 }

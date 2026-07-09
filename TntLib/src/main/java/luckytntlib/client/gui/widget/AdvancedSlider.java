@@ -2,18 +2,18 @@ package luckytntlib.client.gui.widget;
 
 import java.text.DecimalFormat;
 
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 /**
  * Slider widget implementation which allows inputting values in a certain range
  * with optional step size.
  */
-public class AdvancedSlider extends SliderWidget {
+public class AdvancedSlider extends AbstractSliderButton {
 
-	protected Text prefix;
-	protected Text suffix;
+	protected Component prefix;
+	protected Component suffix;
 
 	protected double minValue;
 	protected double maxValue;
@@ -31,8 +31,8 @@ public class AdvancedSlider extends SliderWidget {
 	 * @param y            y position of upper left corner
 	 * @param width        Width of the widget
 	 * @param height       Height of the widget
-	 * @param prefix       {@link Text} displayed before the value string
-	 * @param suffix       {@link Text} displayed after the value string
+	 * @param prefix       {@link Component} displayed before the value string
+	 * @param suffix       {@link Component} displayed after the value string
 	 * @param minValue     Minimum (left) value of slider
 	 * @param maxValue     Maximum (right) value of slider
 	 * @param currentValue Starting value when widget is first displayed
@@ -42,8 +42,8 @@ public class AdvancedSlider extends SliderWidget {
 	 *                     maximum of 4 (inclusive).
 	 * @param drawString   Should text be displayed on the widget
 	 */
-	public AdvancedSlider(int x, int y, int width, int height, Text prefix, Text suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString) {
-		super(x, y, width, height, Text.empty(), 0D);
+	public AdvancedSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString) {
+		super(x, y, width, height, Component.empty(), 0D);
 		this.prefix = prefix;
 		this.suffix = suffix;
 		this.minValue = minValue;
@@ -67,7 +67,7 @@ public class AdvancedSlider extends SliderWidget {
 			}
 
 			format = new DecimalFormat(builder.toString());
-		} else if (MathHelper.approximatelyEquals(this.stepSize, Math.floor(this.stepSize))) {
+		} else if (Mth.equal(this.stepSize, Math.floor(this.stepSize))) {
 			format = new DecimalFormat("0");
 		} else {
 			format = new DecimalFormat(Double.toString(this.stepSize).replaceAll("\\d", "0"));
@@ -76,7 +76,7 @@ public class AdvancedSlider extends SliderWidget {
 		updateMessage();
 	}
 
-	public AdvancedSlider(int x, int y, int width, int height, Text prefix, Text suffix, double minValue, double maxValue, double currentValue, boolean drawString) {
+	public AdvancedSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, boolean drawString) {
 		this(x, y, width, height, prefix, suffix, minValue, maxValue, currentValue, 1D, 0, drawString);
 	}
 
@@ -94,11 +94,11 @@ public class AdvancedSlider extends SliderWidget {
 
 	public void setSliderValue(double val) {
 		double d = value;
-        value = snapToNearest((val - minValue) / (maxValue - minValue));
-        if (d != value) {
-            applyValue();
-        }
-        updateMessage();
+		value = snapToNearest((val - minValue) / (maxValue - minValue));
+		if (d != value) {
+			applyValue();
+		}
+		updateMessage();
 	}
 
 	public String getValueString() {
@@ -111,28 +111,28 @@ public class AdvancedSlider extends SliderWidget {
 
 	private double snapToNearest(double value) {
 		if (stepSize <= 0D) {
-			return MathHelper.clamp(value, 0D, 1D);
+			return Mth.clamp(value, 0D, 1D);
 		}
 
-		value = MathHelper.lerp(MathHelper.clamp(value, 0D, 1D), minValue, maxValue);
+		value = Mth.lerp(Mth.clamp(value, 0D, 1D), minValue, maxValue);
 
 		value = (stepSize * Math.round(value / stepSize));
 
 		if (minValue > maxValue) {
-			value = MathHelper.clamp(value, maxValue, minValue);
+			value = Mth.clamp(value, maxValue, minValue);
 		} else {
-			value = MathHelper.clamp(value, minValue, maxValue);
+			value = Mth.clamp(value, minValue, maxValue);
 		}
 
-		return MathHelper.map(value, minValue, maxValue, 0D, 1D);
+		return Mth.map(value, minValue, maxValue, 0D, 1D);
 	}
 
 	@Override
 	protected void updateMessage() {
 		if (drawString) {
-			setMessage(Text.literal("").append(prefix).append(getValueString()).append(suffix));
+			setMessage(Component.literal("").append(prefix).append(getValueString()).append(suffix));
 		} else {
-			setMessage(Text.empty());
+			setMessage(Component.empty());
 		}
 	}
 

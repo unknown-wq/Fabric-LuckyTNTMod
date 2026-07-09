@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import luckytntlib.LuckyTNTLib;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 /**
  * An extension of {@link Config} that should only be used on {@link EnvType#CLIENT} and will neither init nor save on {@link EnvType#SERVER}
@@ -25,29 +25,29 @@ public class ClientConfig extends Config {
 		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
 			return;
 		}
-		
+
 		Path path = FabricLoader.getInstance().getConfigDir();
 		File file = new File(path.toString() + "\\" + modid + "-client-config.json");
 
 		LuckyTNTLib.LOGGER.info("Init client config for " + modid + " from file " + file.toString());
-		
+
 		if(!file.exists()) {
 			createConfigFile(file);
 		} else {
 			loadConfigValues(file);
 		}
 	}
-	
-	public void save(@Nullable World world) {
+
+	public void save(@Nullable Level world) {
 		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
 			return;
 		}
-		
+
 		Path path = FabricLoader.getInstance().getConfigDir();
 		File file = new File(path.toString() + "\\" + modid + "-client-config.json");
-		
+
 		LuckyTNTLib.LOGGER.info("Saving client config for " + modid + " to file " + file.toString());
-		
+
 		if(!file.exists()) {
 			createConfigFile(file);
 		} else {

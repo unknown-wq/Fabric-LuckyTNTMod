@@ -1,29 +1,32 @@
 package luckytntlib.item;
 
+import luckytntlib.LuckyTNTLib;
 import luckytntlib.client.ClientAccess;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 
 public class TNTConfigItem extends Item {
 
 	public TNTConfigItem() {
-		super(new Item.Settings().maxCount(1));
+		super(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(LuckyTNTLib.MODID, "tnt_config"))));
 	}
 
 	@Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		if(user.isSneaking()) {
-			return TypedActionResult.fail(user.getStackInHand(hand));
+	public InteractionResult use(Level world, Player user, InteractionHand hand) {
+		if(user.isShiftKeyDown()) {
+			return InteractionResult.FAIL;
 		}
-		
-		if(world.isClient) {
+
+		if(world.isClientSide()) {
 			ClientAccess.openConfigScreenListScreen();
 		}
-		
-		return TypedActionResult.success(user.getStackInHand(hand), true);
+
+		return InteractionResult.SUCCESS;
 	}
 }
