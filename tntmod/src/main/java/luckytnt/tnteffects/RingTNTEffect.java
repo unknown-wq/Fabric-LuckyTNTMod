@@ -44,7 +44,7 @@ public class RingTNTEffect extends PrimedTNTEffect {
 				BlockState state = level.getBlockState(pos);
 				BlockState stateUp = level.getBlockState(posUp);				
 				if(!blockFound) {
-					if(!state.getCollisionShape(level, pos, CollisionContext.absent()).isEmpty() && stateUp.getCollisionShape(level, posUp, CollisionContext.absent()).isEmpty()) {
+					if(!state.getCollisionShape(level, pos, CollisionContext.empty()).isEmpty() && stateUp.getCollisionShape(level, posUp, CollisionContext.empty()).isEmpty()) {
 						blockFound = true;
 						y = offY;
 					}	

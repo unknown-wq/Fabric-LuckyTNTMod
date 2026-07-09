@@ -62,17 +62,17 @@ public class LushTNTEffect extends PrimedTNTEffect{
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if((level.getBlockState(pos.below()).isAir() && !state.isAir()) && Math.random() < 0.025f) {
 						Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.MOSS_PATCH_CEILING);
-						feature.value().place(sLevel, sLevel.getChunkSource().getChunkSource().getGenerator(), sLevel.getRandom(), pos);
+						feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
 					}
 					if((!level.getBlockState(pos.below()).isAir() && state.isAir()) && Math.random() < 0.1f) {
 						Holder<ConfiguredFeature<?, ?>> feature = null;
 						if(Math.random() < 0.5f) {
 							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.LUSH_CAVES_CLAY);
-							feature.value().place(sLevel, sLevel.getChunkSource().getChunkSource().getGenerator(), sLevel.getRandom(), pos);
+							feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
 						}
 						else {
 							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.MOSS_PATCH);
-							feature.value().place(sLevel, sLevel.getChunkSource().getChunkSource().getGenerator(), sLevel.getRandom(), pos);
+							feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
 						}
 					}
 				}

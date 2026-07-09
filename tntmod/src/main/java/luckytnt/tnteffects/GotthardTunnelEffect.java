@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.server.level.ServerLevel;
 
 import java.util.List;
@@ -224,11 +225,11 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + (offX * -1), ent.y() - 1, ent.z() + offZ));
 								if(!ent.getLevel().canSeeSky(pos1) && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
 									ent.getLevel().getBlockState(pos1).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlock(pos1, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
+									ent.getLevel().setBlock(pos1, Blocks.CONCRETE.pick(DyeColor.GRAY).defaultBlockState(), 3);
 								}
 								if(!ent.getLevel().canSeeSky(pos2) && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
 									ent.getLevel().getBlockState(pos2).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlock(pos2, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
+									ent.getLevel().setBlock(pos2, Blocks.CONCRETE.pick(DyeColor.GRAY).defaultBlockState(), 3);
 								}
 							}
 							
@@ -257,7 +258,7 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 								for(BlockPos pos : list2) {
 									if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
 										ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-										ent.getLevel().setBlock(pos, Blocks.YELLOW_CONCRETE.defaultBlockState(), 3);
+										ent.getLevel().setBlock(pos, Blocks.CONCRETE.pick(DyeColor.YELLOW).defaultBlockState(), 3);
 									}
 								}
 							}
@@ -270,11 +271,11 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + (offZ * -1)));
 								if(!ent.getLevel().canSeeSky(pos1) && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
 									ent.getLevel().getBlockState(pos1).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlock(pos1, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
+									ent.getLevel().setBlock(pos1, Blocks.CONCRETE.pick(DyeColor.GRAY).defaultBlockState(), 3);
 								}
 								if(!ent.getLevel().canSeeSky(pos2) && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
 									ent.getLevel().getBlockState(pos2).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlock(pos2, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
+									ent.getLevel().setBlock(pos2, Blocks.CONCRETE.pick(DyeColor.GRAY).defaultBlockState(), 3);
 								}
 							}
 							
@@ -303,7 +304,7 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 								for(BlockPos pos : list2) {
 									if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
 										ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-										ent.getLevel().setBlock(pos, Blocks.YELLOW_CONCRETE.defaultBlockState(), 3);
+										ent.getLevel().setBlock(pos, Blocks.CONCRETE.pick(DyeColor.YELLOW).defaultBlockState(), 3);
 									}
 								}
 							}
@@ -316,11 +317,11 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + (offX * -1), ent.y() - 1, ent.z() + offZ));
 								if(!ent.getLevel().canSeeSky(pos1) && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
 									ent.getLevel().getBlockState(pos1).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlock(pos1, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
+									ent.getLevel().setBlock(pos1, Blocks.CONCRETE.pick(DyeColor.GRAY).defaultBlockState(), 3);
 								}
 								if(!ent.getLevel().canSeeSky(pos2) && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
 									ent.getLevel().getBlockState(pos2).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlock(pos2, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
+									ent.getLevel().setBlock(pos2, Blocks.CONCRETE.pick(DyeColor.GRAY).defaultBlockState(), 3);
 								}
 							}
 							
@@ -349,7 +350,7 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 								for(BlockPos pos : list2) {
 									if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
 										ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-										ent.getLevel().setBlock(pos, Blocks.YELLOW_CONCRETE.defaultBlockState(), 3);
+										ent.getLevel().setBlock(pos, Blocks.CONCRETE.pick(DyeColor.YELLOW).defaultBlockState(), 3);
 									}
 								}
 							}
@@ -362,11 +363,11 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + (offZ * -1)));
 								if(!ent.getLevel().canSeeSky(pos1) && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
 									ent.getLevel().getBlockState(pos1).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlock(pos1, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
+									ent.getLevel().setBlock(pos1, Blocks.CONCRETE.pick(DyeColor.GRAY).defaultBlockState(), 3);
 								}
 								if(!ent.getLevel().canSeeSky(pos2) && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
 									ent.getLevel().getBlockState(pos2).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlock(pos2, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
+									ent.getLevel().setBlock(pos2, Blocks.CONCRETE.pick(DyeColor.GRAY).defaultBlockState(), 3);
 								}
 							}
 							
@@ -395,7 +396,7 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 								for(BlockPos pos : list2) {
 									if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
 										ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-										ent.getLevel().setBlock(pos, Blocks.YELLOW_CONCRETE.defaultBlockState(), 3);
+										ent.getLevel().setBlock(pos, Blocks.CONCRETE.pick(DyeColor.YELLOW).defaultBlockState(), 3);
 									}
 								}
 							}

@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
@@ -29,7 +30,7 @@ public class FreezeTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if((state.getBlock().getExplosionResistance() < 100 || state.getBlock() instanceof LiquidBlock) && !(state.getBlock() instanceof VegetationBlock) && !state.isAir()) {
-					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
 				}
 			}

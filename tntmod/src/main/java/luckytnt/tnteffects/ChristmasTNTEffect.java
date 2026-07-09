@@ -42,7 +42,7 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 				tag.putDouble("flyingY", flying.y);
 				tag.putDouble("flyingZ", flying.z);
 				entity.setPersistentData(tag);
-				Vec3 flyingPos = new Vec3(entity.x() + flying.negate().normalize().scale(20).x, entity.y() + 30, entity.z() + flying.negate().normalize().scale(20).z);
+				Vec3 flyingPos = new Vec3(entity.x() + flying.reverse().normalize().scale(20).x, entity.y() + 30, entity.z() + flying.reverse().normalize().scale(20).z);
 				((Entity)entity).setPos(flyingPos.x, flyingPos.y, flyingPos.z);
 			}
 			if(entity.getTNTFuse() <= 220) {
@@ -60,7 +60,7 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 				}
 			}
 			if(entity.getLevel() instanceof ServerLevel sLevel) {
-				for(ServerPlayer player : sLevel.getPlayers()) {
+				for(ServerPlayer player : sLevel.players()) {
 					double x = player.getX() - entity.x();
 					double y = player.getY() - entity.y();
 					double z = player.getZ() - entity.z();
@@ -82,7 +82,7 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 				}
 			}
 			else {
-				super.sendParticles(entity);
+				super.spawnParticles(entity);
 			}
 		}
 	}

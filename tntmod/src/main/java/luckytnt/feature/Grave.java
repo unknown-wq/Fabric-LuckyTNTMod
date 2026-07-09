@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.core.BlockPos;
@@ -51,13 +51,13 @@ public class Grave extends Feature<NoneFeatureConfiguration>{
 	public BlockState chestSouthLeft = Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.SOUTH).setValue(ChestBlock.TYPE, ChestType.LEFT);
 	public BlockState chestSouthRight = Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.SOUTH).setValue(ChestBlock.TYPE, ChestType.RIGHT);
 	
-	public static final Identifier GRAVE_LOOT_1_LOCATION = Identifier.fromNamespaceAndPath("luckytntmod:chests/grave_loot_1");
-	public static final Identifier GRAVE_LOOT_2_LOCATION = Identifier.fromNamespaceAndPath("luckytntmod:chests/grave_loot_2");
-	public static final Identifier GRAVE_LOOT_RARE_LOCATION = Identifier.fromNamespaceAndPath("luckytntmod:chests/grave_loot_rare");
-	
-	public static final RegistryKey<LootTable> GRAVE_LOOT_1 = RegistryKey.of(Registries.LOOT_TABLE, GRAVE_LOOT_1_LOCATION);
-	public static final RegistryKey<LootTable> GRAVE_LOOT_2 = RegistryKey.of(Registries.LOOT_TABLE, GRAVE_LOOT_2_LOCATION);
-	public static final RegistryKey<LootTable> GRAVE_LOOT_RARE = RegistryKey.of(Registries.LOOT_TABLE, GRAVE_LOOT_RARE_LOCATION);
+	public static final Identifier GRAVE_LOOT_1_LOCATION = Identifier.parse("luckytntmod:chests/grave_loot_1");
+	public static final Identifier GRAVE_LOOT_2_LOCATION = Identifier.parse("luckytntmod:chests/grave_loot_2");
+	public static final Identifier GRAVE_LOOT_RARE_LOCATION = Identifier.parse("luckytntmod:chests/grave_loot_rare");
+
+	public static final ResourceKey<LootTable> GRAVE_LOOT_1 = ResourceKey.create(Registries.LOOT_TABLE, GRAVE_LOOT_1_LOCATION);
+	public static final ResourceKey<LootTable> GRAVE_LOOT_2 = ResourceKey.create(Registries.LOOT_TABLE, GRAVE_LOOT_2_LOCATION);
+	public static final ResourceKey<LootTable> GRAVE_LOOT_RARE = ResourceKey.create(Registries.LOOT_TABLE, GRAVE_LOOT_RARE_LOCATION);
 	
 	public Grave(Codec<NoneFeatureConfiguration> codec) {
 		super(codec);

@@ -54,7 +54,7 @@ public class NetherGroveTNTEffect extends PrimedTNTEffect{
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					return false;
 				}
-				return (state.isCollisionShapeFullBlock(level, pos) || state.isFaceSturdy(level, pos, Direction.UP)) && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.above()).canReplace(new DirectionalPlaceContext(level, pos.above(), Direction.DOWN, ItemStack.EMPTY, Direction.UP)) || !level.getBlockState(pos.above()).isCollisionShapeFullBlock(level, pos.above()) || level.getBlockState(pos.above()).is(BlockTags.FLOWERS));
+				return (state.isCollisionShapeFullBlock(level, pos) || state.isFaceSturdy(level, pos, Direction.UP)) && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.above()).canBeReplaced(new DirectionalPlaceContext(level, pos.above(), Direction.DOWN, ItemStack.EMPTY, Direction.UP)) || !level.getBlockState(pos.above()).isCollisionShapeFullBlock(level, pos.above()) || level.getBlockState(pos.above()).is(BlockTags.FLOWERS));
 			}
 		}, new IForEachBlockExplosionEffect() {
 			
@@ -74,10 +74,10 @@ public class NetherGroveTNTEffect extends PrimedTNTEffect{
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(level instanceof ServerLevel sLevel) {
 					if(Math.random() < 0.05f) {
-						tree.value().place(sLevel, sLevel.getChunkSource().getChunkSource().getGenerator(), sLevel.getRandom(), pos);
+						tree.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
 					}
 					if(Math.random() < 0.1f) {
-						vegetation.value().place(sLevel, sLevel.getChunkSource().getChunkSource().getGenerator(), sLevel.getRandom(), pos);
+						vegetation.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
 					}
 				}
 			}

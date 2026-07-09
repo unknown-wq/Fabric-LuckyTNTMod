@@ -37,7 +37,7 @@ public class PickyTNTEffect extends PrimedTNTEffect{
 			template = entity.getLevel().getBlockState(toBlockPos(entity.getPos()).below()).getBlock();
 		}
 		else {
-			BlockHitResult result = entity.getLevel().clip(new ClipContext(entity.getPos(), entity.getPos().add(((Entity)entity).getDeltaMovement().normalize().multiply(0.5f)), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, (Entity)entity));
+			BlockHitResult result = entity.getLevel().clip(new ClipContext(entity.getPos(), entity.getPos().add(((Entity)entity).getDeltaMovement().normalize().scale(0.5f)), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, (Entity)entity));
 			if(result != null) {
 				template = entity.getLevel().getBlockState(result.getBlockPos()).getBlock();
 			}
@@ -49,7 +49,7 @@ public class PickyTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock().getExplosionResistance() < 100 && !state.isAir() && state.getBlock() == template) {
-					List<ItemStack> drops = Block.getDroppedStacks(state, (ServerLevel)level, pos, level.getBlockEntity(pos));
+					List<ItemStack> drops = Block.getDrops(state, (ServerLevel)level, pos, level.getBlockEntity(pos));
 					for(ItemStack stack : drops) {
 						ItemEntity item = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), stack);
 						level.addFreshEntity(item);

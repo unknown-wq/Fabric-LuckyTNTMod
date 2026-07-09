@@ -14,9 +14,9 @@ public class InvertedTNTEffect extends PrimedTNTEffect{
 	public void serverExplosion(IExplosiveEntity entity) {
 		for(float angleY = 0; angleY <= 360; angleY += 11.25f) {
 			for(float angleX = 0; angleX <= 360; angleX += 11.25f) {
-				double offX = 30 * ((Entity)entity).getRotationVec(1).x + Math.random() * 4f - Math.random() * 4f;
-				double offY = 30 * ((Entity)entity).getRotationVec(1).y + Math.random() * 4f - Math.random() * 4f;
-				double offZ = 30 * ((Entity)entity).getRotationVec(1).z + Math.random() * 4f - Math.random() * 4f;
+				double offX = 30 * ((Entity)entity).getViewVector(1).x + Math.random() * 4f - Math.random() * 4f;
+				double offY = 30 * ((Entity)entity).getViewVector(1).y + Math.random() * 4f - Math.random() * 4f;
+				double offZ = 30 * ((Entity)entity).getViewVector(1).z + Math.random() * 4f - Math.random() * 4f;
 				double magnitude = Math.sqrt(offX * offX + offY * offY + offZ * offZ) + 0.1f;
 				for(int j = 1; j < magnitude; j++) {
 					BlockPos pos = new BlockPos(Mth.floor(entity.x() + offX * j / magnitude), Mth.floor(entity.y() + offY * j / magnitude), Mth.floor(entity.z() + offZ * j / magnitude));

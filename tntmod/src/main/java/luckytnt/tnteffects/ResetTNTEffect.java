@@ -46,7 +46,7 @@ public class ResetTNTEffect extends PrimedTNTEffect {
 	    			pair.getSecond().setPos(pair.getFirst());
 	    		} else if(pair.getSecond() instanceof Player pla) {
 	    			if(pla instanceof ServerPlayer player) {
-	    				player.requestTeleport(pair.getFirst().x, pair.getFirst().y, pair.getFirst().z);
+	    				player.teleportTo(pair.getFirst().x, pair.getFirst().y, pair.getFirst().z);
 	    			}
 	    		}
 	    	}

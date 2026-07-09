@@ -37,7 +37,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 				double y = ent.y() - lent.getY();
 				double z = ent.z() - lent.getZ();
 				double distance = Math.sqrt(x * x + y * y + z * z) + 0.1D;
-				Vec3 vec = new Vec3(x, y, z).normalize().multiply(1D / (distance * 0.2D) + 0.5D).add(0, 0.1D, 0);
+				Vec3 vec = new Vec3(x, y, z).normalize().scale(1D / (distance * 0.2D) + 0.5D).add(0, 0.1D, 0);
 				if (distance > 2.1D && distance <= 75D && lent instanceof LuckyTNTEntityExtension elent && elent.getAdditionalPersistentData().getIntOr("knockbacktime", 0) <= 0) {
 					if (lent instanceof Player player) {
 						if (!player.isCreative()) {
@@ -52,13 +52,13 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 							CompoundTag tag = elent.getAdditionalPersistentData();
 							tag.putInt("knockbacktime", 40);
 							elent.setAdditionalPersistentData(tag);
-							lent.setDeltaMovement(vec.negate().normalize().multiply(5D).add(0, 0.5D, 0));
+							lent.setDeltaMovement(vec.negate().normalize().scale(5D).add(0, 0.5D, 0));
 						}
 					} else {
 						CompoundTag tag = elent.getAdditionalPersistentData();
 						tag.putInt("knockbacktime", 40);
 						elent.setAdditionalPersistentData(tag);
-						lent.setDeltaMovement(vec.negate().normalize().multiply(5D).add(0, 0.5D, 0));
+						lent.setDeltaMovement(vec.negate().normalize().scale(5D).add(0, 0.5D, 0));
 					}
 				}
 			}
@@ -67,10 +67,10 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		List<Entity> entities = ent.getLevel().getOtherEntities((Entity)ent, new AABB(ent.x() - 75, ent.y() - 75, ent.z() - 75, ent.x() + 75, ent.y() + 75, ent.z() + 75));
+		List<Entity> entities = ent.getLevel().getEntities((Entity)ent, new AABB(ent.x() - 75, ent.y() - 75, ent.z() - 75, ent.x() + 75, ent.y() + 75, ent.z() + 75));
 		for(Entity entity : entities) {
-			if(!entity.isImmuneToExplosion(ImprovedExplosion.dummyExplosion(ent.getLevel()))) {
-				double distance = Math.sqrt(entity.squaredDistanceTo(ent.getPos())) / (75 * 2);
+			if(!entity.ignoreExplosion(ImprovedExplosion.dummyExplosion(ent.getLevel()))) {
+				double distance = Math.sqrt(entity.distanceToSqr(ent.getPos())) / (75 * 2);
 				if(distance <= 1f) {
 					double offX = (entity.getX() - ent.x());
 					double offY = (entity.getEyeY() - ent.y());
@@ -82,7 +82,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 					float damage = (1f - (float)distance);
 					entity.setDeltaMovement(entity.getDeltaMovement().add(offX * damage * 15, offY * damage * 15, offZ * damage * 15));
 					if(entity instanceof Player player) {
-						player.velocityModified = true;
+						player.hurtMarked = true;
 					}
 				}
 			}

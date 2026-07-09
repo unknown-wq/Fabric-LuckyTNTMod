@@ -42,7 +42,7 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 					int offZ = new Random().nextInt(75) - new Random().nextInt(75);
 					int offY = LevelEvents.getTopBlock(ent.getLevel(), (int)Math.round(ent.x()) + offX, (int)Math.round(ent.z()) + offZ, false);
 					BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, offY, ent.z() + offZ));
-					FallingBlockEntity.spawnFromBlock(ent.getLevel(), pos, ent.getLevel().getBlockState(pos));
+					FallingBlockEntity.fall(ent.getLevel(), pos, ent.getLevel().getBlockState(pos));
 					ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}
@@ -67,7 +67,7 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 				double y = ent.y() - living.getEyeY();
 				double z = ent.z() - living.getZ();
 				Vec3 vec = new Vec3(x, y, z);
-				DamageSources sources = ent.getLevel().getDamageSources();
+				DamageSources sources = ent.getLevel().damageSources();
 				if(vec.length() <= 2 && ent.getTNTFuse() % 80 == 0 && living instanceof Player) {
 					living.hurtServer((ServerLevel) ent.getLevel(), sources.inWall(), 6f);
 				}

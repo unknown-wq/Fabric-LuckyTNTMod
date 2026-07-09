@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import org.joml.Vector3f;
 
@@ -92,7 +93,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
-							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
@@ -117,7 +118,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
-							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
@@ -143,7 +144,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(Math.random() < 0.66f && !state.isAir()) {
-							state.getBlock().wasExploded(level, pos, explosion);
+							state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							if(Math.random() < 0.5f) {
 								ent.getLevel().setBlockAndUpdate(pos, Blocks.MELON.defaultBlockState());
@@ -207,7 +208,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
-							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
@@ -232,7 +233,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
-							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
@@ -258,7 +259,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(Math.random() < 0.66f && !state.isAir()) {
-							state.getBlock().wasExploded(level, pos, explosion);
+							state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							if(Math.random() < 0.5f) {
 								ent.getLevel().setBlockAndUpdate(pos, Blocks.MELON.defaultBlockState());
@@ -309,7 +310,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
-							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
@@ -321,7 +322,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
-							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
@@ -334,7 +335,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(Math.random() < 0.66f && !state.isAir()) {
-							state.getBlock().wasExploded(level, pos, explosion);
+							state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							if(Math.random() < 0.5f) {
 								ent.getLevel().setBlockAndUpdate(pos, Blocks.MELON.defaultBlockState());

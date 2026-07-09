@@ -15,14 +15,14 @@ public class SmokeTNTEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity) {
 		spawnParticles(entity);
 		if(entity.getTNTFuse() < 460 && entity.getLevel() instanceof ServerLevel sLevel) {
-			sLevel.sendParticles(new DustParticleOptions(new Vector3f(entity.getPersistentData().getFloatOr("r", 0f), entity.getPersistentData().getFloatOr("g", 0f), entity.getPersistentData().getFloatOr("b", 0f)), 10f), entity.x(), entity.y(), entity.z(), 30, 2.5f, 2.5f, 2.5f, 0);
+			sLevel.sendParticles(new DustParticleOptions((((int)(entity.getPersistentData().getFloatOr("r", 0f) * 255)) << 16) | (((int)(entity.getPersistentData().getFloatOr("g", 0f) * 255)) << 8) | ((int)(entity.getPersistentData().getFloatOr("b", 0f) * 255)), 10f), entity.x(), entity.y(), entity.z(), 30, 2.5f, 2.5f, 2.5f, 0);
 		}
 	}
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
 		if(entity.getLevel() instanceof ServerLevel sLevel) {
-			sLevel.sendParticles(new DustParticleOptions(new Vector3f(entity.getPersistentData().getFloatOr("r", 0f), entity.getPersistentData().getFloatOr("g", 0f), entity.getPersistentData().getFloatOr("b", 0f)), 1f), entity.x(), entity.y() + 1f, entity.z(), 1, 0, 0, 0, 0);
+			sLevel.sendParticles(new DustParticleOptions((((int)(entity.getPersistentData().getFloatOr("r", 0f) * 255)) << 16) | (((int)(entity.getPersistentData().getFloatOr("g", 0f) * 255)) << 8) | ((int)(entity.getPersistentData().getFloatOr("b", 0f) * 255)), 1f), entity.x(), entity.y() + 1f, entity.z(), 1, 0, 0, 0, 0);
 		}
 	}
 	

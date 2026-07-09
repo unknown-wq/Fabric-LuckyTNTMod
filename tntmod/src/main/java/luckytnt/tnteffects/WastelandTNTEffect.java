@@ -62,7 +62,7 @@ public class WastelandTNTEffect extends PrimedTNTEffect {
 							}
 							if(dryArea) {
 								if(Materials.isPlant(state)) {
-									if(Blocks.DEAD_BUSH.defaultBlockState().canPlaceAt(ent.getLevel(), pos)) {
+									if(Blocks.DEAD_BUSH.defaultBlockState().canSurvive(ent.getLevel(), pos)) {
 										ent.getLevel().setBlock(pos, Blocks.DEAD_BUSH.defaultBlockState(), 3);
 									}
 								}
@@ -71,7 +71,7 @@ public class WastelandTNTEffect extends PrimedTNTEffect {
 								} else if(DIRT.contains(state.getBlock())) {
 									ent.getLevel().setBlock(pos, Blocks.SAND.defaultBlockState(), 3);
 								} else if(state.is(BlockTags.WOOL)) {
-									ent.getLevel().setBlock(pos, Blocks.WHITE_WOOL.defaultBlockState(), 3);
+									ent.getLevel().setBlock(pos, Blocks.WOOL.white().defaultBlockState(), 3);
 								} else if(state.getBlock() instanceof WetSpongeBlock) {
 									ent.getLevel().setBlock(pos, Blocks.SPONGE.defaultBlockState(), 3);
 								} else if(state.is(BlockTags.ICE) || state.is(BlockTags.SNOW) || state.is(BlockTags.LEAVES)) {

@@ -14,6 +14,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -56,22 +57,22 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 			((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 1.6f, ((Entity)ent).getDeltaMovement().z);
 			ent.getLevel().addParticle(ParticleTypes.LARGE_SMOKE, ent.x(), ent.y(), ent.z(), 0, -0.5f, 0);
 			if(ent.getTNTFuse() == 0) {
-				Block template = Blocks.WHITE_CONCRETE;
+				Block template = Blocks.CONCRETE.pick(DyeColor.WHITE);
 				for(int count = 0; count < 1000; count++) {
 					int rand = new Random().nextInt(12);
 					switch (rand) {
-						case 0: template = Blocks.RED_CONCRETE; break;
-						case 1: template = Blocks.GREEN_CONCRETE; break;
-						case 2: template = Blocks.BLUE_CONCRETE; break;
-						case 3: template = Blocks.YELLOW_CONCRETE; break;
-						case 4: template = Blocks.BROWN_CONCRETE; break;
-						case 5: template = Blocks.CYAN_CONCRETE; break;
-						case 6: template = Blocks.LIME_CONCRETE; break;
-						case 7: template = Blocks.PURPLE_CONCRETE; break;
-						case 8: template = Blocks.PINK_CONCRETE; break;
-						case 9: template = Blocks.MAGENTA_CONCRETE; break;
-						case 10: template = Blocks.ORANGE_CONCRETE; break;
-						case 11: template = Blocks.LIGHT_BLUE_CONCRETE; break;
+						case 0: template = Blocks.CONCRETE.pick(DyeColor.RED); break;
+						case 1: template = Blocks.CONCRETE.pick(DyeColor.GREEN); break;
+						case 2: template = Blocks.CONCRETE.pick(DyeColor.BLUE); break;
+						case 3: template = Blocks.CONCRETE.pick(DyeColor.YELLOW); break;
+						case 4: template = Blocks.CONCRETE.pick(DyeColor.BROWN); break;
+						case 5: template = Blocks.CONCRETE.pick(DyeColor.CYAN); break;
+						case 6: template = Blocks.CONCRETE.pick(DyeColor.LIME); break;
+						case 7: template = Blocks.CONCRETE.pick(DyeColor.PURPLE); break;
+						case 8: template = Blocks.CONCRETE.pick(DyeColor.PINK); break;
+						case 9: template = Blocks.CONCRETE.pick(DyeColor.MAGENTA); break;
+						case 10: template = Blocks.CONCRETE.pick(DyeColor.ORANGE); break;
+						case 11: template = Blocks.CONCRETE.pick(DyeColor.LIGHT_BLUE); break;
 					}
 					FallingBlockEntity block = null;
 					try {

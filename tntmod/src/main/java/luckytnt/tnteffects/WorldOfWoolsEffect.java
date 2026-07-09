@@ -70,7 +70,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 				// TODO(port-26.2): DISABLED — map-color→wool-shade classification (see field block above).
 				/*
 				MapColor color = state.getMapColor(level, pos);
-				if(color != MapColor.CLEAR & !state.getCollisionShape(level, pos, CollisionContext.absent()).isEmpty() && state.getBlock().getExplosionResistance() <= 200) {
+				if(color != MapColor.CLEAR & !state.getCollisionShape(level, pos, CollisionContext.empty()).isEmpty() && state.getBlock().getExplosionResistance() <= 200) {
 					if(WHITE.contains(color)) {
 						blocks.add(Pair.of(pos, Blocks.WHITE_WOOL));
 					} else if(LIGHT_GRAY.contains(color)) {
@@ -90,7 +90,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 					} else if(LIME.contains(color)) {
 						blocks.add(Pair.of(pos, Blocks.LIME_WOOL));
 					} else if(GREEN.contains(color)) {
-						blocks.add(Pair.of(pos, Blocks.GREEN_WOOL));
+						blocks.add(Pair.of(pos, Blocks.WOOL.green()));
 					} else if(CYAN.contains(color)) {
 						blocks.add(Pair.of(pos, Blocks.CYAN_WOOL));
 					} else if(LIGHT_BLUE.contains(color)) {
@@ -108,19 +108,19 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 				*/
 
 				if((state.is(Blocks.WATER) || state.is(Blocks.BUBBLE_COLUMN) || state.getBlock() instanceof BaseCoralPlantTypeBlock) && state.getBlock().getExplosionResistance() <= 200) {
-					blocks.add(Pair.of(pos, Blocks.BLUE_STAINED_GLASS));
+					blocks.add(Pair.of(pos, Blocks.STAINED_GLASS.blue()));
 				}
 				
 				if(state.getBlock() == Blocks.SEAGRASS || state.getBlock() == Blocks.TALL_SEAGRASS || state.getBlock() == Blocks.KELP || state.getBlock() == Blocks.SEA_PICKLE || state.getBlock() == Blocks.KELP_PLANT) {
-					blocks.add(Pair.of(pos, Blocks.GREEN_WOOL));
+					blocks.add(Pair.of(pos, Blocks.WOOL.green()));
 				}
 				
 				if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) && state.getBlock().getExplosionResistance() <= 200) {
-					blocks.add(Pair.of(pos, Blocks.BLUE_STAINED_GLASS));
+					blocks.add(Pair.of(pos, Blocks.STAINED_GLASS.blue()));
 				}
 				
 				if(state.is(Blocks.LAVA) && state.getBlock().getExplosionResistance() <= 200) {
-					blocks.add(Pair.of(pos, Blocks.ORANGE_STAINED_GLASS));
+					blocks.add(Pair.of(pos, Blocks.STAINED_GLASS.orange()));
 				}
 			}
 		});
@@ -136,22 +136,22 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 			BlockPos origin = new BlockPos(Mth.floor(ent.x() + x), Mth.floor(LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1), Mth.floor(ent.z() + z));
 			boolean xOrZ = new Random().nextBoolean();
 			int rr = 16 + new Random().nextInt(11);
-			Block block = Blocks.RED_CONCRETE;
+			Block block = Blocks.CONCRETE.red();
 			
 			for(int j = 0; j < 6; j++) {
 				placeRing(ent, origin, block, rr, xOrZ);
 				placeLegs(ent, origin, block, rr--, xOrZ);
 				
 				if(j == 0) {
-					block = Blocks.ORANGE_CONCRETE;
+					block = Blocks.CONCRETE.orange();
 				} else if(j == 1) {
-					block = Blocks.YELLOW_CONCRETE;
+					block = Blocks.CONCRETE.yellow();
 				} else if(j == 2) {
-					block = Blocks.LIME_CONCRETE;
+					block = Blocks.CONCRETE.lime();
 				} else if(j == 3) {
-					block = Blocks.BLUE_CONCRETE;
+					block = Blocks.CONCRETE.blue();
 				} else if(j == 4) {
-					block = Blocks.PURPLE_CONCRETE;
+					block = Blocks.CONCRETE.purple();
 				}
 			}
 		}
@@ -225,7 +225,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 		if(xOrZ) {
 			for(int offY = -1; offY > -200; offY--) {
 				BlockPos pos = origin.offset(radius + 1, offY, 0);
-				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.absent()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
+				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.empty()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
 					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 				} else {
 					break;
@@ -234,7 +234,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 			
 			for(int offY = -1; offY > -200; offY--) {
 				BlockPos pos = origin.offset(-radius - 1, offY, 0);
-				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.absent()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
+				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.empty()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
 					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 				} else {
 					break;
@@ -243,7 +243,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 		} else {
 			for(int offY = -1; offY > -200; offY--) {
 				BlockPos pos = origin.offset(0, offY, radius + 1);
-				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.absent()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
+				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.empty()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
 					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 				} else {
 					break;
@@ -252,7 +252,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 			
 			for(int offY = -1; offY > -200; offY--) {
 				BlockPos pos = origin.offset(0, offY, -radius - 1);
-				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.absent()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
+				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.empty()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
 					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 				} else {
 					break;

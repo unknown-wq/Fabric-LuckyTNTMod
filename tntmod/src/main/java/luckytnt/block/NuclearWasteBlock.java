@@ -93,7 +93,12 @@ public class NuclearWasteBlock extends FallingBlock {
 	}
 
 	@Override
-	protected MapCodec<? extends FallingBlock> getCodec() {
+	public int getDustColor(BlockState state, BlockGetter level, BlockPos pos) {
+		return 0xFFFFF019;
+	}
+
+	@Override
+	protected MapCodec<? extends FallingBlock> codec() {
 		return CODEC;
 	}
 }

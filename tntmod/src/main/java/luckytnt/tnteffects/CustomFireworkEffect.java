@@ -51,7 +51,7 @@ public class CustomFireworkEffect extends PrimedTNTEffect {
 					if(tnt instanceof LTNTBlock ltnt) {
 						ltnt.explode(ent.getLevel(), false, ent.getPos().x, ent.getPos().y, ent.getPos().z, ent.owner());
 					} else {
-						TntBlock.primeTnt(ent.getLevel(), toBlockPos(ent.getPos()));
+						TntBlock.prime(ent.getLevel(), toBlockPos(ent.getPos()));
 					}
 				} else {
 					try {

@@ -69,7 +69,7 @@ public class MineralTNTEffect extends PrimedTNTEffect {
 								case 0: block = Blocks.COAL_BLOCK; break;
 								case 1: block = Blocks.IRON_BLOCK; break;
 								case 2: block = Blocks.GOLD_BLOCK; break;
-								case 3: block = Blocks.COPPER_BLOCK; break;
+								case 3: block = Blocks.COPPER_BLOCK.weathering().unaffected(); break;
 								case 4: block = Blocks.REDSTONE_BLOCK; break;
 								case 5: block = Blocks.EMERALD_BLOCK; break;
 								case 6: block = Blocks.LAPIS_BLOCK; break;
@@ -99,7 +99,7 @@ public class MineralTNTEffect extends PrimedTNTEffect {
 	
 	public boolean touchesAir(IExplosiveEntity ent, BlockPos pos) {
 		for(Direction dir : Direction.values()) {
-			BlockPos pos1 = pos.add(dir.getVector());
+			BlockPos pos1 = pos.offset(dir.getUnitVec3i());
 			if(ent.getLevel().getBlockState(pos1).isAir()) {
 				return true;
 			}

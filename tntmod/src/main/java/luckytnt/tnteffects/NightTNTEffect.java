@@ -14,7 +14,11 @@ public class NightTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		if(entity.getLevel() instanceof ServerLevel sLevel) {
-			sLevel.setTimeOfDay(18000);
+			// TODO(port-26.2): DISABLED — the day-time API was reworked into the WorldClock /
+			// ServerClockManager system in 26.2; ServerLevel#setDayTime/#setTimeOfDay no longer exist.
+			// Setting time now requires the dimension's default WorldClock holder and
+			// server.clockManager().setTotalTicks(clock, 18000). Restore once that path is ported.
+			// sLevel.setTimeOfDay(18000);
 		}
 	}
 	

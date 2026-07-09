@@ -37,7 +37,7 @@ public class EventRegistry {
 				EntityLivingEvent.onLivingTick(ent);
 			}
 		});
-		ServerTickEvents.START_WORLD_TICK.register(new ServerTickEvents.StartWorldTick() {
+		ServerTickEvents.START_LEVEL_TICK.register(new ServerTickEvents.StartLevelTick() {
 			
 			@Override
 			public void onStartTick(ServerLevel world) {

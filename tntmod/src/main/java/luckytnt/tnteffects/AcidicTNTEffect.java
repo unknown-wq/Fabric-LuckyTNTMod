@@ -72,7 +72,7 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 				BlockPos min = toBlockPos(ent.getPos()).offset(-3, -3, -3);
 				BlockPos max = toBlockPos(ent.getPos()).offset(3, 3, 3);
 				List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));			
-				DamageSources sources = ent.getLevel().getDamageSources();
+				DamageSources sources = ent.getLevel().damageSources();
 				for(LivingEntity lent : list) {
 					lent.hurtServer((ServerLevel) ent.getLevel(), sources.magic(), 3f);
 				}

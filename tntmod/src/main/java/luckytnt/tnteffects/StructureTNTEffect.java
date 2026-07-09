@@ -128,7 +128,7 @@ public class StructureTNTEffect extends PrimedTNTEffect {
 			}
 		}
 		if(bool) {
-			return BlockRegistry.STRUCTURE_TNT.get().defaultBlockState().setValue(StructureTNTBlock.STRUCTURE, StructureTNTBlock.STRUCTURE.parse(ent.getPersistentData().getStringOr("structure", "")).get());
+			return BlockRegistry.STRUCTURE_TNT.get().defaultBlockState().setValue(StructureTNTBlock.STRUCTURE, StructureTNTBlock.STRUCTURE.getValue(ent.getPersistentData().getStringOr("structure", "")).get());
 		}
 		return BlockRegistry.STRUCTURE_TNT.get().defaultBlockState();
 	}

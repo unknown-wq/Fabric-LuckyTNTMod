@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -15,13 +16,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.explosion.ExplosionBehavior;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 
 public class DrillingTNTEffect extends PrimedTNTEffect{
 
 	private static final float VEC_LENGTH = 100f;
 	private static final float MAX_RESISTANCE = 100f;
-	private final ExplosionBehavior damageCalculator = new ExplosionBehavior();
+	private final ExplosionDamageCalculator damageCalculator = new ExplosionDamageCalculator();
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
@@ -47,7 +48,7 @@ public class DrillingTNTEffect extends PrimedTNTEffect{
 			}
 		}
 		for(BlockPos pos : blocks) {
-			entity.getLevel().getBlockState(pos).getBlock().wasExploded(entity.getLevel(), pos, dummyExplosion);
+			entity.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel) entity.getLevel(), pos, dummyExplosion);
 			entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 		}
 	}

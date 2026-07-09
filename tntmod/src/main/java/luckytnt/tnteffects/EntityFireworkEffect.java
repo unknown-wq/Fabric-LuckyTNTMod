@@ -36,7 +36,7 @@ public class EntityFireworkEffect extends PrimedTNTEffect {
 	      		if(d < distance && !(lent instanceof Player)) {
 	      			distance = d;
 	      			CompoundTag tag = ent.getPersistentData();
-	      			tag.putString("type", EntityType.getId(lent.getType()).toString());
+	      			tag.putString("type", EntityType.getKey(lent.getType()).toString());
 	      			ent.setPersistentData(tag);
 	      		}
 	      	}

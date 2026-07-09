@@ -73,7 +73,7 @@ public class NetherTNTEffect extends PrimedTNTEffect {
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 				
-				if(state.contains(BlockStateProperties.WATERLOGGED) && state.get(BlockStateProperties.WATERLOGGED) && pos.getY() <= 50) {
+				if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) && pos.getY() <= 50) {
 					level.setBlock(pos, state.setValue(BlockStateProperties.WATERLOGGED, false), 3);
 				}
 			}
@@ -84,7 +84,7 @@ public class NetherTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getExplosionResistance() <= 200 && !state.getCollisionShape(level, pos, CollisionContext.absent()).isEmpty()) {
+				if(state.getBlock().getExplosionResistance() <= 200 && !state.getCollisionShape(level, pos, CollisionContext.empty()).isEmpty()) {
 					level.setBlock(pos, Blocks.NETHERRACK.defaultBlockState(), 3);
 				}
 			}

@@ -14,7 +14,7 @@ public class DayTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		if(entity.getLevel() instanceof ServerLevel sLevel) {
-			sLevel.setTimeOfDay(6000);
+			sLevel.dimensionTypeRegistration().value().defaultClock().ifPresent(clock -> sLevel.getServer().clockManager().setTotalTicks(clock, 6000L));
 		}
 	}
 	

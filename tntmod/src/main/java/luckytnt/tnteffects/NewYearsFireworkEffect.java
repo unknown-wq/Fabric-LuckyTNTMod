@@ -32,11 +32,11 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 	public void serverExplosion(IExplosiveEntity ent) {
 		if(ent.getPersistentData().getIntOr("type", 0) == 0) {
 			for(int count = 0; count < 10; count++) {
-				Vec3 vel = ((Entity)ent).getRotationVec(1).normalize();
+				Vec3 vel = ((Entity)ent).getViewVector(1).normalize();
 				PrimedLTNT firework = EntityRegistry.NEW_YEARS_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				firework.setTNTFuse(40);
 				firework.setPos(ent.getPos());
-				firework.setDeltaMovement(vel.multiply(2));
+				firework.setDeltaMovement(vel.scale(2));
 				CompoundTag tag = firework.getPersistentData();
 				tag.putInt("type", 1);
 				firework.setPersistentData(tag);
@@ -58,7 +58,7 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 										double x = Math.cos(theta) * radius;
 										double z = Math.sin(theta) * radius;
 									
-										Vec3 vec = new Vec3((ent.x() + (x * 20)) - ent.x(), (ent.y() + (y * 20)) - ent.y(), (ent.z() + (z * 20)) - ent.z()).normalize().multiply(1D + Math.random() * 0.5D);
+										Vec3 vec = new Vec3((ent.x() + (x * 20)) - ent.x(), (ent.y() + (y * 20)) - ent.y(), (ent.z() + (z * 20)) - ent.z()).normalize().scale(1D + Math.random() * 0.5D);
 										addFallingBlock(ent.x(), ent.y(), ent.z(), vec.x, vec.y, vec.z, block.defaultBlockState(), ent);
 									}
 								}
@@ -101,7 +101,7 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 		block.setDeltaMovement(mX, mY, mZ);
 		ent.getLevel().addFreshEntity(block);
 		if(ent.getLevel() instanceof ServerLevel sl) {
-			for(ServerPlayer player : sl.getPlayers()) {
+			for(ServerPlayer player : sl.players()) {
 				if(player.distanceTo((Entity)ent) <= 100f) {
 					player.connection.send(new ClientboundSetEntityMotionPacket(block));
 				}
@@ -157,18 +157,18 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 		Block template = null;
 		int rand = new Random().nextInt(12);
 		switch (rand) {
-			case 0: template = Blocks.RED_CONCRETE; break;
-			case 1: template = Blocks.GREEN_CONCRETE; break;
-			case 2: template = Blocks.BLUE_CONCRETE; break;
-			case 3: template = Blocks.YELLOW_CONCRETE; break;
-			case 4: template = Blocks.BROWN_CONCRETE; break;
-			case 5: template = Blocks.CYAN_CONCRETE; break;
-			case 6: template = Blocks.LIME_CONCRETE; break;
-			case 7: template = Blocks.PURPLE_CONCRETE; break;
-			case 8: template = Blocks.PINK_CONCRETE; break;
-			case 9: template = Blocks.MAGENTA_CONCRETE; break;
-			case 10: template = Blocks.ORANGE_CONCRETE; break;
-			case 11: template = Blocks.LIGHT_BLUE_CONCRETE; break;
+			case 0: template = Blocks.CONCRETE.red(); break;
+			case 1: template = Blocks.CONCRETE.green(); break;
+			case 2: template = Blocks.CONCRETE.blue(); break;
+			case 3: template = Blocks.CONCRETE.yellow(); break;
+			case 4: template = Blocks.CONCRETE.brown(); break;
+			case 5: template = Blocks.CONCRETE.cyan(); break;
+			case 6: template = Blocks.CONCRETE.lime(); break;
+			case 7: template = Blocks.CONCRETE.purple(); break;
+			case 8: template = Blocks.CONCRETE.pink(); break;
+			case 9: template = Blocks.CONCRETE.magenta(); break;
+			case 10: template = Blocks.CONCRETE.orange(); break;
+			case 11: template = Blocks.CONCRETE.lightBlue(); break;
 		}
 		return template;
 	}

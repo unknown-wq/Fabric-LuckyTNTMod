@@ -27,7 +27,7 @@ public class LightningStormEffect extends PrimedTNTEffect {
 				if(ent.getLevel() instanceof ServerLevel) {
 					double offX = Math.random() * 150D - 75D;
 					double offZ = Math.random() * 150D - 75D;
-					for(int offY = ent.getLevel().getTopY(); offY > ent.getLevel().getBottomY(); offY--) {
+					for(int offY = ent.getLevel().getMaxY(); offY > ent.getLevel().getMinY(); offY--) {
 						if(!ent.getLevel().getBlockState(new BlockPos(Mth.floor(ent.x() + offX), offY, Mth.floor(ent.z() + offZ))).isAir()) {
 							Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, ent.getLevel());
 							lighting.setPos(ent.x() + offX, offY, ent.z() + offZ);
@@ -44,7 +44,7 @@ public class LightningStormEffect extends PrimedTNTEffect {
 	public void serverExplosion(IExplosiveEntity ent) {
 		List<LivingEntity> ents = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() - 75, ent.y() - 75, ent.z() - 75, ent.x() + 75, ent.y() + 75, ent.z() + 75));
 		for(LivingEntity lent : ents) {
-			for(int offY = ent.getLevel().getTopY(); offY > ent.getLevel().getBottomY(); offY--) {
+			for(int offY = ent.getLevel().getMaxY(); offY > ent.getLevel().getMinY(); offY--) {
 				if(!ent.getLevel().getBlockState(new BlockPos(Mth.floor(lent.getX()), offY, Mth.floor(lent.getZ()))).isAir()) {
 					Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT,  ent.getLevel());
 					lighting.setPos(lent.getX(), offY, lent.getZ());

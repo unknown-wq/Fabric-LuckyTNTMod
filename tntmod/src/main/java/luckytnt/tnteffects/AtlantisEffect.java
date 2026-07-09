@@ -104,8 +104,8 @@ public class AtlantisEffect extends PrimedTNTEffect {
 							BlockState state = ent.getLevel().getBlockState(pos);
 							if(!foundBlock && state.isCollisionShapeFullBlock(ent.getLevel(), pos) && !state.isAir()) {
 								if(Math.random() < 0.0005f) {
-									StructureStart start = ocean_ruin.createStructureStart(sLevel.registryAccess(), sLevel.getChunkSource().getChunkSource().getGenerator(), sLevel.getChunkSource().getChunkSource().getGenerator().getBiomeSource(), sLevel.getChunkSource().getNoiseConfig(), sLevel.getStructureManager(), sLevel.getSeed(), new ChunkPos(pos), 20, ent.getLevel(), predicate);
-									start.place(sLevel, sLevel.getStructureAccessor(), sLevel.getChunkSource().getChunkSource().getGenerator(), Random.create(), new BlockBox((int)ent.x() - 150, (int)ent.y() - 150, (int)ent.z() - 150, (int)ent.x() + 150, (int)ent.y() + 150, (int)ent.z() + 150), new ChunkPos(pos));
+									StructureStart start = ocean_ruin.createStructureStart(sLevel.registryAccess(), sLevel.getChunkSource().getGenerator(), sLevel.getChunkSource().getGenerator().getBiomeSource(), sLevel.getChunkSource().getNoiseConfig(), sLevel.getStructureManager(), sLevel.getSeed(), new ChunkPos(pos), 20, ent.getLevel(), predicate);
+									start.place(sLevel, sLevel.getStructureAccessor(), sLevel.getChunkSource().getGenerator(), Random.create(), new BlockBox((int)ent.x() - 150, (int)ent.y() - 150, (int)ent.z() - 150, (int)ent.x() + 150, (int)ent.y() + 150, (int)ent.z() + 150), new ChunkPos(pos));
 								}
 								foundBlock = true;
 							}
@@ -127,11 +127,11 @@ public class AtlantisEffect extends PrimedTNTEffect {
 				
 				if(((ent.y() + 8) - pos.getY()) >= 0 && ((ent.y() + 8) - pos.getY()) <= 50) {
 					if((state.getBlock().getExplosionResistance() < 0 || state.getBlock() instanceof LiquidBlock || state.isAir()) && !Materials.isStone(state)) {
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
 					}
 					if((stateTop.getFluidState().is(Fluids.WATER) || stateTop.getFluidState().is(Fluids.FLOWING_WATER)) && !state.isAir() && (state.getBlock() == Blocks.GRASS_BLOCK || state.getBlock() == Blocks.STONE || state.getBlock() == Blocks.DEEPSLATE || state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.GRAVEL) && level.getBlockState(pos.above()).getBlock() != Blocks.SAND) {
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlock(pos, Blocks.SAND.defaultBlockState(), 3);
 					}
 				}

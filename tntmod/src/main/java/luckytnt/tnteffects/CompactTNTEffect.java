@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import java.util.function.Supplier;
 
@@ -30,7 +31,7 @@ public class CompactTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(Math.random() < chance && !state.isAir() && state.getBlock().getExplosionResistance() < 100) {
-					state.getBlock().wasExploded(level, pos, explosion);
+					state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
 					level.setBlockAndUpdate(pos, place.get().get().defaultBlockState());
 				}
 			}

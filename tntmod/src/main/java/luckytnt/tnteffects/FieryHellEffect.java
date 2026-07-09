@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
@@ -31,7 +32,7 @@ public class FieryHellEffect extends PrimedTNTEffect {
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if((Math.round(ent.y()) - pos.getY()) >= 0 && (Math.round(ent.y()) - pos.getY()) <= 20) {
 					if((state.getBlock().getExplosionResistance() < 100 || state.getBlock() instanceof LiquidBlock || state.isAir()) && !Materials.isStone(state)) {
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
 					} 
 				}
@@ -47,7 +48,7 @@ public class FieryHellEffect extends PrimedTNTEffect {
 				
 				if(state.getBlock().getExplosionResistance() < 100 && !state.isAir()) {
 					if(Math.random() < 0.9f) {
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlock(pos, Blocks.NETHERRACK.defaultBlockState(), 3);
 						if(Math.random() < 0.1f) {
 							if(!Block.isFaceFull(stateTop.getCollisionShape(level, posTop), Direction.UP)) {
@@ -55,7 +56,7 @@ public class FieryHellEffect extends PrimedTNTEffect {
 							}
 						}
 					} else if(Math.random() < 0.3f) {
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
 					}								
 				}

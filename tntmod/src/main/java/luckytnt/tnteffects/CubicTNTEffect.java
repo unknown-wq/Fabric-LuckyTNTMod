@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 
 import luckytnt.registry.BlockRegistry;
@@ -27,7 +28,7 @@ public class CubicTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock().getExplosionResistance() <= 100) {
-					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}

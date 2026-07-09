@@ -64,9 +64,9 @@ public class AetherTNTEffect extends PrimedTNTEffect {
 					double random = Math.random();
 
 					if(random > 0.1D && random <= 0.1125D) {
-						features.getValue(VegetationFeatures.FOREST_FLOWERS).place((WorldGenLevel) ent.getLevel(), ((ServerLevel) ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), RandomSource.create(), pos);
+						features.getValue(VegetationFeatures.FOREST_FLOWERS).place((WorldGenLevel) ent.getLevel(), ((ServerLevel) ent.getLevel()).getChunkSource().getGenerator(), RandomSource.create(), pos);
 					} else if(random > 0.15D && random <= 0.1625D) {
-						features.getValue(VegetationFeatures.FLOWER_FLOWER_FOREST).place((WorldGenLevel) ent.getLevel(), ((ServerLevel) ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), RandomSource.create(), pos);
+						features.getValue(VegetationFeatures.FLOWER_FLOWER_FOREST).place((WorldGenLevel) ent.getLevel(), ((ServerLevel) ent.getLevel()).getChunkSource().getGenerator(), RandomSource.create(), pos);
 					}
 				}
 			}

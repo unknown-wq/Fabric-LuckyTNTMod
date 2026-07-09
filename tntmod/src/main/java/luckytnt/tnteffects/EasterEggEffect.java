@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 
 import org.joml.Vector3f;
@@ -44,7 +45,7 @@ public class EasterEggEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(Math.random() < 0.66f && !state.isAir()) {
-					state.getBlock().wasExploded(level, pos, explosion);
+					state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
 					if(Math.random() < 0.5f) {
 						entity.getLevel().setBlockAndUpdate(pos, Blocks.MELON.defaultBlockState());
 					}

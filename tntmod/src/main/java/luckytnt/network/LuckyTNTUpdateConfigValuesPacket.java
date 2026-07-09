@@ -21,7 +21,7 @@ public class LuckyTNTUpdateConfigValuesPacket extends UpdateConfigValuesPacket {
 		super(configValues);
 	}
 	
-	public LuckyTNTUpdateConfigValuesPacket(FriendlyByteBuf buf) {
+	public LuckyTNTUpdateConfigValuesPacket(RegistryFriendlyByteBuf buf) {
 		super(buf);
 	}
 	

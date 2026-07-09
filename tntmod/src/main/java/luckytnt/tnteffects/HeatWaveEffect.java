@@ -30,7 +30,7 @@ public class HeatWaveEffect extends PrimedTNTEffect {
 				if(state.getBlock().getExplosionResistance() <= 200) {
 					if(state.isAir() && BlockSurviveChecks.canFirePlaceAt(state, level, pos)) {
 						BlockPlaceContext ctx = new BlockPlaceContext(level, null, InteractionHand.MAIN_HAND, new ItemStack(Items.FLINT_AND_STEEL), new BlockHitResult(ent.getPos(), Direction.DOWN, pos, true));
-						BlockState stateForPlacement = Blocks.FIRE.getPlacementState(ctx);
+						BlockState stateForPlacement = Blocks.FIRE.getStateForPlacement(ctx);
 						level.setBlock(pos, stateForPlacement, 3);
 					}
 				}

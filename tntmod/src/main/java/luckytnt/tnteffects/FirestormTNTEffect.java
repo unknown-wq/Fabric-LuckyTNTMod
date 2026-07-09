@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import luckytnt.registry.BlockRegistry;
 import luckytnt.util.Materials;
@@ -37,7 +38,7 @@ public class FirestormTNTEffect extends PrimedTNTEffect {
 					|| state.is(BlockTags.LEAVES) || Materials.isPlant(state) || state.is(BlockTags.SNOW)
 					|| Materials.isWood(state)) && !(state.getBlock() instanceof GrassBlock) && !(state.getBlock() instanceof MyceliumBlock)) 
 					{
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}
@@ -49,7 +50,7 @@ public class FirestormTNTEffect extends PrimedTNTEffect {
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock().getExplosionResistance() <= 200 && !state.isAir()) {
-					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+					state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 					level.setBlock(pos, Blocks.NETHERRACK.defaultBlockState(), 3);
 				}
 			}
@@ -61,7 +62,7 @@ public class FirestormTNTEffect extends PrimedTNTEffect {
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(Math.random() < 0.75f) {
 					BlockPlaceContext ctx = new BlockPlaceContext(level, null, InteractionHand.MAIN_HAND, new ItemStack(Items.FLINT_AND_STEEL), new BlockHitResult(new Vec3(ent.x(), ent.y(), ent.z()), Direction.DOWN, pos, true));
-					level.setBlock(pos, Blocks.FIRE.getPlacementState(ctx), 3);
+					level.setBlock(pos, Blocks.FIRE.getStateForPlacement(ctx), 3);
 				}
 			}
 		});

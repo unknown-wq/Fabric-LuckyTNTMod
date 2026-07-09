@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import org.joml.Vector3f;
 
@@ -49,7 +50,7 @@ public class ChemicalTNTEffect extends PrimedTNTEffect{
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if(distance + Math.random() < 4f && state.getBlock().getExplosionResistance() < 100) {
-						state.getBlock().wasExploded(level, pos, dummyExplosion);
+						state.getBlock().wasExploded((ServerLevel) level, pos, dummyExplosion);
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}

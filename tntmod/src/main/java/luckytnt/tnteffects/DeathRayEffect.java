@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import org.joml.Vector3f;
 
@@ -50,7 +51,7 @@ public class DeathRayEffect extends PrimedTNTEffect {
 									}
 								}
 							} else if(state.getBlock().getExplosionResistance() < 2000 && !state.isAir()) {
-								state.getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								state.getBlock().wasExploded((ServerLevel) ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							}
 						}

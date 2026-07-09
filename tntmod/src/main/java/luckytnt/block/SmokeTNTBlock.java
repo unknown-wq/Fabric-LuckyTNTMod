@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -65,7 +66,7 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 	public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
         BlockEntity block = level.getBlockEntity(pos);	
 		if(player.getItemInHand(hand).getItem() instanceof DyeItem dye && block != null && block instanceof SmokeTNTBlockEntity blockEntity) {
-			if(dye == Items.BLACK_DYE) {
+			if(dye == Items.DYE.pick(DyeColor.BLACK)) {
 				if(blockEntity.getPersistentData().getFloatOr("r", 0f) > 0 || blockEntity.getPersistentData().getFloatOr("g", 0f) > 0 || blockEntity.getPersistentData().getFloatOr("b", 0f) > 0) {
 					if(!player.isCreative()) {
 						player.getItemInHand(hand).shrink(1);
@@ -79,7 +80,7 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 				}
 				return InteractionResult.SUCCESS;
 			}
-			if(dye == Items.WHITE_DYE) {
+			if(dye == Items.DYE.pick(DyeColor.WHITE)) {
 				if(blockEntity.getPersistentData().getFloatOr("r", 0f) < 1 || blockEntity.getPersistentData().getFloatOr("g", 0f) < 1 || blockEntity.getPersistentData().getFloatOr("b", 0f) < 1) {
 					if(!player.isCreative()) {
 						player.getItemInHand(hand).shrink(1);
@@ -93,7 +94,7 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 				}
 				return InteractionResult.SUCCESS;
 			}
-			if(dye == Items.RED_DYE) {
+			if(dye == Items.DYE.pick(DyeColor.RED)) {
 				if(blockEntity.getPersistentData().getFloatOr("r", 0f) < 1) {
 					if(!player.isCreative()) {
 						player.getItemInHand(hand).shrink(1);
@@ -105,7 +106,7 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 				}
 				return InteractionResult.SUCCESS;
 			}
-			if(dye == Items.GREEN_DYE) {
+			if(dye == Items.DYE.pick(DyeColor.GREEN)) {
 				if(blockEntity.getPersistentData().getFloatOr("g", 0f) < 1) {
 					if(!player.isCreative()) {
 						player.getItemInHand(hand).shrink(1);
@@ -117,7 +118,7 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 				}
 				return InteractionResult.SUCCESS;
 			}
-			if(dye == Items.BLUE_DYE) {
+			if(dye == Items.DYE.pick(DyeColor.BLUE)) {
 				if(blockEntity.getPersistentData().getFloatOr("b", 0f) < 1) {
 					if(!player.isCreative()) {
 						player.getItemInHand(hand).shrink(1);

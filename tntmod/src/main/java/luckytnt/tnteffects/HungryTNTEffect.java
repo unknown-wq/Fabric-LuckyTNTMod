@@ -47,7 +47,7 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 				if(!(target instanceof Player)) {
 					target.setDeltaMovement(vec3d);
 				} else if(target instanceof Player) {
-					target.setDeltaMovement(vec3d.multiply(0.3D));
+					target.setDeltaMovement(vec3d.scale(0.3D));
 				}
 			} else if(magnitude <= 2) {
 				if(!(target instanceof Player)) {
@@ -61,7 +61,7 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 					if(ent.getLevel() instanceof ServerLevel sLevel) {
 						target.hurtServer(sLevel, sources.fellOutOfWorld(), 4f);
 					}
-					Vec3 vec3d = new Vec3(target.getX() - ent.x(), target.getY() - ent.y(), target.getZ() - ent.z()).normalize().multiply(10);
+					Vec3 vec3d = new Vec3(target.getX() - ent.x(), target.getY() - ent.y(), target.getZ() - ent.z()).normalize().scale(10);
 					target.setDeltaMovement(vec3d);
 				}
 			}

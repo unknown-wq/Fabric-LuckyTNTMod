@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 
 import luckytnt.registry.BlockRegistry;
@@ -40,7 +41,7 @@ public class EndTNTEffect extends PrimedTNTEffect {
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(distance <= 25) {
 					if(Math.random() < 0.9f) {
-						state.getBlock().wasExploded(level, pos, endExplosion);
+						state.getBlock().wasExploded((ServerLevel) level, pos, endExplosion);
 						level.setBlockAndUpdate(pos, Blocks.END_STONE.defaultBlockState());
 						if(Math.random() < 0.1f) {
 							if(level.getBlockState(pos.above()).isAir()) {

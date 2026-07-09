@@ -40,7 +40,7 @@ public class FlowerForestTNTEffect extends PrimedTNTEffect {
 					|| state.is(BlockTags.LEAVES) || Materials.isPlant(state) || state.is(BlockTags.SNOW)
 					|| Materials.isWood(state)) && !(state.getBlock() instanceof GrassBlock) && !(state.getBlock() instanceof MyceliumBlock)) 
 					{
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}
@@ -96,13 +96,13 @@ public class FlowerForestTNTEffect extends PrimedTNTEffect {
 							if(!foundBlock && state.isCollisionShapeFullBlock(ent.getLevel(), pos) && !state.isAir() && !(ent.getLevel().getBlockState(pos.above()).getBlock() instanceof LiquidBlock)) {
 								double random = Math.random();
 								if(random <= 0.1D) {
-									features.get(VegetationConfiguredFeatures.TREES_FLOWER_FOREST).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), Random.create(), pos.above());
+									features.get(VegetationConfiguredFeatures.TREES_FLOWER_FOREST).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getGenerator(), Random.create(), pos.above());
 								} else if(random > 0.1D && random <= 0.1125D) {
-									features.get(VegetationConfiguredFeatures.FOREST_FLOWERS).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), Random.create(), pos.above());
+									features.get(VegetationConfiguredFeatures.FOREST_FLOWERS).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getGenerator(), Random.create(), pos.above());
 								} else if(random > 0.15D && random <= 0.1625D) {
-									features.get(VegetationConfiguredFeatures.FLOWER_FLOWER_FOREST).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), Random.create(), pos.above());
+									features.get(VegetationConfiguredFeatures.FLOWER_FLOWER_FOREST).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getGenerator(), Random.create(), pos.above());
 								} else if(random > 0.2D && random <= 0.2125D) {
-									features.get(VegetationConfiguredFeatures.PATCH_GRASS).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkSource().getGenerator(), Random.create(), pos.above());
+									features.get(VegetationConfiguredFeatures.PATCH_GRASS).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getGenerator(), Random.create(), pos.above());
 								}
 								foundBlock = true;
 							}
