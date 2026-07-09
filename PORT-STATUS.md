@@ -46,3 +46,12 @@ already ported — do not touch it.
   `getStructureAccessor`, `getNoiseConfig`, `BlockBox`, `StructureKeys`). Why: same chunk/biome
   internals plus heavily-changed worldgen structure API. Kept the portable water/sand terraforming
   + squid spawning; explosionTick (weather/sound) fully ported. Class compiles.
+- `item/VacuumCleaner.java` — `use()` / `inventoryTick()` bodies stubbed to no-ops (item still
+  registers & is craftable). Why: original toggled a "using" flag in mutable CustomData NBT (removed
+  in 26.2) and spawned VACUUM_SHOT projectiles via renamed velocity/damage accessors. (Stub
+  pre-existed from an earlier pass; Agent CORE fixed the surrounding compile errors — `TooltipDisplay`
+  package + `Item.Properties.setId`.)
+- `effects/MidasTouchEffect.java` — `applyEffectTick()` body commented out (effect still registers,
+  inert). Why: relied on removed PickaxeItem/SwordItem/ToolItem classes + RaycastContext(→ClipContext)
+  + renamed item accessors. (Stub pre-existed; Agent CORE removed the now-invalid `isInstantenous()`
+  override so it compiles.)
