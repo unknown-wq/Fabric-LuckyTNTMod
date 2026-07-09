@@ -86,7 +86,7 @@ public class FlowerForestTNTEffect extends PrimedTNTEffect {
 								}
 							}
 						}
-						for(ServerPlayer player : ((ServerLevel)ent.getLevel()).getPlayers()) {
+						for(ServerPlayer player : ((ServerLevel)ent.getLevel()).players()) {
 							player.networkHandler.sendPacket(new ChunkDataS2CPacket(ent.getLevel().getWorldChunk(toBlockPos(new Vec3(ent.x() + offX, 0, ent.z() + offZ))), ent.getLevel().getLightingProvider(), null, null));
 						}
 						for(double offY = 320; offY > -64; offY--) {

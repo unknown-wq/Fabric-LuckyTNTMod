@@ -36,7 +36,7 @@ public class HydrogenBombBombEffect extends PrimedTNTEffect implements NuclearBo
 	public void serverExplosion(IExplosiveEntity ent) {
 		if(ent.getLevel() instanceof ServerLevel sworld) {
 			for(ServerLevel sw : sworld.getServer().getAllLevels()) {
-				for(ServerPlayer player : sw.getPlayers()) {
+				for(ServerPlayer player : sw.players()) {
 					if(player.level().dimension() == sworld.dimension() && player.distanceTo((Entity)ent) <= 150) {
 						LuckyTNTMod.RH.sendS2CPacket(player, new HydrogenBombS2CPacket(((Entity)ent).getId()));
 					}

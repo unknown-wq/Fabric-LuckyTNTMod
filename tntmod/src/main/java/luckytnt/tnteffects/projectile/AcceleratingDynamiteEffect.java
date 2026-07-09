@@ -20,7 +20,7 @@ public class AcceleratingDynamiteEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		((Entity)entity).setDeltaMovement(((Entity)entity).getDeltaMovement().add(((Entity)entity).getDeltaMovement().multiply(0.05f)));
+		((Entity)entity).setDeltaMovement(((Entity)entity).getDeltaMovement().add(((Entity)entity).getDeltaMovement().scale(0.05f)));
 		if(((Entity)entity).getDeltaMovement().length() > entity.getPersistentData().getDoubleOr("speed", 0d)) {
 			CompoundTag nbt = entity.getPersistentData();
 			nbt.putDouble("speed", ((Entity)entity).getDeltaMovement().length());

@@ -14,10 +14,10 @@ public class BlockSurviveChecks {
 	
 	public static boolean canSnowPlaceAt(BlockState state, LevelReader reader, BlockPos pos) {
 		BlockState blockstate = reader.getBlockState(pos.below());
-		if (blockstate.is(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON)) {
+		if (blockstate.is(BlockTags.CANNOT_SUPPORT_SNOW_LAYER)) {
 			return false;
 		} else {
-			return blockstate.is(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON) ? true : Block.isFaceFull(blockstate.getCollisionShape(reader, pos.below()), Direction.UP) || blockstate.is(Blocks.SNOW) && blockstate.getValue(SnowLayerBlock.LAYERS) == 8;
+			return blockstate.is(BlockTags.SUPPORT_OVERRIDE_SNOW_LAYER) ? true : Block.isFaceFull(blockstate.getCollisionShape(reader, pos.below()), Direction.UP) || blockstate.is(Blocks.SNOW) && blockstate.getValue(SnowLayerBlock.LAYERS) == 8;
 		}
 	}
 	

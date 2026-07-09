@@ -91,7 +91,7 @@ public class AtlantisEffect extends PrimedTNTEffect {
 							}
 						}
 					}
-					for(ServerPlayer player : sLevel.getPlayers()) {
+					for(ServerPlayer player : sLevel.players()) {
 						player.networkHandler.sendPacket(new ChunkDataS2CPacket(ent.getLevel().getWorldChunk(toBlockPos(new Vec3(ent.x() + offX, 0, ent.z() + offZ))), ent.getLevel().getLightingProvider(), null, null));
 					}
 					if(distance < 50) {

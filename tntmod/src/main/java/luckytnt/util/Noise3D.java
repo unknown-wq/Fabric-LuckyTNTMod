@@ -38,10 +38,10 @@ public class Noise3D {
 				for(int z = 0; z < sizeZ; z += scale) {
 					if(!(x > sizeX) && !(y > sizeY)) {
 						if((x == 0 || y == 0 || z == 0) || (x == sizeX || y == sizeY || z == sizeZ)) {
-							noisePoints[x][y][z].with(0);
+							noisePoints[x][y][z].setValue(0);
 						}
 						else {
-							noisePoints[x][y][z].with(Math.random());
+							noisePoints[x][y][z].setValue(Math.random());
 						}
 					}
 				}
@@ -57,7 +57,7 @@ public class Noise3D {
 					if(!noisePoints[x][y][z].isSet()) {
 						int previousX = x - (x % scale);
 						int nextX = (previousX + scale) >= sizeX ? sizeX - 1 : (previousX + scale);
-						noisePoints[x][y][z].with(noisePoints[previousX][y][z].getValue() - /*lerp calculation ->*/(noisePoints[previousX][y][z].getValue() / scale - noisePoints[nextX][y][z].getValue() / scale) * (x % scale) /*<- step calculation*/);
+						noisePoints[x][y][z].setValue(noisePoints[previousX][y][z].getValue() - /*lerp calculation ->*/(noisePoints[previousX][y][z].getValue() / scale - noisePoints[nextX][y][z].getValue() / scale) * (x % scale) /*<- step calculation*/);
 					}
 				}
 			}
@@ -69,7 +69,7 @@ public class Noise3D {
 					if(!noisePoints[x][y][z].isSet()) {
 						int previousY = y - (y % scale);
 						int nextY = (previousY + scale) >= sizeY ? sizeY - 1 : (previousY + scale);
-						noisePoints[x][y][z].with(noisePoints[x][previousY][z].getValue() - /*lerp calculation ->*/(noisePoints[x][previousY][z].getValue() / scale - noisePoints[x][nextY][z].getValue() / scale) * (y % scale) /*<- step calculation*/);
+						noisePoints[x][y][z].setValue(noisePoints[x][previousY][z].getValue() - /*lerp calculation ->*/(noisePoints[x][previousY][z].getValue() / scale - noisePoints[x][nextY][z].getValue() / scale) * (y % scale) /*<- step calculation*/);
 					}
 				}
 			}
@@ -81,7 +81,7 @@ public class Noise3D {
 					if(!noisePoints[x][y][z].isSet()) {
 						int previousZ = z - (z % scale);
 						int nextZ = (previousZ + scale) >= sizeZ ? sizeZ - 1 : (previousZ + scale);
-						noisePoints[x][y][z].with(noisePoints[x][y][previousZ].getValue() - /*lerp calculation ->*/(noisePoints[x][y][previousZ].getValue() / scale - noisePoints[x][y][nextZ].getValue() / scale) * (z % scale) /*<- step calculation*/);
+						noisePoints[x][y][z].setValue(noisePoints[x][y][previousZ].getValue() - /*lerp calculation ->*/(noisePoints[x][y][previousZ].getValue() / scale - noisePoints[x][y][nextZ].getValue() / scale) * (z % scale) /*<- step calculation*/);
 					}
 				}
 			}
