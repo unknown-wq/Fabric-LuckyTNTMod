@@ -17,7 +17,7 @@ public class BlockSurviveChecks {
 		if (blockstate.is(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON)) {
 			return false;
 		} else {
-			return blockstate.is(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON) ? true : Block.isFaceSturdy(blockstate.getCollisionShape(reader, pos.below()), Direction.UP) || blockstate.is(Blocks.SNOW) && blockstate.get(SnowLayerBlock.LAYERS) == 8;
+			return blockstate.is(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON) ? true : Block.isFaceFull(blockstate.getCollisionShape(reader, pos.below()), Direction.UP) || blockstate.is(Blocks.SNOW) && blockstate.getValue(SnowLayerBlock.LAYERS) == 8;
 		}
 	}
 	
@@ -28,7 +28,7 @@ public class BlockSurviveChecks {
 	
 	private static boolean isValidFireLocation(LevelReader reader, BlockPos pos) {
         for (Direction direction : Direction.values()) {
-            if (Blocks.FIRE instanceof FireBlockExtension efire && efire.canBurn(reader.getBlockState(pos.offset(direction)))) {
+            if (Blocks.FIRE instanceof FireBlockExtension efire && efire.canBurn(reader.getBlockState(pos.relative(direction)))) {
                 return true;
             }
         }
