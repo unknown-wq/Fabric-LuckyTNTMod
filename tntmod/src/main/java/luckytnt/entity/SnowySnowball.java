@@ -4,15 +4,15 @@ import luckytnt.util.BlockSurviveChecks;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.projectile.thrown.SnowballEntity;
-import net.minecraft.fluid.Fluids;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
-public class SnowySnowball extends SnowballEntity {
+public class SnowySnowball extends Snowball {
 
-	public SnowySnowball(EntityType<? extends SnowballEntity> type, Level level) {
+	public SnowySnowball(EntityType<? extends Snowball> type, Level level) {
 		super(type, level);
 	}
 	

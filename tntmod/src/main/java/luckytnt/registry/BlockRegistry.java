@@ -24,17 +24,17 @@ import luckytntlib.registry.TNTBlockRegistryData;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.DetectorRailBlock;
-import net.minecraft.block.ExperienceDroppingBlock;
+import net.minecraft.world.level.block.DetectorRailBlock;
+import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.block.PoweredRailBlock;
-import net.minecraft.block.RailBlock;
+import net.minecraft.world.level.block.PoweredRailBlock;
+import net.minecraft.world.level.block.RailBlock;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.math.intprovider.UniformIntProvider;
+import net.minecraft.util.valueproviders.UniformInt;
 
 public class BlockRegistry {
 
@@ -255,8 +255,8 @@ public class BlockRegistry {
 	
 	//Other
 	public static final Supplier<Block> NUCLEAR_WASTE = registerBlock("nuclear_waste", () -> new NuclearWasteBlock(BlockBehaviour.Properties.create().mapColor(MapColor.GREEN).sounds(SoundType.SLIME).breakInstantly().noCollision().dropsNothing().ticksRandomly().luminance(s -> 8)));
-	public static final Supplier<Block> GUNPOWDER_ORE = registerBlock("gunpowder_ore", () -> new ExperienceDroppingBlock(UniformIntProvider.create(2, 5), BlockBehaviour.Properties.create().mapColor(MapColor.LIGHT_GRAY).sounds(SoundType.STONE).requiresTool().strength(3f, 3f)));
-	public static final Supplier<Block> DEEPSLATE_GUNPOWDER_ORE = registerBlock("deepslate_gunpowder_ore", () -> new ExperienceDroppingBlock(UniformIntProvider.create(2, 5), BlockBehaviour.Properties.create().mapColor(MapColor.LIGHT_GRAY).sounds(SoundType.DEEPSLATE).requiresTool().strength(4.5f, 3f)));
+	public static final Supplier<Block> GUNPOWDER_ORE = registerBlock("gunpowder_ore", () -> new DropExperienceBlock(UniformInt.create(2, 5), BlockBehaviour.Properties.create().mapColor(MapColor.LIGHT_GRAY).sounds(SoundType.STONE).requiresTool().strength(3f, 3f)));
+	public static final Supplier<Block> DEEPSLATE_GUNPOWDER_ORE = registerBlock("deepslate_gunpowder_ore", () -> new DropExperienceBlock(UniformInt.create(2, 5), BlockBehaviour.Properties.create().mapColor(MapColor.LIGHT_GRAY).sounds(SoundType.DEEPSLATE).requiresTool().strength(4.5f, 3f)));
 	public static final Supplier<Block> URANIUM_ORE = registerBlock("uranium_ore", () -> new UraniumOreBlock(BlockBehaviour.Properties.create().mapColor(MapColor.LIME).sounds(SoundType.STONE).requiresTool().strength(3f, 3f)));
 	public static final Supplier<Block> DEEPSLATE_URANIUM_ORE = registerBlock("deepslate_uranium_ore", () -> new UraniumOreBlock(BlockBehaviour.Properties.create().mapColor(MapColor.LIME).sounds(SoundType.DEEPSLATE).requiresTool().strength(4.5f, 3f)));
 	public static final Supplier<Block> OBSIDIAN_RAIL = registerBlock("obsidian_rail", () -> new RailBlock(BlockBehaviour.Properties.create().mapColor(MapColor.CLEAR).sounds(SoundType.METAL).requiresTool().strength(0.7f, 1200f).noCollision()));

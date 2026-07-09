@@ -4,7 +4,7 @@ import luckytnt.registry.EntityRegistry;
 import luckytntlib.block.LTNTBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.shape.VoxelShape;
@@ -18,7 +18,7 @@ public class XRayTNTBlock extends LTNTBlock{
 	}
 	
     @Override
-    public VoxelShape getCameraCollisionShape(BlockState state, BlockGetter world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getCameraCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
     	return VoxelShapes.empty();
     }
     

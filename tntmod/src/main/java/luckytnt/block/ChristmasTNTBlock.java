@@ -7,8 +7,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 public class ChristmasTNTBlock extends LTNTBlock{
 
@@ -20,7 +20,7 @@ public class ChristmasTNTBlock extends LTNTBlock{
 	}
     
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> definition) {
+    public void appendProperties(StateDefinition.Builder<Block, BlockState> definition) {
     	super.appendProperties(definition);
     	definition.add(ONLY_PRESENT);
     }

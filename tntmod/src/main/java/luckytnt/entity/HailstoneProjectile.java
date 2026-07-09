@@ -10,9 +10,9 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.core.particles.BlockStateParticleEffect;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.registry.entry.RegistryEntry.Reference;
+import net.minecraft.core.Holder.Reference;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.resources.Identifier;
@@ -41,7 +41,7 @@ public class HailstoneProjectile extends LExplosiveProjectile {
 	public void onEntityHit(EntityHitResult result) {
 		super.onEntityHit(result);
 		if(result.getEntity() instanceof LivingEntity lent) {
-			Reference<DamageType> type = getLevel().getRegistryManager().get(Registries.DAMAGE_TYPE).entryOf(RegistryKey.of(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "hailstone")));
+			Reference<DamageType> type = getLevel().getRegistryManager().get(Registries.DAMAGE_TYPE).entryOf(ResourceKey.of(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "hailstone")));
 			DamageSource source = new DamageSource(type, this, owner());
 			
 			lent.damage(source, 4f);

@@ -14,14 +14,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.LightningEntity;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemPlacementContext;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.core.Holder;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -84,7 +84,7 @@ public class LevelEvents {
 								double offZ = Math.random() * 200 - Math.random() * 200;
 								for(double offY = 320; offY > -64; offY--) {
 									if(!level.getBlockState(new BlockPos(Mth.floor(x + offX), Mth.floor(offY), Mth.floor(z + offZ))).isAir()) {
-										Entity lighting = new LightningEntity(EntityType.LIGHTNING_BOLT,  level);
+										Entity lighting = new LightningBolt(EntityType.LIGHTNING_BOLT,  level);
 										lighting.setPosition(x + offX, offY, z + offZ);
 										level.addFreshEntity(lighting);
 										break;
@@ -105,7 +105,7 @@ public class LevelEvents {
 					}
 					if(variables.iceAgeTime > 0) {
 						Registry<Biome> registry = level.getRegistryManager().get(Registries.BIOME);
-						RegistryEntry<Biome> biome = registry.entryOf(BiomeKeys.SNOWY_TAIGA);
+						Holder<Biome> biome = registry.entryOf(BiomeKeys.SNOWY_TAIGA);
 						if(player instanceof ServerPlayer sPlayer) {	
 							for(double offX = -32; offX <= 32; offX += 16) {
 								for(double offZ = -32; offZ <= 32; offZ += 16) {
@@ -114,7 +114,7 @@ public class LevelEvents {
 										for(int i = 0; i < 4; ++i) {
 											for(int j = 0; j < 4; ++j) {
 												for(int k = 0; k < 4; ++k) {
-													if(section.getBiomeContainer() instanceof PalettedContainer<RegistryEntry<Biome>> container && section.getBiomeContainer().get(i, j, k).value() != biome.value()) {
+													if(section.getBiomeContainer() instanceof PalettedContainer<Holder<Biome>> container && section.getBiomeContainer().get(i, j, k).value() != biome.value()) {
 														container.swapUnsafe(i, j, k, biome);
 														needsUpdate = true;
 													}
@@ -131,7 +131,7 @@ public class LevelEvents {
 					}
 					if(variables.heatDeathTime > 0) {
 						Registry<Biome> registry = level.getRegistryManager().get(Registries.BIOME);
-						RegistryEntry<Biome> biome = registry.entryOf(BiomeKeys.DESERT);
+						Holder<Biome> biome = registry.entryOf(BiomeKeys.DESERT);
 						if(player instanceof ServerPlayer sPlayer) {	
 							for(double offX = -32; offX <= 32; offX += 16) {
 								for(double offZ = -32; offZ <= 32; offZ += 16) {
@@ -140,7 +140,7 @@ public class LevelEvents {
 										for(int i = 0; i < 4; ++i) {
 											for(int j = 0; j < 4; ++j) {
 												for(int k = 0; k < 4; ++k) {
-													if(section.getBiomeContainer() instanceof PalettedContainer<RegistryEntry<Biome>> container && section.getBiomeContainer().get(i, j, k).value() != biome.value()) {
+													if(section.getBiomeContainer() instanceof PalettedContainer<Holder<Biome>> container && section.getBiomeContainer().get(i, j, k).value() != biome.value()) {
 														container.swapUnsafe(i, j, k, biome);
 														needsUpdate = true;
 													}

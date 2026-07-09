@@ -8,33 +8,33 @@ import luckytnt.registry.BlockRegistry;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.entity.ExperienceOrbEntity;
-import net.minecraft.entity.ItemEntity;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemPlacementContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.loot.context.LootContextParameterSet;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.IntProperty;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 public class PresentBlock extends Block {
 	
-	public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
-	public static final IntProperty TYPE = IntProperty.of("type", 0, 4);
+	public static final EnumProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final IntegerProperty TYPE = IntegerProperty.of("type", 0, 4);
 	
 	public PresentBlock(BlockBehaviour.Properties properties) {
 		super(properties);
 	}	
 
 	@Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> definition) {
+    public void appendProperties(StateDefinition.Builder<Block, BlockState> definition) {
     	super.appendProperties(definition);
     	definition.add(FACING);
     	definition.add(TYPE);
@@ -92,7 +92,7 @@ public class PresentBlock extends Block {
 			level.addFreshEntity(itemEntity);
 			rand = random.nextInt(1, 6);
 			for(int i = 0; i < rand; i++) {
-				ExperienceOrbEntity xp = new ExperienceOrbEntity(level, pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, xpCount / rand);
+				ExperienceOrb xp = new ExperienceOrb(level, pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, xpCount / rand);
 				level.addFreshEntity(xp);
 			}
 			for(int i = 0; i < 15; i++) {

@@ -6,13 +6,13 @@ import com.mojang.brigadier.context.CommandContext;
 import luckytnt.LevelVariables;
 import luckytnt.config.LuckyTNTConfigValues;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.network.chat.Component;
 
 public class LTMDisastersCommand {
 
-	public static int executeGetActiveDisasters(CommandContext<ServerCommandSource> command) {
+	public static int executeGetActiveDisasters(CommandContext<CommandSourceStack> command) {
 		if(command.getSource().getEntity() instanceof Player) {
 			ServerLevel level = command.getSource().level();
 			boolean disasterActive = false;
@@ -43,7 +43,7 @@ public class LTMDisastersCommand {
 		return 1;
 	}
 	
-	public static int executeClear(CommandContext<ServerCommandSource> command) {
+	public static int executeClear(CommandContext<CommandSourceStack> command) {
 		if(command.getSource().getEntity() instanceof Player) {
 			ServerLevel level = command.getSource().level();
 			LevelVariables.get(level).doomsdayTime = 0;
@@ -58,7 +58,7 @@ public class LTMDisastersCommand {
 		return 1;
 	}
 	
-	public static int executeDoomsday(CommandContext<ServerCommandSource> command) {
+	public static int executeDoomsday(CommandContext<CommandSourceStack> command) {
 		if(command.getSource().getEntity() instanceof Player) {
 			ServerLevel level = command.getSource().level();
 			LevelVariables.get(level).doomsdayTime = 1000 * LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get() + (int)Math.random() * 1000 * LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get();
@@ -69,7 +69,7 @@ public class LTMDisastersCommand {
 		return 1;
 	}
 	
-	public static int executeToxicClouds(CommandContext<ServerCommandSource> command) {
+	public static int executeToxicClouds(CommandContext<CommandSourceStack> command) {
 		if(command.getSource().getEntity() instanceof Player) {
 			ServerLevel level = command.getSource().level();
 			LevelVariables.get(level).toxicCloudsTime = 1000 * LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get() + (int)Math.random() * 1000 * LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get();
@@ -79,7 +79,7 @@ public class LTMDisastersCommand {
 		return 1;
 	}
 	
-	public static int executeIceAge(CommandContext<ServerCommandSource> command) {
+	public static int executeIceAge(CommandContext<CommandSourceStack> command) {
 		if(command.getSource().getEntity() instanceof Player) {
 			ServerLevel level = command.getSource().level();
 			LevelVariables.get(level).iceAgeTime = 1000 * LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get() + (int)Math.random() * 1000 * LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get();
@@ -90,7 +90,7 @@ public class LTMDisastersCommand {
 		return 1;
 	}
 	
-	public static int executeHeatDeath(CommandContext<ServerCommandSource> command) {
+	public static int executeHeatDeath(CommandContext<CommandSourceStack> command) {
 		if(command.getSource().getEntity() instanceof Player) {
 			ServerLevel level = command.getSource().level();
 			LevelVariables.get(level).heatDeathTime = 1000 * LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get() + (int)Math.random() * 1000 * LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get();
@@ -100,7 +100,7 @@ public class LTMDisastersCommand {
 		return 1;
 	}
 	
-	public static int executeTNTRain(CommandContext<ServerCommandSource> command) {
+	public static int executeTNTRain(CommandContext<CommandSourceStack> command) {
 		if(command.getSource().getEntity() instanceof Player) {
 			ServerLevel level = command.getSource().level();
 			LevelVariables.get(level).tntRainTime = 1000 * LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get() + (int)Math.random() * 1000 * LuckyTNTConfigValues.MAXIMUM_DISASTER_TIME.get();

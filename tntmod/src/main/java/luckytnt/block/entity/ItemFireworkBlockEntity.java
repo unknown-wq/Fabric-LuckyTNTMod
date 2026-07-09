@@ -3,7 +3,7 @@ package luckytnt.block.entity;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.block.entity.LTNTBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;

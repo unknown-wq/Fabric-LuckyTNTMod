@@ -5,8 +5,8 @@ import java.util.List;
 import luckytnt.registry.EntityRegistry;
 import luckytnt.registry.SoundRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow.PickupPermission;
@@ -43,19 +43,19 @@ public class VacuumCleaner extends Item {
 	@SuppressWarnings("deprecation")
 	@Override
 	public InteractionResult<ItemStack> use(Level level, Player player, InteractionHand hand) {
-		if(!player.getItemInHand(hand).contains(DataComponentTypes.CUSTOM_DATA)) {
-			player.getItemInHand(hand).set(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
+		if(!player.getItemInHand(hand).contains(DataComponents.CUSTOM_DATA)) {
+			player.getItemInHand(hand).set(DataComponents.CUSTOM_DATA, CustomData.DEFAULT);
 		}
 		
 		usageTick(level, player, player.getItemInHand(hand) , player.getItemInHand(hand).getCount());
-		if(!player.getItemInHand(hand).get(DataComponentTypes.CUSTOM_DATA).getNbt().getBoolean("using")) {
+		if(!player.getItemInHand(hand).get(DataComponents.CUSTOM_DATA).getNbt().getBoolean("using")) {
 			soundCooldown = 42;
-			player.getItemInHand(hand).get(DataComponentTypes.CUSTOM_DATA).getNbt().putBoolean("using", true);
+			player.getItemInHand(hand).get(DataComponents.CUSTOM_DATA).getNbt().putBoolean("using", true);
 		}
-		else if(player.getItemInHand(hand).get(DataComponentTypes.CUSTOM_DATA).getNbt().getBoolean("using")) {
-			player.getItemInHand(hand).get(DataComponentTypes.CUSTOM_DATA).getNbt().putBoolean("using", false);
+		else if(player.getItemInHand(hand).get(DataComponents.CUSTOM_DATA).getNbt().getBoolean("using")) {
+			player.getItemInHand(hand).get(DataComponents.CUSTOM_DATA).getNbt().putBoolean("using", false);
 		}
-		if(player.getItemInHand(hand).get(DataComponentTypes.CUSTOM_DATA).getNbt().getBoolean("using"))
+		if(player.getItemInHand(hand).get(DataComponents.CUSTOM_DATA).getNbt().getBoolean("using"))
 			level.playSoundFromEntity(null, player, SoundRegistry.VACUUM_CLEANER_START.get(), SoundSource.MASTER, 2, 1);
 		return new InteractionResult<ItemStack>(InteractionResult.SUCCESS, player.getItemInHand(hand));
 	}
@@ -63,11 +63,11 @@ public class VacuumCleaner extends Item {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void inventoryTick(ItemStack stack, Level level, Entity entity, int count, boolean inHand) {		
-		if(!stack.contains(DataComponentTypes.CUSTOM_DATA)) {
-			stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
+		if(!stack.contains(DataComponents.CUSTOM_DATA)) {
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.DEFAULT);
 		}
 		
-		if(stack.get(DataComponentTypes.CUSTOM_DATA).getNbt().getBoolean("using") && inHand) {
+		if(stack.get(DataComponents.CUSTOM_DATA).getNbt().getBoolean("using") && inHand) {
 			if(!level.isClient)
 				soundCooldown--;
 			if(soundCooldown == 0) {
@@ -88,7 +88,7 @@ public class VacuumCleaner extends Item {
 				level.addFreshEntity(shot);
 			}
 		} else {
-			stack.get(DataComponentTypes.CUSTOM_DATA).getNbt().putBoolean("using", false);
+			stack.get(DataComponents.CUSTOM_DATA).getNbt().putBoolean("using", false);
 		}
 	}
 }

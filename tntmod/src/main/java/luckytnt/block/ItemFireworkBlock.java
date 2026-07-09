@@ -8,10 +8,10 @@ import luckytnt.registry.EntityRegistry;
 import luckytntlib.block.LTNTBlock;
 import luckytntlib.entity.PrimedLTNT;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.block.BlockEntityProvider;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -20,7 +20,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.stat.Stats;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.ItemActionResult;
 import net.minecraft.world.phys.BlockHitResult;
@@ -28,7 +28,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
-public class ItemFireworkBlock extends LTNTBlock implements BlockEntityProvider {
+public class ItemFireworkBlock extends LTNTBlock implements EntityBlock {
 
 	public ItemFireworkBlock(BlockBehaviour.Properties properties) {
 		super(properties, EntityRegistry.ITEM_FIREWORK, false);

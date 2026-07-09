@@ -6,8 +6,8 @@ import luckytntlib.util.LuckyTNTEntityExtension;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.damagesource.DamageSources;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -54,8 +54,8 @@ public class EntityLivingEvent {
 					lentity.setAdditionalPersistentData(tag);
 				}
 				if(lentity.getAdditionalPersistentData().getInt("freezeTime") >= 600) {
-					ent.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, lentity.getAdditionalPersistentData().getInt("freezeTime") / 600));
-					ent.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 100, lentity.getAdditionalPersistentData().getInt("freezeTime") / 900));
+					ent.addStatusEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, lentity.getAdditionalPersistentData().getInt("freezeTime") / 600));
+					ent.addStatusEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, lentity.getAdditionalPersistentData().getInt("freezeTime") / 900));
 				}
 				if(lentity.getAdditionalPersistentData().getInt("freezeTime") >= 1200 && lentity.getAdditionalPersistentData().getInt("freezeTime") % 10 == 0) {
 					DamageSources sources = ent.level().getDamageSources();
@@ -87,13 +87,13 @@ public class EntityLivingEvent {
 					lentity.setAdditionalPersistentData(tag);
 				}
 				if(lentity.getAdditionalPersistentData().getInt("heatTime") >= 600) {
-					ent.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 0));
-					ent.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 100, 0));
+					ent.addStatusEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 0));
+					ent.addStatusEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0));
 				}
 				if(lentity.getAdditionalPersistentData().getInt("heatTime") >= 1200 && lentity.getAdditionalPersistentData().getInt("heatTime") % 10 == 0) {
 					ent.setOnFireFor(lentity.getAdditionalPersistentData().getInt("heatTime") / 800);
-					ent.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 1));
-					ent.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 100, 1));
+					ent.addStatusEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 1));
+					ent.addStatusEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 1));
 				}
 			}
 		}

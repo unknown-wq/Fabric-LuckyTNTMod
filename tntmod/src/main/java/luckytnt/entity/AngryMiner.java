@@ -2,29 +2,29 @@ package luckytnt.entity;
 
 import luckytnt.registry.ItemRegistry;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.ai.RangedAttackMob;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.EscapeDangerGoal;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.ai.goal.ProjectileAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.passive.IronGolemEntity;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
-public class AngryMiner extends HostileEntity implements RangedAttackMob {
+public class AngryMiner extends Monster implements RangedAttackMob {
 	
 	public AngryMiner(EntityType<AngryMiner> type, Level level) {
 		super(type, level);
@@ -34,14 +34,14 @@ public class AngryMiner extends HostileEntity implements RangedAttackMob {
 	@Override
 	public void initGoals() {
 		super.initGoals();
-		targetSelector.add(0, new ActiveTargetGoal<Player>(this, Player.class, false, false));
-		targetSelector.add(1, new ActiveTargetGoal<IronGolemEntity>(this, IronGolemEntity.class, false, false));
-		targetSelector.add(2, new RevengeGoal(this, Player.class).setGroupRevenge(getClass()));
-		goalSelector.add(3, new EscapeDangerGoal(this, 1.2f));
-		goalSelector.add(4, new WanderAroundFarGoal(this, 1));
-		goalSelector.add(5, new LookAroundGoal(this));
-		goalSelector.add(6, new SwimGoal(this));
-		goalSelector.add(0, new ProjectileAttackGoal(this, 1.25f, 20, 10));
+		targetSelector.add(0, new NearestAttackableTargetGoal<Player>(this, Player.class, false, false));
+		targetSelector.add(1, new NearestAttackableTargetGoal<IronGolem>(this, IronGolem.class, false, false));
+		targetSelector.add(2, new HurtByTargetGoal(this, Player.class).setGroupRevenge(getClass()));
+		goalSelector.add(3, new PanicGoal(this, 1.2f));
+		goalSelector.add(4, new WaterAvoidingRandomStrollGoal(this, 1));
+		goalSelector.add(5, new RandomLookAroundGoal(this));
+		goalSelector.add(6, new FloatGoal(this));
+		goalSelector.add(0, new RangedAttackGoal(this, 1.25f, 20, 10));
 	}
 	
 	@Override
@@ -63,9 +63,9 @@ public class AngryMiner extends HostileEntity implements RangedAttackMob {
 		return false;
 	}
 	
-	public static DefaultAttributeContainer.Builder createAttributes() {
-		return MobEntity.createMobAttributes()
-			.add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3f)
-			.add(EntityAttributes.GENERIC_MAX_HEALTH, 40);
+	public static AttributeSupplier.Builder createAttributes() {
+		return Mob.createMobAttributes()
+			.add(Attributes.GENERIC_MOVEMENT_SPEED, 0.3f)
+			.add(Attributes.GENERIC_MAX_HEALTH, 40);
 	}
 }

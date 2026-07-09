@@ -8,10 +8,10 @@ import luckytnt.registry.EntityRegistry;
 import luckytntlib.block.LTNTBlock;
 import luckytntlib.entity.PrimedLTNT;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.block.BlockEntityProvider;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeItem;
@@ -29,7 +29,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
-public class SmokeTNTBlock extends LTNTBlock implements BlockEntityProvider {
+public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 
 	public SmokeTNTBlock(BlockBehaviour.Properties properties) {
 		super(properties, EntityRegistry.SMOKE_TNT, false);

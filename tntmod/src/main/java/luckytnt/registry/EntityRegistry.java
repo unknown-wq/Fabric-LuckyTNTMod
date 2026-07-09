@@ -74,18 +74,18 @@ import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.tnteffects.GeneralDynamiteEffect;
 import luckytntlib.util.tnteffects.StackedPrimedTNTEffect;
 import luckytntlib.util.tnteffects.TNTXStrengthEffect;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.LongDoorInteractGoal;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.particles.DustParticleEffect;
 import net.minecraft.core.particles.ParticleTypes;
@@ -160,21 +160,21 @@ public class EntityRegistry {
 		@Override
 		public void initGoals() {
 			super.initGoals();
-			targetSelector.add(0, new ActiveTargetGoal<Player>(this, Player.class, 10, false, false, PREDICATE));
+			targetSelector.add(0, new NearestAttackableTargetGoal<Player>(this, Player.class, 10, false, false, PREDICATE));
 			goalSelector.add(1, new MeleeAttackGoal(this, 1, false));
-			goalSelector.add(2, new LongDoorInteractGoal(this, true));
-			goalSelector.add(3, new WanderAroundGoal(this, 1));
-			goalSelector.add(4, new LookAroundGoal(this));
-			goalSelector.add(5, new SwimGoal(this));
+			goalSelector.add(2, new OpenDoorGoal(this, true));
+			goalSelector.add(3, new RandomStrollGoal(this, 1));
+			goalSelector.add(4, new RandomLookAroundGoal(this));
+			goalSelector.add(5, new FloatGoal(this));
 		}	
 	}, MobCategory.MISC).makeFireImmune().dimensions(1f, 1f).build("attacking_tnt"));
 	public static final Supplier<EntityType<LivingPrimedLTNT>> WALKING_TNT = LuckyTNTMod.RH.registerLivingTNTEntity("walking_tnt", () -> EntityType.Builder.<LivingPrimedLTNT>create((EntityType<LivingPrimedLTNT> type, Level level) -> new LivingPrimedLTNT(type, level, TNT_EFFECT.fuse(400).buildTNT(() -> BlockRegistry.WALKING_TNT)) {		
 		@Override
 		public void initGoals() {
 			super.initGoals();
-			goalSelector.add(0, new WanderAroundGoal(this, 1));
-			goalSelector.add(1, new LookAroundGoal(this));
-			goalSelector.add(2, new SwimGoal(this));
+			goalSelector.add(0, new RandomStrollGoal(this, 1));
+			goalSelector.add(1, new RandomLookAroundGoal(this));
+			goalSelector.add(2, new FloatGoal(this));
 		}	
 	}, MobCategory.MISC).makeFireImmune().dimensions(1f, 1f).build("walking_tnt"));
 	public static final Supplier<EntityType<PrimedLTNT>> WOOL_TNT = LuckyTNTMod.RH.registerTNTEntity("wool_tnt", new WoolTNTEffect(40));
@@ -270,12 +270,12 @@ public class EntityRegistry {
 		@Override
 		public void initGoals() {
 			super.initGoals();
-			targetSelector.add(0, new ActiveTargetGoal<Player>(this, Player.class, 10, false, false, PREDICATE));
+			targetSelector.add(0, new NearestAttackableTargetGoal<Player>(this, Player.class, 10, false, false, PREDICATE));
 			goalSelector.add(1, new MeleeAttackGoal(this, 1.2D, false));
-			goalSelector.add(2, new LongDoorInteractGoal(this, true));
-			goalSelector.add(3, new WanderAroundGoal(this, 1));
-			goalSelector.add(4, new LookAroundGoal(this));
-			goalSelector.add(5, new SwimGoal(this));
+			goalSelector.add(2, new OpenDoorGoal(this, true));
+			goalSelector.add(3, new RandomStrollGoal(this, 1));
+			goalSelector.add(4, new RandomLookAroundGoal(this));
+			goalSelector.add(5, new FloatGoal(this));
 		}	
 	}, MobCategory.MISC).makeFireImmune().dimensions(1f, 1f).build("vicious_tnt"));
 	public static final Supplier<EntityType<PrimedLTNT>> HUNGRY_TNT = LuckyTNTMod.RH.registerTNTEntity("hungry_tnt", new HungryTNTEffect());
@@ -331,12 +331,12 @@ public class EntityRegistry {
 		@Override
 		public void initGoals() {
 			super.initGoals();
-			targetSelector.add(0, new ActiveTargetGoal<Player>(this, Player.class, 10, false, false, PREDICATE));
+			targetSelector.add(0, new NearestAttackableTargetGoal<Player>(this, Player.class, 10, false, false, PREDICATE));
 			goalSelector.add(1, new MeleeAttackGoal(this, 1.2D, false));
-			goalSelector.add(2, new LongDoorInteractGoal(this, true));
-			goalSelector.add(3, new WanderAroundGoal(this, 1));
-			goalSelector.add(4, new LookAroundGoal(this));
-			goalSelector.add(5, new SwimGoal(this));
+			goalSelector.add(2, new OpenDoorGoal(this, true));
+			goalSelector.add(3, new RandomStrollGoal(this, 1));
+			goalSelector.add(4, new RandomLookAroundGoal(this));
+			goalSelector.add(5, new FloatGoal(this));
 		}	
 	}, MobCategory.MISC).makeFireImmune().dimensions(1f, 1f).build("evil_tnt"));
 	public static final Supplier<EntityType<PrimedLTNT>> KOLA_BOREHOLE_TNT = LuckyTNTMod.RH.registerTNTEntity("kola_borehole_tnt", new KolaBoreholeTNTEffect());

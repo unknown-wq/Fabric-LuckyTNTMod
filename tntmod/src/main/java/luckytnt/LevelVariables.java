@@ -1,9 +1,9 @@
 package luckytnt;
 
 import luckytnt.network.LevelVariablesS2CPacket;
-import net.minecraft.datafixer.DataFixTypes;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.PersistentState;
@@ -21,7 +21,7 @@ public class LevelVariables extends PersistentState {
 	public static LevelVariables clientSide = new LevelVariables();
 	
 	@Override
-	public CompoundTag writeNbt(CompoundTag tag, RegistryWrapper.WrapperLookup registryLookup) {
+	public CompoundTag writeNbt(CompoundTag tag, HolderLookup.WrapperLookup registryLookup) {
 		tag.putInt("doomsdayTime", doomsdayTime);
 		tag.putInt("toxicCloudsTime", toxicCloudsTime);
 		tag.putInt("iceAgeTime", iceAgeTime);

@@ -18,9 +18,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.stat.Stats;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.EnumProperty;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.ItemActionResult;
 import net.minecraft.world.phys.BlockHitResult;
@@ -37,7 +37,7 @@ public class StructureTNTBlock extends LTNTBlock {
     }
 
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> definition) {
+    public void appendProperties(StateDefinition.Builder<Block, BlockState> definition) {
     	super.appendProperties(definition);
     	definition.add(STRUCTURE);
     }

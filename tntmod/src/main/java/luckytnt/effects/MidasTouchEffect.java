@@ -2,10 +2,10 @@ package luckytnt.effects;
 
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.HoeItem;
@@ -22,9 +22,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.level.Level;
 
-public class MidasTouchEffect extends StatusEffect {
+public class MidasTouchEffect extends MobEffect {
 
-	public MidasTouchEffect(StatusEffectCategory category, int id) {
+	public MidasTouchEffect(MobEffectCategory category, int id) {
 		super(category, id);		
 	}
 	

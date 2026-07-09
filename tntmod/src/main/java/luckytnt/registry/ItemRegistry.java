@@ -9,9 +9,9 @@ import luckytnt.item.VacuumCleaner;
 import luckytntlib.item.LDynamiteItem;
 import luckytntlib.item.LTNTMinecartItem;
 import luckytntlib.item.LuckyDynamiteItem;
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -167,11 +167,11 @@ public class ItemRegistry {
 	
 	//Other
 	public static final Supplier<Item> NUCLEAR_WASTE = registerItem("nuclear_waste", () -> new BlockItem(BlockRegistry.NUCLEAR_WASTE.get(), new Item.Properties()));
-	public static final Supplier<Item> RED_CANDY = registerItem("red_candy", () -> new Item(new Item.Properties().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 100, 2), 1).statusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 100, 0), 1).build())));
-	public static final Supplier<Item> GREEN_CANDY = registerItem("green_candy", () -> new Item(new Item.Properties().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.JUMP_BOOST, 200, 2), 1).statusEffect(new StatusEffectInstance(StatusEffects.SPEED, 200, 2), 1).build())));
-	public static final Supplier<Item> BLUE_CANDY = registerItem("blue_candy", () -> new Item(new Item.Properties().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.WATER_BREATHING, 1200, 0), 1).statusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 500, 2), 1).statusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 1200, 0), 0).build())));
-	public static final Supplier<Item> PURPLE_CANDY = registerItem("purple_candy", () -> new Item(new Item.Properties().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 100, 3), 1).statusEffect(new StatusEffectInstance(StatusEffects.HEALTH_BOOST, 2000, 1), 1).build())));
-	public static final Supplier<Item> YELLOW_CANDY = registerItem("yellow_candy", () -> new Item(new Item.Properties().food(new FoodComponent.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new StatusEffectInstance(StatusEffects.HASTE, 2000, 3), 1).build())));;
+	public static final Supplier<Item> RED_CANDY = registerItem("red_candy", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new MobEffectInstance(MobEffects.STRENGTH, 100, 2), 1).statusEffect(new MobEffectInstance(MobEffects.RESISTANCE, 100, 0), 1).build())));
+	public static final Supplier<Item> GREEN_CANDY = registerItem("green_candy", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new MobEffectInstance(MobEffects.JUMP_BOOST, 200, 2), 1).statusEffect(new MobEffectInstance(MobEffects.SPEED, 200, 2), 1).build())));
+	public static final Supplier<Item> BLUE_CANDY = registerItem("blue_candy", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 1200, 0), 1).statusEffect(new MobEffectInstance(MobEffects.ABSORPTION, 500, 2), 1).statusEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 1200, 0), 0).build())));
+	public static final Supplier<Item> PURPLE_CANDY = registerItem("purple_candy", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 3), 1).statusEffect(new MobEffectInstance(MobEffects.HEALTH_BOOST, 2000, 1), 1).build())));
+	public static final Supplier<Item> YELLOW_CANDY = registerItem("yellow_candy", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().alwaysEdible().snack().nutrition(1).statusEffect(new MobEffectInstance(MobEffects.HASTE, 2000, 3), 1).build())));;
 	public static final Supplier<Item> URANIUM_INGOT = registerItem("uranium_ingot", () -> new Item(new Item.Properties()));
 	public static final Supplier<Item> ANTIMATTER = registerItem("antimatter", () -> new Item(new Item.Properties().rarity(Rarity.EPIC)) {
 		@Override

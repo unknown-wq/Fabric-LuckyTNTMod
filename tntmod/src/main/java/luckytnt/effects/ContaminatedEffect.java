@@ -3,16 +3,16 @@ package luckytnt.effects;
 import luckytnt.util.mixin.HungerManagerExtension;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.damagesource.DamageSources;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 
-public class ContaminatedEffect extends StatusEffect {
+public class ContaminatedEffect extends MobEffect {
 	
-	public ContaminatedEffect(StatusEffectCategory category, int id) {
+	public ContaminatedEffect(MobEffectCategory category, int id) {
 		super(category, id);
 	}
 
@@ -28,7 +28,7 @@ public class ContaminatedEffect extends StatusEffect {
 
 	@Override
 	public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
-		StatusEffectInstance instance = entity.getActiveStatusEffects().get(RegistryEntry.of(this));
+		MobEffectInstance instance = entity.getActiveStatusEffects().get(Holder.of(this));
 		int duration = instance == null ? 0 : instance.getDuration();
 		DamageSources sources = entity.level().getDamageSources();
 		

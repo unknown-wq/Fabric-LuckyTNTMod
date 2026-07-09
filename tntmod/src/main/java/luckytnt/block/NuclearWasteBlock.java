@@ -12,15 +12,15 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.FallingBlock;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.ItemEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.loot.context.LootContextParameterSet;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.core.particles.DustParticleEffect;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
@@ -44,7 +44,7 @@ public class NuclearWasteBlock extends FallingBlock {
 	}
 	
 	@Override
-	public VoxelShape getOutlineShape(BlockState state, BlockGetter world, BlockPos pos, ShapeContext context) {
+	public VoxelShape getOutlineShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
 		return VoxelShapes.cuboid(0, 0, 0, 1, 2d / 16d, 1);
 	}
 
@@ -82,9 +82,9 @@ public class NuclearWasteBlock extends FallingBlock {
 	public void onEntityCollision(BlockState state, Level level, BlockPos pos, Entity entity) {
 		super.onEntityCollision(state, level, pos, entity);
 		if(entity instanceof LivingEntity l_Entity) {
-			l_Entity.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 120, 4, false, true));
-			l_Entity.addStatusEffect(new StatusEffectInstance(BuiltInRegistries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 120, 0, false, true));
-			l_Entity.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 120, 0, false, true));
+			l_Entity.addStatusEffect(new MobEffectInstance(MobEffects.POISON, 120, 4, false, true));
+			l_Entity.addStatusEffect(new MobEffectInstance(BuiltInRegistries.STATUS_EFFECT.entryOf(EffectRegistry.CONTAMINATED), 120, 0, false, true));
+			l_Entity.addStatusEffect(new MobEffectInstance(MobEffects.NAUSEA, 120, 0, false, true));
 		}
 		else if(entity instanceof ItemEntity i_Entity) {
 			i_Entity.damage(Explosion.createDamageSource(level, entity), 100);

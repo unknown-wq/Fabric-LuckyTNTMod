@@ -6,9 +6,9 @@ import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.CoralParentBlock;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.world.level.block.CoralPlantBlock;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 
 public class Materials {
 
@@ -52,7 +52,7 @@ public class Materials {
 	}
 	
 	public static boolean isWaterPlant(BlockState state) {
-		return WATER_PLANTS.contains(state.getBlock()) || state.getBlock() instanceof CoralParentBlock;
+		return WATER_PLANTS.contains(state.getBlock()) || state.getBlock() instanceof CoralPlantBlock;
 	}
 	
 	public static boolean isStone(BlockState state) {

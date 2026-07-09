@@ -8,12 +8,12 @@ import luckytnt.LuckyTNTMod;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 
 public class RandomTNTCommand {
 
-	public static int executeGiveItems(ServerCommandSource command, int amount, boolean allowDuplicate, String key) {
+	public static int executeGiveItems(CommandSourceStack command, int amount, boolean allowDuplicate, String key) {
 		if(command.getEntity() instanceof Player player) {
 			if(allowDuplicate) {
 				int j = 0;

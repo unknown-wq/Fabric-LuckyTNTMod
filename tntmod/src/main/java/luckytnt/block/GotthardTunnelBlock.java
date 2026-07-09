@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.HorizontalFacingBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -21,10 +21,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.stat.Stats;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.ItemActionResult;
 import net.minecraft.world.phys.BlockHitResult;
@@ -33,7 +33,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 public class GotthardTunnelBlock extends LTNTBlock {
-	public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
+	public static final EnumProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty STREETS = BooleanProperty.of("streets");
 
 	public GotthardTunnelBlock(BlockBehaviour.Properties properties) {
@@ -41,7 +41,7 @@ public class GotthardTunnelBlock extends LTNTBlock {
 	}
 
 	@Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> definition) {
+    public void appendProperties(StateDefinition.Builder<Block, BlockState> definition) {
     	super.appendProperties(definition);
     	definition.add(FACING);
     	definition.add(STREETS);
