@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
@@ -34,7 +35,7 @@ public class IcyTNTEffect extends PrimedTNTEffect {
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if (distance <= 40 && state.getBlock().getExplosionResistance() <= 100) {
 					if(WastelandTNTEffect.GRASS.contains(state.getBlock()) || state.is(BlockTags.LEAVES) || state.is(BlockTags.SAND)) {
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel())); 
+						state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel())); 
 						level.setBlock(pos, Blocks.BLUE_ICE.defaultBlockState(), 3);
 					} if(state.getBlock() instanceof LiquidBlock) {
 						level.setBlock(pos, Blocks.ICE.defaultBlockState(), 3);

@@ -12,7 +12,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
@@ -36,17 +36,17 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 		if(entity instanceof PrimedLTNT) {
 			if(entity.getTNTFuse() == 240) {
 				((Entity)entity).setNoGravity(true);
-				Vec3 flying = new Vec3(Math.random() - Math.random(), 0, Math.random() - Math.random()).normalize().multiply(40);
+				Vec3 flying = new Vec3(Math.random() - Math.random(), 0, Math.random() - Math.random()).normalize().scale(40);
 				CompoundTag tag = entity.getPersistentData();
 				tag.putDouble("flyingX", flying.x);
 				tag.putDouble("flyingY", flying.y);
 				tag.putDouble("flyingZ", flying.z);
 				entity.setPersistentData(tag);
-				Vec3 flyingPos = new Vec3(entity.x() + flying.negate().normalize().multiply(20).x, entity.y() + 30, entity.z() + flying.negate().normalize().multiply(20).z);
+				Vec3 flyingPos = new Vec3(entity.x() + flying.negate().normalize().scale(20).x, entity.y() + 30, entity.z() + flying.negate().normalize().scale(20).z);
 				((Entity)entity).setPos(flyingPos.x, flyingPos.y, flyingPos.z);
 			}
 			if(entity.getTNTFuse() <= 220) {
-				((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDoubleOr("flyingX", 0), entity.getPersistentData().getDoubleOr("flyingY", 0), entity.getPersistentData().getDoubleOr("flyingZ", 0)).normalize().multiply(40D / 220D));
+				((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDoubleOr("flyingX", 0), entity.getPersistentData().getDoubleOr("flyingY", 0), entity.getPersistentData().getDoubleOr("flyingZ", 0)).normalize().scale(40D / 220D));
 				if(entity.getTNTFuse() % 10 == 0) {
 					LExplosiveProjectile present = EntityRegistry.PRESENT.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					present.setPos(entity.getPos());
@@ -66,7 +66,7 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 					double z = player.getZ() - entity.z();
 					double distance = Math.sqrt(x * x + y * y + z * z);
 					if(distance <= 200) {
-						player.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket((Entity)entity));
+						player.connection.send(new ClientboundSetEntityMotionPacket((Entity)entity));
 					}
 				}
 			}

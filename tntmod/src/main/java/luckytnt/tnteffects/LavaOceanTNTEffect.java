@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import org.joml.Vector3f;
 
@@ -34,7 +35,7 @@ public class LavaOceanTNTEffect extends PrimedTNTEffect{
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(pos.getY() <= entity.getPos().y) {
 					if((!state.isFaceSturdy(level, pos, Direction.UP) && state.getBlock().getExplosionResistance() < 100) || state.getBlock().getExplosionResistance() < 4) {
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+						state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 						level.setBlockAndUpdate(pos, Blocks.LAVA.defaultBlockState());
 					}
 				}

@@ -16,7 +16,7 @@ public class PoseidonsWaveEffect extends OceanTNTEffect {
 		super.baseTick(entity);
 		if(entity.getTNTFuse() == 179) {
 			if(entity.getLevel() instanceof ServerLevel sl) {
-				sl.setWeather(0, 10000, true, true);
+				sl.getServer().setWeatherParameters(0, 10000, true, true);
 			}
 		}
 	}

@@ -27,7 +27,7 @@ public class EatingTNTEffect extends PrimedTNTEffect{
 		if(entity.getPersistentData().getIntOr("eatLevel", 0) < 300) {
 			List<ItemEntity> items = entity.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(entity.getPos().add(-10, -10, -10), entity.getPos().add(10, 10, 10)));
 			for(ItemEntity item : items) {
-				item.setDeltaMovement(entity.getPos().add(item.getPosition(1).multiply(-1)).normalize());
+				item.setDeltaMovement(entity.getPos().add(item.getPosition(1).scale(-1)).normalize());
 				if(entity.getPos().distanceTo(item.getPosition(1)) < 1) {
 					CompoundTag tag = entity.getPersistentData();
 					tag.putInt("eatLevel", Mth.clamp(entity.getPersistentData().getIntOr("eatLevel", 0) + item.getItem().getCount(), 0, 300));

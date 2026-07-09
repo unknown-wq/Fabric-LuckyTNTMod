@@ -26,6 +26,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.server.level.ServerLevel;
 
 public class AcidicTNTEffect extends PrimedTNTEffect {
 
@@ -54,7 +55,7 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 			}
 		} else {
 			if(ent.getTNTFuse() == 0) {
-				ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundSource.MASTER, 1f, 1f);
+				ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.FIRE_EXTINGUISH, SoundSource.MASTER, 1f, 1f);
 			}
 			if(!ent.getLevel().isClientSide()) {
 				ExplosionHelper.doCubicalExplosion(ent.getLevel(), ent.getPos(), 7, new IForEachBlockExplosionEffect() {
@@ -73,7 +74,7 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 				List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));			
 				DamageSources sources = ent.getLevel().getDamageSources();
 				for(LivingEntity lent : list) {
-					lent.damage(sources.magic(), 3f);
+					lent.hurtServer((ServerLevel) ent.getLevel(), sources.magic(), 3f);
 				}
 			}
 		}

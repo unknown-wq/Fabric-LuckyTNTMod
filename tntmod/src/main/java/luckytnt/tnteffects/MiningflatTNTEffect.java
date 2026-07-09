@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
@@ -35,7 +36,7 @@ public class MiningflatTNTEffect extends PrimedTNTEffect{
 						if(state.is(ConventionalBlockTags.ORES)) {
 							Block.dropStacks(state, level, pos);
 						}
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+						state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						if(pos.getY() - Math.round(entity.y()) == 0) {
 							if(Math.random() < 0.05f && Block.sideCoversSmallSquare(level, pos.below(), Direction.UP)) {

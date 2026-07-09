@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
@@ -31,7 +32,7 @@ public class IgniterTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock() instanceof TntBlock block) {
-					block.wasExploded(level, pos, new Explosion(level, (Entity)entity, null, null, pos.getX(), pos.getY(), pos.getZ(), 0, false, Explosion.DestructionType.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));
+					block.wasExploded((ServerLevel)level, pos, luckytntlib.util.explosions.ImprovedExplosion.dummyExplosion((ServerLevel)level));
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}

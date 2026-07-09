@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import java.util.function.Supplier;
 
@@ -47,7 +48,7 @@ public class OceanTNTEffect extends PrimedTNTEffect {
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(pos.getY() <= entity.getPos().y) {
 					if((!state.isFaceSturdy(level, pos, Direction.UP) && state.getBlock().getExplosionResistance() < 100) || state.getBlock().getExplosionResistance() < 4) {
-						state.getBlock().wasExploded(level, pos, dummyExplosion);
+						state.getBlock().wasExploded((ServerLevel)level, pos, dummyExplosion);
 						level.setBlockAndUpdate(pos, Blocks.WATER.defaultBlockState());
 					}
 				}

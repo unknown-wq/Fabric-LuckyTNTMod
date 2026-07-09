@@ -105,7 +105,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 					blocks.add(Pair.of(pos, Blocks.GREEN_WOOL));
 				}
 				
-				if(state.contains(BlockStateProperties.WATERLOGGED) && state.get(BlockStateProperties.WATERLOGGED) && state.getBlock().getExplosionResistance() <= 200) {
+				if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) && state.getBlock().getExplosionResistance() <= 200) {
 					blocks.add(Pair.of(pos, Blocks.BLUE_STAINED_GLASS));
 				}
 				

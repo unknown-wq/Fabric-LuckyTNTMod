@@ -61,7 +61,7 @@ public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 			entity.setPersistentData(tag);
 		}
 		if(entity.getTNTFuse() <= 220 && entity.getTNTFuse() > 60) {
-			((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDoubleOr("vecx", 0), 0, entity.getPersistentData().getDoubleOr("vecz", 0)).normalize().multiply(0.25f));
+			((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDoubleOr("vecx", 0), 0, entity.getPersistentData().getDoubleOr("vecz", 0)).normalize().scale(0.25f));
 			if(entity.getTNTFuse() % 20 == 0) {
 				LExplosiveProjectile dynamite = EntityRegistry.CHRISTMAS_DYNAMITE_PROJECTILE.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				dynamite.setPos(entity.getPos());

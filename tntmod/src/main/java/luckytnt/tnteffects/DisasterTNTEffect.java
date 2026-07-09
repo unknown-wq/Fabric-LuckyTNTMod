@@ -34,7 +34,7 @@ public class DisasterTNTEffect extends PrimedTNTEffect {
 			var.tntRainTime = 0;
 			var.toxicCloudsTime = 0;
 			if(ent.getLevel() instanceof ServerLevel sl) {
-				sl.setWeather(1000000, 0, false, false);
+				sl.getServer().setWeatherParameters(1000000, 0, false, false);
 			}
 		} else if(disaster.equals("ice_age")) {
 			var.iceAgeTime = time;
@@ -47,7 +47,7 @@ public class DisasterTNTEffect extends PrimedTNTEffect {
 		if(ent.getLevel() instanceof ServerLevel sl) {
 			var.sync(sl);
 			if(rain) {
-				sl.setWeather(0, time, true, true);
+				sl.getServer().setWeatherParameters(0, time, true, true);
 			}
 		}
 	}

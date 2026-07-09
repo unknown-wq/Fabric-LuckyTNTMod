@@ -34,7 +34,7 @@ public class GeodeTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				blocks.put(pos, state);
-				state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+				state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 				level.setBlockAndUpdate(pos, Blocks.STONE.defaultBlockState());
 			}
 		});

@@ -16,12 +16,12 @@ public class RingDynamiteEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		Vec3 vec = ((Entity)ent).getDeltaMovement().normalize().multiply(4D);
+		Vec3 vec = ((Entity)ent).getDeltaMovement().normalize().scale(4D);
 		
 		Vec3 left = (int)Math.round(vec.x) == 0 && (int)Math.round(vec.z) == 0 ? new Vec3(1, 0, 0) : new Vec3(vec.x * Math.cos(0.5 * Math.PI) + vec.z * Math.sin(0.5 * Math.PI), 0, -vec.x * Math.sin(0.5 * Math.PI) + vec.z * Math.cos(0.5 * Math.PI)).normalize();
-		Vec3 right = left.negate().normalize();
+		Vec3 right = left.reverse().normalize();
 		Vec3 up = left.cross(vec).normalize();
-		Vec3 down = up.negate().normalize();
+		Vec3 down = up.reverse().normalize();
 		
 		Vec3 rightup = right.add(up).normalize();
 		Vec3 rightdown = right.add(down).normalize();
@@ -43,7 +43,7 @@ public class RingDynamiteEffect extends PrimedTNTEffect {
 			LExplosiveProjectile dynamite = EntityRegistry.DYNAMITE.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			dynamite.setOwner(ent.owner());
 			dynamite.setPos(ent.getPos());
-			dynamite.setDeltaMovement(array[i].multiply(2D));
+			dynamite.setDeltaMovement(array[i].scale(2D));
 			ent.getLevel().addFreshEntity(dynamite);
 		}
 	}

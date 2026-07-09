@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 
 import luckytnt.registry.BlockRegistry;
@@ -43,7 +44,7 @@ public class HellfireTNTEffect extends PrimedTNTEffect{
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(distance <= 25) {
 					if(Math.random() < 0.9f) {
-						state.getBlock().wasExploded(level, pos, netherExplosion);
+						state.getBlock().wasExploded((ServerLevel)level, pos, netherExplosion);
 						level.setBlockAndUpdate(pos, Blocks.NETHERRACK.defaultBlockState());
 						if(Math.random() < 0.1f) {
 							if(level.getBlockState(pos.above()).isAir()) {
@@ -52,7 +53,7 @@ public class HellfireTNTEffect extends PrimedTNTEffect{
 						}
 					}
 					else if(Math.random() < 0.3f) {
-						state.getBlock().wasExploded(level, pos, netherExplosion);
+						state.getBlock().wasExploded((ServerLevel)level, pos, netherExplosion);
 						level.setBlockAndUpdate(pos, Blocks.LAVA.defaultBlockState());
 					}
 				}

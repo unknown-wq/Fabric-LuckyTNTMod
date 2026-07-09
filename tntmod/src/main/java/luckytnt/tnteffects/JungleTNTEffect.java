@@ -12,7 +12,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
+// TODO(port-26.2): DISABLED import — yarn ChunkDataS2CPacket (see doJungleExplosion)
+//import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.Holder;
@@ -26,12 +27,13 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeKeys;
-import net.minecraft.world.level.chunk.ChunkSection;
-import net.minecraft.world.level.chunk.PalettedContainer;
-import net.minecraft.world.level.chunk.ReadableContainer;
+// TODO(port-26.2): DISABLED imports — yarn worldgen/chunk APIs (see doJungleExplosion)
+//import net.minecraft.world.level.biome.BiomeKeys;
+//import net.minecraft.world.level.chunk.ChunkSection;
+//import net.minecraft.world.level.chunk.PalettedContainer;
+//import net.minecraft.world.level.chunk.ReadableContainer;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.VegetationConfiguredFeatures;
+//import net.minecraft.world.gen.feature.VegetationConfiguredFeatures;
 
 public class JungleTNTEffect extends PrimedTNTEffect {
 
@@ -47,13 +49,14 @@ public class JungleTNTEffect extends PrimedTNTEffect {
 				BlockState stateTop = level.getBlockState(posTop);
 				
 				if(state.getBlock().getExplosionResistance() < 100 && stateTop.getBlock().getExplosionResistance() < 100 && Block.isFaceFull(state.getCollisionShape(level, pos), Direction.UP) && (stateTop.isAir() || Materials.isPlant(stateTop) || stateTop.is(BlockTags.SNOW))) {
-					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 					level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
 				}
 			}
 		});
 		
-		doJungleExplosion(ent, 150);
+		// TODO(port-26.2): DISABLED — doJungleExplosion needs yarn chunk/biome/packet + worldgen APIs
+		//doJungleExplosion(ent, 150);
 	}
 	
 	@Override
@@ -78,10 +81,10 @@ public class JungleTNTEffect extends PrimedTNTEffect {
 							if(state.getBlock().getExplosionResistance() <= maxResistance && !state.isAir() && ((!state.isCollisionShapeFullBlock(ent.getLevel(), pos) && !state.is(Blocks.MUD) && !state.is(ConventionalBlockTags.CHESTS)) || (vegetation && (state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS) || state.getBlock() == Blocks.MANGROVE_ROOTS)))) {
 								if(Materials.isWaterPlant(state)) {
 									Block block1 = state.getBlock();
-									block1.wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									block1.wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 									ent.getLevel().setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
 								} else {
-									state.getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									state.getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 									ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 								}
 							}
@@ -93,6 +96,9 @@ public class JungleTNTEffect extends PrimedTNTEffect {
 	}
 	
 	public static void doJungleExplosion(IExplosiveEntity ent, double radius) {
+		// TODO(port-26.2): DISABLED — biome overwrite + ChunkDataS2CPacket + ConfiguredFeature.generate use yarn chunk/worldgen APIs with no 1:1 port here
+		if(true) return;
+		/*
 		Registry<Biome> registry = ent.getLevel().registryAccess().get(Registries.BIOME);
 		Holder<Biome> biome = registry.entryOf(BiomeKeys.JUNGLE);
 		for(double offX = -radius; offX < radius; offX++) {
@@ -144,5 +150,6 @@ public class JungleTNTEffect extends PrimedTNTEffect {
 				}
 			}
 		}
+		*/
 	}
 }

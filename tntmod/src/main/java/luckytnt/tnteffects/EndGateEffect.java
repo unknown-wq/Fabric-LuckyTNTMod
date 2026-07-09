@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.mob.EndermanEntity;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.server.level.ServerLevel;
@@ -69,7 +69,7 @@ public class EndGateEffect extends PrimedTNTEffect{
 		for(int i = 0; i < 80; i++) {
 			int offX = (int)Math.round(Math.random() * 30D - 15D);
 			int offZ = (int)Math.round(Math.random() * 30D - 15D);
-			EndermanEntity man = new EndermanEntity(EntityTypes.ENDERMAN, entity.getLevel());
+			EnderMan man = new EnderMan(EntityTypes.ENDERMAN, entity.getLevel());
 			for(int offY = 320; offY >= -64; offY--) {
 				BlockPos pos = toBlockPos(new Vec3(entity.x() + offX, offY, entity.z() + offZ));
 				BlockPos posDown = toBlockPos(new Vec3(entity.x() + offX, offY - 1, entity.z() + offZ));
@@ -84,7 +84,7 @@ public class EndGateEffect extends PrimedTNTEffect{
 			entity.getLevel().addFreshEntity(man);
 		}
 		
-		entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.BLOCK_END_PORTAL_SPAWN, SoundSource.BLOCKS, 0.5f, 1);
+		entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.END_PORTAL_SPAWN, SoundSource.BLOCKS, 0.5f, 1);
 		if(entity.getLevel() instanceof ServerLevel sLevel) {
 			sLevel.setTimeOfDay(18000);
 		}

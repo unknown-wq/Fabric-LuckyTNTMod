@@ -50,7 +50,7 @@ public class NetherGroveTNTEffect extends PrimedTNTEffect{
 			@Override
 			public boolean conditionMet(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS) || state.is(BlockTags.FLOWERS) || state.is(BlockTags.WART_BLOCKS) || (!state.isCollisionShapeFullBlock(level, pos) && state.getBlock().getExplosionResistance() < 100)) {
-					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					return false;
 				}
@@ -63,7 +63,7 @@ public class NetherGroveTNTEffect extends PrimedTNTEffect{
 				BlockPos posBelow = pos.below();
 				BlockState stateBelow = level.getBlockState(posBelow);
 				if(stateBelow.getBlock().getExplosionResistance() < 100) {
-					stateBelow.getBlock().wasExploded(level, posBelow, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					stateBelow.getBlock().wasExploded((ServerLevel)level, posBelow, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 					level.setBlockAndUpdate(posBelow, topBlock.defaultBlockState());
 				}
 			}

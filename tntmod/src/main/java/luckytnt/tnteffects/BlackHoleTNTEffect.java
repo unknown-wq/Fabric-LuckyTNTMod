@@ -22,6 +22,7 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerLevel;
 
 public class BlackHoleTNTEffect extends PrimedTNTEffect {
 
@@ -57,7 +58,7 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 				if(vec.length() <= 2) {
 					block.discard();
 				}
-				Vec3 vec3 = vec.normalize().multiply(0.4D);
+				Vec3 vec3 = vec.normalize().scale(0.4D);
 				block.setDeltaMovement(vec3.add(0, 0.1D, 0));
 			}
 			
@@ -68,12 +69,12 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 				Vec3 vec = new Vec3(x, y, z);
 				DamageSources sources = ent.getLevel().getDamageSources();
 				if(vec.length() <= 2 && ent.getTNTFuse() % 80 == 0 && living instanceof Player) {
-					living.damage(sources.inWall(), 6f);
+					living.hurtServer((ServerLevel) ent.getLevel(), sources.inWall(), 6f);
 				}
 				if(vec.length() <= 2 && !(living instanceof Player)) {
 					living.discard();
 				}
-				Vec3 vec3 = vec.normalize().multiply((1D / (0.25D * vec.length() + 0.0001D)) + 0.5D);
+				Vec3 vec3 = vec.normalize().scale((1D / (0.25D * vec.length() + 0.0001D)) + 0.5D);
 				living.setDeltaMovement(vec3);
 			}
 		}
@@ -94,7 +95,7 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 			double x = living.getX() - ent.x();
 			double y = living.getEyeY() - ent.y();
 			double z = living.getZ() - ent.z();
-			Vec3 vec = new Vec3(x, y, z).normalize().multiply(4);
+			Vec3 vec = new Vec3(x, y, z).normalize().scale(4);
 			living.setDeltaMovement(vec);
 		}
 	}

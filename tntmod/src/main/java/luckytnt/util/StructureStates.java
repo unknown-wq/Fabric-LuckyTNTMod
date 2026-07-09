@@ -26,7 +26,7 @@ public enum StructureStates implements StringRepresentable {
 	}
 
 	@Override
-	public String asString() {
+	public String getSerializedName() {
 		return name;
 	}
 }

@@ -23,7 +23,7 @@ public class TunnelingDynamiteEffect extends PrimedTNTEffect{
 	public void serverExplosion(IExplosiveEntity entity) {
 		Vec3 direction = entity.getPos().subtract(((Entity)entity).xo, ((Entity)entity).yo, ((Entity)entity).zo).normalize();
 		for(float length = 0; length <= 40; length += 1f) {
-			BlockPos pos = toBlockPos(entity.getPos().add(direction.multiply(length)));
+			BlockPos pos = toBlockPos(entity.getPos().add(direction.scale(length)));
 			ExplosionHelper.doSphericalExplosion(entity.getLevel(), new Vec3(pos.getX(), pos.getY(), pos.getZ()), 4, new IForEachBlockExplosionEffect() {
 				
 				@Override

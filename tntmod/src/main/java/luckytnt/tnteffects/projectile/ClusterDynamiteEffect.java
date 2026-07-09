@@ -22,7 +22,7 @@ public class ClusterDynamiteEffect extends PrimedTNTEffect{
 					LExplosiveProjectile shrapnel = EntityRegistry.SHRAPNEL.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					shrapnel.setPos(entity.getPos());
 					shrapnel.setOwner(entity.owner());
-					shrapnel.setDeltaMovement(dynamite.getDeltaMovement().add(new Vec3(Math.random() - Math.random(), Math.random() - Math.random(), Math.random() - Math.random()).multiply(0.4f)));
+					shrapnel.setDeltaMovement(dynamite.getDeltaMovement().add(new Vec3(Math.random() - Math.random(), Math.random() - Math.random(), Math.random() - Math.random()).scale(0.4f)));
 					entity.getLevel().addFreshEntity(shrapnel);
 				}
 			}
@@ -34,7 +34,7 @@ public class ClusterDynamiteEffect extends PrimedTNTEffect{
 					LExplosiveProjectile shrapnel = EntityRegistry.SHRAPNEL.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					shrapnel.setPos(entity.getPos());
 					shrapnel.setOwner(entity.owner());
-					shrapnel.setDeltaMovement(dynamite.getDeltaMovement().add(Math.random() * 2f - 1f, Math.random() * 2f - 1f, Math.random() * 2f - 1f).multiply(-1f));
+					shrapnel.setDeltaMovement(dynamite.getDeltaMovement().add(Math.random() * 2f - 1f, Math.random() * 2f - 1f, Math.random() * 2f - 1f).scale(-1f));
 					entity.getLevel().addFreshEntity(shrapnel);
 				}
 			}

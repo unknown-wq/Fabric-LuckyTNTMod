@@ -19,7 +19,7 @@ public class GravityDynamiteEffect extends PrimedTNTEffect{
 		for(Entity ent : ents) {
 			if(!ent.equals(entity.owner()) && !(ent instanceof IExplosiveEntity)) {
 				Vec3 direction = entity.getPos().subtract(ent.position()).normalize();
-				ent.setDeltaMovement(direction.multiply(1.5f));
+				ent.setDeltaMovement(direction.scale(1.5f));
 			}
 		}
 	}

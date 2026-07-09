@@ -30,9 +30,9 @@ public class ToxicCloudEffect extends PrimedTNTEffect {
 		((Entity)ent).setPos(((Entity)ent).xo, ((Entity)ent).yo, ((Entity)ent).zo);
 		List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, ((Entity)ent).getBoundingBox());
 		for(LivingEntity lent : list) {
-			lent.addStatusEffect(new MobEffectInstance(MobEffects.POISON, 80, 4));
-			lent.addStatusEffect(new MobEffectInstance(MobEffects.NAUSEA, 400, 0));
-			lent.addStatusEffect(new MobEffectInstance(MobEffects.SLOWNESS, 80, 2));
+			lent.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 4));
+			lent.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 400, 0));
+			lent.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 80, 2));
 		}
 	}
 	
@@ -46,7 +46,7 @@ public class ToxicCloudEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		for(int count = 0; count < ent.getPersistentData().getDoubleOr("size", 0d) * 5; count++) {
-			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.7f*255)<<16)|((int)(1f*255)<<8)|(int)(0.5f*255), 10f), true, ent.x() + ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random() - ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random(), ent.y() + ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random() - ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random(), ent.z() + ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random() - ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.7f*255)<<16)|((int)(1f*255)<<8)|(int)(0.5f*255), 10f), ent.x() + ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random() - ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random(), ent.y() + ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random() - ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random(), ent.z() + ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random() - ent.getPersistentData().getDoubleOr("size", 0d) * 1.5f * Math.random(), 0, 0, 0);
 		}
 	}
 	

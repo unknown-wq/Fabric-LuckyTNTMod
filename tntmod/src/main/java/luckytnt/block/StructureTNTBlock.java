@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -30,15 +31,15 @@ import net.minecraft.world.level.Level;
 
 public class StructureTNTBlock extends LTNTBlock {
 
-	public static final EnumProperty<StructureStates> STRUCTURE = EnumProperty.of("structure", StructureStates.class);
+	public static final EnumProperty<StructureStates> STRUCTURE = EnumProperty.create("structure", StructureStates.class);
 	
     public StructureTNTBlock(BlockBehaviour.Properties properties) {
         super(properties, EntityRegistry.STRUCTURE_TNT, true);
     }
 
     @Override
-    public void appendProperties(StateDefinition.Builder<Block, BlockState> definition) {
-    	super.appendProperties(definition);
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> definition) {
+    	super.createBlockStateDefinition(definition);
     	definition.add(STRUCTURE);
     }
     
@@ -48,20 +49,20 @@ public class StructureTNTBlock extends LTNTBlock {
     		explode(level, false, pos.getX(), pos.getY(), pos.getZ(), player);
     		level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
     		if(!player.isCreative()) {
-    			stack.damage(1, player, LivingEntity.getSlotForHand(hand));
+    			stack.hurtAndBreak(1, player, hand);
     		}
-        	player.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
-        	return InteractionResult.success(level.isClientSide());
+        	player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
+        	return InteractionResult.SUCCESS;
     	}
     	else if(stack.getItem() == ItemRegistry.CONFIGURATION_WAND.get()) {
     		cycleThroughStructures(level, state, pos);
-    		return InteractionResult.success(level.isClientSide());
+    		return InteractionResult.SUCCESS;
     	}
     	return InteractionResult.FAIL;
     }
     
     public void cycleThroughStructures(Level level, BlockState state, BlockPos pos) {
-    	StructureStates structure = state.get(STRUCTURE);
+    	StructureStates structure = state.getValue(STRUCTURE);
     	if(structure == StructureStates.PILLAGER_OUTPOST) {
     		level.setBlock(pos, state.setValue(STRUCTURE, StructureStates.MANSION), 3);
     	}
@@ -110,17 +111,17 @@ public class StructureTNTBlock extends LTNTBlock {
     @Override
 	public PrimedLTNT explode(Level level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
 		if(TNT != null) {
-			PrimedLTNT tnt = TNT.get().create(level);
+			PrimedLTNT tnt = TNT.get().create(level, EntitySpawnReason.TRIGGERED);
 			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(Mth.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
 			tnt.setPos(x + 0.5f, y, z + 0.5f);
 			tnt.setOwner(igniter);
-			if(level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).contains(STRUCTURE)) {
+			if(level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).hasProperty(STRUCTURE)) {
 				CompoundTag tag = tnt.getPersistentData();
-				tag.putString("structure", level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).get(STRUCTURE).asString());
+				tag.putString("structure", level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).getValue(STRUCTURE).getSerializedName());
 				tnt.setPersistentData(tag);
 			}
 			level.addFreshEntity(tnt);
-			level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.ENTITY_TNT_PRIMED, SoundSource.MASTER, 1, 1);
+			level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.TNT_PRIMED, SoundSource.MASTER, 1, 1);
 			if(level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).getBlock() == this) {
 				level.setBlock(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), Blocks.AIR.defaultBlockState(), 3);
 			}

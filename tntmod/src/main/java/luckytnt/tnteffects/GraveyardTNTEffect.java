@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import org.joml.Vector3f;
 
@@ -22,7 +23,7 @@ public class GraveyardTNTEffect extends PrimedTNTEffect {
 					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
 					BlockPos pos = toBlockPos(new Vec3(entity.x() + offX, entity.y() + offY - 10, entity.z() + offZ));
 					if(distance <= 20 && entity.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100 && !entity.getLevel().getBlockState(pos).isCollisionShapeFullBlock(entity.getLevel(), pos)) {
-						entity.getLevel().getBlockState(pos).getBlock().wasExploded(entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+						entity.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 						entity.getLevel().setBlockAndUpdate(pos, Blocks.GRASS_BLOCK.defaultBlockState());
 					}
 				}

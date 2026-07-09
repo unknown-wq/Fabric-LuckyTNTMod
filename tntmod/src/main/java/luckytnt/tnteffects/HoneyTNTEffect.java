@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import java.util.Random;
 
@@ -40,7 +41,7 @@ public class HoneyTNTEffect extends PrimedTNTEffect{
 				if(state.getBlock().getExplosionResistance() <= 200) {
 					distance += Math.random();
 					if(distance <= radius - 2) {
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+						state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						if(distance >= radius - 3 && Math.random() < 0.05f) {
 							level.setBlockAndUpdate(pos, Blocks.BEE_NEST.defaultBlockState().setValue(BeehiveBlock.FACING, getRandomDirectionHorizontal()).setValue(BeehiveBlock.HONEY_LEVEL, new Random().nextInt(6)));
@@ -55,7 +56,7 @@ public class HoneyTNTEffect extends PrimedTNTEffect{
 						int offX = Math.round(pos.getX() - (float)entity.x());
 						int offY = Math.round(pos.getY() - (float)entity.y());
 						int offZ = Math.round(pos.getZ() - (float)entity.z());
-						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+						state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						if(noise.getValue(Mth.clamp(offX + radius, 0, radius * 4), Mth.clamp((int)(offY + radius * 1.5f), 0, radius * 4), Mth.clamp(offZ + radius, 0, radius * 4)) > 0.7f) {
 							level.setBlockAndUpdate(pos, Blocks.HONEY_BLOCK.defaultBlockState());

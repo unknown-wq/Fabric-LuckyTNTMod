@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
@@ -34,7 +35,7 @@ public class KolaBoreholeTNTEffect extends PrimedTNTEffect {
 					double distance = Math.sqrt(offX * offX + offZ * offZ);
 					BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), offY - 64, Mth.floor(ent.z() + offZ));
 					if(distance <= rad && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
-						ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 					if(distance > rad && distance <= (rad + 1) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
@@ -44,7 +45,7 @@ public class KolaBoreholeTNTEffect extends PrimedTNTEffect {
 							|| (Block.isShapeFullCube(ent.getLevel().getBlockState(pos.above().south()).getOutlineShape(ent.getLevel(), pos.above().south())) && ent.getLevel().getBlockState(pos.above().south()).isOpaque())
 							|| (Block.isShapeFullCube(ent.getLevel().getBlockState(pos.above().west()).getOutlineShape(ent.getLevel(), pos.above().west())) && ent.getLevel().getBlockState(pos.above().west()).isOpaque()))
 							{
-								ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 								if(pos.getY() > (Math.random() * 2 - Math.random() * 2)) {
 									ent.getLevel().setBlock(pos, Blocks.STONE.defaultBlockState(), 3);
@@ -55,7 +56,7 @@ public class KolaBoreholeTNTEffect extends PrimedTNTEffect {
 						} else if(prevRad == rad) {
 							if(Block.isShapeFullCube(ent.getLevel().getBlockState(pos.above()).getOutlineShape(ent.getLevel(), pos)) && ent.getLevel().getBlockState(pos.above()).isOpaque()) {
 								Block block = ent.getLevel().getBlockState(pos).getBlock();
-								block.wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								block.wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 								if(pos.getY() > (Math.random() * 2 - Math.random() * 2)) {
 									ent.getLevel().setBlock(pos, Blocks.STONE.defaultBlockState(), 3);
@@ -74,7 +75,7 @@ public class KolaBoreholeTNTEffect extends PrimedTNTEffect {
 		}
 		for(int i = -59; i >= -65; i--) {
 			BlockPos pos = new BlockPos(Mth.floor(ent.x()), i, Mth.floor(ent.z()));
-			ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+			ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 			ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 		}
 	}

@@ -3,6 +3,7 @@ package luckytnt.block;
 import java.util.List;
 
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.damagesource.DamageSources;
@@ -45,10 +46,10 @@ public class ToxicStoneBlock extends Block {
 				DamageSources sources = level.damageSources();
 				if(living instanceof Player player) {
 					if(!player.isCreative() && !player.isSpectator()) {
-						player.damage(sources.magic(), 8f);
+						player.hurtServer(level, sources.magic(), 8f);
 					}
 				} else {
-					living.damage(sources.magic(), 8f);
+					living.hurtServer(level, sources.magic(), 8f);
 				}
 			}
 			timer = 100;

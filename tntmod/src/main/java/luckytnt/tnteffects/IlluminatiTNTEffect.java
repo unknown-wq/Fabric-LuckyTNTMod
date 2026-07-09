@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
@@ -42,7 +43,7 @@ public class IlluminatiTNTEffect extends PrimedTNTEffect {
 						BlockPos pos5 = toBlockPos(ent.getPos()).add(offX, offY, offZ);
 
 						if (ent.getLevel().getBlockState(pos5).getBlock().getExplosionResistance() <= 200) {
-							ent.getLevel().getBlockState(pos5).getBlock().wasExploded(ent.getLevel(), pos5, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							ent.getLevel().getBlockState(pos5).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos5, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 							ent.getLevel().setBlock(pos5, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}

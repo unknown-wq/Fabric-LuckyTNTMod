@@ -16,7 +16,7 @@ import net.minecraft.world.entity.monster.spider.CaveSpider;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.zombie.Drowned;
 import net.minecraft.world.entity.monster.ElderGuardian;
-import net.minecraft.entity.mob.EndermanEntity;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.monster.illager.Evoker;
 import net.minecraft.world.entity.monster.Ghast;
@@ -61,7 +61,7 @@ import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.animal.equine.Horse;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.equine.Llama;
-import net.minecraft.entity.passive.MooshroomEntity;
+import net.minecraft.world.entity.animal.cow.MushroomCow;
 import net.minecraft.world.entity.animal.equine.Mule;
 import net.minecraft.world.entity.animal.feline.Ocelot;
 import net.minecraft.world.entity.animal.panda.Panda;
@@ -139,7 +139,7 @@ public class AnimalKingdomEffect extends PrimedTNTEffect {
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			Mob mob = new EndermanEntity(EntityTypes.ENDERMAN, ent.getLevel());
+			Mob mob = new EnderMan(EntityTypes.ENDERMAN, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
@@ -199,7 +199,7 @@ public class AnimalKingdomEffect extends PrimedTNTEffect {
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
-			Mob mob = new MooshroomEntity(EntityTypes.MOOSHROOM, ent.getLevel());
+			Mob mob = new MushroomCow(EntityTypes.MOOSHROOM, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0; i < 4 + new Random().nextInt(3); i++) {
