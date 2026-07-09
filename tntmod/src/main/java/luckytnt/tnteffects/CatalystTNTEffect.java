@@ -23,7 +23,7 @@ public class CatalystTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() < 200) {
-			if(ent.getPersistentData().getInt("nextExplosion") <= 0) {
+			if(ent.getPersistentData().getIntOr("nextExplosion", 0) <= 0) {
 				double x = ent.x() + Math.random() * 40 - Math.random() * 40;
 				double y = ent.y() + Math.random() * 15 - Math.random() * 15;
 				double z = ent.z() + Math.random() * 40 - Math.random() * 40;
@@ -38,7 +38,7 @@ public class CatalystTNTEffect extends PrimedTNTEffect {
 				ent.setPersistentData(tag);
 			}
 			CompoundTag tag = ent.getPersistentData();
-			tag.putInt("nextExplosion", ent.getPersistentData().getInt("nextExplosion") - 1);
+			tag.putInt("nextExplosion", ent.getPersistentData().getIntOr("nextExplosion", 0) - 1);
 			ent.setPersistentData(tag);
 		}
 	}

@@ -17,6 +17,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class ChristmasTNTEffect extends PrimedTNTEffect{
 	
@@ -45,9 +46,9 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 				((Entity)entity).setPos(flyingPos.x, flyingPos.y, flyingPos.z);
 			}
 			if(entity.getTNTFuse() <= 220) {
-				((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDouble("flyingX"), entity.getPersistentData().getDouble("flyingY"), entity.getPersistentData().getDouble("flyingZ")).normalize().multiply(40D / 220D));
+				((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDoubleOr("flyingX", 0), entity.getPersistentData().getDoubleOr("flyingY", 0), entity.getPersistentData().getDoubleOr("flyingZ", 0)).normalize().multiply(40D / 220D));
 				if(entity.getTNTFuse() % 10 == 0) {
-					LExplosiveProjectile present = EntityRegistry.PRESENT.get().create(entity.getLevel());
+					LExplosiveProjectile present = EntityRegistry.PRESENT.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					present.setPos(entity.getPos());
 					present.setOwner(entity.owner());
 					double randomX = Math.random();

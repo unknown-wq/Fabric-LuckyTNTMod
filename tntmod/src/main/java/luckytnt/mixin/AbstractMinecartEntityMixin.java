@@ -1,48 +1,63 @@
 package luckytnt.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-
 import luckytnt.registry.BlockRegistry;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.PoweredRailBlock;
-import net.minecraft.entity.vehicle.AbstractMinecartEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
+import net.minecraft.world.level.block.PoweredRailBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
-@Mixin(AbstractMinecartEntity.class)
+/**
+ * Gives the mod's blast-resistant obsidian rails their vanilla counterparts' behavior.
+ * <p>
+ * NOTE (port-26.2): In 26.2 minecart movement was moved out of {@code AbstractMinecart} and into the
+ * {@code MinecartBehavior} implementations ({@code OldMinecartBehavior}/{@code NewMinecartBehavior}).
+ * The old {@code moveOnRail} target no longer exists on {@code AbstractMinecart}. The activator-rail
+ * hook is re-implemented here against the still-existing {@code AbstractMinecart.tick} +
+ * {@code activateMinecart(ServerLevel,int,int,int,boolean)}. The powered-rail acceleration override
+ * (old {@code injectMoveOnRail}) now lives entirely inside the behavior classes and cannot be reached
+ * from an {@code AbstractMinecart} mixin — see the disabled block at the bottom of this file.
+ */
+@Mixin(AbstractMinecart.class)
 public abstract class AbstractMinecartEntityMixin {
 
-	@Shadow
-	public abstract void onActivatorRail(int x, int y, int z, boolean powered);
-	
-	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/vehicle/AbstractMinecartEntity;moveOnRail(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V", shift = At.Shift.AFTER), cancellable = true)
+	@Inject(method = "tick", at = @At("TAIL"))
 	private void injectTick(CallbackInfo info) {
-		AbstractMinecartEntity ent = (AbstractMinecartEntity)(Object)this;
-		
-		int i = MathHelper.floor(ent.getX());
-        int j = MathHelper.floor(ent.getY());
-        int k = MathHelper.floor(ent.getZ());
-        
-        BlockPos blockPos = new BlockPos(i, j, k);
-        BlockState blockState = ent.getWorld().getBlockState(blockPos);
-        
-        if (blockState.isOf(BlockRegistry.OBSIDIAN_ACTIVATOR_RAIL.get())) {
-            onActivatorRail(i, j, k, blockState.get(PoweredRailBlock.POWERED));
-        }
+		AbstractMinecart cart = (AbstractMinecart)(Object)this;
+
+		if (!(cart.level() instanceof ServerLevel level)) {
+			return;
+		}
+
+		BlockPos pos = cart.getCurrentBlockPosOrRailBelow();
+		BlockState blockState = level.getBlockState(pos);
+
+		if (blockState.is(BlockRegistry.OBSIDIAN_ACTIVATOR_RAIL.get())) {
+			cart.activateMinecart(level, pos.getX(), pos.getY(), pos.getZ(), blockState.getValue(PoweredRailBlock.POWERED));
+		}
 	}
-	
-	@Inject(method = "moveOnRail", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/AbstractRailBlock;getShapeProperty()Lnet/minecraft/state/property/Property;", shift = At.Shift.BEFORE), cancellable = true)
-	private void injectMoveOnRail(BlockPos pos, BlockState state, CallbackInfo info, @Local(ordinal = 0) LocalBooleanRef bl, @Local(ordinal = 1) LocalBooleanRef bl2) {
-		if (state.isOf(BlockRegistry.OBSIDIAN_POWERED_RAIL.get())) {
-			bl.set(state.get(PoweredRailBlock.POWERED));
-			bl2.set(!bl.get());
-        }
-	}
+
+	/*
+	 * TODO(port-26.2): DISABLED — obsidian powered-rail acceleration override.
+	 * The original mixin injected into AbstractMinecartEntity#moveOnRail and mutated the local
+	 * powerTrack/haltTrack booleans so OBSIDIAN_POWERED_RAIL accelerated/halted carts like a vanilla
+	 * powered rail. In 26.2 that logic lives in MinecartBehavior#moveAlongTrack
+	 * (OldMinecartBehavior/NewMinecartBehavior) and is gated on hardcoded `state.is(Blocks.POWERED_RAIL)`
+	 * checks. It is not reachable from an AbstractMinecart mixin, so this behavior is dropped for now.
+	 * Reinstating it requires new mixins targeting the two MinecartBehavior implementations.
+	 *
+	 * @Inject(method = "moveOnRail", ...) // method no longer exists on AbstractMinecart
+	 * private void injectMoveOnRail(BlockPos pos, BlockState state, CallbackInfo info,
+	 *         @Local(ordinal = 0) LocalBooleanRef bl, @Local(ordinal = 1) LocalBooleanRef bl2) {
+	 *     if (state.isOf(BlockRegistry.OBSIDIAN_POWERED_RAIL.get())) {
+	 *         bl.set(state.get(PoweredRailBlock.POWERED));
+	 *         bl2.set(!bl.get());
+	 *     }
+	 * }
+	 */
 }

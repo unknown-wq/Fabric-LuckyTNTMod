@@ -17,6 +17,6 @@ public class BombEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(ParticleTypes.CLOUD, true, entity.x(), entity.y(), entity.z(), 0f, 0f, 0f);
+		entity.getLevel().addParticle(ParticleTypes.CLOUD, entity.x(), entity.y(), entity.z(), 0f, 0f, 0f);
 	}
 }

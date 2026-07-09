@@ -1,22 +1,33 @@
 package luckytnt.client.renderer;
 
+import luckytnt.LuckyTNTMod;
 import luckytnt.entity.AngryMiner;
-import net.minecraft.client.render.entity.BipedEntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayers;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.entity.ArmorModelSet;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
+import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.resources.Identifier;
 
-public class AngryMinerRenderer extends BipedEntityRenderer<AngryMiner, BipedEntityModel<AngryMiner>>{
+@Environment(value = EnvType.CLIENT)
+public class AngryMinerRenderer extends HumanoidMobRenderer<AngryMiner, HumanoidRenderState, HumanoidModel<HumanoidRenderState>> {
 
-	public AngryMinerRenderer(EntityRendererFactory.Context context) {
-		super(context, new BipedEntityModel<AngryMiner>(context.getPart(EntityModelLayers.PLAYER)), 0.5f);
-		addFeature(new ArmorFeatureRenderer<>(this, new BipedEntityModel<AngryMiner>(context.getPart(EntityModelLayers.PLAYER_INNER_ARMOR)), new BipedEntityModel<AngryMiner>(context.getPart(EntityModelLayers.PLAYER_OUTER_ARMOR)), context.getModelManager()));
+	public AngryMinerRenderer(EntityRendererProvider.Context context) {
+		super(context, new HumanoidModel<HumanoidRenderState>(context.bakeLayer(ModelLayers.PLAYER)), 0.5f);
+		addLayer(new HumanoidArmorLayer<>(this, ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, context.getModelSet(), HumanoidModel::new), context.getEquipmentRenderer()));
 	}
 
 	@Override
-	public Identifier getTexture(AngryMiner entity) {
-		return Identifier.fromNamespaceAndPath("luckytntmod:textures/angryminer.png");
+	public Identifier getTextureLocation(HumanoidRenderState state) {
+		return Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "textures/angryminer.png");
+	}
+
+	@Override
+	public HumanoidRenderState createRenderState() {
+		return new HumanoidRenderState();
 	}
 }

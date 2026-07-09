@@ -36,8 +36,8 @@ public class SwapTNTEffect extends PrimedTNTEffect{
 		}
 		if(ids.length != 0 && entity.getTNTFuse() % 2 == 0) {
 			if(entity.getPersistentData().getInt("count") < ids.length) {
-				Entity ent1 = entity.getLevel().getEntityById(ids[entity.getPersistentData().getInt("count")]);
-				Entity ent2 = entity.getLevel().getEntityById(ids[new Random().nextInt(ids.length)]);
+				Entity ent1 = entity.getLevel().getEntity(ids[entity.getPersistentData().getInt("count")]);
+				Entity ent2 = entity.getLevel().getEntity(ids[new Random().nextInt(ids.length)]);
 				if(ent1 != null && ent2 != null) {
 					Vec3 pos1 = ent1.getPosition(1);
 					Vec3 pos2 = ent2.getPosition(1);

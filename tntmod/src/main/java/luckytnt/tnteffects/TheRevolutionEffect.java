@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
@@ -24,7 +25,7 @@ public class TheRevolutionEffect extends PrimedTNTEffect {
 					CompoundTag tag = entity.getPersistentData();
 					tag.putFloat("spiral_power", Mth.clamp(entity.getPersistentData().getFloat("spiral_power") + 0.15f, 0.15f, Float.MAX_VALUE));
 					entity.setPersistentData(tag);
-					PrimedLTNT spiral_tnt = EntityRegistry.SPIRAL_TNT.get().create(entity.getLevel());
+					PrimedLTNT spiral_tnt = EntityRegistry.SPIRAL_TNT.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					spiral_tnt.setTNTFuse(140);
 					spiral_tnt.setPos(entity.x(), entity.y(), entity.z());
 					spiral_tnt.setOwner(entity.owner());

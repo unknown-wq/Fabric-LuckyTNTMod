@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
@@ -25,7 +26,7 @@ public class SpiralTNTEffect extends PrimedTNTEffect{
 					CompoundTag tag = entity.getPersistentData();
 					tag.putFloat("spiral_power", Mth.clamp(entity.getPersistentData().getFloat("spiral_power") + 0.06f, 0.2f, Float.MAX_VALUE));
 					entity.setPersistentData(tag);
-					LExplosiveProjectile spiral_tnt = EntityRegistry.SPIRAL_PROJECTILE.get().create(entity.getLevel());
+					LExplosiveProjectile spiral_tnt = EntityRegistry.SPIRAL_PROJECTILE.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					spiral_tnt.setPos(entity.x(), entity.y(), entity.z());
 					spiral_tnt.setOwner(entity.owner());
 					spiral_tnt.setDeltaMovement(ent.getRotationVector().x, ent.getRotationVector().y, ent.getRotationVector().z, entity.getPersistentData().getFloat("spiral_power"), 0);

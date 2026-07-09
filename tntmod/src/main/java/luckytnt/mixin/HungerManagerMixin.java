@@ -5,16 +5,16 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import luckytnt.util.mixin.HungerManagerExtension;
-import net.minecraft.entity.player.HungerManager;
+import net.minecraft.world.food.FoodData;
 
-@Mixin(HungerManager.class)
+@Mixin(FoodData.class)
 public abstract class HungerManagerMixin implements HungerManagerExtension {
 
 	@Shadow
-    private int foodTickTimer;
+	private int tickTimer;
 
 	@Unique
 	public void setFoodTickTimerRaw(int timer) {
-		foodTickTimer = timer;
+		tickTimer = timer;
 	}
 }

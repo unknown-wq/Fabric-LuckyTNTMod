@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
@@ -17,7 +18,7 @@ public class RingTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
 		for(double angle = 0; angle < 360; angle += 30D) {
-			PrimedLTNT tnt = EntityRegistry.TNT.get().create(ent.getLevel());
+			PrimedLTNT tnt = EntityRegistry.TNT.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			tnt.setTNTFuse(80);
 			tnt.setOwner(ent.owner());
 			double x = ent.x() + 10 * Math.cos(angle * Math.PI / 180);
@@ -37,7 +38,7 @@ public class RingTNTEffect extends PrimedTNTEffect {
 		if(!level.isClientSide()) {
 			boolean blockFound = false;
 			int y = 0;
-			for(int offY = level.getTopY(); offY >= level.getBottomY(); offY--) {	
+			for(int offY = level.getMaxY(); offY >= level.getMinY(); offY--) {	
 				BlockPos pos = new BlockPos(Mth.floor(x), offY, Mth.floor(z));
 				BlockPos posUp = new BlockPos(Mth.floor(x), offY + 1, Mth.floor(z));
 				BlockState state = level.getBlockState(pos);

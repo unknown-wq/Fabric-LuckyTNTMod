@@ -30,7 +30,7 @@ public class FluorineTNTEffect extends PrimedTNTEffect {
 			}
 		}
 		if(ent.getTNTFuse() < 300) {
-			if(ent.getPersistentData().getInt("nextExplosion") <= 0) {
+			if(ent.getPersistentData().getIntOr("nextExplosion", 0) <= 0) {
 				double x = ent.x() + Math.random() * 80 - Math.random() * 80;
 				double y = ent.y() + Math.random() * 30 - Math.random() * 30;
 				double z = ent.z() + Math.random() * 80 - Math.random() * 80;
@@ -45,7 +45,7 @@ public class FluorineTNTEffect extends PrimedTNTEffect {
 				ent.setPersistentData(tag);
 			}
 			CompoundTag tag = ent.getPersistentData();
-			tag.putInt("nextExplosion", ent.getPersistentData().getInt("nextExplosion") - 1);
+			tag.putInt("nextExplosion", ent.getPersistentData().getIntOr("nextExplosion", 0) - 1);
 			ent.setPersistentData(tag);
 		}
 	}

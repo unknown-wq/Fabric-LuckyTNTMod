@@ -41,7 +41,7 @@ public class CustomFireworkEffect extends PrimedTNTEffect {
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
 		if(ent instanceof PrimedCustomFirework fire) {
-			BlockState state = ent.getLevel().getBlockState(new BlockPos(ent.getPersistentData().getInt("x"), ent.getPersistentData().getInt("y"), ent.getPersistentData().getInt("z")));
+			BlockState state = ent.getLevel().getBlockState(new BlockPos(ent.getPersistentData().getIntOr("x", 0), ent.getPersistentData().getIntOr("y", 0), ent.getPersistentData().getIntOr("z", 0)));
 			if(fire.state != null) {
 				state = fire.state;
 			}

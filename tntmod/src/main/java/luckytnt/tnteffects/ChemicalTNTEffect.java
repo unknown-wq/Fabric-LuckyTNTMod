@@ -17,6 +17,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class ChemicalTNTEffect extends PrimedTNTEffect{
 
@@ -59,7 +60,7 @@ public class ChemicalTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		for(int count = 0; count < 30; count++) {
-			LExplosiveProjectile projectile = EntityRegistry.CHEMICAL_PROJECTILE.get().create(entity.getLevel());
+			LExplosiveProjectile projectile = EntityRegistry.CHEMICAL_PROJECTILE.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			projectile.setPos(entity.getPos());
 			projectile.setOwner(entity.owner());
 			projectile.setDeltaMovement(Math.random() * 1.5f - Math.random() * 1.5f, 0.2f, Math.random() * 1.5f - Math.random() * 1.5f);

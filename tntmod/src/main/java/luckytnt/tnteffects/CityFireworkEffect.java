@@ -12,6 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class CityFireworkEffect extends PrimedTNTEffect {
 
@@ -33,7 +34,7 @@ public class CityFireworkEffect extends PrimedTNTEffect {
 			}
 			
 			if(type != null) {
-				PrimedLTNT tnt = type.get().create(ent.getLevel());
+				PrimedLTNT tnt = type.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				tnt.setPos(ent.getPos());
 				tnt.setOwner(ent.owner() instanceof LivingEntity ? (LivingEntity)ent.owner() : null);
 				tnt.setDeltaMovement(Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f  - Math.random() * 1.5f);

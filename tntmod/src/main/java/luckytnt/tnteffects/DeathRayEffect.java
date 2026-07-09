@@ -32,7 +32,7 @@ public class DeathRayEffect extends PrimedTNTEffect {
 			((Entity)ent).setDeltaMovement(0, 0, 0);
 			((Entity)ent).setPos(((Entity)ent).xo, ((Entity)ent).yo, ((Entity)ent).zo);
 			
-			int size = ent.getPersistentData().getInt("explosionSize");
+			int size = ent.getPersistentData().getIntOr("explosionSize", 0);
 			
 			for(int offX = -size; offX <= size; offX++) {
 				for(int offY = size; offY >= -size; offY--) {
@@ -59,7 +59,7 @@ public class DeathRayEffect extends PrimedTNTEffect {
 			}
 			
 			CompoundTag tag = ent.getPersistentData();
-			tag.putInt("explosionSize", ent.getPersistentData().getInt("explosionSize") + 1);
+			tag.putInt("explosionSize", ent.getPersistentData().getIntOr("explosionSize", 0) + 1);
 			ent.setPersistentData(tag);
 		}
 	}
@@ -71,10 +71,10 @@ public class DeathRayEffect extends PrimedTNTEffect {
 		}
 		if(ent.getTNTFuse() < 140) {
 			for(int count = 0; count < 200; count++) {
-				ent.getLevel().addParticle(new DustParticleOptions(((int)(0.5f*255)<<16)|((int)(0f*255)<<8)|(int)(2f*255), 10f), true, ent.x() + Math.random() - Math.random(), ent.y() + 135f - Math.random() * ent.getPersistentData().getInt("particleSize"), ent.z() + Math.random() - Math.random(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(((int)(0.5f*255)<<16)|((int)(0f*255)<<8)|(int)(2f*255), 10f), true, ent.x() + Math.random() - Math.random(), ent.y() + 135f - Math.random() * ent.getPersistentData().getIntOr("particleSize", 0), ent.z() + Math.random() - Math.random(), 0, 0, 0);
 			}
 			CompoundTag tag = ent.getPersistentData();
-			tag.putInt("particleSize", ent.getPersistentData().getInt("particleSize") + 2);
+			tag.putInt("particleSize", ent.getPersistentData().getIntOr("particleSize", 0) + 2);
 			ent.setPersistentData(tag);
 		}
 	}

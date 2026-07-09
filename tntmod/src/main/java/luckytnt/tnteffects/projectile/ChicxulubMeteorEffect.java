@@ -1,6 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.util.IExplosiveEntity;
@@ -42,7 +43,7 @@ public class ChicxulubMeteorEffect extends PrimedTNTEffect {
 		});
 		
 		for(int count = 0; count < 300; count++) {
-			LExplosiveProjectile pompeii = EntityRegistry.POMPEII_PROJECTILE.get().create(entity.getLevel());
+			LExplosiveProjectile pompeii = EntityRegistry.POMPEII_PROJECTILE.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			pompeii.setPos(entity.getPos());
 			pompeii.setOwner(entity.owner());
 			pompeii.setDeltaMovement(Math.random() * 8D - 4D, 3 + Math.random() * 2, Math.random() * 8D - 4D);

@@ -153,12 +153,12 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 			int z = new Random().nextInt(151) - 75;
 			
 			sheep.setPos(ent.x() + x, LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1, ent.z() + z);
-			sheep.initialize((ServerLevel)ent.getLevel(), ent.getLevel().getLocalDifficulty(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
+			sheep.finalizeSpawn((ServerLevel)ent.getLevel(), ent.getLevel().getLocalDifficulty(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
 			ent.getLevel().addFreshEntity(sheep);
 		}
 		
-		BlockPos min = toBlockPos(ent.getPos()).add(100, 100, 100);
-		BlockPos max = toBlockPos(ent.getPos()).add(-100, -100, -100);
+		BlockPos min = toBlockPos(ent.getPos()).offset(100, 100, 100);
+		BlockPos max = toBlockPos(ent.getPos()).offset(-100, -100, -100);
 		List<Sheep> list = ent.getLevel().getEntitiesOfClass(Sheep.class, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
 		for(Sheep sheep : list) {
 			sheep.setColor(randomColor());
@@ -191,7 +191,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 		if(xOrZ) {
 			for(int offX = -radius - 1; offX <= radius + 1; offX++) {
 				for(int offY = 0; offY <= radius + 1; offY++) {
-					BlockPos pos = origin.add(offX, offY, 0);
+					BlockPos pos = origin.offset(offX, offY, 0);
 					double distance = Math.sqrt(offX * offX + offY * offY);
 					if(distance > radius && distance <= (radius + 1) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
 						ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
@@ -201,7 +201,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 		} else {
 			for(int offZ = -radius - 1; offZ <= radius + 1; offZ++) {
 				for(int offY = 0; offY <= radius + 1; offY++) {
-					BlockPos pos = origin.add(0, offY, offZ);
+					BlockPos pos = origin.offset(0, offY, offZ);
 					double distance = Math.sqrt(offZ * offZ + offY * offY);
 					if(distance > radius && distance <= (radius + 1) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
 						ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
@@ -214,7 +214,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 	public void placeLegs(IExplosiveEntity ent, BlockPos origin, Block block, int radius, boolean xOrZ) {
 		if(xOrZ) {
 			for(int offY = -1; offY > -200; offY--) {
-				BlockPos pos = origin.add(radius + 1, offY, 0);
+				BlockPos pos = origin.offset(radius + 1, offY, 0);
 				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.absent()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
 					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 				} else {
@@ -223,7 +223,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 			}
 			
 			for(int offY = -1; offY > -200; offY--) {
-				BlockPos pos = origin.add(-radius - 1, offY, 0);
+				BlockPos pos = origin.offset(-radius - 1, offY, 0);
 				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.absent()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
 					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 				} else {
@@ -232,7 +232,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 			}
 		} else {
 			for(int offY = -1; offY > -200; offY--) {
-				BlockPos pos = origin.add(0, offY, radius + 1);
+				BlockPos pos = origin.offset(0, offY, radius + 1);
 				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.absent()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
 					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 				} else {
@@ -241,7 +241,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 			}
 			
 			for(int offY = -1; offY > -200; offY--) {
-				BlockPos pos = origin.add(0, offY, -radius - 1);
+				BlockPos pos = origin.offset(0, offY, -radius - 1);
 				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.absent()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
 					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 				} else {

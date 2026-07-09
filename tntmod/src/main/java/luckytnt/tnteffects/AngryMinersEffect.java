@@ -9,13 +9,14 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class AngryMinersEffect extends PrimedTNTEffect{
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		for(int count = 0; count <= 8; count++) {
-			AngryMiner miner = EntityRegistry.ANGRY_MINER.get().create(entity.getLevel());
+			AngryMiner miner = EntityRegistry.ANGRY_MINER.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			miner.setPos(entity.getPos());
 			entity.getLevel().addFreshEntity(miner);
 		}

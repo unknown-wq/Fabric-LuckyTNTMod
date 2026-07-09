@@ -30,7 +30,7 @@ public class WastelandTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		for (int count = 0; count < 100; count++) {
-			ent.getLevel().addParticle(ParticleTypes.CLOUD, true, ent.x() + Math.random() * 30 - Math.random() * 30, ent.y() + 0.5f, ent.z() + Math.random() * 30 - Math.random() * 30, 0, 0, 0);
+			ent.getLevel().addParticle(ParticleTypes.CLOUD, ent.x() + Math.random() * 30 - Math.random() * 30, ent.y() + 0.5f, ent.z() + Math.random() * 30 - Math.random() * 30, 0, 0, 0);
 		}
 	}
 	

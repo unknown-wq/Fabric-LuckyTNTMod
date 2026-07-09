@@ -45,12 +45,12 @@ public class EntityFireworkEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(Identifier.fromNamespaceAndPath(ent.getPersistentData().getString("type")));
+		EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(Identifier.fromNamespaceAndPath(ent.getPersistentData().getStringOr("type", "")));
 		if(type == null) {
 			type = EntityTypes.PIG;
 		}
 		for(int count = 0; count < 300; count++) {
-			Entity lent = type.create(ent.getLevel());	
+			Entity lent = type.create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);	
 			lent.setPos(ent.x(), ent.y(), ent.z());
 			lent.setDeltaMovement(Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f);
 			if(lent instanceof Mob mob && ent.getLevel() instanceof ServerLevel sLevel) {

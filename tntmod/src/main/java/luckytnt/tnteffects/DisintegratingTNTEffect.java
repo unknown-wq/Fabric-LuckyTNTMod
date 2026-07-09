@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class DisintegratingTNTEffect extends PrimedTNTEffect {
 
@@ -24,7 +25,7 @@ public class DisintegratingTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
 		for(int count = 0; count < 50; count++) {
-			LExplosiveProjectile projectile = EntityRegistry.DISINTEGRATING_PROJECTILE.get().create(ent.getLevel());
+			LExplosiveProjectile projectile = EntityRegistry.DISINTEGRATING_PROJECTILE.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			projectile.setPos(ent.getPos());
 			projectile.setOwner(ent.owner());
 			projectile.setDeltaMovement(Math.random() * 4f - Math.random() * 4f, Math.random() * 4f - Math.random() * 4f, Math.random() * 4f - Math.random() * 4f);

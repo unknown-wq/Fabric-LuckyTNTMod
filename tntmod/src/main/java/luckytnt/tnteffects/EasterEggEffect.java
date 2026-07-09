@@ -20,13 +20,14 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class EasterEggEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
 		super.baseTick(entity);
-		if(((Entity)entity).onGround() && entity.getPersistentData().getInt("level") > 0) {
+		if(((Entity)entity).onGround() && entity.getPersistentData().getIntOr("level", 0) > 0) {
 			serverExplosion(entity);
 			Level level = entity.getLevel();
 			entity.getLevel().playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
@@ -36,7 +37,7 @@ public class EasterEggEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		int level = entity.getPersistentData().getInt("level");
+		int level = entity.getPersistentData().getIntOr("level", 0);
 		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), 15);
 		explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
 		explosion.doBlockExplosion(new IForEachBlockExplosionEffect() {		
@@ -58,7 +59,7 @@ public class EasterEggEffect extends PrimedTNTEffect{
 		}
 		else {
 			for(int count = 0; count < 4; count++) {
-				PrimedLTNT tnt = EntityRegistry.EASTER_EGG.get().create(entity.getLevel());
+				PrimedLTNT tnt = EntityRegistry.EASTER_EGG.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				tnt.setPos(entity.getPos());
 				tnt.setOwner(entity.owner());
 				tnt.setDeltaMovement(Math.random() * 2 - 1, 1 + Math.random(), Math.random() * 2 - 1);

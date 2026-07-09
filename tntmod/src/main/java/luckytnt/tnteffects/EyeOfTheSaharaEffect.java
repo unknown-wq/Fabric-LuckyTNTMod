@@ -9,13 +9,14 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class EyeOfTheSaharaEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
 		for(double angle = 0; angle < 360; angle += 6D) {
-			PrimedLTNT tnt = EntityRegistry.TNT_X20.get().create(ent.getLevel());
+			PrimedLTNT tnt = EntityRegistry.TNT_X20.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			tnt.setTNTFuse(160);
 			tnt.setOwner(ent.owner());
 			double x = ent.x() + 80 * Math.cos(angle * Math.PI / 180);

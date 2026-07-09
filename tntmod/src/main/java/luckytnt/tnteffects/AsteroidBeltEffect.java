@@ -7,13 +7,14 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class AsteroidBeltEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
 		for(double angle = 0; angle < 360; angle += 12D) {
-			PrimedLTNT tnt = EntityRegistry.GLOBAL_DISASTER.get().create(ent.getLevel());
+			PrimedLTNT tnt = EntityRegistry.GLOBAL_DISASTER.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			tnt.setTNTFuse(100);
 			tnt.setOwner(ent.owner());
 			double x = ent.x() + 160 * Math.cos(angle * Math.PI / 180);

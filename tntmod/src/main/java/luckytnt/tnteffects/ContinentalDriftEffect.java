@@ -53,11 +53,11 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 		}
 		
 		if(ent.getTNTFuse() <= 400 && (ent.getTNTFuse() % 60 == 0 || ent.getTNTFuse() == 400) && !ent.getLevel().isClientSide()) {
-			BlockPos origin = toBlockPos(new Vec3(ent.getPersistentData().getDouble("x"), ent.getPersistentData().getDouble("y"), ent.getPersistentData().getDouble("z")));
-			BlockPos start = origin.add(toBlockPos(new Vec3(ent.getPersistentData().getDouble("vecx") * -80, 0, ent.getPersistentData().getDouble("vecz") * -80)));
-			Vec3 vec = new Vec3(ent.getPersistentData().getDouble("vecx"), 0, ent.getPersistentData().getDouble("vecz"));
-			Vec3 vec2 = new Vec3(ent.getPersistentData().getDouble("vecx2"), 0, ent.getPersistentData().getDouble("vecz2"));
-			BlockPos start2 = start.add(toBlockPos(new Vec3(vec.x * ent.getPersistentData().getInt("second"), 0, vec.z * ent.getPersistentData().getInt("second")))).add(toBlockPos(new Vec3(vec2.x * 8, 0, vec2.z * 8)));
+			BlockPos origin = toBlockPos(new Vec3(ent.getPersistentData().getDoubleOr("x", 0), ent.getPersistentData().getDoubleOr("y", 0), ent.getPersistentData().getDoubleOr("z", 0)));
+			BlockPos start = origin.add(toBlockPos(new Vec3(ent.getPersistentData().getDoubleOr("vecx", 0) * -80, 0, ent.getPersistentData().getDoubleOr("vecz", 0) * -80)));
+			Vec3 vec = new Vec3(ent.getPersistentData().getDoubleOr("vecx", 0), 0, ent.getPersistentData().getDoubleOr("vecz", 0));
+			Vec3 vec2 = new Vec3(ent.getPersistentData().getDoubleOr("vecx2", 0), 0, ent.getPersistentData().getDoubleOr("vecz2", 0));
+			BlockPos start2 = start.add(toBlockPos(new Vec3(vec.x * ent.getPersistentData().getIntOr("second", 0), 0, vec.z * ent.getPersistentData().getIntOr("second", 0)))).add(toBlockPos(new Vec3(vec2.x * 8, 0, vec2.z * 8)));
 			
 			for(double i = 0; i < 160D; i += 1D) {
 				for(int offX = -10; offX <= 10; offX++) {

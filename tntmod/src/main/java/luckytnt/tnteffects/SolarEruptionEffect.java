@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
@@ -17,7 +18,7 @@ public class SolarEruptionEffect extends PrimedTNTEffect {
 		if(ent.getTNTFuse() < 260) {
 			if(ent.getTNTFuse() % 20 == 0) {
 				for(int count = 0; count < 40; count++) {
-					LExplosiveProjectile tnt = EntityRegistry.SOLAR_ERUPTION_PROJECTILE.get().create(ent.getLevel());
+					LExplosiveProjectile tnt = EntityRegistry.SOLAR_ERUPTION_PROJECTILE.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					tnt.setPos(ent.getPos());
 					tnt.setOwner(ent.owner());
 					tnt.setDeltaMovement(Math.random() * 3f - Math.random() * 3f, 5 + Math.random() * 2, Math.random() * 3f - Math.random() * 3f);		

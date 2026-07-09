@@ -25,6 +25,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class AcidicTNTEffect extends PrimedTNTEffect {
 
@@ -82,7 +83,7 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 	public void serverExplosion(IExplosiveEntity ent) {
 		if(ent instanceof PrimedLTNT) {
 			for(int count = 0; count < 70; count++) {
-				LExplosiveProjectile projectile = EntityRegistry.ACIDIC_PROJECTILE.get().create(ent.getLevel());
+				LExplosiveProjectile projectile = EntityRegistry.ACIDIC_PROJECTILE.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				projectile.setPos(ent.getPos());
 				projectile.setOwner(ent.owner());
 				projectile.setDeltaMovement(Math.random() * 2.5f - Math.random() * 2.5f, Math.random() - Math.random(), Math.random() * 2.5f - Math.random() * 2.5f);

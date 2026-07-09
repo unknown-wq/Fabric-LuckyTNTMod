@@ -17,20 +17,20 @@ public class EatingTNTEffect extends PrimedTNTEffect{
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), 10 + Mth.floor((1f/7.5f) * entity.getPersistentData().getInt("eatLevel")));
-		explosion.doEntityExplosion(1.5f + entity.getPersistentData().getInt("eatLevel") / 300f, true);
+		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), 10 + Mth.floor((1f/7.5f) * entity.getPersistentData().getIntOr("eatLevel", 0)));
+		explosion.doEntityExplosion(1.5f + entity.getPersistentData().getIntOr("eatLevel", 0) / 300f, true);
 		explosion.doBlockExplosion();
 	}
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		if(entity.getPersistentData().getInt("eatLevel") < 300) {
+		if(entity.getPersistentData().getIntOr("eatLevel", 0) < 300) {
 			List<ItemEntity> items = entity.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(entity.getPos().add(-10, -10, -10), entity.getPos().add(10, 10, 10)));
 			for(ItemEntity item : items) {
 				item.setDeltaMovement(entity.getPos().add(item.getPosition(1).multiply(-1)).normalize());
 				if(entity.getPos().distanceTo(item.getPosition(1)) < 1) {
 					CompoundTag tag = entity.getPersistentData();
-					tag.putInt("eatLevel", Mth.clamp(entity.getPersistentData().getInt("eatLevel") + item.getStack().getCount(), 0, 300));
+					tag.putInt("eatLevel", Mth.clamp(entity.getPersistentData().getIntOr("eatLevel", 0) + item.getStack().getCount(), 0, 300));
 					entity.setPersistentData(tag);
 					item.discard();
 				}
@@ -45,7 +45,7 @@ public class EatingTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public float getSize(IExplosiveEntity entity) {
-		return 1f + entity.getPersistentData().getInt("eatLevel") / 300f;
+		return 1f + entity.getPersistentData().getIntOr("eatLevel", 0) / 300f;
 	}
 		
 	@Override

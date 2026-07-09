@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
@@ -21,7 +22,7 @@ public class PompeiiEffect extends PrimedTNTEffect{
 			if(entity.getTNTFuse() < 150) {
 				if(entity.getTNTFuse() % 15 == 0) {
 					for(int i = 0; i < 30; i++) {
-						LExplosiveProjectile pompeii = EntityRegistry.POMPEII_PROJECTILE.get().create(entity.getLevel());
+						LExplosiveProjectile pompeii = EntityRegistry.POMPEII_PROJECTILE.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 						pompeii.setPos(entity.getPos());
 						pompeii.setOwner(entity.owner());
 						pompeii.setDeltaMovement((Math.random() * 3D - 1.5D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 3D - 1.5D) * 0.1f, 3f + entity.getLevel().getRandom().nextFloat() * 2f, 0f);	
@@ -53,7 +54,7 @@ public class PompeiiEffect extends PrimedTNTEffect{
 			ent.getLevel().addParticle(ParticleTypes.LAVA, ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
 		}
 		else {
-			ent.getLevel().addParticle(ParticleTypes.LARGE_SMOKE, true, ent.x(), ent.y() + 0.5f, ent.z(), 0, 0.1f, 0);
+			ent.getLevel().addParticle(ParticleTypes.LARGE_SMOKE, ent.x(), ent.y() + 0.5f, ent.z(), 0, 0.1f, 0);
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
@@ -20,7 +21,7 @@ public class TNTFireworkEffect extends PrimedTNTEffect {
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		for(int count = 0; count <= 300; count++) {
-			PrimedLTNT TNT = EntityRegistry.TNT.get().create(entity.getLevel());
+			PrimedLTNT TNT = EntityRegistry.TNT.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			TNT.setPos(entity.getPos());
 			TNT.setOwner(entity.owner());
 			TNT.setDeltaMovement((Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f);

@@ -57,13 +57,13 @@ public class ReplayTNTEffect extends PrimedTNTEffect {
 			}
 			if(tnt.getTNTFuse() == 200) {
 				for(BlockPos pos : tnt.blocks.keySet()) {
-					sLevel.setBlock(pos, tnt.blocks.get(pos));
+					sLevel.setBlockAndUpdate(pos, tnt.blocks.get(pos));
 				}
 			}
 			if(tnt.getTNTFuse() < 200 && tnt.blockChanges.get(tnt.getTNTFuse()) != null) {
 				HashMap<BlockPos, BlockState> list = tnt.blockChanges.get(tnt.getTNTFuse());
 				for(BlockPos pos : list.keySet()) {
-					sLevel.setBlock(pos, list.get(pos));
+					sLevel.setBlockAndUpdate(pos, list.get(pos));
 				}
 			}
 		}

@@ -29,7 +29,7 @@ public class XRayTNTEffect extends PrimedTNTEffect {
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(!state.is(ConventionalBlockTags.ORES) && !state.isAir() && state.getBlock().getExplosionResistance() <= 100) {
 					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlock(pos, Blocks.GLASS.defaultBlockState());
+					level.setBlockAndUpdate(pos, Blocks.GLASS.defaultBlockState());
 				}
 			}
 		});

@@ -18,6 +18,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class EndTNTEffect extends PrimedTNTEffect {
 
@@ -47,7 +48,7 @@ public class EndTNTEffect extends PrimedTNTEffect {
 							}
 						}
 						if(Math.random() < 0.025f) {
-							EndermanEntity enderman = EntityTypes.ENDERMAN.create(level);
+							EndermanEntity enderman = EntityTypes.ENDERMAN.create(level, EntitySpawnReason.MOB_SUMMONED);
 							enderman.setPos(new Vec3(pos.getX(), pos.getY() + 1f, pos.getZ()));
 							level.addFreshEntity(enderman);
 						}

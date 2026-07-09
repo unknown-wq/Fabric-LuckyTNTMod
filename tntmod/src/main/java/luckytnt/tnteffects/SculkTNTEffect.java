@@ -44,11 +44,11 @@ public class SculkTNTEffect extends PrimedTNTEffect {
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(level.getBlockState(pos.below()).isAir() && !state.isAir() && state.getBlock().getExplosionResistance() < 100 && !state.is(BlockTags.LUSH_GROUND_REPLACEABLE)) {
 					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlock(pos, Blocks.STONE.defaultBlockState());
+					level.setBlockAndUpdate(pos, Blocks.STONE.defaultBlockState());
 				}
 				else if(level.getBlockState(pos.below()).getBlock().getExplosionResistance() < 100 && !level.getBlockState(pos.below()).isAir() && state.isAir() && !level.getBlockState(pos.below()).is(BlockTags.LUSH_GROUND_REPLACEABLE)) {
 					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlock(pos.below(), Blocks.STONE.defaultBlockState());
+					level.setBlockAndUpdate(pos.below(), Blocks.STONE.defaultBlockState());
 				}
 			}
 		});

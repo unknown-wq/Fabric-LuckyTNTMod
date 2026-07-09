@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
@@ -36,7 +37,7 @@ public class SquaringTNTEffect extends PrimedTNTEffect{
 			explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
 		} else if(level == 0) {
 			for(int count = 0; count < 4; count++) {
-				PrimedLTNT tnt = EntityRegistry.SQUARING_TNT.get().create(entity.getLevel());
+				PrimedLTNT tnt = EntityRegistry.SQUARING_TNT.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				tnt.setPos(entity.getPos());
 				tnt.setOwner(entity.owner());
 				tnt.setDeltaMovement(Math.random() * 2.5D - 1.25D, 1 + Math.random(), Math.random() * 2.5D - 1.25D);
@@ -47,7 +48,7 @@ public class SquaringTNTEffect extends PrimedTNTEffect{
 			}
 		} else {
 			for(int count = 0; count < level * level; count++) {
-				PrimedLTNT tnt = EntityRegistry.SQUARING_TNT.get().create(entity.getLevel());
+				PrimedLTNT tnt = EntityRegistry.SQUARING_TNT.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				tnt.setPos(entity.getPos());
 				tnt.setOwner(entity.owner());
 				tnt.setDeltaMovement(Math.random() * 2.5D - 1.25D, 1 + Math.random(), Math.random() * 2.5D - 1.25D);
