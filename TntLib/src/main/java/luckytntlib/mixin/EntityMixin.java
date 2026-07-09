@@ -25,12 +25,12 @@ public abstract class EntityMixin implements LuckyTNTEntityExtension {
 	@Unique
 	private CompoundTag luckytntlib$additionalData = new CompoundTag();
 
-	@Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
+	@Inject(method = "load", at = @At("HEAD"))
 	private void injectionReadNbt(ValueInput input, CallbackInfo info) {
 		setAdditionalPersistentData(input.read("AdditionalData", CompoundTag.CODEC).orElse(new CompoundTag()));
 	}
 
-	@Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
+	@Inject(method = "saveWithoutId", at = @At("HEAD"))
 	private void injectionWriteNbt(ValueOutput output, CallbackInfo info) {
 		output.store("AdditionalData", CompoundTag.CODEC, getAdditionalPersistentData());
 	}

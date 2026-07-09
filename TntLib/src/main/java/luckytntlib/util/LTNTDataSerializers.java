@@ -1,9 +1,10 @@
 package luckytntlib.util;
 
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityDataRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.resources.Identifier;
 
 /**
  * Holds custom {@link EntityDataSerializer}s used by Lucky TNT Lib.
@@ -23,6 +24,6 @@ public class LTNTDataSerializers {
 	 * Registers all custom serializers. Must run once during mod initialization, before entity types are registered.
 	 */
 	public static void register() {
-		EntityDataSerializers.registerSerializer(COMPOUND_TAG);
+		FabricEntityDataRegistry.register(Identifier.fromNamespaceAndPath("luckytntlib", "compound_tag"), COMPOUND_TAG);
 	}
 }

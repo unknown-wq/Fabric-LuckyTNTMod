@@ -6,12 +6,8 @@
 		" X "
 	],
 	"key": {
-		"X": {
-			"item": "minecraft:iron_ingot"
-		},
-		"O": {
-			"item": "minecraft:paper"
-		}
+		"X": "minecraft:iron_ingot",
+		"O": "minecraft:paper"
 	},
 	"result": {
 		"id": "luckytntlib:tnt_config",
