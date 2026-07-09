@@ -292,3 +292,83 @@ types register, mixins apply, and (client) TNT/dynamite render, throw, and explo
 - **DON'T** re-port the library — it is finished; only adapt the mod's call sites to it.
 - **DON'T** invent a method name. If unsure, grep the reference or stop and ask.
 - **DON'T** `@Inject` at HEAD of an abstract method — target its concrete caller.
+
+---
+
+## 8. Token economy — MANDATORY for every agent
+
+1. **Environment first, no downloads.** GitHub release assets are blocked by egress
+   policy (HTTP 403). NEVER run `./gradlew`, never try to download Gradle/Loom
+   distributions — it will fail and waste a whole attempt. Install the vendored
+   distribution once: `./gradle-dist/install.sh` → use `/opt/gradle-9.6.1/bin/gradle`
+   (see §1 for Java 25 install). Verify with `gradle --version` before anything else.
+2. **Mechanical renames are done by a script, not by hand.** Before any hand edits,
+   run the ready-made `port-rename.sh` (repo root) ONCE. If it needs extending, how to
+   write it: take every row of the §4 tables and turn it into a `perl -pi -e 's/…/…/g'`
+   (or `sed -E`) rule over all `tntmod/src/**/*.java` **excluding `*/mixin/*`**
+   (mixin targets must be reworked by hand). Rules in three groups, applied in order:
+   (a) fully-qualified import paths (`net.minecraft.util.math.Vec3d` →
+   `net.minecraft.world.phys.Vec3`), (b) bare class names with `\b` word boundaries
+   (`Vec3d`→`Vec3`, `World`→`Level`, `PlayerEntity`→`Player`, …) — replace the longer
+   names before their substrings, and swap the `Registries`/`RegistryKeys` pair through
+   a temp placeholder so they don't overwrite each other, (c) common method renames
+   (`.getWorld()`→`.level()`, `.setVelocity(`→`.setDeltaMovement(`, …).
+   It is a FIRST PASS: it doesn't need to be perfect — the compiler catches leftovers.
+   Sanity-check with `git diff --stat` and commit it separately before hand fixes.
+3. **Work error-driven, never file-driven.** Do not read files "for context".
+   Loop: `/opt/gradle-9.6.1/bin/gradle compileJava --no-daemon 2>&1 | tee /tmp/errors.txt`
+   → take the first ~30 errors → open ONLY the failing lines (Read with offset/limit)
+   → fix → recompile. Never re-read this guide's tables — grep this file instead.
+4. **Decompiled sources: unpack once.** The setup agent runs `genSources` once and
+   unzips the sources jar to a fixed path (e.g. `/opt/mc-src/`), records the path in
+   `PORT-STATUS.md`. All other agents only `grep -rn` that dir — never re-generate.
+5. **One smoke test.** Only the final agent runs `runServer` (§6); nobody else boots
+   the server.
+
+## 9. Rule: too hard? Disable it, keep the code
+
+If a specific entity/item/effect has complex logic that resists porting (roughly two
+honest attempts failed, or it needs an API with no equivalent found in the lib or
+decompiled source): **do not block the build and do not delete the code.**
+
+- Preferred: comment out its **registration line(s)** so the content simply doesn't
+  exist in game, and stub/comment the broken method bodies so the class still compiles.
+- Or comment out the whole broken block, keeping the original source in place:
+  ```java
+  // TODO(port-26.2): DISABLED — needs manual port (reason: <one line>)
+  /* … original code untouched … */
+  ```
+- Every cut MUST be logged in `PORT-STATUS.md` under "Disabled content" (file, what,
+  why). The goal: build green, server boots, original code preserved for a human.
+
+## 10. Orchestrator plan — fully autonomous loop
+
+The orchestrator NEVER asks the user anything and does not stop until done. It does
+minimal work itself; agents do the porting.
+
+**Step 0 (orchestrator itself):** install toolchain per §8.1/§1; create
+`PORT-STATUS.md` (checklist of §5 areas + "Disabled content" section); run
+`port-rename.sh` per §8.2; commit + push.
+
+**Phases** (each agent gets: its role below, its exact file list, and the order to
+read §0–§5 + §8–§9 of this file and `PORT-STATUS.md` first):
+
+- **Agent A — setup/core:** `tntmod` build files per §1; `genSources` + unpack to
+  `/opt/mc-src/`; fix `registry/*`, `block/*`, `item/*`, `entity/*` until they compile.
+  Everything else depends on this — A runs alone, first.
+- **Agent B — mixins:** the 7 mixins only (§5, top row). Verifies every target against
+  `/opt/mc-src/`. Highest-risk work.
+- **Agent C — client:** renderers (render-state/`submit` model — copy the ported lib
+  renderers), HUD overlay, config GUI.
+- **Agent D — sweeper/finisher:** remaining compile errors (`tnteffects/*`, `feature/*`,
+  data JSON), full `build`, then the single `runServer` smoke test (§6).
+
+B and C run in parallel after A (disjoint files), but must NOT run Gradle
+concurrently in the same checkout — B/C fix by reading errors A/D produced, or
+compile strictly one at a time.
+
+**The loop:** after D, if `build` or `runServer` still fails → collect the error list
+→ spawn a fresh sweeper agent with that list (apply §9 to anything that keeps
+resisting) → repeat until the server logs `Done (…)!` with no errors. After every
+phase: update `PORT-STATUS.md`, commit, push. Done = server boots green, everything
+pushed, `PORT-STATUS.md` lists all disabled content.
