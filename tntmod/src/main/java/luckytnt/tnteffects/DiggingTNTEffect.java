@@ -32,7 +32,7 @@ public class DiggingTNTEffect extends PrimedTNTEffect{
 			BlockPos pos = toBlockPos(entity.getPos().add(0, -y, 0));
 			BlockState blockState = entity.getLevel().getBlockState(pos);
 			FluidState fluidState = entity.getLevel().getFluidState(pos);
-			Optional<Float> explosionResistance = damageCalculator.getExplosionResistance(dummyExplosion, entity.getLevel(), pos, blockState, fluidState);
+			Optional<Float> explosionResistance = damageCalculator.getBlockExplosionResistance(dummyExplosion, entity.getLevel(), pos, blockState, fluidState);
 			if(explosionResistance.isPresent() && explosionResistance.get() > MAX_RESISTANCE) {
 				y += 100f;
 			}

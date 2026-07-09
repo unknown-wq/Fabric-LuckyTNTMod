@@ -52,13 +52,13 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 							CompoundTag tag = elent.getAdditionalPersistentData();
 							tag.putInt("knockbacktime", 40);
 							elent.setAdditionalPersistentData(tag);
-							lent.setDeltaMovement(vec.negate().normalize().scale(5D).add(0, 0.5D, 0));
+							lent.setDeltaMovement(vec.reverse().normalize().scale(5D).add(0, 0.5D, 0));
 						}
 					} else {
 						CompoundTag tag = elent.getAdditionalPersistentData();
 						tag.putInt("knockbacktime", 40);
 						elent.setAdditionalPersistentData(tag);
-						lent.setDeltaMovement(vec.negate().normalize().scale(5D).add(0, 0.5D, 0));
+						lent.setDeltaMovement(vec.reverse().normalize().scale(5D).add(0, 0.5D, 0));
 					}
 				}
 			}
