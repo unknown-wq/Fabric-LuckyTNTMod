@@ -43,7 +43,7 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 						tag.putInt("type", 1);
 						entity.setPersistentData(tag); break;
 			}
-			ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundSource.MASTER, 3, 1);
+			ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.MASTER, 3, 1);
 			entity.setPos(ent.getPos());
 			entity.setOwner(ent.owner());
 			entity.setDeltaMovement(Math.random() * 5 - Math.random() * 5, 0, Math.random() * 5 - Math.random() * 5);

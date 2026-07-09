@@ -7,7 +7,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.ai.TargetPredicate;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 
@@ -16,11 +17,11 @@ public class GhostTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() == 60) {
-			Player player = ent.getLevel().getClosestPlayer((Entity)ent, 100);
+			Player player = ent.getLevel().getNearestPlayer((Entity)ent, 100);
 			if(player != null && player != ent.owner()) {
 				((Entity)ent).setPos(player.getX(), player.getY(), player.getZ());
-			} else {
-				LivingEntity entity = ent.getLevel().getClosestEntity(ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() - 100, ent.y() - 100, ent.z() - 100, ent.x() + 100, ent.y() + 100, ent.z() + 100)), TargetPredicate.createNonAttackable().setBaseMaxDistance(5).ignoreVisibility().ignoreDistanceScalingFactor(), null, ent.x(), ent.y(), ent.z());
+			} else if(ent.getLevel() instanceof ServerLevel sLevel) {
+				LivingEntity entity = sLevel.getNearestEntity(ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() - 100, ent.y() - 100, ent.z() - 100, ent.x() + 100, ent.y() + 100, ent.z() + 100)), TargetingConditions.forNonCombat().range(5).ignoreLineOfSight(), null, ent.x(), ent.y(), ent.z());
 				if(entity != null && entity != ent.owner()) {
 					((Entity)ent).setPos(entity.getX(), entity.getY(), entity.getZ());
 				}

@@ -44,7 +44,7 @@ public class StoneColdEffect extends PrimedTNTEffect {
 				ent.getLevel().setBlock(pos, Blocks.BLUE_ICE.defaultBlockState(), 3);
 			}
 		}
-		ent.getLevel().playSound(null, ent.x(), ent.y(), ent.z(), SoundEvents.BLOCK_STONE_PLACE, SoundSource.BLOCKS, 0.5f, 1);
+		ent.getLevel().playSound(null, ent.x(), ent.y(), ent.z(), SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 0.5f, 1);
 	}
 	
 	@Override
@@ -84,7 +84,7 @@ public class StoneColdEffect extends PrimedTNTEffect {
 		
 		List<LivingEntity> entities = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() - 90, ent.y() - 90, ent.z() - 90, ent.x() + 90, ent.y() + 90, ent.z() + 90));
 		for(LivingEntity lEnt : entities) {
-			lEnt.addStatusEffect(new MobEffectInstance(MobEffects.SLOWNESS, 800, 2));
+			lEnt.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 800, 2));
 		}
 	}
 	

@@ -32,7 +32,7 @@ public class HelixEffect extends PrimedTNTEffect {
 				spiral.setTNTFuse(140);
 				spiral.setDeltaMovement(new Vec3(((Entity)ent).getLookAngle().x, ((Entity)ent).getLookAngle().y, ((Entity)ent).getLookAngle().z).normalize().multiply(ent.getPersistentData().getFloatOr("power", 0f)));
 				ent.getLevel().addFreshEntity(spiral);
-				ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.BLOCK_DISPENSER_LAUNCH, SoundSource.MASTER, 3, 1);
+				ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.DISPENSER_LAUNCH, SoundSource.MASTER, 3, 1);
 				CompoundTag tag = ent.getPersistentData();
 				tag.putFloat("power", ent.getPersistentData().getFloatOr("power", 0f) + 0.35f);
 				ent.setPersistentData(tag);

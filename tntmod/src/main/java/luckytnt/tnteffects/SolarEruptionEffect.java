@@ -22,9 +22,9 @@ public class SolarEruptionEffect extends PrimedTNTEffect {
 					tnt.setPos(ent.getPos());
 					tnt.setOwner(ent.owner());
 					tnt.setDeltaMovement(Math.random() * 3f - Math.random() * 3f, 5 + Math.random() * 2, Math.random() * 3f - Math.random() * 3f);		
-					tnt.setOnFireFor(1000);
+					tnt.igniteForTicks(20000);
 					ent.getLevel().addFreshEntity(tnt);
-					ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.ENTITY_TNT_PRIMED, SoundSource.MASTER, 3, 1);
+					ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.TNT_PRIMED, SoundSource.MASTER, 3, 1);
 				}
 			}
 		}

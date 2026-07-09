@@ -34,3 +34,15 @@ already ported — do not touch it.
   `BlockColorRegistry.register(List.of(BlockTintSources.grass()), CUSTOM_FIREWORK)`). 26.2 has no
   item `ColorProvider` API; item tints are now driven by item model JSON. Only the CUSTOM_FIREWORK
   block item lost its grass tint (cosmetic, non-blocking).
+- `tnteffects/FlowerForestTNTEffect.java` — serverExplosion's biome-overwrite + chunk-resync +
+  feature-gen block (biome loop, `ChunkDataS2CPacket` resync, `ConfiguredFeature.generate`).
+  Why: 26.2-rewritten internals (`ChunkSection`→`LevelChunkSection`, `ReadableContainer`→
+  `PalettedContainerRO`, `PalettedContainer.swapUnsafe`, `networkHandler.sendPacket`→
+  `connection.send` + changed `ChunkDataS2CPacket` ctor, `getWorldChunk`/`getLightingProvider`
+  renamed, `PATCH_GRASS` key absent). Kept the portable cylindrical explosion + grass placement.
+  Class compiles.
+- `tnteffects/AtlantisEffect.java` — serverExplosion's biome-overwrite + chunk-resync + Ocean-Ruin
+  structure generation block (`Structure.createStructureStart`/`StructureStart.place` rewritten,
+  `getStructureAccessor`, `getNoiseConfig`, `BlockBox`, `StructureKeys`). Why: same chunk/biome
+  internals plus heavily-changed worldgen structure API. Kept the portable water/sand terraforming
+  + squid spawning; explosionTick (weather/sound) fully ported. Class compiles.

@@ -72,7 +72,7 @@ public class WitherStormEffect extends PrimedTNTEffect {
 			ent.getLevel().addFreshEntity(skeleton);
 		}
 		
-		ent.getLevel().playSound(null, ent.x(), ent.y(), ent.z(), SoundEvents.ENTITY_WITHER_SPAWN, SoundSource.HOSTILE, 3, 1);
+		ent.getLevel().playSound(null, ent.x(), ent.y(), ent.z(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 3, 1);
 	}
 	
 	@Override

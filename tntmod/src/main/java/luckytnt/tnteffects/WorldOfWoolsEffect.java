@@ -35,6 +35,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.EntityTypes;
 
 public class WorldOfWoolsEffect extends PrimedTNTEffect {
+	// TODO(port-26.2): DISABLED — the map-color→wool-shade classification uses ~60 yarn MapColor
+	// constant names (WHITE, OFF_WHITE, IRON_GRAY, STONE_GRAY, PALE_YELLOW, EMERALD_GREEN,
+	// BRIGHT_TEAL, DIAMOND_BLUE, WATER_BLUE, LAPIS_BLUE, ...) that have no verified 1:1 Mojang
+	// mapping (Mojang uses SNOW / COLOR_* / TERRACOTTA_* / DEEPSLATE). The rest of the effect
+	// (water/coral/seagrass/waterlogged/lava → glass & wool, rings, legs, sheep) is preserved.
+	/*
 	public static List<MapColor> WHITE = List.of(MapColor.WHITE, MapColor.OFF_WHITE, MapColor.TERRACOTTA_WHITE, MapColor.WHITE_GRAY);
 	public static List<MapColor> LIGHT_GRAY = List.of(MapColor.IRON_GRAY, MapColor.LIGHT_BLUE_GRAY, MapColor.LIGHT_GRAY);
 	public static List<MapColor> GRAY = List.of(MapColor.STONE_GRAY, MapColor.GRAY, MapColor.TERRACOTTA_CYAN, MapColor.DEEPSLATE_GRAY);
@@ -51,7 +57,8 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 	public static List<MapColor> PURPLE = List.of(MapColor.PURPLE, MapColor.TERRACOTTA_BLUE, MapColor.DARK_DULL_PINK);
 	public static List<MapColor> MAGENTA = List.of(MapColor.MAGENTA, MapColor.TERRACOTTA_MAGENTA, MapColor.TERRACOTTA_PURPLE, MapColor.DULL_PINK);
 	public static List<MapColor> PINK = List.of(MapColor.PINK);
-	
+	*/
+
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
 		List<Pair<BlockPos, Block>> blocks = new ArrayList<>();
@@ -60,6 +67,8 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				// TODO(port-26.2): DISABLED — map-color→wool-shade classification (see field block above).
+				/*
 				MapColor color = state.getMapColor(level, pos);
 				if(color != MapColor.CLEAR & !state.getCollisionShape(level, pos, CollisionContext.absent()).isEmpty() && state.getBlock().getExplosionResistance() <= 200) {
 					if(WHITE.contains(color)) {
@@ -96,7 +105,8 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 						blocks.add(Pair.of(pos, Blocks.PINK_WOOL));
 					}
 				}
-				
+				*/
+
 				if((state.is(Blocks.WATER) || state.is(Blocks.BUBBLE_COLUMN) || state.getBlock() instanceof BaseCoralPlantTypeBlock) && state.getBlock().getExplosionResistance() <= 200) {
 					blocks.add(Pair.of(pos, Blocks.BLUE_STAINED_GLASS));
 				}

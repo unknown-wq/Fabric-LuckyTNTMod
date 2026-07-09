@@ -7,7 +7,7 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.AbstractFireBlock;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -48,7 +48,7 @@ public class HellfireTNTEffect extends PrimedTNTEffect{
 						level.setBlockAndUpdate(pos, Blocks.NETHERRACK.defaultBlockState());
 						if(Math.random() < 0.1f) {
 							if(level.getBlockState(pos.above()).isAir()) {
-								level.setBlockAndUpdate(pos.above(), AbstractFireBlock.getState(level, pos.above()));
+								level.setBlockAndUpdate(pos.above(), BaseFireBlock.getState(level, pos.above()));
 							}
 						}
 					}
@@ -62,7 +62,7 @@ public class HellfireTNTEffect extends PrimedTNTEffect{
 		for(int i = 0; i < ghastCount; i++) {
 			Ghast ghast = new Ghast(EntityTypes.GHAST, entity.getLevel());
 			ghast.setPos(entity.getPos().add(0, 20 + Math.random() * 20, 0));
-			entity.getLevel().playSound(ghast, ghast.getBlockPos(), SoundEvents.ENTITY_GHAST_HURT, SoundSource.HOSTILE, 3f, 1f);
+			entity.getLevel().playSound(ghast, ghast.blockPosition(), SoundEvents.GHAST_HURT, SoundSource.HOSTILE, 3f, 1f);
 			entity.getLevel().addFreshEntity(ghast);
 		}
 	}

@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FarmlandBlock;
-import net.minecraft.world.item.AutomaticItemPlacementContext;
+import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.tags.BlockTags;
@@ -37,7 +37,7 @@ public class FarmingTNTEffect extends PrimedTNTEffect{
 			
 			@Override
 			public boolean conditionMet(Level level, BlockPos pos, BlockState state, double distance) {
-				return (state.isCollisionShapeFullBlock(level, pos) || state.isFaceSturdy(level, pos, Direction.UP)) && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.above()).canReplace(new AutomaticItemPlacementContext(level, pos.above(), Direction.DOWN, ItemStack.EMPTY, Direction.UP)) || !level.getBlockState(pos.above()).isCollisionShapeFullBlock(level, pos.above()) || level.getBlockState(pos.above()).is(BlockTags.FLOWERS)) && (!state.is(BlockTags.LEAVES) && !state.is(BlockTags.LOGS) && state.getBlock().getExplosionResistance() < 100);
+				return (state.isCollisionShapeFullBlock(level, pos) || state.isFaceSturdy(level, pos, Direction.UP)) && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.above()).canBeReplaced(new DirectionalPlaceContext(level, pos.above(), Direction.DOWN, ItemStack.EMPTY, Direction.UP)) || !level.getBlockState(pos.above()).isCollisionShapeFullBlock(level, pos.above()) || level.getBlockState(pos.above()).is(BlockTags.FLOWERS)) && (!state.is(BlockTags.LEAVES) && !state.is(BlockTags.LOGS) && state.getBlock().getExplosionResistance() < 100);
 			}
 		}, new IForEachBlockExplosionEffect() {
 			

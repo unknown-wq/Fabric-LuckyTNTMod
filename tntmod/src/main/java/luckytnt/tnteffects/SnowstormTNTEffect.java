@@ -14,6 +14,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -50,43 +52,43 @@ public class SnowstormTNTEffect extends PrimedTNTEffect {
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() % 4 == 0) {
 			Vec3 vec31 = new Vec3(0.5D, 1D, 0D).normalize();
-			Snowball ball1 = new Snowball(ent.getLevel(), ent.x() + 0.5D, ent.y() + 1D, ent.z());
-			ball1.setDeltaMovement(vec31.x, vec31.y, vec31.z, 1f, 5f);
+			Snowball ball1 = new Snowball(ent.getLevel(), ent.x() + 0.5D, ent.y() + 1D, ent.z(), new ItemStack(Items.SNOWBALL));
+			ball1.shoot(vec31.x, vec31.y, vec31.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball1);
 			
 			Vec3 vec32 = new Vec3(-0.5D, 1D, 0D).normalize();
-			Snowball ball2 = new Snowball(ent.getLevel(), ent.x() - 0.5D, ent.y() + 1D, ent.z());
-			ball2.setDeltaMovement(vec32.x, vec32.y, vec32.z, 1f, 5f);
+			Snowball ball2 = new Snowball(ent.getLevel(), ent.x() - 0.5D, ent.y() + 1D, ent.z(), new ItemStack(Items.SNOWBALL));
+			ball2.shoot(vec32.x, vec32.y, vec32.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball2);
 			
 			Vec3 vec33 = new Vec3(0D, 1D, 0.5D).normalize();
-			Snowball ball3 = new Snowball(ent.getLevel(), ent.x(), ent.y() + 1D, ent.z() + 0.5D);
-			ball3.setDeltaMovement(vec33.x, vec33.y, vec33.z, 1f, 5f);
+			Snowball ball3 = new Snowball(ent.getLevel(), ent.x(), ent.y() + 1D, ent.z() + 0.5D, new ItemStack(Items.SNOWBALL));
+			ball3.shoot(vec33.x, vec33.y, vec33.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball3);
 			
 			Vec3 vec34 = new Vec3(0D, 1D, -0.5D).normalize();
-			Snowball ball4 = new Snowball(ent.getLevel(), ent.x(), ent.y() + 1D, ent.z() - 0.5D);
-			ball4.setDeltaMovement(vec34.x, vec34.y, vec34.z, 1f, 5f);
+			Snowball ball4 = new Snowball(ent.getLevel(), ent.x(), ent.y() + 1D, ent.z() - 0.5D, new ItemStack(Items.SNOWBALL));
+			ball4.shoot(vec34.x, vec34.y, vec34.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball4);
 			
 			Vec3 vec35 = new Vec3(0.5D, 1D, 0.5D).normalize();
-			Snowball ball5 = new Snowball(ent.getLevel(), ent.x() + 0.5D, ent.y() + 1D, ent.z() + 0.5D);
-			ball5.setDeltaMovement(vec35.x, vec35.y, vec35.z, 1f, 5f);
+			Snowball ball5 = new Snowball(ent.getLevel(), ent.x() + 0.5D, ent.y() + 1D, ent.z() + 0.5D, new ItemStack(Items.SNOWBALL));
+			ball5.shoot(vec35.x, vec35.y, vec35.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball5);
 			
 			Vec3 vec36 = new Vec3(-0.5D, 1D, 0.5D).normalize();
-			Snowball ball6 = new Snowball(ent.getLevel(), ent.x() - 0.5D, ent.y() + 1D, ent.z() + 0.5D);
-			ball6.setDeltaMovement(vec36.x, vec36.y, vec36.z, 1f, 5f);
+			Snowball ball6 = new Snowball(ent.getLevel(), ent.x() - 0.5D, ent.y() + 1D, ent.z() + 0.5D, new ItemStack(Items.SNOWBALL));
+			ball6.shoot(vec36.x, vec36.y, vec36.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball6);
 			
 			Vec3 vec37 = new Vec3(0.5D, 1D, -0.5D).normalize();
-			Snowball ball7 = new Snowball(ent.getLevel(), ent.x() + 0.5D, ent.y() + 1D, ent.z() - 0.5D);
-			ball7.setDeltaMovement(vec37.x, vec37.y, vec37.z, 1f, 5f);
+			Snowball ball7 = new Snowball(ent.getLevel(), ent.x() + 0.5D, ent.y() + 1D, ent.z() - 0.5D, new ItemStack(Items.SNOWBALL));
+			ball7.shoot(vec37.x, vec37.y, vec37.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball7);
 			
 			Vec3 vec38 = new Vec3(-0.5D, 1D, -0.5D).normalize();
-			Snowball ball8 = new Snowball(ent.getLevel(), ent.x() - 0.5D, ent.y() + 1D, ent.z() - 0.5D);
-			ball8.setDeltaMovement(vec38.x, vec38.y, vec38.z, 1f, 5f);
+			Snowball ball8 = new Snowball(ent.getLevel(), ent.x() - 0.5D, ent.y() + 1D, ent.z() - 0.5D, new ItemStack(Items.SNOWBALL));
+			ball8.shoot(vec38.x, vec38.y, vec38.z, 1f, 5f);
 			ent.getLevel().addFreshEntity(ball8);
 		}
 	}

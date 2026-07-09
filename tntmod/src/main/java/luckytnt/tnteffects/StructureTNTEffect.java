@@ -123,7 +123,7 @@ public class StructureTNTEffect extends PrimedTNTEffect {
 		boolean bool = false;
 		List<StructureStates> list = Arrays.asList(StructureStates.values());
 		for(StructureStates state : list) {
-			if(ent.getPersistentData().getStringOr("structure", "").equals(state.asString())) {
+			if(ent.getPersistentData().getStringOr("structure", "").equals(state.getSerializedName())) {
 				bool = true;
 			}
 		}

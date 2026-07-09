@@ -43,13 +43,13 @@ public class SwapTNTEffect extends PrimedTNTEffect{
 					Vec3 pos2 = ent2.position();
 					
 					ent1.setPos(pos2);
-					entity.getLevel().playSound(null, toBlockPos(pos2), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundSource.MASTER, 2, 1);
+					entity.getLevel().playSound(null, toBlockPos(pos2), SoundEvents.ENDERMAN_TELEPORT, SoundSource.MASTER, 2, 1);
 					for(int count = 0; count < 40; count++) {
 						entity.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(0f*255)<<8)|(int)(1f*255), 1f), pos2.x + Math.random() * ent1.getBbWidth() - Math.random() * ent1.getBbWidth(), pos2.y + Math.random() * ent1.getBbHeight(), pos2.z + Math.random() * ent1.getBbWidth() - Math.random() * ent1.getBbWidth(), 0, 0, 0);
 					}
 					
 					ent2.setPos(pos1);
-					entity.getLevel().playSound(null, toBlockPos(pos1), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundSource.MASTER, 2, 1);
+					entity.getLevel().playSound(null, toBlockPos(pos1), SoundEvents.ENDERMAN_TELEPORT, SoundSource.MASTER, 2, 1);
 					for(int count = 0; count < 40; count++) {
 						entity.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(0f*255)<<8)|(int)(1f*255), 1f), pos1.x + Math.random() * ent2.getBbWidth() - Math.random() * ent2.getBbWidth(), pos1.y + Math.random() * ent2.getBbHeight(), pos1.z + Math.random() * ent2.getBbWidth() - Math.random() * ent2.getBbWidth(), 0, 0, 0);
 					}

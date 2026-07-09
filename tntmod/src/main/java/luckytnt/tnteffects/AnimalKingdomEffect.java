@@ -342,13 +342,13 @@ public class AnimalKingdomEffect extends PrimedTNTEffect {
 		for(Mob mob : list) {
 			int offX = new Random().nextInt(101) - 50;
 			int offZ = new Random().nextInt(101) - 50;
-			for(int y = ent.getLevel().getTopY(); y > ent.getLevel().getBottomY(); y--) {
+			for(int y = ent.getLevel().getMaxY(); y > ent.getLevel().getMinY(); y--) {
 				BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, y, ent.z() + offZ));
 				BlockState state = ent.getLevel().getBlockState(pos);
-				if(Block.isFaceSturdy(ent.getLevel().getBlockState(pos.below()).getCollisionShape(ent.getLevel(), pos.below()), Direction.UP) && !Block.isFaceSturdy(state.getCollisionShape(ent.getLevel(), pos), Direction.UP)) {
+				if(Block.isFaceFull(ent.getLevel().getBlockState(pos.below()).getCollisionShape(ent.getLevel(), pos.below()), Direction.UP) && !Block.isFaceFull(state.getCollisionShape(ent.getLevel(), pos), Direction.UP)) {
 					mob.setPos(pos.getX(), pos.getY(), pos.getZ());
 					if(ent.getLevel() instanceof ServerLevel sl) {
-						mob.initialize(sl, ent.getLevel().getLocalDifficulty(pos), EntitySpawnReason.MOB_SUMMONED, null);
+						mob.finalizeSpawn(sl, sl.getCurrentDifficultyAt(pos), EntitySpawnReason.MOB_SUMMONED, null);
 					}
 					ent.getLevel().addFreshEntity(mob);
 					break;

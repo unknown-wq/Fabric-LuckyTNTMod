@@ -24,27 +24,27 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.structure.NetherFossilGenerator;
+//import net.minecraft.structure.NetherFossilGenerator;  // TODO(port-26.2): DISABLED yarn worldgen
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.math.intprovider.UniformIntProvider;
+//import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.gen.YOffset;
-import net.minecraft.world.gen.blockpredicate.BlockPredicate;
+//import net.minecraft.world.gen.YOffset;
+//import net.minecraft.world.gen.blockpredicate.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.DiskFeatureConfig;
+//import net.minecraft.world.gen.feature.DiskFeatureConfig;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.gen.feature.NetherConfiguredFeatures;
-import net.minecraft.world.gen.feature.TreeConfiguredFeatures;
-import net.minecraft.world.gen.heightprovider.ConstantHeightProvider;
+//import net.minecraft.world.gen.feature.NetherConfiguredFeatures;
+//import net.minecraft.world.gen.feature.TreeConfiguredFeatures;
+//import net.minecraft.world.gen.heightprovider.ConstantHeightProvider;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
-import net.minecraft.world.gen.stateprovider.PredicatedStateProvider;
-import net.minecraft.world.level.levelgen.structure.structures.NetherFossilStructure;
+//import net.minecraft.world.gen.stateprovider.PredicatedStateProvider;
+//import net.minecraft.world.level.levelgen.structure.structures.NetherFossilStructure;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 public class NetherTNTEffect extends PrimedTNTEffect {
@@ -126,6 +126,8 @@ public class NetherTNTEffect extends PrimedTNTEffect {
 			}
 		});
 		
+		// TODO(port-26.2): DISABLED — nether biome ConfiguredFeature.generate, DiskFeatureConfig and NetherFossil structure use yarn worldgen APIs with no 1:1 port here
+		/*
 		ImprovedExplosion explosion5 = new ImprovedExplosion(ent.getLevel(), new Vec3(ent.x(), 0, ent.z()), 150);
 		explosion5.doBlockExplosion(1f, 0.8f, 1f, 0.2f, true, new IForEachBlockExplosionEffect() {
 			
@@ -188,8 +190,9 @@ public class NetherTNTEffect extends PrimedTNTEffect {
 				}
 			}
 		});
+		*/
 	}
-	
+
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() % 3 == 0) {
@@ -223,9 +226,11 @@ public class NetherTNTEffect extends PrimedTNTEffect {
 		return 180;
 	}
 	
+	// TODO(port-26.2): DISABLED — NetherFossilStructure/ChunkRandom/NetherFossilGenerator are yarn worldgen APIs with no 1:1 port here
+	/*
 	public class NetherFossil extends NetherFossilStructure {
 		private final Level level;
-		
+
 		public NetherFossil(Structure.Config config, HeightProvider height, Level level) {
 			super(config, height);
 			this.level = level;
@@ -257,4 +262,5 @@ public class NetherTNTEffect extends PrimedTNTEffect {
 			}
 		}
 	}
+	*/
 }

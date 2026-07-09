@@ -29,8 +29,8 @@ public class TheRevolutionEffect extends PrimedTNTEffect {
 					spiral_tnt.setTNTFuse(140);
 					spiral_tnt.setPos(entity.x(), entity.y(), entity.z());
 					spiral_tnt.setOwner(entity.owner());
-					spiral_tnt.setDeltaMovement(ent.getRotationVector().normalize().multiply((double)entity.getPersistentData().getFloatOr("spiral_power", 0f)));
-					entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.BLOCK_DISPENSER_LAUNCH, SoundSource.MASTER, 3, 1);
+					spiral_tnt.setDeltaMovement(ent.getLookAngle().normalize().multiply((double)entity.getPersistentData().getFloatOr("spiral_power", 0f)));
+					entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.DISPENSER_LAUNCH, SoundSource.MASTER, 3, 1);
 					entity.getLevel().addFreshEntity(spiral_tnt);
 					ent.setYRot(ent.getYRot() + 60f);
 				}

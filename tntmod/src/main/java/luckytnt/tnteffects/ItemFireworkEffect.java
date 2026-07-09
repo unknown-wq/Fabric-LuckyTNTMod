@@ -8,8 +8,9 @@ import luckytntlib.item.LDynamiteItem;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.PotionContentsComponent;
+// TODO(port-26.2): DISABLED imports — yarn component API (see serverExplosion)
+//import net.minecraft.component.DataComponentTypes;
+//import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -20,7 +21,7 @@ import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.projectile.arrow.SpectralArrow;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEgg;
-import net.minecraft.entity.projectile.thrown.ThrownPotion;
+//import net.minecraft.entity.projectile.thrown.ThrownPotion;  // TODO(port-26.2): DISABLED — ThrownPotion removed/split in 26.2
 import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
 import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.entity.vehicle.boat.ChestBoat;
@@ -47,6 +48,9 @@ public class ItemFireworkEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
+		// TODO(port-26.2): DISABLED — Boat.Type/setVariant removed, Fireball is abstract, ThrownPotion removed, and PotionContents/DataComponents APIs changed; needs manual re-port of entity spawning
+		if(true) return;
+		/*
 		if(entity instanceof PrimedItemFirework ent) {
 			Item item = ent.item;
 			ItemStack stack = ent.stack == null ? ItemStack.EMPTY : ent.stack;
@@ -154,8 +158,9 @@ public class ItemFireworkEffect extends PrimedTNTEffect {
 				}
 			}
 		}
+		*/
 	}
-	
+
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		ent.getLevel().addParticle(ParticleTypes.FLAME, ent.x(), ent.y(), ent.z(), 0, 0, 0);

@@ -96,7 +96,7 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 	}
 	
 	public void addFallingBlock(double x, double y, double z, double mX, double mY, double mZ, BlockState state, IExplosiveEntity ent) {
-		FallingBlockEntity block = FallingBlockEntity.spawnFromBlock(ent.getLevel(), new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), state);
+		FallingBlockEntity block = FallingBlockEntity.fall(ent.getLevel(), new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), state);
 		block.dropItem = false;
 		block.setDeltaMovement(mX, mY, mZ);
 		ent.getLevel().addFreshEntity(block);

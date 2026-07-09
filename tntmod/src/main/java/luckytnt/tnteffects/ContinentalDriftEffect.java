@@ -66,7 +66,7 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 						BlockPos pos = start.offset(toBlockPos(new Vec3(i * vec.x + offX, 0, i * vec.z + offZ)));
 						if(distance <= 7) {
 							if(Math.random() > 0.1D) {
-								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
+								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
 								if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
 									ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
@@ -74,7 +74,7 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 						}
 						if(distance <= 9 && distance > 7) {
 							if(Math.random() > 0.5D) {
-								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
+								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
 								if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
 									ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
@@ -82,7 +82,7 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 						}
 						if(distance <= 10 && distance > 9) {
 							if(Math.random() > 0.9D) {
-								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
+								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
 								if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
 									ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
@@ -99,7 +99,7 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 						BlockPos pos = start2.offset(toBlockPos(new Vec3(i * vec2.x + offX, 0, i * vec2.z + offZ)));
 						if(distance <= 7) {
 							if(Math.random() > 0.1D) {
-								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
+								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
 								if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
 									ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
@@ -107,7 +107,7 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 						}
 						if(distance <= 9 && distance > 7) {
 							if(Math.random() > 0.5D) {
-								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
+								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
 								if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
 									ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
@@ -115,7 +115,7 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 						}
 						if(distance <= 10 && distance > 9) {
 							if(Math.random() > 0.9D) {
-								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
+								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
 								if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
 									ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}

@@ -50,7 +50,7 @@ public class FieryHellEffect extends PrimedTNTEffect {
 						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 						level.setBlock(pos, Blocks.NETHERRACK.defaultBlockState(), 3);
 						if(Math.random() < 0.1f) {
-							if(!Block.isFaceSturdy(stateTop.getCollisionShape(level, posTop), Direction.UP)) {
+							if(!Block.isFaceFull(stateTop.getCollisionShape(level, posTop), Direction.UP)) {
 								level.setBlock(posTop, Blocks.FIRE.defaultBlockState(), 3);
 							}
 						}

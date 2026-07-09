@@ -57,7 +57,7 @@ public class EarthquakeTNTEffect extends PrimedTNTEffect{
 						BlockPos pos = start.offset(toBlockPos(new Vec3(i * vec.x + offX, 0, i * vec.z + offZ)));
 						if(distance <= 3) {
 							if(Math.random() > 0.1D) {
-								BlockPos pos1 = new BlockPos(pos.getX(), entity.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
+								BlockPos pos1 = new BlockPos(pos.getX(), entity.getLevel().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
 								if(entity.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
 									entity.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
@@ -65,7 +65,7 @@ public class EarthquakeTNTEffect extends PrimedTNTEffect{
 						}
 						if(distance <= 5 && distance > 3) {
 							if(Math.random() > 0.5D) {
-								BlockPos pos1 = new BlockPos(pos.getX(), entity.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
+								BlockPos pos1 = new BlockPos(pos.getX(), entity.getLevel().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
 								if(entity.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
 									entity.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
@@ -73,7 +73,7 @@ public class EarthquakeTNTEffect extends PrimedTNTEffect{
 						}
 						if(distance <= 6 && distance > 5) {
 							if(Math.random() > 0.9D) {
-								BlockPos pos1 = new BlockPos(pos.getX(), entity.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
+								BlockPos pos1 = new BlockPos(pos.getX(), entity.getLevel().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
 								if(entity.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
 									entity.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}

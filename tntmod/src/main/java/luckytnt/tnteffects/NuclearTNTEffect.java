@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.block.PlantBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -48,7 +48,7 @@ public class NuclearTNTEffect extends PrimedTNTEffect{
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), strength * 3, new IForEachBlockExplosionEffect() {		
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock() instanceof PlantBlock || state.getBlock() instanceof LeavesBlock) {
+				if(state.getBlock() instanceof VegetationBlock || state.getBlock() instanceof LeavesBlock) {
 					state.getBlock().wasExploded((ServerLevel)level, pos, explosion);
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}

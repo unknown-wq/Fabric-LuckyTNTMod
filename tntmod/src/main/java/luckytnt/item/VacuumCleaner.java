@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
-import net.minecraft.world.item.TooltipDisplay;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
@@ -21,7 +21,7 @@ public class VacuumCleaner extends Item {
 	public int soundCooldown = 0;
 
 	public VacuumCleaner() {
-		super(new Item.Properties().stacksTo(1).durability(1000));
+		super(new Item.Properties().stacksTo(1).durability(1000).setId(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.Identifier.fromNamespaceAndPath(luckytnt.LuckyTNTMod.MODID, "vacuum_cleaner"))));
 	}
 
 	@Override

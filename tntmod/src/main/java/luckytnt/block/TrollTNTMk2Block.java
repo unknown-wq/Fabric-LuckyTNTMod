@@ -10,10 +10,13 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -40,43 +43,43 @@ public class TrollTNTMk2Block extends LTNTBlock{
 		if (oldState.is(state.getBlock())) {
 			return;
 		}
-		if (world.isReceivingRedstonePower(pos)) {
+		if (world.hasNeighborSignal(pos)) {
 			placeSurroundingBlocks(world, pos.getX(), pos.getY(), pos.getZ());
 			world.removeBlock(pos, false);
 		}
 	}
 
 	@Override
-	public void neighborUpdate(BlockState state, Level world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-		if (world.isReceivingRedstonePower(pos)) {
+	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block sourceBlock, Orientation orientation, boolean notify) {
+		if (world.hasNeighborSignal(pos)) {
 			placeSurroundingBlocks(world, pos.getX(), pos.getY(), pos.getZ());
 			world.removeBlock(pos, false);
 		}
 	}
 
 	@Override
-	public BlockState onBreak(Level world, BlockPos pos, BlockState state, Player player) {
+	public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
 		if (!world.isClientSide()) {
 			explode(world, false, pos.getX(), pos.getY(), pos.getZ(), null);
 		}
-		
-		spawnBreakParticles(world, player, pos, state);
-        if (state.is(BlockTags.GUARDED_BY_PIGLINS)) {
-            PiglinAi.onGuardedBlockInteracted(player, false);
+
+		spawnDestroyParticles(world, player, pos, state);
+        if (state.is(BlockTags.GUARDED_BY_PIGLINS) && world instanceof ServerLevel serverLevel) {
+            PiglinAi.angerNearbyPiglins(serverLevel, player, false);
         }
-        world.emitGameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Emitter.of(player, state));
+        world.gameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Context.of(player, state));
         return state;
 	}
-	
+
 	@Nullable
 	public PrimedLTNT explode(Level level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
 		if(TNT != null) {
-			PrimedLTNT tnt = TNT.get().create(level);
+			PrimedLTNT tnt = TNT.get().create(level, EntitySpawnReason.TRIGGERED);
 			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(Mth.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
 			tnt.setPos(x + 0.5f, y, z + 0.5f);
 			tnt.setOwner(igniter);
 			level.addFreshEntity(tnt);
-			level.playSound(null, new BlockPos((int)x, (int)y, (int)z), SoundEvents.ENTITY_TNT_PRIMED, SoundSource.MASTER, 1, 1);
+			level.playSound(null, new BlockPos((int)x, (int)y, (int)z), SoundEvents.TNT_PRIMED, SoundSource.MASTER, 1, 1);
 			if(level.getBlockState(new BlockPos((int)x, (int)y, (int)z)).getBlock() == this) {
 				level.setBlock(new BlockPos((int)x, (int)y, (int)z), Blocks.AIR.defaultBlockState(), 3);
 			}
@@ -90,26 +93,26 @@ public class TrollTNTMk2Block extends LTNTBlock{
 		ItemStack itemStack = player.getItemInHand(hand);
 		if (itemStack.is(Items.FLINT_AND_STEEL) || itemStack.is(Items.FIRE_CHARGE)) {
 			placeSurroundingBlocks(world, pos.getX(), pos.getY(), pos.getZ());
-			world.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.NOTIFY_ALL_AND_REDRAW);
+			world.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
 			Item item = itemStack.getItem();
 			if (!player.isCreative()) {
 				if (itemStack.is(Items.FLINT_AND_STEEL)) {
-					itemStack.damage(1, player, LivingEntity.getSlotForHand(hand));
+					itemStack.hurtAndBreak(1, player, hand);
 				} else {
 					itemStack.shrink(1);
 				}
 			}
-			player.incrementStat(Stats.USED.getOrCreateStat(item));
-			return InteractionResult.success(world.isClientSide());
+			player.awardStat(Stats.ITEM_USED.get(item));
+			return InteractionResult.SUCCESS;
 		}
-		return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		return InteractionResult.TRY_WITH_EMPTY_HAND;
 	}
 
 	@Override
 	public void onProjectileHit(Level world, BlockState state, BlockHitResult hit, Projectile projectile) {
-		if (!world.isClientSide()) {
+		if (world instanceof ServerLevel serverLevel) {
 			BlockPos blockPos = hit.getBlockPos();
-			if (projectile.isOnFire() && projectile.canModifyAt(world, blockPos)) {
+			if (projectile.isOnFire() && projectile.mayInteract(serverLevel, blockPos)) {
 				placeSurroundingBlocks(world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
 				world.removeBlock(blockPos, false);
 			}

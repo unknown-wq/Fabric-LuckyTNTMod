@@ -11,23 +11,24 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Explosion;
 
 public class UraniumOreBlock extends Block {
-	
+
 	public UraniumOreBlock(BlockBehaviour.Properties properties) {
 		super(properties);
 	}
-	
+
 	@Override
-	public List<ItemStack> getDroppedStacks(BlockState state, LootParams.Builder builder) {
+	public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
 		return Collections.singletonList(new ItemStack(this, 1));
 	}
-	
+
     @Override
-    public void onDestroyedByExplosion(Level level, BlockPos pos, Explosion explosion) {
+    public void wasExploded(ServerLevel level, BlockPos pos, Explosion explosion) {
     	level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
     	ImprovedExplosion explo = new ImprovedExplosion(level, new Vec3(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f), 10);
     	explo.doEntityExplosion(1.5f, true);

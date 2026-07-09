@@ -57,7 +57,7 @@ public class WastelandTNTEffect extends PrimedTNTEffect {
 							if(state.getBlock() instanceof LiquidBlock || Materials.isWaterPlant(state) || state.is(Blocks.BUBBLE_COLUMN)) {
 								ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							}
-							if(state.contains(BlockStateProperties.WATERLOGGED) && state.get(BlockStateProperties.WATERLOGGED)) {
+							if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
 								ent.getLevel().setBlock(pos, state.setValue(BlockStateProperties.WATERLOGGED, false), 3);
 							}
 							if(dryArea) {
