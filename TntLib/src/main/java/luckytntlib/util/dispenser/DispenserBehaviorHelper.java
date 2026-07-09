@@ -6,40 +6,40 @@ import luckytntlib.block.LTNTBlock;
 import luckytntlib.entity.LTNTMinecart;
 import luckytntlib.item.LDynamiteItem;
 import luckytntlib.item.LTNTMinecartItem;
-import net.minecraft.block.AbstractRailBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DispenserBlock;
-import net.minecraft.block.dispenser.DispenserBehavior;
-import net.minecraft.block.dispenser.ItemDispenserBehavior;
-import net.minecraft.block.enums.RailShape;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.util.math.BlockPointer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Position;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.RailShape;
+import net.minecraft.world.phys.Vec3;
 
 /**
- * Used to register default {@link DispenserBehavior}s for {@link LTNTBlock}s, {@link LDynamiteItem}s and {@link LTNTMinecartItem}s
+ * Used to register default {@link DispenseItemBehavior}s for {@link LTNTBlock}s, {@link LDynamiteItem}s and {@link LTNTMinecartItem}s
  */
 public class DispenserBehaviorHelper {
-	
+
 	public static void registerTNTBlockDispenserBehavior(Supplier<LTNTBlock> tnt) {
 		LTNTBlock block = tnt.get();
-		
-		DispenserBehavior behaviour = new DispenserBehavior() {
-			
+
+		DispenseItemBehavior behaviour = new DispenseItemBehavior() {
+
 			@Override
-			public ItemStack dispense(BlockPointer source, ItemStack stack) {
-				World level = source.world();
-				Position p = DispenserBlock.getOutputLocation(source);
-				BlockPos pos = new BlockPos(MathHelper.floor(p.getX()), MathHelper.floor(p.getY()), MathHelper.floor(p.getZ()));
+			public ItemStack dispense(BlockSource source, ItemStack stack) {
+				Level level = source.level();
+				Position p = DispenserBlock.getDispensePosition(source);
+				BlockPos pos = new BlockPos(Mth.floor(p.x()), Mth.floor(p.y()), Mth.floor(p.z()));
 				block.explode(level, false, pos.getX(), pos.getY(), pos.getZ(), null);
-				stack.decrement(1);
+				stack.shrink(1);
 				return stack;
 			}
 		};
@@ -47,53 +47,53 @@ public class DispenserBehaviorHelper {
 	}
 
 	public static void registerDynamiteDispenserBehavior(Supplier<LDynamiteItem> dynamite) {
-    		LDynamiteItem item = dynamite.get();
-    		
-    		DispenserBehavior behaviour = new DispenserBehavior() {
-				
+			LDynamiteItem item = dynamite.get();
+
+			DispenseItemBehavior behaviour = new DispenseItemBehavior() {
+
 				@Override
-				public ItemStack dispense(BlockPointer source, ItemStack stack) {
-					World level = source.world();
-					Vec3d dispenserPos = new Vec3d(source.pos().getX() + 0.5f, source.pos().getY() + 0.5f, source.pos().getZ() + 0.5f);
-					Position pos = DispenserBlock.getOutputLocation(source);
-					item.shoot(level, pos.getX(), pos.getY(), pos.getZ(), new Vec3d(pos.getX(), pos.getY(), pos.getZ()).add(-dispenserPos.getX(), -dispenserPos.getY(), -dispenserPos.getZ()), 2, null);
-					stack.decrement(1);
+				public ItemStack dispense(BlockSource source, ItemStack stack) {
+					Level level = source.level();
+					Vec3 dispenserPos = new Vec3(source.pos().getX() + 0.5f, source.pos().getY() + 0.5f, source.pos().getZ() + 0.5f);
+					Position pos = DispenserBlock.getDispensePosition(source);
+					item.shoot(level, pos.x(), pos.y(), pos.z(), new Vec3(pos.x(), pos.y(), pos.z()).add(-dispenserPos.x(), -dispenserPos.y(), -dispenserPos.z()), 2, null);
+					stack.shrink(1);
 					return stack;
 				}
 			};
 			DispenserBlock.registerBehavior(item, behaviour);
 	}
-	
+
 	public static void registerMinecartDispenserBehavior(Supplier<LTNTMinecartItem> minecart) {
 		LTNTMinecartItem item = minecart.get();
-		
-		DispenserBehavior behaviour = new DispenserBehavior() {
-			
+
+		DispenseItemBehavior behaviour = new DispenseItemBehavior() {
+
 			@Override
-			public ItemStack dispense(BlockPointer source, ItemStack stack) {
-				Direction direction = source.state().get(DispenserBlock.FACING);
-				World level = source.world();
-				double x = source.centerPos().getX() + (double) direction.getOffsetX() * 1.125D;
-				double y = Math.floor(source.centerPos().getY()) + (double) direction.getOffsetY();
-				double z = source.centerPos().getZ() + (double) direction.getOffsetZ() * 1.125D;
-				BlockPos pos = source.pos().offset(direction);
+			public ItemStack dispense(BlockSource source, ItemStack stack) {
+				Direction direction = source.state().getValue(DispenserBlock.FACING);
+				Level level = source.level();
+				double x = source.center().x() + (double) direction.getStepX() * 1.125D;
+				double y = Math.floor(source.center().y()) + (double) direction.getStepY();
+				double z = source.center().z() + (double) direction.getStepZ() * 1.125D;
+				BlockPos pos = source.pos().relative(direction);
 				BlockState state = level.getBlockState(pos);
-				RailShape rail = state.getBlock() instanceof AbstractRailBlock ? state.get(((AbstractRailBlock)state.getBlock()).getShapeProperty()) : RailShape.NORTH_SOUTH;
+				RailShape rail = state.getBlock() instanceof BaseRailBlock ? state.getValue(((BaseRailBlock)state.getBlock()).getShapeProperty()) : RailShape.NORTH_SOUTH;
 				double railHeight;
-				if (state.isIn(BlockTags.RAILS)) {
-					if (rail.isAscending()) {
+				if (state.is(BlockTags.RAILS)) {
+					if (rail.isSlope()) {
 						railHeight = 0.6D;
 					} else {
 						railHeight = 0.1D;
 					}
 				} else {
-					if (!state.isAir() || !level.getBlockState(pos.down()).isIn(BlockTags.RAILS)) {
-						return new ItemDispenserBehavior().dispense(source, stack);
+					if (!state.isAir() || !level.getBlockState(pos.below()).is(BlockTags.RAILS)) {
+						return new DefaultDispenseItemBehavior().dispense(source, stack);
 					}
 
-					BlockState stateDown = level.getBlockState(pos.down());
-					RailShape railDown = stateDown.getBlock() instanceof AbstractRailBlock ? stateDown.get(((AbstractRailBlock)stateDown.getBlock()).getShapeProperty()) : RailShape.NORTH_SOUTH;
-					if (direction != Direction.DOWN && railDown.isAscending()) {
+					BlockState stateDown = level.getBlockState(pos.below());
+					RailShape railDown = stateDown.getBlock() instanceof BaseRailBlock ? stateDown.getValue(((BaseRailBlock)stateDown.getBlock()).getShapeProperty()) : RailShape.NORTH_SOUTH;
+					if (direction != Direction.DOWN && railDown.isSlope()) {
 						railHeight = -0.4D;
 					} else {
 						railHeight = -0.9D;
@@ -101,10 +101,10 @@ public class DispenserBehaviorHelper {
 				}
 
 				LTNTMinecart cart = item.createMinecart(level, x, y + railHeight, z, null);
-				if (stack.contains(DataComponentTypes.CUSTOM_NAME) && stack.get(DataComponentTypes.CUSTOM_NAME) != null && !stack.get(DataComponentTypes.CUSTOM_NAME).getString().equals("")) {
-					cart.setCustomName(stack.getName());
+				if (stack.has(DataComponents.CUSTOM_NAME) && stack.get(DataComponents.CUSTOM_NAME) != null && !stack.get(DataComponents.CUSTOM_NAME).getString().equals("")) {
+					cart.setCustomName(stack.getHoverName());
 				}
-				stack.decrement(1);
+				stack.shrink(1);
 				return stack;
 			}
 		};

@@ -7,12 +7,12 @@ import org.jetbrains.annotations.Nullable;
 
 import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.registry.RegistryHelper;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 /**
  * The LuckyTNTBlock is an extension of the {@link LTNTBlock} and serves the simple purpose of spawning a random
@@ -22,12 +22,12 @@ import net.minecraft.world.World;
 public class LuckyTNTBlock extends LTNTBlock{
 
 	public List<Supplier<LTNTBlock>> TNTs;
-	
-	public LuckyTNTBlock(AbstractBlock.Settings properties, List<Supplier<LTNTBlock>> TNTs) {
+
+	public LuckyTNTBlock(BlockBehaviour.Properties properties, List<Supplier<LTNTBlock>> TNTs) {
 		super(properties, null, false);
 		this.TNTs = TNTs;
 	}
-	
+
 	/**
 	 * Gets a random {@link LTNTBlock} from the list held by this block and calls its explode method.
 	 * Can not explode another {@link LuckyTNTBlock}.
@@ -40,10 +40,10 @@ public class LuckyTNTBlock extends LTNTBlock{
 	 * @return {@link PrimedLTNT}
 	 */
 	@Override
-	public PrimedLTNT explode(World level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) {
+	public PrimedLTNT explode(Level level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) {
 		int rand = random.nextInt(TNTs.size());
 		if(level.getBlockState(new BlockPos((int)x, (int)y, (int)z)).getBlock() == this) {
-			level.setBlockState(new BlockPos((int)x, (int)y, (int)z), Blocks.AIR.getDefaultState(), 3);
+			level.setBlock(new BlockPos((int)x, (int)y, (int)z), Blocks.AIR.defaultBlockState(), 3);
 		}
 		return TNTs.get(rand).get().explode(level, exploded, x, y, z, igniter);
 	}

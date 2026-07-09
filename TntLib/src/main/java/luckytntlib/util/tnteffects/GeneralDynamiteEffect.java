@@ -4,9 +4,9 @@ import java.util.function.Supplier;
 
 import luckytntlib.item.LDynamiteItem;
 import luckytntlib.util.IExplosiveEntity;
-import net.minecraft.item.Item;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.item.Item;
 
 /**
  * GeneralDynamiteEffect is an extension of the {@link PrimedTNTEffect} and is an easy way of generalizing Dynamites without having to 
@@ -16,14 +16,14 @@ public class GeneralDynamiteEffect extends PrimedTNTEffect{
 
 	private final Supplier<Supplier<LDynamiteItem>> dynamite;
 	private final PrimedTNTEffect effect;
-	private ParticleEffect particles = ParticleTypes.SMOKE;
+	private ParticleOptions particles = ParticleTypes.SMOKE;
 	
 	/**
 	 * @param dynamite  {@link LDynamiteItem} to render
 	 * @param particles  Particles to display
 	 * @param effect  TNT effect to execute
 	 */
-	public GeneralDynamiteEffect(Supplier<Supplier<LDynamiteItem>> dynamite, ParticleEffect particles, PrimedTNTEffect effect) {
+	public GeneralDynamiteEffect(Supplier<Supplier<LDynamiteItem>> dynamite, ParticleOptions particles, PrimedTNTEffect effect) {
 		this.dynamite = dynamite;
 		this.particles = particles;
 		this.effect = effect;

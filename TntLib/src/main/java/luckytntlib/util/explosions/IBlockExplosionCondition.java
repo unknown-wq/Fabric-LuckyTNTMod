@@ -1,8 +1,8 @@
 package luckytntlib.util.explosions;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * An IBlockExplosionCondition is used by different explosions to check whether a block is suited for further actions or not.
@@ -19,6 +19,6 @@ public interface IBlockExplosionCondition {
 	 * @param state  the state of the block
 	 * @param distance  the distance of the block to the explosion origin
 	 */
-	public boolean conditionMet(World level, BlockPos pos, BlockState state, double distance);
+	public boolean conditionMet(Level level, BlockPos pos, BlockState state, double distance);
 	
 }

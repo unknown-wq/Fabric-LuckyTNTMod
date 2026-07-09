@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import luckytntlib.util.IExplosiveEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A StackedPrimedTNTEffect is a way of combining multiple PrimedTNTEffects into one.

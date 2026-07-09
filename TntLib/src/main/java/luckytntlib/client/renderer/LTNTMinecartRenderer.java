@@ -1,44 +1,59 @@
 package luckytntlib.client.renderer;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import luckytntlib.entity.LTNTMinecart;
-import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.MinecartEntityRenderer;
-import net.minecraft.client.render.entity.TntMinecartEntityRenderer;
-import net.minecraft.client.render.entity.model.EntityModelLayers;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockModelRenderState;
+import net.minecraft.client.renderer.entity.AbstractMinecartRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.TntMinecartRenderer;
+import net.minecraft.client.renderer.entity.TntRenderer;
+import net.minecraft.client.renderer.entity.state.MinecartRenderState;
 
 /**
  * The LTNTMinecartRenderer renders a Minecart with a TNT inside of it.
  * The TNT is scaled using the size parameter of its {@link PrimedTNTEffect}.
  */
 @Environment(value=EnvType.CLIENT)
-public class LTNTMinecartRenderer extends MinecartEntityRenderer<LTNTMinecart>{
-	
-	public LTNTMinecartRenderer(EntityRendererFactory.Context context) {
-		super(context, EntityModelLayers.TNT_MINECART);
+public class LTNTMinecartRenderer extends AbstractMinecartRenderer<LTNTMinecart, LTNTMinecartRenderer.LTNTMinecartRenderState> {
+
+	public LTNTMinecartRenderer(EntityRendererProvider.Context context) {
+		super(context, ModelLayers.TNT_MINECART);
 	}
-	
+
 	@Override
-	public void renderBlock(LTNTMinecart entity, float partialTicks, BlockState state, MatrixStack stack, VertexConsumerProvider buffer, int light) {
-		int fuse = entity.getTNTFuse();
-		if(fuse > -1 && (float) fuse - partialTicks + 1f < 10f) {
-			float scaleMult = 1f - ((float)fuse - partialTicks + 1f) / 10f;
-			scaleMult = MathHelper.clamp(scaleMult, 0f, 1f);
-			scaleMult *= scaleMult;
-			scaleMult *= scaleMult;
-			float scale = 1f + scaleMult * 0.3f;
-			stack.scale(scale, scale, scale);
+	protected void submitMinecartContents(LTNTMinecartRenderState state, BlockModelRenderState blockModel, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords) {
+		float fuse = state.fuseRemainingInTicks;
+		if (fuse > -1.0F && fuse < 10.0F) {
+			float scale = 1.0F + TntRenderer.getSwellAmount(fuse);
+			poseStack.scale(scale, scale, scale);
 		}
-		stack.translate((-entity.getEffect().getSize(entity) + 1) / 2f, 0, (-entity.getEffect().getSize(entity) + 1) / 2f);
-		stack.scale(entity.getEffect().getSize((IExplosiveEntity)entity), entity.getEffect().getSize((IExplosiveEntity)entity), entity.getEffect().getSize((IExplosiveEntity)entity));
-		TntMinecartEntityRenderer.renderFlashingBlock(MinecraftClient.getInstance().getBlockRenderManager(), state, stack, buffer, light, fuse > -1 && fuse / 5 % 2 == 0);
+		poseStack.translate((-state.size + 1.0F) / 2.0F, 0.0F, (-state.size + 1.0F) / 2.0F);
+		poseStack.scale(state.size, state.size, state.size);
+		TntMinecartRenderer.submitWhiteSolidBlock(blockModel, poseStack, submitNodeCollector, lightCoords, fuse > -1.0F && TntRenderer.isLit(fuse), state.outlineColor);
+	}
+
+	@Override
+	public LTNTMinecartRenderState createRenderState() {
+		return new LTNTMinecartRenderState();
+	}
+
+	@Override
+	public void extractRenderState(LTNTMinecart entity, LTNTMinecartRenderState state, float partialTicks) {
+		super.extractRenderState(entity, state, partialTicks);
+		int fuse = entity.getTNTFuse();
+		state.fuseRemainingInTicks = fuse > -1 ? fuse - partialTicks + 1.0F : -1.0F;
+		state.size = entity.getEffect().getSize(entity);
+	}
+
+	@Environment(value=EnvType.CLIENT)
+	public static class LTNTMinecartRenderState extends MinecartRenderState {
+		public float fuseRemainingInTicks = -1.0F;
+		public float size = 1.0F;
 	}
 }

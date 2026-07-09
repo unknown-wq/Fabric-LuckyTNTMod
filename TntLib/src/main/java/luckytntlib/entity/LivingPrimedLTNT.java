@@ -3,118 +3,119 @@ package luckytntlib.entity;
 import org.jetbrains.annotations.Nullable;
 
 import luckytntlib.util.IExplosiveEntity;
+import luckytntlib.util.LTNTDataSerializers;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.TntEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * A LivingPrimedLTNT is a type of TNT designed to have health points,
  * attack damage and be able to use an AI to wander around and interact with the world,
  * while still retaining the abilities of a TNT through its {@link PrimedTNTEffect}.
- * It has to be registered independetly of the {@link PrimedLTNT} 
- * because Minecraft's {@link TntEntity} does not extend any form of a {@link LivingEntity}.
+ * It has to be registered independetly of the {@link PrimedLTNT}
+ * because Minecraft's {@link PrimedTnt} does not extend any form of a {@link LivingEntity}.
  * It implements {@link IExplosiveEntity}.
  */
-public class LivingPrimedLTNT extends PathAwareEntity implements IExplosiveEntity{
-	
-	@Nullable 
+public class LivingPrimedLTNT extends PathfinderMob implements IExplosiveEntity{
+
+	@Nullable
 	private LivingEntity igniter;
 	private PrimedTNTEffect effect;
-	private static final TrackedData<Integer> DATA_FUSE_ID = DataTracker.registerData(LivingPrimedLTNT.class, TrackedDataHandlerRegistry.INTEGER);
-	private static final TrackedData<NbtCompound> PERSISTENT_DATA = DataTracker.registerData(LivingPrimedLTNT.class, TrackedDataHandlerRegistry.NBT_COMPOUND);
-	
-	public LivingPrimedLTNT(EntityType<? extends PathAwareEntity> type, World level, @Nullable PrimedTNTEffect effect) {
+	private static final EntityDataAccessor<Integer> DATA_FUSE_ID = SynchedEntityData.defineId(LivingPrimedLTNT.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<CompoundTag> PERSISTENT_DATA = SynchedEntityData.defineId(LivingPrimedLTNT.class, LTNTDataSerializers.COMPOUND_TAG);
+
+	public LivingPrimedLTNT(EntityType<? extends PathfinderMob> type, Level level, @Nullable PrimedTNTEffect effect) {
 		super(type, level);
 		this.effect = effect;
 		this.setTNTFuse(effect.getDefaultFuse(this));
 	}
-	
+
 	@Override
 	public void tick() {
 		super.tick();
 		effect.baseTick(this);
 	}
-		
+
 	@Override
-	public void initDataTracker(DataTracker.Builder builder) {
-		builder.add(DATA_FUSE_ID, -1);
-		builder.add(PERSISTENT_DATA, new NbtCompound());
-		super.initDataTracker(builder);
+	public void defineSynchedData(SynchedEntityData.Builder builder) {
+		builder.define(DATA_FUSE_ID, -1);
+		builder.define(PERSISTENT_DATA, new CompoundTag());
+		super.defineSynchedData(builder);
 	}
-	
+
 	@Override
-	public void writeCustomDataToNbt(NbtCompound tag) {
+	public void addAdditionalSaveData(ValueOutput output) {
 		if(igniter != null) {
-			tag.putInt("throwerID", igniter.getId());
+			output.putInt("throwerID", igniter.getId());
 		}
-		tag.putShort("Fuse", (short)getTNTFuse());
-		tag.put("PersistentData", getPersistentData());
-		super.writeCustomDataToNbt(tag);
+		output.putShort("Fuse", (short)getTNTFuse());
+		output.store("PersistentData", CompoundTag.CODEC, getPersistentData());
+		super.addAdditionalSaveData(output);
 	}
-	
+
 	@Override
-	public void readCustomDataFromNbt(NbtCompound tag) {
-		if(getWorld().getEntityById(tag.getInt("throwerID")) instanceof LivingEntity lEnt) {
+	public void readAdditionalSaveData(ValueInput input) {
+		if(level().getEntity(input.getIntOr("throwerID", 0)) instanceof LivingEntity lEnt) {
 			igniter = lEnt;
 		}
-		setTNTFuse(tag.getShort("Fuse"));
-		setPersistentData(tag.getCompound("PersistentData"));
-		super.readCustomDataFromNbt(tag);
+		setTNTFuse(input.getShortOr("Fuse", (short)0));
+		setPersistentData(input.read("PersistentData", CompoundTag.CODEC).orElse(new CompoundTag()));
+		super.readAdditionalSaveData(input);
 	}
-	
+
 	@Override
-	public boolean canImmediatelyDespawn(double distance) {
+	public boolean removeWhenFarAway(double distance) {
 		return false;
 	}
-	
+
 	@Override
-	public void tickCramming() {
+	protected void pushEntities() {
 	}
-	
+
 	@Override
-	public void addVelocity(double x, double y, double z) {
+	public void push(double x, double y, double z) {
 	}
-	
+
 	public void setOwner(@Nullable LivingEntity thrower) {
 		this.igniter = thrower;
 	}
 
 	@Override
-	public boolean damage(DamageSource source, float amount) {
-		if(source.isOf(DamageTypes.OUT_OF_WORLD)) {
-			return true;
-		}
-		return false;
+	public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+		return source.is(DamageTypes.FELL_OUT_OF_WORLD);
 	}
 
 	@Override
 	public int getTNTFuse() {
-		return dataTracker.get(DATA_FUSE_ID);
+		return entityData.get(DATA_FUSE_ID);
 	}
 
 	@Override
 	public void setTNTFuse(int fuse) {
-		dataTracker.set(DATA_FUSE_ID, fuse);
+		entityData.set(DATA_FUSE_ID, fuse);
 	}
 
 	@Override
-	public World getLevel() {
-		return getWorld();
+	public Level getLevel() {
+		return level();
 	}
 
 	@Override
-	public Vec3d getPos() {
-		return getLerpedPos(1);
+	public Vec3 getPos() {
+		return position();
 	}
 
 	@Override
@@ -148,12 +149,12 @@ public class LivingPrimedLTNT extends PathAwareEntity implements IExplosiveEntit
 	}
 
 	@Override
-	public NbtCompound getPersistentData() {
-		return dataTracker.get(PERSISTENT_DATA);
+	public CompoundTag getPersistentData() {
+		return entityData.get(PERSISTENT_DATA);
 	}
-	
+
 	@Override
-	public void setPersistentData(NbtCompound tag) {
-		dataTracker.set(PERSISTENT_DATA, tag, true);
+	public void setPersistentData(CompoundTag tag) {
+		entityData.set(PERSISTENT_DATA, tag, true);
 	}
 }

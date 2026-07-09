@@ -1,8 +1,8 @@
 package luckytntlib.util.explosions;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * An IForEachEntityExplosionEffect is used to affect individual blocks gotten by an {@link ImprovedExplosion} 
@@ -18,6 +18,6 @@ public interface IForEachBlockExplosionEffect {
 	 * @param state  the state of the block
 	 * @param distance  the distance of the block to the explosion origin
 	 */
-	public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance);
+	public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance);
 	
 }

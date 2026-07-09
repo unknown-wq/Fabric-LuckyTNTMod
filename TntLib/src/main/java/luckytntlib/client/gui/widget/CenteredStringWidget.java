@@ -1,25 +1,21 @@
 package luckytntlib.client.gui.widget;
 
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.network.chat.Component;
 
 /**
  * Renders a vertically center-aligned String in a Layout.
- * Is used in the config Screen
+ * Is used in the config Screen.
+ * <p>
+ * In 26.2 {@link StringWidget} vertically centers its text within its own
+ * height, so this widget simply forces a taller bounding box (matching the
+ * height of the surrounding buttons) which reproduces the vertically centered
+ * look the old manual pose translation provided.
  */
-public class CenteredStringWidget extends TextWidget {
+public class CenteredStringWidget extends StringWidget {
 
-	public CenteredStringWidget(Text component, TextRenderer font) {
-		super(component, font);
-	}
-
-	@Override
-	public void renderWidget(DrawContext graphics, int i1, int i2, float f) {
-		graphics.getMatrices().push();
-		graphics.getMatrices().translate(0f, 6f, 0f);
-		super.renderWidget(graphics, i1, i2, f);
-		graphics.getMatrices().pop();
+	public CenteredStringWidget(Component component, Font font) {
+		super(font.width(component.getVisualOrderText()), 20, component, font);
 	}
 }

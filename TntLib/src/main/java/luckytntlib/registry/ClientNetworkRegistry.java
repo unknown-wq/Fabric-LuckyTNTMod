@@ -6,7 +6,7 @@ import luckytntlib.network.UpdateConfigValuesPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.Context;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.PlayPayloadHandler;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 
 public class ClientNetworkRegistry {
 
@@ -14,7 +14,7 @@ public class ClientNetworkRegistry {
 		
 		@Override
 		public void receive(UpdateConfigValuesPacket payload, Context ctx) {
-			NbtCompound tag = payload.data;
+			CompoundTag tag = payload.data;
 			
 			ctx.client().execute(() -> {
 				Config.writeToValues(tag, LuckyTNTLibConfigValues.CONFIG.getConfigValues());

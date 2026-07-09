@@ -1,8 +1,8 @@
 package luckytntlib.registry;
 
-import net.minecraft.block.MapColor;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.material.MapColor;
 
 /**
  * The TNTBlockRegistryData only serves the purpose of bringing together relatively simple and repetitive properties that a TNT block/item may have.
@@ -16,12 +16,12 @@ public class TNTBlockRegistryData {
 	private final boolean addDispenseBehavior;
 	private final boolean randomizedFuseUponExploded;
 	private final boolean addToTNTLists;
-	private final MutableText description;
+	private final MutableComponent description;
 	private final String tab;
 	private final MapColor color;
 	
 	
-	private TNTBlockRegistryData(String registryName, boolean makeItem, boolean addDispenseBehavior, boolean randomizedFuseUponExploded, boolean addToTNTLists, MutableText description, String tab, MapColor color) {
+	private TNTBlockRegistryData(String registryName, boolean makeItem, boolean addDispenseBehavior, boolean randomizedFuseUponExploded, boolean addToTNTLists, MutableComponent description, String tab, MapColor color) {
 		this.registryName = registryName;
 		this.makeItem = makeItem;
 		this.addDispenseBehavior = addDispenseBehavior;
@@ -52,7 +52,7 @@ public class TNTBlockRegistryData {
 		return addToTNTLists;
 	}
 	
-	public MutableText getDescription() {
+	public MutableComponent getDescription() {
 		return description;
 	}
 
@@ -71,9 +71,9 @@ public class TNTBlockRegistryData {
 		private boolean addDispenseBehavior = true;
 		private boolean randomizedFuseUponExploded = true;
 		private boolean addToTNTLists = true;
-		private MutableText description = Text.translatable("");
+		private MutableComponent description = Component.translatable("");
 		private String tab = "none";
-		private MapColor color = MapColor.RED;
+		private MapColor color = MapColor.FIRE;
 		
 		public Builder(String registryName) {
 			this.registryName = registryName;
@@ -99,7 +99,7 @@ public class TNTBlockRegistryData {
 			return this;
 		}
 		
-		public Builder description(MutableText description) {
+		public Builder description(MutableComponent description) {
 			this.description = description;
 			return this;
 		}
