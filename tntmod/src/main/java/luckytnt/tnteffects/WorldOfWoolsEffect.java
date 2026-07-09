@@ -168,7 +168,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		for(int i = 0; i < 50; i++) {
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(20f, 20f, 20f), 1f), ent.x() + Math.random() * 2 - Math.random() * 2, ent.y() + 1D + Math.random() * 2 - Math.random() * 2, ent.z() + Math.random() * 2 - Math.random() * 2, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(20f*255)<<16)|((int)(20f*255)<<8)|(int)(20f*255), 1f), ent.x() + Math.random() * 2 - Math.random() * 2, ent.y() + 1D + Math.random() * 2 - Math.random() * 2, ent.z() + Math.random() * 2 - Math.random() * 2, 0, 0, 0);
 		}
 	}
 	

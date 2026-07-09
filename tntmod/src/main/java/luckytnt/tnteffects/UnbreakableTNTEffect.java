@@ -33,8 +33,8 @@ public class UnbreakableTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
-		ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
-		ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.8f, 0.8f, 0.8f), 1), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
+		ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 1), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
+		ent.getLevel().addParticle(new DustParticleOptions(((int)(0.8f*255)<<16)|((int)(0.8f*255)<<8)|(int)(0.8f*255), 1), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
 	}
 
 	@Override

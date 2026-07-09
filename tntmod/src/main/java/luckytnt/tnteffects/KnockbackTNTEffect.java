@@ -101,7 +101,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 			double x = Math.cos(theta) * radius;
 			double z = Math.sin(theta) * radius;
 			
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.2f, 0.8f, 0.2f), 0.75f), ent.x() + x * 2, ent.y() + 0.5D + y * 2, ent.z() + 2 * z, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.8f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() + x * 2, ent.y() + 0.5D + y * 2, ent.z() + 2 * z, 0, 0, 0);
 		}
 	}
 	

@@ -33,8 +33,8 @@ public class GraveyardTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
 		for(int count = 0; count <= 20; count++) {
-			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.5f, 0.2f, 0f), 0.75f), entity.x(), entity.y() + 1D + 0.05D * count, entity.z(), 0, 0, 0);
-			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.5f, 0.2f, 0f), 0.75f), entity.x() - 0.5D + count * 0.05D, entity.y() + 1D + (2D / 3D), entity.z(), 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(((int)(0.5f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0f*255), 0.75f), entity.x(), entity.y() + 1D + 0.05D * count, entity.z(), 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(((int)(0.5f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0f*255), 0.75f), entity.x() - 0.5D + count * 0.05D, entity.y() + 1D + (2D / 3D), entity.z(), 0, 0, 0);
 		}
 	}
 	

@@ -59,16 +59,16 @@ public class SculkTNTEffect extends PrimedTNTEffect {
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if((level.getBlockState(pos.below()).isAir() && !state.isAir()) && Math.random() < 0.025f) {
 						Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.SCULK_PATCH_DEEP_DARK);
-						feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos.below());
+						feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos.below());
 					}
 					if((!level.getBlockState(pos.below()).isAir() && state.isAir()) && Math.random() < 0.03f) {
 						Holder<ConfiguredFeature<?, ?>> feature = null;
 						if(Math.random() < 0.5f) {
 							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.SCULK_PATCH_DEEP_DARK);
-							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
+							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 						} else {
 							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.SCULK_PATCH_ANCIENT_CITY);
-							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
+							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 						}
 					}
 				}

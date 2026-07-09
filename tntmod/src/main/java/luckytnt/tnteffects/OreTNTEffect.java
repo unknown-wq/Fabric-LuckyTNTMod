@@ -23,7 +23,7 @@ public class OreTNTEffect extends PrimedTNTEffect{
 	@SuppressWarnings("resource")
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		if(!entity.getLevel().isClientSide) {
+		if(!entity.getLevel().isClientSide()) {
 			if(entity instanceof PrimedOreTNT tnt) {
 				if(tnt.availablePos.isEmpty()) {
 					fillAvailablePos(tnt);

@@ -24,10 +24,10 @@ public class AngryMinersEffect extends PrimedTNTEffect{
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
 		for(int count = 0; count < 8; count++) {
-			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.5f, 0.3f, 0f), 1f), entity.x() + Math.random() * 0.25f -Math.random() * 0.25f, entity.y() + 1f + Math.random(), entity.z() + Math.random() * 0.25f - Math.random() * 0.25f, 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(((int)(0.5f*255)<<16)|((int)(0.3f*255)<<8)|(int)(0f*255), 1f), entity.x() + Math.random() * 0.25f -Math.random() * 0.25f, entity.y() + 1f + Math.random(), entity.z() + Math.random() * 0.25f - Math.random() * 0.25f, 0, 0, 0);
 		}
 		for(int count = 0; count < 8; count++) {
-			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0f), 1f), entity.x() + Math.random() * 0.25f -Math.random() * 0.25f, entity.y() + 2f + Math.random() * 0.25f, entity.z() + Math.random() * 0.25f -Math.random() * 0.25f, 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(1f*255)<<8)|(int)(0f*255), 1f), entity.x() + Math.random() * 0.25f -Math.random() * 0.25f, entity.y() + 2f + Math.random() * 0.25f, entity.z() + Math.random() * 0.25f -Math.random() * 0.25f, 0, 0, 0);
 		}
 	}
 	

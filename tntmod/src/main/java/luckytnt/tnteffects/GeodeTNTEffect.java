@@ -40,7 +40,7 @@ public class GeodeTNTEffect extends PrimedTNTEffect{
 		});
 		if(entity.getLevel() instanceof ServerLevel sLevel) {
 			Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.AMETHYST_GEODE);
-			feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, toBlockPos(entity.getPos()));
+			feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), toBlockPos(entity.getPos()));
 		}
 		for(int i = blocks.size() - 1; i > 0; i--) {
 			List<BlockPos> poses = new ArrayList<>(blocks.keySet());
@@ -53,8 +53,8 @@ public class GeodeTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.6f, 0.1f, 1f), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
-		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.3f, 0.3f, 0.3f), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(0.6f*255)<<16)|((int)(0.1f*255)<<8)|(int)(1f*255), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(0.3f*255)<<16)|((int)(0.3f*255)<<8)|(int)(0.3f*255), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
 	}
 	
 	@Override

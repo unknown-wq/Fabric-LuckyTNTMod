@@ -101,7 +101,7 @@ public class RainbowDynamiteEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(10f, 10f, 10f), 1f), entity.x(), entity.y(), entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(10f*255)<<16)|((int)(10f*255)<<8)|(int)(10f*255), 1f), entity.x(), entity.y(), entity.z(), 0, 0, 0);
 	}
 	
 	@Override

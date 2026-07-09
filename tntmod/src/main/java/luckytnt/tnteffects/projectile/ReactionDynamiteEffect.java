@@ -35,7 +35,7 @@ public class ReactionDynamiteEffect extends PrimedTNTEffect{
 				explosionTick(ent);
 				ent.setTNTFuse(ent.getTNTFuse() - 1);
 			}
-			if(level.isClientSide) {
+			if(level.isClientSide()) {
 				spawnParticles(entity);
 			}
 		}
@@ -44,16 +44,16 @@ public class ReactionDynamiteEffect extends PrimedTNTEffect{
 	@Override
 	public void explosionTick(IExplosiveEntity entity){
 		Level level = entity.getLevel();
-		if(!level.isClientSide) {
+		if(!level.isClientSide()) {
 			if(entity.getPersistentData().getInt("nextExplosion") == 0) {
 				Vec3 randomPos = new Vec3(Math.random() * 20 - 10, Math.random() * 10 - 5, Math.random() * 20 - 10);
-				float explosionSize = 5 + level.random.nextFloat() * 5;
+				float explosionSize = 5 + level.getRandom().nextFloat() * 5;
 				ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos().add(randomPos), Math.round(explosionSize));
 				explosion.doEntityExplosion(1f + 0.05f * explosionSize, true);
 				explosion.doBlockExplosion(1f, 1f, 0.75f, 1.25f, false, false);
-				level.playSound((Entity)entity, toBlockPos(entity.getPos().add(randomPos)), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+				level.playSound((Entity)entity, toBlockPos(entity.getPos().add(randomPos)), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
 				CompoundTag tag = entity.getPersistentData();
-				tag.putInt("nextExplosion", 2 + level.random.nextInt(3));
+				tag.putInt("nextExplosion", 2 + level.getRandom().nextInt(3));
 				entity.setPersistentData(tag);
 			}
 			CompoundTag tag = entity.getPersistentData();
@@ -65,16 +65,16 @@ public class ReactionDynamiteEffect extends PrimedTNTEffect{
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
 		if(Math.random() < 0.15f) {
-			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.37f, 1f, 1f), 1), entity.x(), entity.y(), entity.z(), 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(((int)(0.37f*255)<<16)|((int)(1f*255)<<8)|(int)(1f*255), 1), entity.x(), entity.y(), entity.z(), 0, 0, 0);
 		}
 		if(Math.random() < 0.15f) {
-			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.59f, 1f, 0f), 1), entity.x(), entity.y(), entity.z(), 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(((int)(0.59f*255)<<16)|((int)(1f*255)<<8)|(int)(0f*255), 1), entity.x(), entity.y(), entity.z(), 0, 0, 0);
 		}
 		if(Math.random() < 0.15f) {
-			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.11f, 0.26f, 0.11f), 1), entity.x(), entity.y(), entity.z(), 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(((int)(0.11f*255)<<16)|((int)(0.26f*255)<<8)|(int)(0.11f*255), 1), entity.x(), entity.y(), entity.z(), 0, 0, 0);
 		}
 		if(Math.random() < 0.15f) {
-			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.16f, 0.42f, 0.15f), 1), entity.x(), entity.y(), entity.z(), 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(((int)(0.16f*255)<<16)|((int)(0.42f*255)<<8)|(int)(0.15f*255), 1), entity.x(), entity.y(), entity.z(), 0, 0, 0);
 		}
 	}
 	

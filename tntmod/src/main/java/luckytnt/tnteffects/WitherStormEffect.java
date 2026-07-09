@@ -78,13 +78,13 @@ public class WitherStormEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getLevel() instanceof ServerLevel sl) {
-			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 2.25f, ent.z(), 20, 0.1f, 0.5f, 0.1f, 0);
-			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 3f, ent.z(), 20, 0.05f, 0.05f, 0.5f, 0);
-			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 2.5f, ent.z(), 20, 0.05f, 0.05f, 0.3f, 0);
-			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 2f, ent.z(), 20, 0.05f, 0.05f, 0.2f, 0);
-			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 3.5f, ent.z(), 20, 0.2f, 0.2f, 0.2f, 0);
-			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 3.25f, ent.z() + 1, 20, 0.15f, 0.15f, 0.15f, 0);
-			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 3.25f, ent.z() - 1, 20, 0.15f, 0.15f, 0.15f, 0);
+			sl.sendParticles(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 1f), ent.x(), ent.y() + 2.25f, ent.z(), 20, 0.1f, 0.5f, 0.1f, 0);
+			sl.sendParticles(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 1f), ent.x(), ent.y() + 3f, ent.z(), 20, 0.05f, 0.05f, 0.5f, 0);
+			sl.sendParticles(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 1f), ent.x(), ent.y() + 2.5f, ent.z(), 20, 0.05f, 0.05f, 0.3f, 0);
+			sl.sendParticles(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 1f), ent.x(), ent.y() + 2f, ent.z(), 20, 0.05f, 0.05f, 0.2f, 0);
+			sl.sendParticles(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 1f), ent.x(), ent.y() + 3.5f, ent.z(), 20, 0.2f, 0.2f, 0.2f, 0);
+			sl.sendParticles(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 1f), ent.x(), ent.y() + 3.25f, ent.z() + 1, 20, 0.15f, 0.15f, 0.15f, 0);
+			sl.sendParticles(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 1f), ent.x(), ent.y() + 3.25f, ent.z() - 1, 20, 0.15f, 0.15f, 0.15f, 0);
 		}
 	}
 	

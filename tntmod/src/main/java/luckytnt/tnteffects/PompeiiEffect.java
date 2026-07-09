@@ -24,7 +24,7 @@ public class PompeiiEffect extends PrimedTNTEffect{
 						LExplosiveProjectile pompeii = EntityRegistry.POMPEII_PROJECTILE.get().create(entity.getLevel());
 						pompeii.setPos(entity.getPos());
 						pompeii.setOwner(entity.owner());
-						pompeii.setDeltaMovement((Math.random() * 3D - 1.5D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 3D - 1.5D) * 0.1f, 3f + entity.getLevel().random.nextFloat() * 2f, 0f);	
+						pompeii.setDeltaMovement((Math.random() * 3D - 1.5D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 3D - 1.5D) * 0.1f, 3f + entity.getLevel().getRandom().nextFloat() * 2f, 0f);	
 						pompeii.setOnFireFor(1000);
 						entity.getLevel().addFreshEntity(pompeii);
 						entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.MASTER, 3, 1);

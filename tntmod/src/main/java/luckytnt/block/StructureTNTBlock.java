@@ -51,11 +51,11 @@ public class StructureTNTBlock extends LTNTBlock {
     			stack.damage(1, player, LivingEntity.getSlotForHand(hand));
     		}
         	player.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
-        	return InteractionResult.success(level.isClientSide);
+        	return InteractionResult.success(level.isClientSide());
     	}
     	else if(stack.getItem() == ItemRegistry.CONFIGURATION_WAND.get()) {
     		cycleThroughStructures(level, state, pos);
-    		return InteractionResult.success(level.isClientSide);
+    		return InteractionResult.success(level.isClientSide());
     	}
     	return InteractionResult.FAIL;
     }

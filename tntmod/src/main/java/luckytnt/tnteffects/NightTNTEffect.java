@@ -20,7 +20,7 @@ public class NightTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, -0.1f, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(0f*255)<<16)|((int)(0f*255)<<8)|(int)(0f*255), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, -0.1f, 0);
 	}
 	
 	@Override

@@ -35,7 +35,7 @@ public class PulseDynamiteEffect extends PrimedTNTEffect{
 				explosionTick(ent);
 				ent.setTNTFuse(ent.getTNTFuse() - 1);
 			}
-			if(level.isClientSide) {
+			if(level.isClientSide()) {
 				spawnParticles(entity);
 			}
 		}
@@ -52,7 +52,7 @@ public class PulseDynamiteEffect extends PrimedTNTEffect{
 					ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), entity.getPersistentData().getInt("strength"));
 					explosion.doEntityExplosion(1f, true);
 					explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
-					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
 					CompoundTag tag = entity.getPersistentData();
 					tag.putInt("strength", entity.getPersistentData().getInt("strength") + 1);
 					entity.setPersistentData(tag);
@@ -73,7 +73,7 @@ public class PulseDynamiteEffect extends PrimedTNTEffect{
 			double x = Math.cos(theta) * radius;
 			double z = Math.sin(theta) * radius;
 			
-			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.4f, 0.4f, 1f), 0.75f), entity.x() + x, entity.y() + y + 0.5f, entity.z() + z, 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(((int)(0.4f*255)<<16)|((int)(0.4f*255)<<8)|(int)(1f*255), 0.75f), entity.x() + x, entity.y() + y + 0.5f, entity.z() + z, 0, 0, 0);
 		}
 	}
 	

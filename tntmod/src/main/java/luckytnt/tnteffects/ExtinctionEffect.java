@@ -32,8 +32,8 @@ public class ExtinctionEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
-		ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 0f, 0f), 1), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
-		ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 1f), 1), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
+		ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(0f*255)<<8)|(int)(0f*255), 1), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
+		ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(1f*255)<<8)|(int)(1f*255), 1), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
 	}
 	
 	@Override

@@ -32,8 +32,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeKeys;
-import net.minecraft.world.level.chunk.ChunkSection;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraft.world.entity.EntityTypes;
 
@@ -106,12 +106,12 @@ public class LevelEvents {
 					}
 					if(variables.iceAgeTime > 0) {
 						Registry<Biome> registry = level.registryAccess().get(Registries.BIOME);
-						Holder<Biome> biome = registry.entryOf(BiomeKeys.SNOWY_TAIGA);
+						Holder<Biome> biome = registry.entryOf(Biomes.SNOWY_TAIGA);
 						if(player instanceof ServerPlayer sPlayer) {	
 							for(double offX = -32; offX <= 32; offX += 16) {
 								for(double offZ = -32; offZ <= 32; offZ += 16) {
 									boolean needsUpdate = false;
-									for(ChunkSection section : level.getChunk(new BlockPos(Mth.floor(x + offX), 0, Mth.floor(z + offZ))).getSectionArray()) {
+									for(LevelChunkSection section : level.getChunk(new BlockPos(Mth.floor(x + offX), 0, Mth.floor(z + offZ))).getSectionArray()) {
 										for(int i = 0; i < 4; ++i) {
 											for(int j = 0; j < 4; ++j) {
 												for(int k = 0; k < 4; ++k) {
@@ -132,12 +132,12 @@ public class LevelEvents {
 					}
 					if(variables.heatDeathTime > 0) {
 						Registry<Biome> registry = level.registryAccess().get(Registries.BIOME);
-						Holder<Biome> biome = registry.entryOf(BiomeKeys.DESERT);
+						Holder<Biome> biome = registry.entryOf(Biomes.DESERT);
 						if(player instanceof ServerPlayer sPlayer) {	
 							for(double offX = -32; offX <= 32; offX += 16) {
 								for(double offZ = -32; offZ <= 32; offZ += 16) {
 									boolean needsUpdate = false;
-									for(ChunkSection section : level.getChunk(new BlockPos(Mth.floor(x + offX), 0, Mth.floor(z + offZ))).getSectionArray()) {
+									for(LevelChunkSection section : level.getChunk(new BlockPos(Mth.floor(x + offX), 0, Mth.floor(z + offZ))).getSectionArray()) {
 										for(int i = 0; i < 4; ++i) {
 											for(int j = 0; j < 4; ++j) {
 												for(int k = 0; k < 4; ++k) {
@@ -259,7 +259,7 @@ public class LevelEvents {
 	}
 	
 	public static int getTopBlock(Level level, double x, double z, boolean ignoreLeaves) {
-		if(!level.isClientSide) {
+		if(!level.isClientSide()) {
 			boolean blockFound = false;
 			int y = 0;
 			for(int offY = level.getTopY(); offY >= level.getBottomY(); offY--) {	

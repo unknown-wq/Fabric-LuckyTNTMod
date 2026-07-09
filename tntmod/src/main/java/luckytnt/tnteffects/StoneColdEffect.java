@@ -90,7 +90,7 @@ public class StoneColdEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
-		ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.2f, 0.9f, 1f), 1f), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
+		ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.9f*255)<<8)|(int)(1f*255), 1f), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
 	}
 	
 	@Override

@@ -45,13 +45,13 @@ public class SwapTNTEffect extends PrimedTNTEffect{
 					ent1.setPos(pos2);
 					entity.getLevel().playSound(null, toBlockPos(pos2), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundSource.MASTER, 2, 1);
 					for(int count = 0; count < 40; count++) {
-						entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 0f, 1f), 1f), pos2.x + Math.random() * ent1.getWidth() - Math.random() * ent1.getWidth(), pos2.y + Math.random() * ent1.getHeight(), pos2.z + Math.random() * ent1.getWidth() - Math.random() * ent1.getWidth(), 0, 0, 0);
+						entity.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(0f*255)<<8)|(int)(1f*255), 1f), pos2.x + Math.random() * ent1.getWidth() - Math.random() * ent1.getWidth(), pos2.y + Math.random() * ent1.getHeight(), pos2.z + Math.random() * ent1.getWidth() - Math.random() * ent1.getWidth(), 0, 0, 0);
 					}
 					
 					ent2.setPos(pos1);
 					entity.getLevel().playSound(null, toBlockPos(pos1), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundSource.MASTER, 2, 1);
 					for(int count = 0; count < 40; count++) {
-						entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 0f, 1f), 1f), pos1.x + Math.random() * ent2.getWidth() - Math.random() * ent2.getWidth(), pos1.y + Math.random() * ent2.getHeight(), pos1.z + Math.random() * ent2.getWidth() - Math.random() * ent2.getWidth(), 0, 0, 0);
+						entity.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(0f*255)<<8)|(int)(1f*255), 1f), pos1.x + Math.random() * ent2.getWidth() - Math.random() * ent2.getWidth(), pos1.y + Math.random() * ent2.getHeight(), pos1.z + Math.random() * ent2.getWidth() - Math.random() * ent2.getWidth(), 0, 0, 0);
 					}
 				}
 				CompoundTag tag = entity.getPersistentData();

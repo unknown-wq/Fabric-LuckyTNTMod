@@ -31,7 +31,7 @@ public class ToxicStoneBlock extends Block {
 	}
 	
 	@Override
-	public void tick(BlockState state, ServerLevel level, BlockPos pos, Random rand) {
+	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rand) {
 		super.tick(state, level, pos, rand);
 		level.scheduleTick(pos, this, 1, TickPriority.EXTREMELY_HIGH);
 		if(timer >= 0) {

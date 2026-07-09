@@ -58,15 +58,15 @@ public class TetrahedronTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		for(double i = 0D; i <= 1D; i += 0.05D) {
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() - 0.5D + i, ent.y() + 1D, ent.z() - 0.5D, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0f*255)<<16)|((int)(0f*255)<<8)|(int)(0f*255), 0.5f), ent.x() - 0.5D + i, ent.y() + 1D, ent.z() - 0.5D, 0, 0, 0);
 		}
 		
 		Vec3 vec1 = new Vec3(0.5D, 0D, 1D);
 		Vec3 vec2 = new Vec3(-0.5D, 0D, 1D);
 		
 		for(double i = 0; i <= vec1.length(); i += vec1.length() / 20D) {
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() - 0.5D + vec1.x * i, ent.y() + 1D, ent.z() - 0.5D + vec1.z * i, 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() + 0.5D + vec2.x * i, ent.y() + 1D, ent.z() - 0.5D + vec2.z * i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0f*255)<<16)|((int)(0f*255)<<8)|(int)(0f*255), 0.5f), ent.x() - 0.5D + vec1.x * i, ent.y() + 1D, ent.z() - 0.5D + vec1.z * i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0f*255)<<16)|((int)(0f*255)<<8)|(int)(0f*255), 0.5f), ent.x() + 0.5D + vec2.x * i, ent.y() + 1D, ent.z() - 0.5D + vec2.z * i, 0, 0, 0);
 		}
 		
 		Vec3 vec3 = new Vec3(0.5D, 0.75D, 0.5D);
@@ -74,12 +74,12 @@ public class TetrahedronTNTEffect extends PrimedTNTEffect {
 		Vec3 vec5 = new Vec3(0D, 0.75D, -0.5D);
 		
 		for(double i = 0; i <= vec3.length(); i += vec3.length() / 20D) {
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() - 0.5D + vec3.x * i, ent.y() + 1D + vec3.y * i, ent.z() - 0.5D + vec3.z * i, 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() + 0.5D + vec4.x * i, ent.y() + 1D + vec3.y * i, ent.z() - 0.5D + vec4.z * i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0f*255)<<16)|((int)(0f*255)<<8)|(int)(0f*255), 0.5f), ent.x() - 0.5D + vec3.x * i, ent.y() + 1D + vec3.y * i, ent.z() - 0.5D + vec3.z * i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0f*255)<<16)|((int)(0f*255)<<8)|(int)(0f*255), 0.5f), ent.x() + 0.5D + vec4.x * i, ent.y() + 1D + vec3.y * i, ent.z() - 0.5D + vec4.z * i, 0, 0, 0);
 		}
 		
 		for(double i = 0; i <= vec5.length(); i += vec5.length() / 20D) {
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.5f), ent.x(), ent.y() + 1D + vec5.y * i, ent.z() + 0.5D + vec5.z * i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0f*255)<<16)|((int)(0f*255)<<8)|(int)(0f*255), 0.5f), ent.x(), ent.y() + 1D + vec5.y * i, ent.z() + 0.5D + vec5.z * i, 0, 0, 0);
 		}
 	}
 	

@@ -58,7 +58,7 @@ public class NuclearWasteBlock extends FallingBlock {
 	}
 	
 	@Override
-	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, Random random) {
+	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		super.randomTick(state, level, pos, random);
 		if(Math.random() < 0.2f) {
 			if(level.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())).getBlock().getExplosionResistance() < 100) {
@@ -66,9 +66,9 @@ public class NuclearWasteBlock extends FallingBlock {
 				level.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundSource.BLOCKS, 1, 1);
 				if(Math.random() < 0.05f) {
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-					level.sendParticles(new DustParticleOptions(new Vector3f(1f, 1f, 0.1f), 1), pos.getX(), pos.getY(), pos.getZ(), 40, 0.6f, 0.6f, 0.6f, 0);
+					level.sendParticles(new DustParticleOptions(((int)(1f*255)<<16)|((int)(1f*255)<<8)|(int)(0.1f*255), 1), pos.getX(), pos.getY(), pos.getZ(), 40, 0.6f, 0.6f, 0.6f, 0);
 				}
-				level.sendParticles(new DustParticleOptions(new Vector3f(1f, 1f, 0.1f), 1), pos.getX(), pos.getY() - 1, pos.getZ(), 40, 0.6f, 0.6f, 0.6f, 0);
+				level.sendParticles(new DustParticleOptions(((int)(1f*255)<<16)|((int)(1f*255)<<8)|(int)(0.1f*255), 1), pos.getX(), pos.getY() - 1, pos.getZ(), 40, 0.6f, 0.6f, 0.6f, 0);
 			}
 		}
 	}

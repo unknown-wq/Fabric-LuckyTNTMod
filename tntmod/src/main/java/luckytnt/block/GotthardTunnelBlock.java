@@ -94,7 +94,7 @@ public class GotthardTunnelBlock extends LTNTBlock {
 			}
 
 			player.incrementStat(Stats.USED.getOrCreateStat(item));
-			return InteractionResult.success(level.isClientSide);
+			return InteractionResult.success(level.isClientSide());
 		} else if(itemstack.is(ItemRegistry.CONFIGURATION_WAND.get())) {
 			if(state.contains(STREETS)) {
     			if(state.get(STREETS)) {

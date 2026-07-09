@@ -34,7 +34,7 @@ public class HyperionEffect extends PrimedTNTEffect {
 				if(state.isFaceSturdy(level, pos, Direction.UP) && state.getBlock().getExplosionResistance() < 100 && !state.isAir() && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.above()).getBlock().getHardness() <= 0.2f)) {
 					level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState());
 					if(Math.random() < 0.015f) {
-						int random = level.random.nextInt(6);
+						int random = level.getRandom().nextInt(6);
 						String string = "";
 						switch (random) {
 							case 0: string = "giant_acaciatree"; break;
@@ -46,7 +46,7 @@ public class HyperionEffect extends PrimedTNTEffect {
 						}
 						StructureTemplate template = ((ServerLevel)entity.getLevel()).getStructureManager().getTemplateOrBlank(Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, string));
 						if(template != null) {
-							template.place((ServerLevel)entity.getLevel(), pos.add(-5, 0, -5), pos.add(-5, 0, -5), new StructurePlacementData(), entity.getLevel().random, 3);
+							template.place((ServerLevel)entity.getLevel(), pos.add(-5, 0, -5), pos.add(-5, 0, -5), new StructurePlacementData(), entity.getLevel().getRandom(), 3);
 						}
 					}
 				}
@@ -57,10 +57,10 @@ public class HyperionEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		for(int count = 0; count < 10; count++) {
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.5f, 0.3f, 0f), 1f), ent.x() + (Math.random() * 0.5D - 0.25D), ent.y() + 1f + Math.random() * 2f, ent.z() + (Math.random() * 0.5D - 0.25D), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.5f*255)<<16)|((int)(0.3f*255)<<8)|(int)(0f*255), 1f), ent.x() + (Math.random() * 0.5D - 0.25D), ent.y() + 1f + Math.random() * 2f, ent.z() + (Math.random() * 0.5D - 0.25D), 0, 0, 0);
 		}
 		for(int count = 0; count < 40; count++) {
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0.5f, 0f), 1f), ent.x() + (Math.random() * 2D - 1D), ent.y() + 3f + (Math.random() * 2D - 1D), ent.z() + (Math.random() * 2D - 1D), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0f*255)<<16)|((int)(0.5f*255)<<8)|(int)(0f*255), 1f), ent.x() + (Math.random() * 2D - 1D), ent.y() + 3f + (Math.random() * 2D - 1D), ent.z() + (Math.random() * 2D - 1D), 0, 0, 0);
 		}
 	}
 	

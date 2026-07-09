@@ -37,7 +37,7 @@ public class GroveTNTEffect extends PrimedTNTEffect {
 				if(state.isFaceSturdy(level, pos, Direction.UP) && state.getBlock().getExplosionResistance() < 100 && !state.isAir() && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.above()).getBlock().getHardness() <= 0.2f)) {
 					level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState());
 					if(Math.random() < 0.2f) {
-						int random = level.random.nextInt(6);
+						int random = level.getRandom().nextInt(6);
 						String string = "";
 						switch (random) {
 							case 0: string = "acaciatree"; break;
@@ -49,7 +49,7 @@ public class GroveTNTEffect extends PrimedTNTEffect {
 						}
 						StructureTemplate template = ((ServerLevel)entity.getLevel()).getStructureManager().getTemplateOrBlank(Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, string));
 						if(template != null) {
-							template.place((ServerLevel)entity.getLevel(), pos.add(-1, 0, -1), pos.add(-1, 0, -1), new StructurePlacementData(), entity.getLevel().random, 3);
+							template.place((ServerLevel)entity.getLevel(), pos.add(-1, 0, -1), pos.add(-1, 0, -1), new StructurePlacementData(), entity.getLevel().getRandom(), 3);
 						}
 					}
 				}

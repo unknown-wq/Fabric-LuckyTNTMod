@@ -67,11 +67,11 @@ public class DeathRayEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() > 120) {
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.8f, 0f, 0f), 1f), true, ent.x(), ent.y(), ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.8f*255)<<16)|((int)(0f*255)<<8)|(int)(0f*255), 1f), true, ent.x(), ent.y(), ent.z(), 0, 0, 0);
 		}
 		if(ent.getTNTFuse() < 140) {
 			for(int count = 0; count < 200; count++) {
-				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.5f, 0f, 2f), 10f), true, ent.x() + Math.random() - Math.random(), ent.y() + 135f - Math.random() * ent.getPersistentData().getInt("particleSize"), ent.z() + Math.random() - Math.random(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(((int)(0.5f*255)<<16)|((int)(0f*255)<<8)|(int)(2f*255), 10f), true, ent.x() + Math.random() - Math.random(), ent.y() + 135f - Math.random() * ent.getPersistentData().getInt("particleSize"), ent.z() + Math.random() - Math.random(), 0, 0, 0);
 			}
 			CompoundTag tag = ent.getPersistentData();
 			tag.putInt("particleSize", ent.getPersistentData().getInt("particleSize") + 2);

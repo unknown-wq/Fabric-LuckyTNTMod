@@ -9,16 +9,16 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.arrow.AbstractArrow.PickupPermission;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow.AbstractArrow.Pickup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.tooltip.TooltipType;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.util.UseAction;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.Level;
 
 public class VacuumCleaner extends Item {
@@ -30,12 +30,12 @@ public class VacuumCleaner extends Item {
 	}
 	
 	@Override
-	public UseAction getUseAction(ItemStack stack) {
-		return UseAction.NONE;
+	public ItemUseAnimation getUseAction(ItemStack stack) {
+		return ItemUseAnimation.NONE;
 	}
 	
 	@Override
-	public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Component> components, TooltipType flag) {
+	public void appendTooltip(ItemStack stack, Item.TooltipContext level, List<Component> components, TooltipFlag flag) {
 		super.appendTooltip(stack, level, components, flag);
 		components.add(Component.translatable("item.vacuum_cleaner.info"));
 	}
@@ -68,11 +68,11 @@ public class VacuumCleaner extends Item {
 		}
 		
 		if(stack.get(DataComponents.CUSTOM_DATA).getNbt().getBoolean("using") && inHand) {
-			if(!level.isClientSide)
+			if(!level.isClientSide())
 				soundCooldown--;
 			if(soundCooldown == 0) {
 				level.playSoundFromEntity(null, entity, SoundRegistry.VACUUM_CLEANER.get(), SoundSource.MASTER, 2, 1);
-				if(!level.isClientSide)
+				if(!level.isClientSide())
 					soundCooldown = 22;
 			}
 			if(entity instanceof Player player) {
@@ -84,7 +84,7 @@ public class VacuumCleaner extends Item {
 				LExplosiveProjectile shot = EntityRegistry.VACUUM_SHOT.get().create(level);
 				shot.setPos(player.getPosition(1f).add(0, player.getStandingEyeHeight(), 0));
 				shot.setDeltaMovement(player.getRotationVec(1).x, player.getRotationVec(1).y, player.getRotationVec(1).z, 4, 0);
-				shot.pickupType = PickupPermission.DISALLOWED;
+				shot.pickup = AbstractArrow.Pickup.DISALLOWED;
 				level.addFreshEntity(shot);
 			}
 		} else {

@@ -28,7 +28,7 @@ public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 		if(entity instanceof LExplosiveProjectile ent) {
 			if(ent.inGround() && ent.getTNTFuse() < 60) {
 				if(level instanceof ServerLevel) {
-					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
 					serverExplosion(ent);
 				}
 				ent.destroy();
@@ -37,7 +37,7 @@ public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 				explosionTick(ent);
 				ent.setTNTFuse(ent.getTNTFuse() - 1);
 			}
-			if(level.isClientSide) {
+			if(level.isClientSide()) {
 				spawnParticles(entity);
 			}
 		}

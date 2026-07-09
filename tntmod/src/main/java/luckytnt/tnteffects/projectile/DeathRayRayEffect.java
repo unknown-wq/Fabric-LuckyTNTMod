@@ -68,7 +68,7 @@ public class DeathRayRayEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.5f, 0.25f, 0f), 1), entity.x(), entity.y(), entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(0.5f*255)<<16)|((int)(0.25f*255)<<8)|(int)(0f*255), 1), entity.x(), entity.y(), entity.z(), 0, 0, 0);
 	}
 	
 	@Override

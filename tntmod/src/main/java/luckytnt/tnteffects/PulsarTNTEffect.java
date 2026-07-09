@@ -42,8 +42,8 @@ public class PulsarTNTEffect extends PrimedTNTEffect {
      		for(double offZ = -2; offZ <= 2; offZ+=0.1) {
      			double offY = Math.sqrt(offX * offX + offZ * offZ);
      			if(offY <= 1.2) {
-     				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.4f, 0f, 0.8f), 1f), ent.x() + offX, ent.y() + 1 + (offY * 4), ent.z() + offZ, 0, 0, 0);
-     				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.4f, 0f, 0.8f), 1f), ent.x() + offX, ent.y() + (offY * -4), ent.z() + offZ, 0, 0, 0);
+     				ent.getLevel().addParticle(new DustParticleOptions(((int)(0.4f*255)<<16)|((int)(0f*255)<<8)|(int)(0.8f*255), 1f), ent.x() + offX, ent.y() + 1 + (offY * 4), ent.z() + offZ, 0, 0, 0);
+     				ent.getLevel().addParticle(new DustParticleOptions(((int)(0.4f*255)<<16)|((int)(0f*255)<<8)|(int)(0.8f*255), 1f), ent.x() + offX, ent.y() + (offY * -4), ent.z() + offZ, 0, 0, 0);
      			}
      		}
      	}

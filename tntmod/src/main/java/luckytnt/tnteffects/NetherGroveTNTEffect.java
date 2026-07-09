@@ -74,10 +74,10 @@ public class NetherGroveTNTEffect extends PrimedTNTEffect{
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(level instanceof ServerLevel sLevel) {
 					if(Math.random() < 0.05f) {
-						tree.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
+						tree.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 					}
 					if(Math.random() < 0.1f) {
-						vegetation.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
+						vegetation.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 					}
 				}
 			}

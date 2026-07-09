@@ -34,7 +34,7 @@ public class RingTNTEffect extends PrimedTNTEffect {
 	}
 	
 	public static int getFirstMotionBlockingBlock(Level level, double x, double z) {
-		if(!level.isClientSide) {
+		if(!level.isClientSide()) {
 			boolean blockFound = false;
 			int y = 0;
 			for(int offY = level.getTopY(); offY >= level.getBottomY(); offY--) {	

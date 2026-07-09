@@ -24,7 +24,7 @@ public class ChemicalTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
 		if(entity instanceof LExplosiveProjectile) {
-			if(!entity.getLevel().isClientSide) {
+			if(!entity.getLevel().isClientSide()) {
 				explosionTick(entity);
 			}
 			else {
@@ -69,10 +69,10 @@ public class ChemicalTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.1f, 1f, 0.6f), 1), entity.x() + 0.2f, entity.y() + 1f, entity.z(), 0, 0, 0);
-		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.6f, 0.8f, 0.4f), 1), entity.x() - 0.2f, entity.y() + 1f, entity.z(), 0, 0, 0);
-		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.8f, 1f, 0.8f), 1), entity.x(),+ entity.y() + 1f, entity.z() + 0.2f, 0, 0, 0);
-		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.1f, 1f, 0.2f), 1), entity.x(),+ entity.y() + 1f, entity.z() - 0.2f, 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(0.1f*255)<<16)|((int)(1f*255)<<8)|(int)(0.6f*255), 1), entity.x() + 0.2f, entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(0.6f*255)<<16)|((int)(0.8f*255)<<8)|(int)(0.4f*255), 1), entity.x() - 0.2f, entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(0.8f*255)<<16)|((int)(1f*255)<<8)|(int)(0.8f*255), 1), entity.x(),+ entity.y() + 1f, entity.z() + 0.2f, 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(0.1f*255)<<16)|((int)(1f*255)<<8)|(int)(0.2f*255), 1), entity.x(),+ entity.y() + 1f, entity.z() - 0.2f, 0, 0, 0);
 	}
 	
 	@Override

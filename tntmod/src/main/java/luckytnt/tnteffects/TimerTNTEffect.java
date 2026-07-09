@@ -14,7 +14,7 @@ public class TimerTNTEffect extends PrimedTNTEffect{
 	public void spawnParticles(IExplosiveEntity entity) {
 		float r = entity.getTNTFuse() < 400 ? 1f : 2f - 0.0025f * entity.getTNTFuse();
 		float g = entity.getTNTFuse() >= 400 ? 1f : 0.0025f * entity.getTNTFuse();
-		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(r, g, 0), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(r*255)<<16)|((int)(g*255)<<8)|(int)(0*255), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
 	}
 	
 	@Override

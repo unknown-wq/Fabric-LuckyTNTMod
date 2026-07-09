@@ -62,17 +62,17 @@ public class LushTNTEffect extends PrimedTNTEffect{
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if((level.getBlockState(pos.below()).isAir() && !state.isAir()) && Math.random() < 0.025f) {
 						Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.MOSS_PATCH_CEILING);
-						feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
+						feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 					}
 					if((!level.getBlockState(pos.below()).isAir() && state.isAir()) && Math.random() < 0.1f) {
 						Holder<ConfiguredFeature<?, ?>> feature = null;
 						if(Math.random() < 0.5f) {
 							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.LUSH_CAVES_CLAY);
-							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
+							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 						}
 						else {
 							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.MOSS_PATCH);
-							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
+							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 						}
 					}
 				}
@@ -83,13 +83,13 @@ public class LushTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
 		for(int count = 0; count <= 20; count++) {
-			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.36f, 0.27f, 0.11f), 0.75f), entity.x() + Math.random() * 0.0625D - Math.random() * 0.0625D, entity.y() + 1D + Math.random() * 0.375D, entity.z() + Math.random() * 0.0625D - Math.random() * 0.0625D, 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(((int)(0.36f*255)<<16)|((int)(0.27f*255)<<8)|(int)(0.11f*255), 0.75f), entity.x() + Math.random() * 0.0625D - Math.random() * 0.0625D, entity.y() + 1D + Math.random() * 0.375D, entity.z() + Math.random() * 0.0625D - Math.random() * 0.0625D, 0, 0, 0);
 		}
 		for(int count = 0; count <= 60; count++) {
-			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.44f, 0.57f, 0.18f), 0.75f), entity.x() + Math.random() * 0.75D - Math.random() * 0.75D, entity.y() + 1D + 0.375D + Math.random() * 0.625D, entity.z() + Math.random() * 0.75D - Math.random() * 0.75D, 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(((int)(0.44f*255)<<16)|((int)(0.57f*255)<<8)|(int)(0.18f*255), 0.75f), entity.x() + Math.random() * 0.75D - Math.random() * 0.75D, entity.y() + 1D + 0.375D + Math.random() * 0.625D, entity.z() + Math.random() * 0.75D - Math.random() * 0.75D, 0, 0, 0);
 		}
 		for(int count = 0; count <= 10; count++) {
-			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.82f, 0.48f, 0.89f), 0.75f), entity.x() + Math.random() * 0.75D - Math.random() * 0.75D, entity.y() + 1D + 0.375D + Math.random() * 0.625D, entity.z() + Math.random() * 0.75D - Math.random() * 0.75D, 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(((int)(0.82f*255)<<16)|((int)(0.48f*255)<<8)|(int)(0.89f*255), 0.75f), entity.x() + Math.random() * 0.75D - Math.random() * 0.75D, entity.y() + 1D + 0.375D + Math.random() * 0.625D, entity.z() + Math.random() * 0.75D - Math.random() * 0.75D, 0, 0, 0);
 		}
 	}
 	

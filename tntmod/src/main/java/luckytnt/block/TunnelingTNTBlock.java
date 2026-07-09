@@ -22,7 +22,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.util.BlockRotation;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.BlockHitResult;
@@ -39,7 +39,7 @@ public class TunnelingTNTBlock extends LTNTBlock{
 	}
 	
     @Override
-    public BlockState rotate(BlockState state, BlockRotation rotation) {  	
+    public BlockState rotate(BlockState state, Rotation rotation) {  	
     	return state.setValue(FACING, rotation.rotate(state.get(FACING)));
     }
     
@@ -71,7 +71,7 @@ public class TunnelingTNTBlock extends LTNTBlock{
 			}
 
 			player.incrementStat(Stats.USED.getOrCreateStat(item));
-			return InteractionResult.success(level.isClientSide);
+			return InteractionResult.success(level.isClientSide());
 		}
 	}
 

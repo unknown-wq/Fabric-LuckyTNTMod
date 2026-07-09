@@ -100,14 +100,14 @@ public class TrollTNTMk2Block extends LTNTBlock{
 				}
 			}
 			player.incrementStat(Stats.USED.getOrCreateStat(item));
-			return InteractionResult.success(world.isClientSide);
+			return InteractionResult.success(world.isClientSide());
 		}
 		return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 
 	@Override
 	public void onProjectileHit(Level world, BlockState state, BlockHitResult hit, Projectile projectile) {
-		if (!world.isClientSide) {
+		if (!world.isClientSide()) {
 			BlockPos blockPos = hit.getBlockPos();
 			if (projectile.isOnFire() && projectile.canModifyAt(world, blockPos)) {
 				placeSurroundingBlocks(world, blockPos.getX(), blockPos.getY(), blockPos.getZ());

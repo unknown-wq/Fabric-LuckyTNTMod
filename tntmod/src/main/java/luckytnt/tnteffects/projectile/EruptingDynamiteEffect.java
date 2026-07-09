@@ -31,7 +31,7 @@ public class EruptingDynamiteEffect extends PrimedTNTEffect{
 				explosionTick(ent);
 				ent.setTNTFuse(ent.getTNTFuse() - 1);
 			}
-			if(level.isClientSide) {
+			if(level.isClientSide()) {
 				spawnParticles(entity);
 			}
 		}
@@ -44,7 +44,7 @@ public class EruptingDynamiteEffect extends PrimedTNTEffect{
 			LExplosiveProjectile erupting_tnt = EntityRegistry.ERUPTING_PROJECTILE.get().create(level);
 			erupting_tnt.setPos(entity.getPos());
 			erupting_tnt.setOwner(entity.owner());
-			erupting_tnt.setDeltaMovement((Math.random() * 2D - 1D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 2D - 1D) * 0.1f, 2f + level.random.nextFloat(), 0f);	
+			erupting_tnt.setDeltaMovement((Math.random() * 2D - 1D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 2D - 1D) * 0.1f, 2f + level.getRandom().nextFloat(), 0f);	
 			erupting_tnt.setOnFireFor(1000);
 			level.addFreshEntity(erupting_tnt);
 			level.playSound(null, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.MASTER, 3, 1);

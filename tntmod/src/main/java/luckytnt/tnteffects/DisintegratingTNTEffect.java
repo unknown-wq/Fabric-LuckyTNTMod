@@ -39,12 +39,12 @@ public class DisintegratingTNTEffect extends PrimedTNTEffect {
 		
 		for(double offX = 0D; offX <= 1D; offX += 0.1D) {
 			for(double offY = 0D; offY <= 1D; offY += 0.1D) {
-				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 1f), 0.5f), ent.x() - 0.5D + offX, ent.y() + 1.25D + offY, ent.z(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(1f*255)<<8)|(int)(1f*255), 0.5f), ent.x() - 0.5D + offX, ent.y() + 1.25D + offY, ent.z(), 0, 0, 0);
 			}
 		}
 		for(double i = 0; i < 1; i += 0.1D) {
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 0, 0), 0.5f), ent.x() + 0.4D + i * vec32.x, ent.y() + 1.35D + i * vec32.y, ent.z(), 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 0, 0), 0.5f), ent.x() - 0.4D + i * vec31.x, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(0*255)<<8)|(int)(0*255), 0.5f), ent.x() + 0.4D + i * vec32.x, ent.y() + 1.35D + i * vec32.y, ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(0*255)<<8)|(int)(0*255), 0.5f), ent.x() - 0.4D + i * vec31.x, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
 		}
 	}
 	

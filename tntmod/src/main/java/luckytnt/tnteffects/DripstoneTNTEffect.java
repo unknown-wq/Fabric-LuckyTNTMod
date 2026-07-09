@@ -62,11 +62,11 @@ public class DripstoneTNTEffect extends PrimedTNTEffect{
 						Holder<ConfiguredFeature<?, ?>> feature = null;
 						if(Math.random() < 0.9f) {
 							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.DRIPSTONE_CLUSTER);
-							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
+							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 						}
 						else {
 							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.LARGE_DRIPSTONE);
-							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
+							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.getRandom(), pos);
 						}
 					}
 				}
