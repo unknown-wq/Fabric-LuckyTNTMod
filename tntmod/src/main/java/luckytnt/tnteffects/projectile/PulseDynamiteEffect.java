@@ -11,7 +11,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
@@ -35,7 +35,7 @@ public class PulseDynamiteEffect extends PrimedTNTEffect{
 				explosionTick(ent);
 				ent.setTNTFuse(ent.getTNTFuse() - 1);
 			}
-			if(level.isClient) {
+			if(level.isClientSide) {
 				spawnParticles(entity);
 			}
 		}
@@ -46,13 +46,13 @@ public class PulseDynamiteEffect extends PrimedTNTEffect{
 		Level level = entity.getLevel();
 		if (entity.getTNTFuse() <= 185) {
 			((Entity)entity).setDeltaMovement(0, 0, 0);
-			((Entity)entity).setPosition(((Entity) entity).getLerpedPos(0f));
+			((Entity)entity).setPos(((Entity) entity).getPosition(0f));
 			if (entity.getTNTFuse() % 20 == 0) {
 				if (entity.getLevel() instanceof ServerLevel) {
 					ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), entity.getPersistentData().getInt("strength"));
 					explosion.doEntityExplosion(1f, true);
 					explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
-					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
 					CompoundTag tag = entity.getPersistentData();
 					tag.putInt("strength", entity.getPersistentData().getInt("strength") + 1);
 					entity.setPersistentData(tag);
@@ -73,7 +73,7 @@ public class PulseDynamiteEffect extends PrimedTNTEffect{
 			double x = Math.cos(theta) * radius;
 			double z = Math.sin(theta) * radius;
 			
-			entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.4f, 0.4f, 1f), 0.75f), entity.x() + x, entity.y() + y + 0.5f, entity.z() + z, 0, 0, 0);
+			entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.4f, 0.4f, 1f), 0.75f), entity.x() + x, entity.y() + y + 0.5f, entity.z() + z, 0, 0, 0);
 		}
 	}
 	

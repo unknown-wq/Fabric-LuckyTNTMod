@@ -29,9 +29,9 @@ public class CompactTNTEffect extends PrimedTNTEffect{
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(Math.random() < chance && !state.isAir() && state.getBlock().getBlastResistance() < 100) {
-					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-					level.setBlockState(pos, place.get().get().getDefaultState());
+				if(Math.random() < chance && !state.isAir() && state.getBlock().getExplosionResistance() < 100) {
+					state.getBlock().wasExploded(level, pos, explosion);
+					level.setBlock(pos, place.get().get().defaultBlockState());
 				}
 			}
 		});

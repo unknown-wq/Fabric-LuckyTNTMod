@@ -33,7 +33,7 @@ public class SandFireworkEffect extends PrimedTNTEffect {
 				sandConstructor = FallingBlockEntity.class.getDeclaredConstructor(parameters);
 				sandConstructor.setAccessible(true);
 				try {
-					FallingBlockEntity sand = sandConstructor.newInstance(entity.getLevel(), entity.getPos().x, entity.getPos().y, entity.getPos().z, Blocks.SAND.getDefaultState());
+					FallingBlockEntity sand = sandConstructor.newInstance(entity.getLevel(), entity.getPos().x, entity.getPos().y, entity.getPos().z, Blocks.SAND.defaultBlockState());
 					sand.setDeltaMovement((Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f);
 					entity.getLevel().addFreshEntity(sand);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

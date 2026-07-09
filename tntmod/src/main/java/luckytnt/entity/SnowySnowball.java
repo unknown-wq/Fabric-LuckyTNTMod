@@ -28,8 +28,8 @@ public class SnowySnowball extends Snowball {
 	public void onBlockHit(BlockHitResult result) {
 		super.onBlockHit(result);
 		BlockPos pos = result.getBlockPos();
-		if(BlockSurviveChecks.canSnowPlaceAt(getWorld().getBlockState(pos.up()), getWorld(), pos.up()) && getWorld().getBlockState(pos.up()).getBlock().getBlastResistance() < 100 && getWorld().getFluidState(pos.up()).isOf(Fluids.EMPTY)) {
-			getWorld().setBlockState(pos.up(), Blocks.SNOW.getDefaultState(), 3);
+		if(BlockSurviveChecks.canSnowPlaceAt(getWorld().getBlockState(pos.above()), getWorld(), pos.above()) && getWorld().getBlockState(pos.above()).getBlock().getExplosionResistance() < 100 && getWorld().getFluidState(pos.above()).is(Fluids.EMPTY)) {
+			getWorld().setBlock(pos.above(), Blocks.SNOW.defaultBlockState(), 3);
 		}
 	}
 }

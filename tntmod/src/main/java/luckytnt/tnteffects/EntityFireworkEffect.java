@@ -18,6 +18,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.entity.EntityTypes;
 
 public class EntityFireworkEffect extends PrimedTNTEffect {
 
@@ -25,7 +26,7 @@ public class EntityFireworkEffect extends PrimedTNTEffect {
 	public void explosionTick(IExplosiveEntity ent) {
 		((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 0.8f, ((Entity)ent).getDeltaMovement().z);
 		if(ent.getTNTFuse() == 40) {
-			List<LivingEntity> ents = ent.getLevel().getNonSpectatingEntities(LivingEntity.class, new Box(ent.x() - 20, ent.y() - 20, ent.z() - 20, ent.x() + 20, ent.y() + 20, ent.z() + 20));
+			List<LivingEntity> ents = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() - 20, ent.y() - 20, ent.z() - 20, ent.x() + 20, ent.y() + 20, ent.z() + 20));
 	      	double distance = 2000;
 	      	for(LivingEntity lent : ents) {
 	      		double xD = lent.getX() - ent.x();
@@ -50,7 +51,7 @@ public class EntityFireworkEffect extends PrimedTNTEffect {
 		}
 		for(int count = 0; count < 300; count++) {
 			Entity lent = type.create(ent.getLevel());	
-			lent.setPosition(ent.x(), ent.y(), ent.z());
+			lent.setPos(ent.x(), ent.y(), ent.z());
 			lent.setDeltaMovement(Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f);
 			if(lent instanceof Mob mob && ent.getLevel() instanceof ServerLevel sLevel) {
 				mob.initialize(sLevel, sLevel.getLocalDifficulty(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);

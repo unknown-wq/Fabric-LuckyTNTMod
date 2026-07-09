@@ -10,8 +10,8 @@ import net.minecraft.resources.Identifier;
 public class HydrogenBombS2CPacket implements CustomPacketPayload {
 	
 	public static final Identifier NAME = Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "hydrogen_bomb_s2c");
-	public static final CustomPacketPayload.Id<HydrogenBombS2CPacket> ID = new CustomPacketPayload.Id<>(NAME);
-    public static final StreamCodec<RegistryFriendlyByteBuf, HydrogenBombS2CPacket> CODEC = StreamCodec.of(HydrogenBombS2CPacket::write, HydrogenBombS2CPacket::new);
+	public static final CustomPacketPayload.Type<HydrogenBombS2CPacket> ID = new CustomPacketPayload.Type<>(NAME);
+    public static final StreamCodec<RegistryFriendlyByteBuf, HydrogenBombS2CPacket> CODEC = StreamCodec.ofMember(HydrogenBombS2CPacket::write, HydrogenBombS2CPacket::new);
 	
 	public final int entityId;
 	
@@ -28,7 +28,7 @@ public class HydrogenBombS2CPacket implements CustomPacketPayload {
 	}
 
 	@Override
-	public Id<? extends CustomPacketPayload> getId() {
+	public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 }

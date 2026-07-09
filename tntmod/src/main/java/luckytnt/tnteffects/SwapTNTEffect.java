@@ -11,7 +11,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.AABB;
@@ -23,7 +23,7 @@ public class SwapTNTEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity) {
 		int[] ids = entity.getPersistentData().getIntArray("entities");
 		if(entity.getTNTFuse() < 40 && ids.length == 0) {
-			List<Entity> entList = entity.getLevel().getOtherEntities((Entity)entity, new Box(entity.x() - 70, entity.y() - 70, entity.z() - 70, entity.x() + 70, entity.y() + 70, entity.z() + 70));
+			List<Entity> entList = entity.getLevel().getOtherEntities((Entity)entity, new AABB(entity.x() - 70, entity.y() - 70, entity.z() - 70, entity.x() + 70, entity.y() + 70, entity.z() + 70));
 			ids = new int[entList.size()];
 			entity.setTNTFuse(0);
 			for(int i = 0; i < entList.size(); i++) {
@@ -39,19 +39,19 @@ public class SwapTNTEffect extends PrimedTNTEffect{
 				Entity ent1 = entity.getLevel().getEntityById(ids[entity.getPersistentData().getInt("count")]);
 				Entity ent2 = entity.getLevel().getEntityById(ids[new Random().nextInt(ids.length)]);
 				if(ent1 != null && ent2 != null) {
-					Vec3 pos1 = ent1.getLerpedPos(1);
-					Vec3 pos2 = ent2.getLerpedPos(1);
+					Vec3 pos1 = ent1.getPosition(1);
+					Vec3 pos2 = ent2.getPosition(1);
 					
-					ent1.setPosition(pos2);
+					ent1.setPos(pos2);
 					entity.getLevel().playSound(null, toBlockPos(pos2), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundSource.MASTER, 2, 1);
 					for(int count = 0; count < 40; count++) {
-						entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 0f, 1f), 1f), pos2.x + Math.random() * ent1.getWidth() - Math.random() * ent1.getWidth(), pos2.y + Math.random() * ent1.getHeight(), pos2.z + Math.random() * ent1.getWidth() - Math.random() * ent1.getWidth(), 0, 0, 0);
+						entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 0f, 1f), 1f), pos2.x + Math.random() * ent1.getWidth() - Math.random() * ent1.getWidth(), pos2.y + Math.random() * ent1.getHeight(), pos2.z + Math.random() * ent1.getWidth() - Math.random() * ent1.getWidth(), 0, 0, 0);
 					}
 					
-					ent2.setPosition(pos1);
+					ent2.setPos(pos1);
 					entity.getLevel().playSound(null, toBlockPos(pos1), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundSource.MASTER, 2, 1);
 					for(int count = 0; count < 40; count++) {
-						entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 0f, 1f), 1f), pos1.x + Math.random() * ent2.getWidth() - Math.random() * ent2.getWidth(), pos1.y + Math.random() * ent2.getHeight(), pos1.z + Math.random() * ent2.getWidth() - Math.random() * ent2.getWidth(), 0, 0, 0);
+						entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 0f, 1f), 1f), pos1.x + Math.random() * ent2.getWidth() - Math.random() * ent2.getWidth(), pos1.y + Math.random() * ent2.getHeight(), pos1.z + Math.random() * ent2.getWidth() - Math.random() * ent2.getWidth(), 0, 0, 0);
 					}
 				}
 				CompoundTag tag = entity.getPersistentData();

@@ -35,7 +35,31 @@ RENAME = {
     "ItemEntity": "ItemEntity",
     "FallingBlockEntity": "FallingBlockEntity",
     "TntEntity": "PrimedTnt",
+    # class renamed (name changed) — verified against /opt/mc-src
+    "DustParticleEffect": "DustParticleOptions",
+    "StructureWorldAccess": "WorldGenLevel",
+    "ItemActionResult": "InteractionResult",
+    "ItemPlacementContext": "BlockPlaceContext",
+    "ItemGroup": "CreativeModeTab",
+    "WorldView": "LevelReader",
+    "ShapeContext": "CollisionContext",
+    "LightType": "LightLayer",
+    "Box": "AABB",
+    "StairsBlock": "StairBlock",
+    "StairShape": "StairsShape",
+    "BlockHalf": "Half",
+    "BlockFace": "AttachFace",
     # common vanilla mobs: yarn XxxEntity -> Mojang Xxx
+}
+
+# classes to also add a missing import for when used but not imported
+ENSURE_IMPORT = {
+    "EntityTypes": "net.minecraft.world.entity.EntityTypes",
+    "Holder": "net.minecraft.core.Holder",
+    "AABB": "net.minecraft.world.phys.AABB",
+    "BlockStateProperties": "net.minecraft.world.level.block.state.properties.BlockStateProperties",
+    "SoundEvents": "net.minecraft.sounds.SoundEvents",
+    "Blocks": "net.minecraft.world.level.block.Blocks",
 }
 
 # Build index: simple class name -> set of dotted packages containing it
@@ -102,8 +126,23 @@ for path in files:
             text = re.sub(r'\b' + re.escape(old) + r'\b', new, text)
             renamed_used[f"{old}->{new}"] += 1
         out = [text]
+    # ensure imports for symbols used but not imported
+    text = "".join(out)
+    add_imports = []
+    for sym, imp in ENSURE_IMPORT.items():
+        if re.search(r'\b' + sym + r'\b', text) and f"import {imp};" not in text:
+            add_imports.append(f"import {imp};\n")
+    if add_imports:
+        lines2 = text.split("\n")
+        # insert after the last existing import (or after package line)
+        idx = 0
+        for i, ln in enumerate(lines2):
+            if ln.startswith("import ") or ln.startswith("package "):
+                idx = i
+        lines2[idx:idx+1] = [lines2[idx]] + [a.rstrip("\n") for a in add_imports]
+        text = "\n".join(lines2)
     with open(path, "w") as fh:
-        fh.writelines(out)
+        fh.write(text)
 
 print(f"Rewrote {fixed_imports} import lines across {len(files)} files.")
 if renamed_used:

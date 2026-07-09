@@ -23,6 +23,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntityTypes;
 
 public class EndGateEffect extends PrimedTNTEffect{
 
@@ -35,16 +36,16 @@ public class EndGateEffect extends PrimedTNTEffect{
 				BlockPos posTop = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				
-				if(state.getBlock().getBlastResistance() < 200 && stateTop.isAir() && !state.isAir() && Math.abs(entity.y() - pos.getY()) <= 20) {
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+				if(state.getBlock().getExplosionResistance() < 200 && stateTop.isAir() && !state.isAir() && Math.abs(entity.y() - pos.getY()) <= 20) {
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					if(Materials.isWood(state)) {
-						level.setBlockState(posTop, Blocks.OBSIDIAN.getDefaultState(), 3);
-					} else if(state.isIn(BlockTags.LEAVES)) {
-						level.setBlockState(posTop, Blocks.END_STONE.getDefaultState(), 3);
+						level.setBlock(posTop, Blocks.OBSIDIAN.defaultBlockState(), 3);
+					} else if(state.is(BlockTags.LEAVES)) {
+						level.setBlock(posTop, Blocks.END_STONE.defaultBlockState(), 3);
 					} else if(state.getBlock() instanceof LiquidBlock) {
-						level.setBlockState(posTop, Blocks.AIR.getDefaultState(), 3);
+						level.setBlock(posTop, Blocks.AIR.defaultBlockState(), 3);
 					} else {
-						level.setBlockState(posTop, Blocks.END_STONE.getDefaultState(), 3);
+						level.setBlock(posTop, Blocks.END_STONE.defaultBlockState(), 3);
 					}
 				}
 			}
@@ -60,7 +61,7 @@ public class EndGateEffect extends PrimedTNTEffect{
 				BlockState stateAbove = level.getBlockState(posAbove);
 				
 				if(stateAbove.isAir() && Math.random() <= 0.05D && stateTop.getBlock() == Blocks.END_STONE) {
-					level.setBlockState(posAbove, Blocks.CHORUS_FLOWER.getDefaultState(), 3);
+					level.setBlock(posAbove, Blocks.CHORUS_FLOWER.defaultBlockState(), 3);
 				}
 			}
 		});
@@ -75,8 +76,8 @@ public class EndGateEffect extends PrimedTNTEffect{
 				BlockState state = entity.getLevel().getBlockState(pos);
 				BlockState stateDown = entity.getLevel().getBlockState(posDown);
 				
-				if(Block.isFaceFullSquare(stateDown.getCollisionShape(entity.getLevel(), posDown), Direction.UP) && !Block.isFaceFullSquare(state.getCollisionShape(entity.getLevel(), pos), Direction.UP)) {
-					man.setPosition(entity.x() + offX, offY, entity.z() + offZ);
+				if(Block.isFaceSturdy(stateDown.getCollisionShape(entity.getLevel(), posDown), Direction.UP) && !Block.isFaceSturdy(state.getCollisionShape(entity.getLevel(), pos), Direction.UP)) {
+					man.setPos(entity.x() + offX, offY, entity.z() + offZ);
 					break;
 				}
 			}

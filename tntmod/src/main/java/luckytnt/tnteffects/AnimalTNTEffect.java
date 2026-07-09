@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityTypes;
 
 public class AnimalTNTEffect extends PrimedTNTEffect{
 
@@ -22,7 +23,7 @@ public class AnimalTNTEffect extends PrimedTNTEffect{
 		for(EntityType<?> entType : entities) {
 			for(int count = 0; count < 2; count++){
 				Entity ent = entType.create(entity.getLevel());
-				ent.setPosition(entity.getPos());
+				ent.setPos(entity.getPos());
 				if(entity.getLevel() instanceof ServerLevel sLevel && ent instanceof Mob mob) {
 					mob.initialize(sLevel, entity.getLevel().getLocalDifficulty(toBlockPos(entity.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
 				}

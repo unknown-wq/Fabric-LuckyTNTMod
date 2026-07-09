@@ -33,9 +33,9 @@ public class DripstoneTNTEffect extends PrimedTNTEffect{
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getBlastResistance() < 100 && (!state.isFullCube(level, pos) || state.isIn(BlockTags.LEAVES) || state.isIn(BlockTags.LOGS))) {
-					state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+				if(state.getBlock().getExplosionResistance() < 100 && (!state.isCollisionShapeFullBlock(level, pos) || state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS))) {
+					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}
 		});
@@ -43,13 +43,13 @@ public class DripstoneTNTEffect extends PrimedTNTEffect{
 
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(level.getBlockState(pos.down()).isAir() && !state.isAir() && state.getBlock().getBlastResistance() < 100 && !state.isIn(BlockTags.DRIPSTONE_REPLACEABLE_BLOCKS)) {
-					state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlockState(pos, Blocks.STONE.getDefaultState());
+				if(level.getBlockState(pos.below()).isAir() && !state.isAir() && state.getBlock().getExplosionResistance() < 100 && !state.is(BlockTags.DRIPSTONE_REPLACEABLE_BLOCKS)) {
+					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					level.setBlock(pos, Blocks.STONE.defaultBlockState());
 				}
-				else if(level.getBlockState(pos.down()).getBlock().getBlastResistance() < 100 && !level.getBlockState(pos.down()).isAir() && state.isAir() && !level.getBlockState(pos.down()).isIn(BlockTags.DRIPSTONE_REPLACEABLE_BLOCKS)) {
-					state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlockState(pos.down(), Blocks.STONE.getDefaultState());
+				else if(level.getBlockState(pos.below()).getBlock().getExplosionResistance() < 100 && !level.getBlockState(pos.below()).isAir() && state.isAir() && !level.getBlockState(pos.below()).is(BlockTags.DRIPSTONE_REPLACEABLE_BLOCKS)) {
+					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					level.setBlock(pos.below(), Blocks.STONE.defaultBlockState());
 				}
 			}
 		});
@@ -58,15 +58,15 @@ public class DripstoneTNTEffect extends PrimedTNTEffect{
 
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-					if(((level.getBlockState(pos.down()).isAir() && !state.isAir()) || (!level.getBlockState(pos.down()).isAir() && state.isAir())) && Math.random() < 0.1f) {
-						RegistryEntry<ConfiguredFeature<?, ?>> feature = null;
+					if(((level.getBlockState(pos.below()).isAir() && !state.isAir()) || (!level.getBlockState(pos.below()).isAir() && state.isAir())) && Math.random() < 0.1f) {
+						Holder<ConfiguredFeature<?, ?>> feature = null;
 						if(Math.random() < 0.9f) {
-							feature = entity.getLevel().getRegistryManager().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.DRIPSTONE_CLUSTER);
-							feature.value().generate(sLevel, sLevel.getChunkManager().getChunkGenerator(), sLevel.random, pos);
+							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.DRIPSTONE_CLUSTER);
+							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
 						}
 						else {
-							feature = entity.getLevel().getRegistryManager().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.LARGE_DRIPSTONE);
-							feature.value().generate(sLevel, sLevel.getChunkManager().getChunkGenerator(), sLevel.random, pos);
+							feature = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(UndergroundConfiguredFeatures.LARGE_DRIPSTONE);
+							feature.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
 						}
 					}
 				}

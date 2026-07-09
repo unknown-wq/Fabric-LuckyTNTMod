@@ -15,7 +15,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
@@ -23,6 +23,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntityTypes;
 
 public class WitherStormEffect extends PrimedTNTEffect {
 	
@@ -37,20 +38,20 @@ public class WitherStormEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getBlastResistance() < 100 && !state.isAir()) {
+				if(state.getBlock().getExplosionResistance() < 100 && !state.isAir()) {
 					if(Math.random() < 0.7D) {
-						state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-						level.setBlockState(pos, Blocks.SOUL_SAND.getDefaultState(), 3);
+						state.getBlock().wasExploded(level, pos, explosion);
+						level.setBlock(pos, Blocks.SOUL_SAND.defaultBlockState(), 3);
 					} else {
-						state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-						level.setBlockState(pos, Blocks.SOUL_SOIL.getDefaultState(), 3);
+						state.getBlock().wasExploded(level, pos, explosion);
+						level.setBlock(pos, Blocks.SOUL_SOIL.defaultBlockState(), 3);
 					}
 				}
 			}
 		});
 		
 		WitherEntity wither = new WitherEntity(EntityTypes.WITHER, ent.getLevel());
-		wither.setPosition(ent.getPos());
+		wither.setPos(ent.getPos());
 		ent.getLevel().addFreshEntity(wither);
 		
 		for(int i = 0; i < 160; i++) {
@@ -63,8 +64,8 @@ public class WitherStormEffect extends PrimedTNTEffect {
 			for(int y = ent.getLevel().getTopY(); y >= ent.getLevel().getBottomY(); y--) {
 				BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), y, Mth.floor(ent.z() + offZ));
 				BlockState state = ent.getLevel().getBlockState(pos);
-				if(!Block.isFaceFullSquare(state.getCollisionShape(ent.getLevel(), pos), Direction.UP) && Block.isFaceFullSquare(ent.getLevel().getBlockState(pos.down()).getCollisionShape(ent.getLevel(), pos.down()), Direction.UP)) {
-					skeleton.setPosition(pos.getX() + 0.5D, y, pos.getZ() + 0.5D);
+				if(!Block.isFaceSturdy(state.getCollisionShape(ent.getLevel(), pos), Direction.UP) && Block.isFaceSturdy(ent.getLevel().getBlockState(pos.below()).getCollisionShape(ent.getLevel(), pos.below()), Direction.UP)) {
+					skeleton.setPos(pos.getX() + 0.5D, y, pos.getZ() + 0.5D);
 					break;
 				}
 			}
@@ -77,13 +78,13 @@ public class WitherStormEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getLevel() instanceof ServerLevel sl) {
-			sl.spawnParticles(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 2.25f, ent.z(), 20, 0.1f, 0.5f, 0.1f, 0);
-			sl.spawnParticles(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 3f, ent.z(), 20, 0.05f, 0.05f, 0.5f, 0);
-			sl.spawnParticles(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 2.5f, ent.z(), 20, 0.05f, 0.05f, 0.3f, 0);
-			sl.spawnParticles(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 2f, ent.z(), 20, 0.05f, 0.05f, 0.2f, 0);
-			sl.spawnParticles(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 3.5f, ent.z(), 20, 0.2f, 0.2f, 0.2f, 0);
-			sl.spawnParticles(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 3.25f, ent.z() + 1, 20, 0.15f, 0.15f, 0.15f, 0);
-			sl.spawnParticles(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 3.25f, ent.z() - 1, 20, 0.15f, 0.15f, 0.15f, 0);
+			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 2.25f, ent.z(), 20, 0.1f, 0.5f, 0.1f, 0);
+			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 3f, ent.z(), 20, 0.05f, 0.05f, 0.5f, 0);
+			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 2.5f, ent.z(), 20, 0.05f, 0.05f, 0.3f, 0);
+			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 2f, ent.z(), 20, 0.05f, 0.05f, 0.2f, 0);
+			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 3.5f, ent.z(), 20, 0.2f, 0.2f, 0.2f, 0);
+			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 3.25f, ent.z() + 1, 20, 0.15f, 0.15f, 0.15f, 0);
+			sl.sendParticles(new DustParticleOptions(new Vector3f(0.2f, 0.2f, 0.2f), 1f), ent.x(), ent.y() + 3.25f, ent.z() - 1, 20, 0.15f, 0.15f, 0.15f, 0);
 		}
 	}
 	

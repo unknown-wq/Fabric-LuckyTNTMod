@@ -91,13 +91,13 @@ public class ItemFireworkEffect extends PrimedTNTEffect {
 						double z = Math.sin(theta) * radius;
 						
 						Fireball fireball = new Fireball(ent.getLevel(), ent.owner(), new Vec3((ent.x() + x * 15) - ent.x(), (ent.y() + y * 15) - ent.y(), (ent.z() + z * 15) - ent.z()).normalize().multiply(0.5D), 1);
-						fireball.setPosition(ent.x() + x * 15, ent.y() + y * 15, ent.z() + z * 15);
+						fireball.setPos(ent.x() + x * 15, ent.y() + y * 15, ent.z() + z * 15);
 						ent.getLevel().addFreshEntity(fireball);
 					}
 				} else if(item == Items.DRAGON_BREATH) {
 					for(int i = 0; i < 300; i++) {
 						DragonFireball fireball = new DragonFireball(ent.getLevel(), ent.owner(), new Vec3(Math.random() - 0.5f, Math.random() - 0.5f, Math.random() - 0.5f));
-						fireball.setPosition(ent.getPos());
+						fireball.setPos(ent.getPos());
 						ent.getLevel().addFreshEntity(fireball);
 					}
 				} else if(item instanceof ThrowablePotionItem) {

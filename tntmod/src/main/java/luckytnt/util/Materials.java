@@ -37,7 +37,7 @@ public class Materials {
 	
 	public static boolean isWood(BlockState state) {
 		for(TagKey<Block> tag : WOOD_TAGS) {
-			if(state.isIn(tag)) {
+			if(state.is(tag)) {
 				return true;
 			}
 		}
@@ -45,7 +45,7 @@ public class Materials {
 	}
 	
 	public static boolean isPlant(BlockState state) {
-		if(state.isIn(BlockTags.SWORD_EFFICIENT) && !EXCLUDED_PLANTS.contains(state.getBlock())) {
+		if(state.is(BlockTags.SWORD_EFFICIENT) && !EXCLUDED_PLANTS.contains(state.getBlock())) {
 			return true;
 		}
 		return INCLUDED_PLANTS.contains(state.getBlock());
@@ -57,7 +57,7 @@ public class Materials {
 	
 	public static boolean isStone(BlockState state) {
 		for(TagKey<Block> tag : STONE_TAGS) {
-			if(state.isIn(tag)) {
+			if(state.is(tag)) {
 				return true;
 			}
 		}

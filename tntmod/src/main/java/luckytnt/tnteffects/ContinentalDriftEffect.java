@@ -42,7 +42,7 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 			
 			ent.setPersistentData(tag);
 	      	
-	      	List<Player> list = ent.getLevel().getNonSpectatingEntities(Player.class, new Box(ent.x() - 200, ent.y() - 200, ent.z() - 200, ent.x() + 200, ent.y() + 200, ent.z() + 200));
+	      	List<Player> list = ent.getLevel().getEntitiesOfClass(Player.class, new AABB(ent.x() - 200, ent.y() - 200, ent.z() - 200, ent.x() + 200, ent.y() + 200, ent.z() + 200));
 	      	for(Player player : list) {
 	      		if(player instanceof LuckyTNTEntityExtension eplayer) {
 	      			CompoundTag etag = eplayer.getAdditionalPersistentData();
@@ -52,7 +52,7 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 	      	}
 		}
 		
-		if(ent.getTNTFuse() <= 400 && (ent.getTNTFuse() % 60 == 0 || ent.getTNTFuse() == 400) && !ent.getLevel().isClient()) {
+		if(ent.getTNTFuse() <= 400 && (ent.getTNTFuse() % 60 == 0 || ent.getTNTFuse() == 400) && !ent.getLevel().isClientSide()) {
 			BlockPos origin = toBlockPos(new Vec3(ent.getPersistentData().getDouble("x"), ent.getPersistentData().getDouble("y"), ent.getPersistentData().getDouble("z")));
 			BlockPos start = origin.add(toBlockPos(new Vec3(ent.getPersistentData().getDouble("vecx") * -80, 0, ent.getPersistentData().getDouble("vecz") * -80)));
 			Vec3 vec = new Vec3(ent.getPersistentData().getDouble("vecx"), 0, ent.getPersistentData().getDouble("vecz"));
@@ -67,24 +67,24 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 						if(distance <= 7) {
 							if(Math.random() > 0.1D) {
 								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
-								if(ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 100) {
-									ent.getLevel().setBlockState(pos1, Blocks.AIR.getDefaultState(), 3);
+								if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
+									ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
 							}
 						}
 						if(distance <= 9 && distance > 7) {
 							if(Math.random() > 0.5D) {
 								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
-								if(ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 100) {
-									ent.getLevel().setBlockState(pos1, Blocks.AIR.getDefaultState(), 3);
+								if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
+									ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
 							}
 						}
 						if(distance <= 10 && distance > 9) {
 							if(Math.random() > 0.9D) {
 								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
-								if(ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 100) {
-									ent.getLevel().setBlockState(pos1, Blocks.AIR.getDefaultState(), 3);
+								if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
+									ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
 							}
 						}
@@ -100,24 +100,24 @@ public class ContinentalDriftEffect extends PrimedTNTEffect {
 						if(distance <= 7) {
 							if(Math.random() > 0.1D) {
 								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
-								if(ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 100) {
-									ent.getLevel().setBlockState(pos1, Blocks.AIR.getDefaultState(), 3);
+								if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
+									ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
 							}
 						}
 						if(distance <= 9 && distance > 7) {
 							if(Math.random() > 0.5D) {
 								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
-								if(ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 100) {
-									ent.getLevel().setBlockState(pos1, Blocks.AIR.getDefaultState(), 3);
+								if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
+									ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
 							}
 						}
 						if(distance <= 10 && distance > 9) {
 							if(Math.random() > 0.9D) {
 								BlockPos pos1 = new BlockPos(pos.getX(), ent.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
-								if(ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 100) {
-									ent.getLevel().setBlockState(pos1, Blocks.AIR.getDefaultState(), 3);
+								if(ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
+									ent.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
 							}
 						}

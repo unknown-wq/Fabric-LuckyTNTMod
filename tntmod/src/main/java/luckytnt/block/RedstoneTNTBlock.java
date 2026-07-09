@@ -17,7 +17,7 @@ public class RedstoneTNTBlock extends LTNTBlock {
 	}
 	
     @Override
-    public void onBlockAdded(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {
+    public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {
     }
     
     @Override

@@ -32,15 +32,15 @@ public class IceMeteorEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(!state.isAir()) {
-					if(distance <= (strength - strength / 8) && state.getBlock().getBlastResistance() <= 100) {
-						state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-						level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+					if(distance <= (strength - strength / 8) && state.getBlock().getExplosionResistance() <= 100) {
+						state.getBlock().wasExploded(level, pos, explosion);
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
-					else if(Math.random() < 0.6f && state.getBlock().getBlastResistance() <= 100) {
-						state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-						level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+					else if(Math.random() < 0.6f && state.getBlock().getExplosionResistance() <= 100) {
+						state.getBlock().wasExploded(level, pos, explosion);
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						if(Math.random() < 0.25f) {
-							level.setBlockState(pos, Math.random() < 0.5f ? Blocks.BLUE_ICE.getDefaultState() : Blocks.PACKED_ICE.getDefaultState());
+							level.setBlock(pos, Math.random() < 0.5f ? Blocks.BLUE_ICE.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState());
 						}
 					}
 				}

@@ -17,8 +17,8 @@ public class FlakTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
-		if(!level.isClient && entity.getTNTFuse() <= 600) {
-			List<Player> players = level.getNonSpectatingEntities(Player.class, new Box(entity.getPos().add(-150, -150, -150), entity.getPos().add(150, 150, 150)));
+		if(!level.isClientSide && entity.getTNTFuse() <= 600) {
+			List<Player> players = level.getEntitiesOfClass(Player.class, new AABB(entity.getPos().add(-150, -150, -150), entity.getPos().add(150, 150, 150)));
 			for(Player player : players) {
 				if(!player.equals(entity.owner())) {
 					double xVel = player.getX() - entity.x();

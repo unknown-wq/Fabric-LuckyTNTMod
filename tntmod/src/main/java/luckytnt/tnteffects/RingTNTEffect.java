@@ -7,7 +7,7 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -23,7 +23,7 @@ public class RingTNTEffect extends PrimedTNTEffect {
 			double x = ent.x() + 10 * Math.cos(angle * Math.PI / 180);
 			double z = ent.z() + 10 * Math.sin(angle * Math.PI / 180);
 			double y = getFirstMotionBlockingBlock(ent.getLevel(), x, z);
-			tnt.setPosition(x, y + 1D, z);
+			tnt.setPos(x, y + 1D, z);
 			ent.getLevel().addFreshEntity(tnt);
 		}
 	}
@@ -34,7 +34,7 @@ public class RingTNTEffect extends PrimedTNTEffect {
 	}
 	
 	public static int getFirstMotionBlockingBlock(Level level, double x, double z) {
-		if(!level.isClient) {
+		if(!level.isClientSide) {
 			boolean blockFound = false;
 			int y = 0;
 			for(int offY = level.getTopY(); offY >= level.getBottomY(); offY--) {	
@@ -43,7 +43,7 @@ public class RingTNTEffect extends PrimedTNTEffect {
 				BlockState state = level.getBlockState(pos);
 				BlockState stateUp = level.getBlockState(posUp);				
 				if(!blockFound) {
-					if(!state.getCollisionShape(level, pos, ShapeContext.absent()).isEmpty() && stateUp.getCollisionShape(level, posUp, ShapeContext.absent()).isEmpty()) {
+					if(!state.getCollisionShape(level, pos, CollisionContext.absent()).isEmpty() && stateUp.getCollisionShape(level, posUp, CollisionContext.absent()).isEmpty()) {
 						blockFound = true;
 						y = offY;
 					}	

@@ -33,7 +33,7 @@ public class GravelFireworkEffect extends PrimedTNTEffect{
 				sandConstructor = FallingBlockEntity.class.getDeclaredConstructor(parameters);
 				sandConstructor.setAccessible(true);
 				try {
-					FallingBlockEntity gravel = sandConstructor.newInstance(entity.getLevel(), entity.getPos().x, entity.getPos().y, entity.getPos().z, Blocks.GRAVEL.getDefaultState());
+					FallingBlockEntity gravel = sandConstructor.newInstance(entity.getLevel(), entity.getPos().x, entity.getPos().y, entity.getPos().z, Blocks.GRAVEL.defaultBlockState());
 					gravel.setDeltaMovement((Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f, (Math.random() - Math.random()) * 1.5f);
 					entity.getLevel().addFreshEntity(gravel);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

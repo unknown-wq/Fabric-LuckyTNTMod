@@ -33,7 +33,7 @@ public class MultiplyingDynamiteEffect extends PrimedTNTEffect{
 				explosionTick(ent);
 				ent.setTNTFuse(ent.getTNTFuse() - 1);
 			}
-			if(level.isClient) {
+			if(level.isClientSide) {
 				spawnParticles(entity);
 			}
 		}
@@ -45,7 +45,7 @@ public class MultiplyingDynamiteEffect extends PrimedTNTEffect{
 		if(entity.getPersistentData().getInt("level") < 3) {	
 			for(int count = 0; count < 4; count++) {
 				LExplosiveProjectile dynamite = EntityRegistry.MULTIPLYING_DYNAMITE.get().create(entity.getLevel());
-				dynamite.setPosition(entity.getPos());
+				dynamite.setPos(entity.getPos());
 				dynamite.setOwner(entity.owner());
 				dynamite.setDeltaMovement(((Entity)entity).getDeltaMovement().add(Math.random() * 0.5f - 0.25f, Math.random() * 0.5f - 0.25f, Math.random() * 0.5f - 0.25f));
 				CompoundTag tag = dynamite.getPersistentData();
@@ -58,7 +58,7 @@ public class MultiplyingDynamiteEffect extends PrimedTNTEffect{
 			ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), 8);
 			explosion.doEntityExplosion(0.75f, true);
 			explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
-			level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+			level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
 		}
 	}
 	

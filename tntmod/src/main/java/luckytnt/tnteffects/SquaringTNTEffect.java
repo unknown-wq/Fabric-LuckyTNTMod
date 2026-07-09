@@ -22,7 +22,7 @@ public class SquaringTNTEffect extends PrimedTNTEffect{
 			serverExplosion(entity);
 			if(entity.getPersistentData().getInt("level") == 5) {
 				Level level = entity.getLevel();
-				entity.getLevel().playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+				entity.getLevel().playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
 			}
 		}
 	}
@@ -37,7 +37,7 @@ public class SquaringTNTEffect extends PrimedTNTEffect{
 		} else if(level == 0) {
 			for(int count = 0; count < 4; count++) {
 				PrimedLTNT tnt = EntityRegistry.SQUARING_TNT.get().create(entity.getLevel());
-				tnt.setPosition(entity.getPos());
+				tnt.setPos(entity.getPos());
 				tnt.setOwner(entity.owner());
 				tnt.setDeltaMovement(Math.random() * 2.5D - 1.25D, 1 + Math.random(), Math.random() * 2.5D - 1.25D);
 				CompoundTag tag = tnt.getPersistentData();
@@ -48,7 +48,7 @@ public class SquaringTNTEffect extends PrimedTNTEffect{
 		} else {
 			for(int count = 0; count < level * level; count++) {
 				PrimedLTNT tnt = EntityRegistry.SQUARING_TNT.get().create(entity.getLevel());
-				tnt.setPosition(entity.getPos());
+				tnt.setPos(entity.getPos());
 				tnt.setOwner(entity.owner());
 				tnt.setDeltaMovement(Math.random() * 2.5D - 1.25D, 1 + Math.random(), Math.random() * 2.5D - 1.25D);
 				CompoundTag tag = tnt.getPersistentData();

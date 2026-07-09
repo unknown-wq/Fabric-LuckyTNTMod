@@ -8,7 +8,7 @@ import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 
 public class EyeOfTheSaharaEffect extends PrimedTNTEffect {
 
@@ -21,7 +21,7 @@ public class EyeOfTheSaharaEffect extends PrimedTNTEffect {
 			double x = ent.x() + 80 * Math.cos(angle * Math.PI / 180);
 			double z = ent.z() + 80 * Math.sin(angle * Math.PI / 180);
 			double y = RingTNTEffect.getFirstMotionBlockingBlock(ent.getLevel(), x, z);
-			tnt.setPosition(x, y + 1D, z);
+			tnt.setPos(x, y + 1D, z);
 			ent.getLevel().addFreshEntity(tnt);
 		}
 	}
@@ -29,7 +29,7 @@ public class EyeOfTheSaharaEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		for(double angle = 0; angle < 360; angle += 4D) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0f, 0f), 1f), ent.x() + 2 * Math.cos(angle * Math.PI / 180), ent.y() + 0.5d, ent.z() + 2 * Math.sin(angle * Math.PI / 180), 0d, 0d, 0d);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 1f), ent.x() + 2 * Math.cos(angle * Math.PI / 180), ent.y() + 0.5d, ent.z() + 2 * Math.sin(angle * Math.PI / 180), 0d, 0d, 0d);
 		}
 	}
 	

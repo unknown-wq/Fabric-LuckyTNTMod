@@ -23,10 +23,10 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		if(entity instanceof PrimedLTNT) {
-			((ServerLevel)entity.getLevel()).spawnParticles(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + 1 + Math.random() * 0.5f, entity.z() + Math.random() - 0.5f, 500, 0.5f, 0.5f, 0.5f, 0f);
+			((ServerLevel)entity.getLevel()).sendParticles(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + 1 + Math.random() * 0.5f, entity.z() + Math.random() - 0.5f, 500, 0.5f, 0.5f, 0.5f, 0f);
 		}
 		else {			
-			((ServerLevel)entity.getLevel()).spawnParticles(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + 1 + Math.random() * 0.5f, entity.z() + Math.random() - 0.5f, 100, 0.5f, 0.5f, 0.5f, 0f);
+			((ServerLevel)entity.getLevel()).sendParticles(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + 1 + Math.random() * 0.5f, entity.z() + Math.random() - 0.5f, 100, 0.5f, 0.5f, 0.5f, 0f);
 		}
 	}
 	
@@ -42,13 +42,13 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 				tag.putDouble("flyingZ", flying.z);
 				entity.setPersistentData(tag);
 				Vec3 flyingPos = new Vec3(entity.x() + flying.negate().normalize().multiply(20).x, entity.y() + 30, entity.z() + flying.negate().normalize().multiply(20).z);
-				((Entity)entity).setPosition(flyingPos.x, flyingPos.y, flyingPos.z);
+				((Entity)entity).setPos(flyingPos.x, flyingPos.y, flyingPos.z);
 			}
 			if(entity.getTNTFuse() <= 220) {
 				((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDouble("flyingX"), entity.getPersistentData().getDouble("flyingY"), entity.getPersistentData().getDouble("flyingZ")).normalize().multiply(40D / 220D));
 				if(entity.getTNTFuse() % 10 == 0) {
 					LExplosiveProjectile present = EntityRegistry.PRESENT.get().create(entity.getLevel());
-					present.setPosition(entity.getPos());
+					present.setPos(entity.getPos());
 					present.setOwner(entity.owner());
 					double randomX = Math.random();
 					randomX *= new Random().nextBoolean() ? 1 : -1;
@@ -81,7 +81,7 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 				}
 			}
 			else {
-				super.spawnParticles(entity);
+				super.sendParticles(entity);
 			}
 		}
 	}
@@ -93,7 +93,7 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public BlockState getBlockState(IExplosiveEntity entity) {
-		return entity instanceof PrimedLTNT ? BlockRegistry.CHRISTMAS_TNT.get().getDefaultState() : BlockRegistry.CHRISTMAS_TNT.get().getDefaultState().with(ChristmasTNTBlock.ONLY_PRESENT, true);
+		return entity instanceof PrimedLTNT ? BlockRegistry.CHRISTMAS_TNT.get().defaultBlockState() : BlockRegistry.CHRISTMAS_TNT.get().defaultBlockState().setValue(ChristmasTNTBlock.ONLY_PRESENT, true);
 	}
 	
 	@Override

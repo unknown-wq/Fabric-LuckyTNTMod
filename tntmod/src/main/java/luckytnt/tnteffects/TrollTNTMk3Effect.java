@@ -29,8 +29,8 @@ public class TrollTNTMk3Effect extends PrimedTNTEffect{
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-				level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+				state.getBlock().wasExploded(level, pos, explosion);
+				level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 			}
 		});
 	}

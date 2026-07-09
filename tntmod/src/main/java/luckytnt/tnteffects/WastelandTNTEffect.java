@@ -45,7 +45,7 @@ public class WastelandTNTEffect extends PrimedTNTEffect {
 	}
 	
 	public static void doVaporizeExplosion(IExplosiveEntity ent, double radius, boolean dryArea) {
-		if(!ent.getLevel().isClient()) {
+		if(!ent.getLevel().isClientSide()) {
 			for(double offX = -radius; offX <= radius; offX++) {
 				for(double offY = -radius; offY <= radius; offY++) {
 					for(double offZ = -radius; offZ <= radius; offZ++) {
@@ -54,28 +54,28 @@ public class WastelandTNTEffect extends PrimedTNTEffect {
 						BlockState state = ent.getLevel().getBlockState(pos);
 						
 						if(distance <= radius) {
-							if(state.getBlock() instanceof LiquidBlock || Materials.isWaterPlant(state) || state.isOf(Blocks.BUBBLE_COLUMN)) {
-								ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+							if(state.getBlock() instanceof LiquidBlock || Materials.isWaterPlant(state) || state.is(Blocks.BUBBLE_COLUMN)) {
+								ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							}
-							if(state.contains(Properties.WATERLOGGED) && state.get(Properties.WATERLOGGED)) {
-								ent.getLevel().setBlockState(pos, state.with(Properties.WATERLOGGED, false), 3);
+							if(state.contains(BlockStateProperties.WATERLOGGED) && state.get(BlockStateProperties.WATERLOGGED)) {
+								ent.getLevel().setBlock(pos, state.setValue(BlockStateProperties.WATERLOGGED, false), 3);
 							}
 							if(dryArea) {
 								if(Materials.isPlant(state)) {
-									if(Blocks.DEAD_BUSH.getDefaultState().canPlaceAt(ent.getLevel(), pos)) {
-										ent.getLevel().setBlockState(pos, Blocks.DEAD_BUSH.getDefaultState(), 3);
+									if(Blocks.DEAD_BUSH.defaultBlockState().canPlaceAt(ent.getLevel(), pos)) {
+										ent.getLevel().setBlock(pos, Blocks.DEAD_BUSH.defaultBlockState(), 3);
 									}
 								}
 								if(GRASS.contains(state.getBlock())) {
-									ent.getLevel().setBlockState(pos, Blocks.DIRT.getDefaultState(), 3);
+									ent.getLevel().setBlock(pos, Blocks.DIRT.defaultBlockState(), 3);
 								} else if(DIRT.contains(state.getBlock())) {
-									ent.getLevel().setBlockState(pos, Blocks.SAND.getDefaultState(), 3);
-								} else if(state.isIn(BlockTags.WOOL)) {
-									ent.getLevel().setBlockState(pos, Blocks.WHITE_WOOL.getDefaultState(), 3);
+									ent.getLevel().setBlock(pos, Blocks.SAND.defaultBlockState(), 3);
+								} else if(state.is(BlockTags.WOOL)) {
+									ent.getLevel().setBlock(pos, Blocks.WHITE_WOOL.defaultBlockState(), 3);
 								} else if(state.getBlock() instanceof WetSpongeBlock) {
-									ent.getLevel().setBlockState(pos, Blocks.SPONGE.getDefaultState(), 3);
-								} else if(state.isIn(BlockTags.ICE) || state.isIn(BlockTags.SNOW) || state.isIn(BlockTags.LEAVES)) {
-									ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+									ent.getLevel().setBlock(pos, Blocks.SPONGE.defaultBlockState(), 3);
+								} else if(state.is(BlockTags.ICE) || state.is(BlockTags.SNOW) || state.is(BlockTags.LEAVES)) {
+									ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 								}
 							}
 						}

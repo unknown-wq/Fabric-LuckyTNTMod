@@ -25,7 +25,7 @@ public class HelixEffect extends PrimedTNTEffect {
 		if(ent.getTNTFuse() < 60) {
 			if(ent.getTNTFuse() % 6 == 0) {
 				PrimedLTNT spiral = EntityRegistry.THE_REVOLUTION.get().create(ent.getLevel());
-				spiral.setPosition(ent.getPos());
+				spiral.setPos(ent.getPos());
 				spiral.setOwner(ent.owner());
 				spiral.setTNTFuse(140);
 				spiral.setDeltaMovement(new Vec3(((Entity)ent).getRotationVector().x, ((Entity)ent).getRotationVector().y, ((Entity)ent).getRotationVector().z).normalize().multiply(ent.getPersistentData().getFloat("power")));

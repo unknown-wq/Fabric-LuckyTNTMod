@@ -26,7 +26,7 @@ public class BouncingDynamite extends LExplosiveProjectile {
 			if(getPersistentData().getInt("bounces") >= 12) {
 				if(getWorld() instanceof ServerLevel) {
 					getEffect().serverExplosion(this);
-					getWorld().playSound(this, new BlockPos(Mth.floor(getX()), Mth.floor(getY()), Mth.floor(getZ())), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (getWorld().getRandom().nextFloat() - getWorld().getRandom().nextFloat()) * 0.2f) * 0.7f);
+					getWorld().playSound(this, new BlockPos(Mth.floor(getX()), Mth.floor(getY()), Mth.floor(getZ())), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (getWorld().getRandom().nextFloat() - getWorld().getRandom().nextFloat()) * 0.2f) * 0.7f);
 				}
 				discard();
 			}

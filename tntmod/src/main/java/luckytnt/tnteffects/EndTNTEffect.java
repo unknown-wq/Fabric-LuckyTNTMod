@@ -17,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntityTypes;
 
 public class EndTNTEffect extends PrimedTNTEffect {
 
@@ -38,16 +39,16 @@ public class EndTNTEffect extends PrimedTNTEffect {
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(distance <= 25) {
 					if(Math.random() < 0.9f) {
-						state.getBlock().onDestroyedByExplosion(level, pos, endExplosion);
-						level.setBlockState(pos, Blocks.END_STONE.getDefaultState());
+						state.getBlock().wasExploded(level, pos, endExplosion);
+						level.setBlock(pos, Blocks.END_STONE.defaultBlockState());
 						if(Math.random() < 0.1f) {
-							if(level.getBlockState(pos.up()).isAir()) {
-								level.setBlockState(pos.up(), Blocks.CHORUS_FLOWER.getDefaultState());
+							if(level.getBlockState(pos.above()).isAir()) {
+								level.setBlock(pos.above(), Blocks.CHORUS_FLOWER.defaultBlockState());
 							}
 						}
 						if(Math.random() < 0.025f) {
 							EndermanEntity enderman = EntityTypes.ENDERMAN.create(level);
-							enderman.setPosition(new Vec3(pos.getX(), pos.getY() + 1f, pos.getZ()));
+							enderman.setPos(new Vec3(pos.getX(), pos.getY() + 1f, pos.getZ()));
 							level.addFreshEntity(enderman);
 						}
 					}

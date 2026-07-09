@@ -23,11 +23,11 @@ public class DeathRayRayItem extends LDynamiteItem{
 	@Override
 	public LExplosiveProjectile shoot(Level level, double x, double y, double z, Vec3 direction, float power, @Nullable LivingEntity thrower){
 		LExplosiveProjectile dyn = dynamite.get().create(level);
-		dyn.setPosition(x, y, z);
+		dyn.setPos(x, y, z);
 		dyn.setDeltaMovement(direction.x, direction.y, direction.z, 4, 0);
 		dyn.setOwner(thrower);
 		level.addFreshEntity(dyn);
-		level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.MASTER, 1, 0.5f);
+		level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.MASTER, 1, 0.5f);
 		return dyn;
 	}
 }

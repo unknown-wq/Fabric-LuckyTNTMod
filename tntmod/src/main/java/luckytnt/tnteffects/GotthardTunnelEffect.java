@@ -14,7 +14,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.LightType;
+import net.minecraft.world.level.LightLayer;
 
 public class GotthardTunnelEffect extends PrimedTNTEffect {
 	
@@ -23,14 +23,14 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 		boolean streets = ent.getPersistentData().getBoolean("streets");
 		Direction dir = Direction.byName(ent.getPersistentData().getString("direction")) != null ? Direction.byName(ent.getPersistentData().getString("direction")) : Direction.NORTH;
 		switch(dir) {
-			case NORTH: for(int offZ = 0; offZ >= dir.getOffsetZ() * 200; offZ--) {
+			case NORTH: for(int offZ = 0; offZ >= dir.getStepZ() * 200; offZ--) {
 							for(int offX = -10; offX <= 10; offX++) {
 								for(int offY = 0; offY <= 15; offY++) {
 									BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, ent.y() + offY, ent.z() + offZ));
 									BlockState state = ent.getLevel().getBlockState(pos);
-									if(state.getBlock().getBlastResistance() <= 200) {
-										state.getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-										ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+									if(state.getBlock().getExplosionResistance() <= 200) {
+										state.getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+										ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 									}
 								}
 							}
@@ -42,14 +42,14 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 						placeLights(ent, dir);
 						break;
 						
-			case EAST: for(int offX = 0; offX <= dir.getOffsetX() * 200; offX++) {
+			case EAST: for(int offX = 0; offX <= dir.getStepX() * 200; offX++) {
 							for(int offZ = -10; offZ <= 10; offZ++) {
 								for(int offY = 0; offY <= 15; offY++) {
 									BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, ent.y() + offY, ent.z() + offZ));
 									BlockState state = ent.getLevel().getBlockState(pos);
-									if(state.getBlock().getBlastResistance() <= 200) {
-										state.getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-										ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+									if(state.getBlock().getExplosionResistance() <= 200) {
+										state.getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+										ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 									}
 								}
 							}
@@ -61,14 +61,14 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 						placeLights(ent, dir);
 						break;
 			
-			case SOUTH: for(int offZ = 0; offZ <= dir.getOffsetZ() * 200; offZ++) {
+			case SOUTH: for(int offZ = 0; offZ <= dir.getStepZ() * 200; offZ++) {
 							for(int offX = -10; offX <= 10; offX++) {
 								for(int offY = 0; offY <= 15; offY++) {
 									BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, ent.y() + offY, ent.z() + offZ));
 									BlockState state = ent.getLevel().getBlockState(pos);
-									if(state.getBlock().getBlastResistance() <= 200) {
-										state.getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-										ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+									if(state.getBlock().getExplosionResistance() <= 200) {
+										state.getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+										ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 									}
 								}
 							}
@@ -80,14 +80,14 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 						placeLights(ent, dir);
 						break;
 						
-			case WEST: for(int offX = 0; offX >= dir.getOffsetX() * 200; offX--) {
+			case WEST: for(int offX = 0; offX >= dir.getStepX() * 200; offX--) {
 							for(int offZ = -10; offZ <= 10; offZ++) {
 								for(int offY = 0; offY <= 15; offY++) {
 									BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, ent.y() + offY, ent.z() + offZ));
 									BlockState state = ent.getLevel().getBlockState(pos);
-									if(state.getBlock().getBlastResistance() <= 200) {
-										state.getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-										ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+									if(state.getBlock().getExplosionResistance() <= 200) {
+										state.getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+										ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 									}
 								}
 							}
@@ -109,7 +109,7 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 		if(!ent.getPersistentData().getString("direction").equals("")) {
 			dir = Direction.byName(ent.getPersistentData().getString("direction"));
 		} 
-		return BlockRegistry.GOTTHARD_TUNNEL.get().getDefaultState().with(GotthardTunnelBlock.STREETS, ent.getPersistentData().getBoolean("streets")).with(GotthardTunnelBlock.FACING, dir);
+		return BlockRegistry.GOTTHARD_TUNNEL.get().defaultBlockState().setValue(GotthardTunnelBlock.STREETS, ent.getPersistentData().getBoolean("streets")).setValue(GotthardTunnelBlock.FACING, dir);
 	}
 	
 	@Override
@@ -119,7 +119,7 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 	
 	public void placeLights(IExplosiveEntity ent, Direction dir) {
 		switch(dir) {
-			case NORTH: for(int offZ = -2; offZ >= dir.getOffsetZ() * 200; offZ -= 4) { 
+			case NORTH: for(int offZ = -2; offZ >= dir.getStepZ() * 200; offZ -= 4) { 
 							BlockPos pos1 = toBlockPos(new Vec3(ent.x(), ent.y() - 1, ent.z() + offZ));
 							BlockPos pos2 = toBlockPos(new Vec3(ent.x() + 10, ent.y() - 1, ent.z() + offZ));
 							BlockPos pos3 = toBlockPos(new Vec3(ent.x() - 10, ent.y() - 1, ent.z() + offZ));
@@ -134,15 +134,15 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 							List<BlockPos> list = List.of(pos1, pos2, pos3, pos4, pos5, pos6, pos7, pos8);
 							
 							for(BlockPos pos : list) {
-								if(!ent.getLevel().isSkyVisible(pos) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos, Blocks.SEA_LANTERN.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos, Blocks.SEA_LANTERN.defaultBlockState(), 3);
 								}
 							}
 						}
 						break;
 						
-			case EAST: 	for(int offX = 2; offX <= dir.getOffsetX() * 200; offX += 4) {
+			case EAST: 	for(int offX = 2; offX <= dir.getStepX() * 200; offX += 4) {
 							BlockPos pos1 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z()));
 							BlockPos pos2 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + 10));
 							BlockPos pos3 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() - 10));
@@ -157,15 +157,15 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 							List<BlockPos> list = List.of(pos1, pos2, pos3, pos4, pos5, pos6, pos7, pos8);
 							
 							for(BlockPos pos : list) {
-								if(!ent.getLevel().isSkyVisible(pos) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos, Blocks.SEA_LANTERN.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos, Blocks.SEA_LANTERN.defaultBlockState(), 3);
 								}
 							}
 						}
 						break;
 						
-			case SOUTH: for(int offZ = 2; offZ <= dir.getOffsetZ() * 200; offZ += 4) {
+			case SOUTH: for(int offZ = 2; offZ <= dir.getStepZ() * 200; offZ += 4) {
 							BlockPos pos1 = toBlockPos(new Vec3(ent.x(), ent.y() - 1, ent.z() + offZ));
 							BlockPos pos2 = toBlockPos(new Vec3(ent.x() + 10, ent.y() - 1, ent.z() + offZ));
 							BlockPos pos3 = toBlockPos(new Vec3(ent.x() - 10, ent.y() - 1, ent.z() + offZ));
@@ -180,15 +180,15 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 							List<BlockPos> list = List.of(pos1, pos2, pos3, pos4, pos5, pos6, pos7, pos8);
 							
 							for(BlockPos pos : list) {
-								if(!ent.getLevel().isSkyVisible(pos) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos, Blocks.SEA_LANTERN.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos, Blocks.SEA_LANTERN.defaultBlockState(), 3);
 								}
 							}
 						}
 						break;
 						
-			case WEST: 	for(int offX = -2; offX >= dir.getOffsetX() * 200; offX -= 4) {
+			case WEST: 	for(int offX = -2; offX >= dir.getStepX() * 200; offX -= 4) {
 							BlockPos pos1 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z()));
 							BlockPos pos2 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + 10));
 							BlockPos pos3 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() - 10));
@@ -203,9 +203,9 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 							List<BlockPos> list = List.of(pos1, pos2, pos3, pos4, pos5, pos6, pos7, pos8);
 							
 							for(BlockPos pos : list) {
-								if(!ent.getLevel().isSkyVisible(pos) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos, Blocks.SEA_LANTERN.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos, Blocks.SEA_LANTERN.defaultBlockState(), 3);
 								}
 							}
 						}
@@ -217,17 +217,17 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 	
 	public void createStreet(IExplosiveEntity ent, Direction dir) {
 		switch(dir) {
-			case NORTH: for(int offZ = 0; offZ >= dir.getOffsetZ() * 200; offZ--) { 
+			case NORTH: for(int offZ = 0; offZ >= dir.getStepZ() * 200; offZ--) { 
 							for(int offX = 1; offX <= 9; offX++) {
 								BlockPos pos1 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + offZ));
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + (offX * -1), ent.y() - 1, ent.z() + offZ));
-								if(!ent.getLevel().isSkyVisible(pos1) && ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos1, Blocks.GRAY_CONCRETE.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos1) && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos1, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
 								}
-								if(!ent.getLevel().isSkyVisible(pos2) && ent.getLevel().getBlockState(pos2).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos2, Blocks.GRAY_CONCRETE.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos2) && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos2, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
 								}
 							}
 							
@@ -237,9 +237,9 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 							List<BlockPos> list = List.of(pos1, pos2, pos3);
 							
 							for(BlockPos pos : list) {
-								if(!ent.getLevel().isSkyVisible(pos) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos, Blocks.SMOOTH_STONE.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos, Blocks.SMOOTH_STONE.defaultBlockState(), 3);
 								}
 							}
 							
@@ -254,26 +254,26 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 								List<BlockPos> list2 = List.of(pos4, pos5, pos6, pos7, pos8, pos9);
 								
 								for(BlockPos pos : list2) {
-									if(!ent.getLevel().isSkyVisible(pos) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-										ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-										ent.getLevel().setBlockState(pos, Blocks.YELLOW_CONCRETE.getDefaultState(), 3);
+									if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+										ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+										ent.getLevel().setBlock(pos, Blocks.YELLOW_CONCRETE.defaultBlockState(), 3);
 									}
 								}
 							}
 						}
 						break;
 						
-			case EAST:	for(int offX = 0; offX <= dir.getOffsetX() * 200; offX++) {
+			case EAST:	for(int offX = 0; offX <= dir.getStepX() * 200; offX++) {
 							for(int offZ = 1; offZ <= 9; offZ++) {
 								BlockPos pos1 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + offZ));
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + (offZ * -1)));
-								if(!ent.getLevel().isSkyVisible(pos1) && ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos1, Blocks.GRAY_CONCRETE.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos1) && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos1, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
 								}
-								if(!ent.getLevel().isSkyVisible(pos2) && ent.getLevel().getBlockState(pos2).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos2, Blocks.GRAY_CONCRETE.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos2) && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos2, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
 								}
 							}
 							
@@ -283,9 +283,9 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 							List<BlockPos> list = List.of(pos1, pos2, pos3);
 							
 							for(BlockPos pos : list) {
-								if(!ent.getLevel().isSkyVisible(pos) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos, Blocks.SMOOTH_STONE.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos, Blocks.SMOOTH_STONE.defaultBlockState(), 3);
 								}
 							}
 							
@@ -300,26 +300,26 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 								List<BlockPos> list2 = List.of(pos4, pos5, pos6, pos7, pos8, pos9);
 								
 								for(BlockPos pos : list2) {
-									if(!ent.getLevel().isSkyVisible(pos) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-										ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-										ent.getLevel().setBlockState(pos, Blocks.YELLOW_CONCRETE.getDefaultState(), 3);
+									if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+										ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+										ent.getLevel().setBlock(pos, Blocks.YELLOW_CONCRETE.defaultBlockState(), 3);
 									}
 								}
 							}
 						}
 						break;
 			
-			case SOUTH:	for(int offZ = 0; offZ <= dir.getOffsetZ() * 200; offZ++) {
+			case SOUTH:	for(int offZ = 0; offZ <= dir.getStepZ() * 200; offZ++) {
 							for(int offX = 1; offX <= 9; offX++) {
 								BlockPos pos1 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + offZ));
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + (offX * -1), ent.y() - 1, ent.z() + offZ));
-								if(!ent.getLevel().isSkyVisible(pos1) && ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos1, Blocks.GRAY_CONCRETE.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos1) && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos1, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
 								}
-								if(!ent.getLevel().isSkyVisible(pos2) && ent.getLevel().getBlockState(pos2).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos2, Blocks.GRAY_CONCRETE.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos2) && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos2, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
 								}
 							}
 							
@@ -329,9 +329,9 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 							List<BlockPos> list = List.of(pos1, pos2, pos3);
 							
 							for(BlockPos pos : list) {
-								if(!ent.getLevel().isSkyVisible(pos) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos, Blocks.SMOOTH_STONE.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos, Blocks.SMOOTH_STONE.defaultBlockState(), 3);
 								}
 							}
 							
@@ -346,26 +346,26 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 								List<BlockPos> list2 = List.of(pos4, pos5, pos6, pos7, pos8, pos9);
 								
 								for(BlockPos pos : list2) {
-									if(!ent.getLevel().isSkyVisible(pos) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-										ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-										ent.getLevel().setBlockState(pos, Blocks.YELLOW_CONCRETE.getDefaultState(), 3);
+									if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+										ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+										ent.getLevel().setBlock(pos, Blocks.YELLOW_CONCRETE.defaultBlockState(), 3);
 									}
 								}
 							}
 						}
 						break;
 			
-			case WEST:	for(int offX = 0; offX >= dir.getOffsetX() * 200; offX--) {
+			case WEST:	for(int offX = 0; offX >= dir.getStepX() * 200; offX--) {
 							for(int offZ = 1; offZ <= 9; offZ++) {
 								BlockPos pos1 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + offZ));
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + (offZ * -1)));
-								if(!ent.getLevel().isSkyVisible(pos1) && ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos1, Blocks.GRAY_CONCRETE.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos1) && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos1, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
 								}
-								if(!ent.getLevel().isSkyVisible(pos2) && ent.getLevel().getBlockState(pos2).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos2, Blocks.GRAY_CONCRETE.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos2) && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos2, Blocks.GRAY_CONCRETE.defaultBlockState(), 3);
 								}
 							}
 							
@@ -375,9 +375,9 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 							List<BlockPos> list = List.of(pos1, pos2, pos3);
 							
 							for(BlockPos pos : list) {
-								if(!ent.getLevel().isSkyVisible(pos) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos, Blocks.SMOOTH_STONE.getDefaultState(), 3);
+								if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos, Blocks.SMOOTH_STONE.defaultBlockState(), 3);
 								}
 							}
 							
@@ -392,9 +392,9 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 								List<BlockPos> list2 = List.of(pos4, pos5, pos6, pos7, pos8, pos9);
 								
 								for(BlockPos pos : list2) {
-									if(!ent.getLevel().isSkyVisible(pos) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-										ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-										ent.getLevel().setBlockState(pos, Blocks.YELLOW_CONCRETE.getDefaultState(), 3);
+									if(!ent.getLevel().canSeeSky(pos) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+										ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+										ent.getLevel().setBlock(pos, Blocks.YELLOW_CONCRETE.defaultBlockState(), 3);
 									}
 								}
 							}
@@ -407,169 +407,169 @@ public class GotthardTunnelEffect extends PrimedTNTEffect {
 	
 	public void placeWalls(IExplosiveEntity ent, Direction dir) {
 		switch(dir) {
-			case NORTH: for(int offZ = 0; offZ >= dir.getOffsetZ() * 200; offZ--) {
+			case NORTH: for(int offZ = 0; offZ >= dir.getStepZ() * 200; offZ--) {
 							for(int offY = 15; offY >= 0; offY--) {
 								BlockPos pos1 = toBlockPos(new Vec3(ent.x() + 11, ent.y() + offY, ent.z() + offZ));
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() - 11, ent.y() + offY, ent.z() + offZ));
-								if(ent.getLevel().getBlockState(pos1).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos1).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getBlockState(pos2).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos2).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos1) < 10 && ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos1, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos1) < 10 && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos1, Blocks.STONE.defaultBlockState(), 3);
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos2, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos2, Blocks.STONE.defaultBlockState(), 3);
 								}
 							}
 						}
-						for(int offZ = 0; offZ >= dir.getOffsetZ() * 200; offZ--) {
+						for(int offZ = 0; offZ >= dir.getStepZ() * 200; offZ--) {
 							for(int offX = -10; offX <= 10; offX++) {
 								BlockPos pos1 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + offZ));
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + offX, ent.y() + 16, ent.z() + offZ));
-								if(ent.getLevel().getBlockState(pos1).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos1).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getBlockState(pos2).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos2).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos1) < 15 && ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos1, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos1) < 15 && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos1, Blocks.STONE.defaultBlockState(), 3);
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos2, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos2, Blocks.STONE.defaultBlockState(), 3);
 								}
 							}
 						}
 						break;
 						
-			case EAST: for(int offX = 0; offX <= dir.getOffsetX() * 200; offX++) {
+			case EAST: for(int offX = 0; offX <= dir.getStepX() * 200; offX++) {
 							for(int offY = 15; offY >= 0; offY--) {
 								BlockPos pos1 = toBlockPos(new Vec3(ent.x() + offX, ent.y() + offY, ent.z() + 11));
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + offX, ent.y() + offY, ent.z() - 11));
-								if(ent.getLevel().getBlockState(pos1).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos1).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getBlockState(pos2).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos2).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos1) < 10 && ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos1, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos1) < 10 && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos1, Blocks.STONE.defaultBlockState(), 3);
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos2, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos2, Blocks.STONE.defaultBlockState(), 3);
 								}
 							}
 						}
-						for(int offX = 0; offX <= dir.getOffsetX() * 200; offX++) {
+						for(int offX = 0; offX <= dir.getStepX() * 200; offX++) {
 							for(int offZ = -10; offZ <= 10; offZ++) {
 								BlockPos pos1 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + offZ));
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + offX, ent.y() + 16, ent.z() + offZ));
-								if(ent.getLevel().getBlockState(pos1).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos1).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getBlockState(pos2).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos2).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos1) < 15 && ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos1, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos1) < 15 && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos1, Blocks.STONE.defaultBlockState(), 3);
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos2, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos2, Blocks.STONE.defaultBlockState(), 3);
 								}
 							}
 						}
 						break;
 						
-			case SOUTH: for(int offZ = 0; offZ <= dir.getOffsetZ() * 200; offZ++) {
+			case SOUTH: for(int offZ = 0; offZ <= dir.getStepZ() * 200; offZ++) {
 							for(int offY = 15; offY >= 0; offY--) {
 								BlockPos pos1 = toBlockPos(new Vec3(ent.x() + 11, ent.y() + offY, ent.z() + offZ));
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() - 11, ent.y() + offY, ent.z() + offZ));
-								if(ent.getLevel().getBlockState(pos1).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos1).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getBlockState(pos2).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos2).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos1) < 10 && ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos1, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos1) < 10 && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos1, Blocks.STONE.defaultBlockState(), 3);
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos2, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos2, Blocks.STONE.defaultBlockState(), 3);
 								}
 							}
 						}
-						for(int offZ = 0; offZ <= dir.getOffsetZ() * 200; offZ++) {
+						for(int offZ = 0; offZ <= dir.getStepZ() * 200; offZ++) {
 							for(int offX = -10; offX <= 10; offX++) {
 								BlockPos pos1 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + offZ));
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + offX, ent.y() + 16, ent.z() + offZ));
-								if(ent.getLevel().getBlockState(pos1).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos1).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getBlockState(pos2).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos2).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos1) < 15 && ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos1, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos1) < 15 && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos1, Blocks.STONE.defaultBlockState(), 3);
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos2, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos2, Blocks.STONE.defaultBlockState(), 3);
 								}
 							}
 						}
 						break;
 						
-			case WEST: for(int offX = 0; offX >= dir.getOffsetX() * 200; offX--) {
+			case WEST: for(int offX = 0; offX >= dir.getStepX() * 200; offX--) {
 							for(int offY = 15; offY >= 0; offY--) {
 								BlockPos pos1 = toBlockPos(new Vec3(ent.x() + offX, ent.y() + offY, ent.z() + 11));
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + offX, ent.y() + offY, ent.z() - 11));
-								if(ent.getLevel().getBlockState(pos1).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos1).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getBlockState(pos2).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos2).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos1) < 10 && ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos1, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos1) < 10 && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos1, Blocks.STONE.defaultBlockState(), 3);
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos2, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos2, Blocks.STONE.defaultBlockState(), 3);
 								}
 							}
 						}
-						for(int offX = 0; offX >= dir.getOffsetX() * 200; offX--) {
+						for(int offX = 0; offX >= dir.getStepX() * 200; offX--) {
 							for(int offZ = -10; offZ <= 10; offZ++) {
 								BlockPos pos1 = toBlockPos(new Vec3(ent.x() + offX, ent.y() - 1, ent.z() + offZ));
 								BlockPos pos2 = toBlockPos(new Vec3(ent.x() + offX, ent.y() + 16, ent.z() + offZ));
-								if(ent.getLevel().getBlockState(pos1).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos1).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos1))) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getBlockState(pos2).isIn(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								if(ent.getLevel().getBlockState(pos2).is(BlockTags.LEAVES) || Materials.isWood(ent.getLevel().getBlockState(pos2))) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos1) < 15 && ent.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos1).getBlock().onDestroyedByExplosion(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos1, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos1) < 15 && ent.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos1).getBlock().wasExploded(ent.getLevel(), pos1, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos1, Blocks.STONE.defaultBlockState(), 3);
 								}
-								if(ent.getLevel().getLightLevel(LightType.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getBlastResistance() <= 200) {
-									ent.getLevel().getBlockState(pos2).getBlock().onDestroyedByExplosion(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlockState(pos2, Blocks.STONE.getDefaultState(), 3);
+								if(ent.getLevel().getLightLevel(LightLayer.SKY, pos2) < 10 && ent.getLevel().getBlockState(pos2).getBlock().getExplosionResistance() <= 200) {
+									ent.getLevel().getBlockState(pos2).getBlock().wasExploded(ent.getLevel(), pos2, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+									ent.getLevel().setBlock(pos2, Blocks.STONE.defaultBlockState(), 3);
 								}
 							}
 						}

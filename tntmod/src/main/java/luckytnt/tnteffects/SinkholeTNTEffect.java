@@ -25,15 +25,15 @@ public class SinkholeTNTEffect extends PrimedTNTEffect {
 			((Entity)ent).setDeltaMovement(Vec3.ZERO);
 			((Entity)ent).setNoGravity(true);
 		}
-		if(ent.getTNTFuse() <= 150 && !ent.getLevel().isClient() && ent.getTNTFuse() % 2 == 0) {
+		if(ent.getTNTFuse() <= 150 && !ent.getLevel().isClientSide() && ent.getTNTFuse() % 2 == 0) {
 			for(int offX = -33; offX <= 33; offX++) {
 				for(int offY = -33; offY <= 33; offY++) {
 					for(int offZ = -33; offZ <= 33; offZ++) {
 						double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ) + Math.random() * 4D - 2D;
 						BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY + ent.getPersistentData().getInt("depth")), Mth.floor(ent.z() + offZ));
-						if(distance <= 30 && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() < 200) {
-							ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-							ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						if(distance <= 30 && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() < 200) {
+							ent.getLevel().getBlockState(pos).getBlock().wasExploded(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 				}

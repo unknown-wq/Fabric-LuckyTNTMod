@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -26,7 +26,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
-		if(!ent.getLevel().isClient()) {
+		if(!ent.getLevel().isClientSide()) {
 			CustomTNTConfig config = LuckyTNTConfigValues.CUSTOM_TNT_FIRST_EXPLOSION.get();
 			if(ent.getPersistentData().getInt("level") == 0) {
 				if(config == CustomTNTConfig.FIREWORK) {
@@ -75,7 +75,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 				if(LuckyTNTConfigValues.CUSTOM_TNT_SECOND_EXPLOSION.get() != CustomTNTConfig.NO_EXPLOSION) {
 					for(int count = 0; count < 3; count++) {
 						PrimedLTNT custom = EntityRegistry.CUSTOM_TNT.get().create(ent.getLevel());
-						custom.setPosition(ent.getPos());
+						custom.setPos(ent.getPos());
 						custom.setOwner(ent.owner());
 						custom.setDeltaMovement(Math.random() * 2f - 1f, Math.random() * 2f, Math.random() * 2f - 1f);
 						CompoundTag tag = custom.getPersistentData();
@@ -90,9 +90,9 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-						if(!state.isAir() && state.getBlock().getBlastResistance() <= 200) {
-							state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
+							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 				});
@@ -100,7 +100,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 				if(LuckyTNTConfigValues.CUSTOM_TNT_SECOND_EXPLOSION.get() != CustomTNTConfig.NO_EXPLOSION) {
 					for(int count = 0; count < 3; count++) {
 						PrimedLTNT custom = EntityRegistry.CUSTOM_TNT.get().create(ent.getLevel());
-						custom.setPosition(ent.getPos());
+						custom.setPos(ent.getPos());
 						custom.setOwner(ent.owner());
 						custom.setDeltaMovement(Math.random() * 2f - 1f, Math.random() * 2f, Math.random() * 2f - 1f);
 						CompoundTag tag = custom.getPersistentData();
@@ -115,9 +115,9 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-						if(!state.isAir() && state.getBlock().getBlastResistance() <= 200) {
-							state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
+							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 				});
@@ -125,7 +125,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 				if(LuckyTNTConfigValues.CUSTOM_TNT_SECOND_EXPLOSION.get() != CustomTNTConfig.NO_EXPLOSION) {
 					for(int count = 0; count < 3; count++) {
 						PrimedLTNT custom = EntityRegistry.CUSTOM_TNT.get().create(ent.getLevel());
-						custom.setPosition(ent.getPos());
+						custom.setPos(ent.getPos());
 						custom.setOwner(ent.owner());
 						custom.setDeltaMovement(Math.random() * 2f - 1f, Math.random() * 2f, Math.random() * 2f - 1f);
 						CompoundTag tag = custom.getPersistentData();
@@ -142,13 +142,13 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(Math.random() < 0.66f && !state.isAir()) {
-							state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+							state.getBlock().wasExploded(level, pos, explosion);
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							if(Math.random() < 0.5f) {
-								ent.getLevel().setBlockState(pos, Blocks.MELON.getDefaultState());
+								ent.getLevel().setBlock(pos, Blocks.MELON.defaultBlockState());
 							}
 							else {
-								ent.getLevel().setBlockState(pos, Blocks.PUMPKIN.getDefaultState());
+								ent.getLevel().setBlock(pos, Blocks.PUMPKIN.defaultBlockState());
 							}
 						}
 					}
@@ -157,7 +157,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 				if(LuckyTNTConfigValues.CUSTOM_TNT_SECOND_EXPLOSION.get() != CustomTNTConfig.NO_EXPLOSION) {
 					for(int count = 0; count < 1 * LuckyTNTConfigValues.CUSTOM_TNT_FIRST_EXPLOSION_INTENSITY.get().intValue(); count++) {
 						PrimedLTNT custom = EntityRegistry.CUSTOM_TNT.get().create(ent.getLevel());
-						custom.setPosition(ent.getPos());
+						custom.setPos(ent.getPos());
 						custom.setOwner(ent.owner());
 						custom.setDeltaMovement(Math.random() * 2f - 1f, Math.random() * 2f, Math.random() * 2f - 1f);
 						CompoundTag tag = custom.getPersistentData();
@@ -170,7 +170,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 			if(config == CustomTNTConfig.FIREWORK) {
 				for(int count = 0; count < 15 * LuckyTNTConfigValues.CUSTOM_TNT_FIRST_EXPLOSION_INTENSITY.get().intValue(); count++) {
 					PrimedLTNT custom = EntityRegistry.CUSTOM_TNT.get().create(ent.getLevel());
-					custom.setPosition(ent.getPos());
+					custom.setPos(ent.getPos());
 					custom.setOwner(ent.owner());
 					custom.setDeltaMovement(Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f);
 					CompoundTag tag = custom.getPersistentData();
@@ -190,7 +190,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 				if(LuckyTNTConfigValues.CUSTOM_TNT_THIRD_EXPLOSION.get() != CustomTNTConfig.NO_EXPLOSION) {
 					for(int count = 0; count < 3; count++) {
 						PrimedLTNT custom = EntityRegistry.CUSTOM_TNT.get().create(ent.getLevel());
-						custom.setPosition(ent.getPos());
+						custom.setPos(ent.getPos());
 						custom.setOwner(ent.owner());
 						custom.setDeltaMovement(Math.random() * 2f - 1f, Math.random() * 2f, Math.random() * 2f - 1f);
 						CompoundTag tag = custom.getPersistentData();
@@ -205,9 +205,9 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-						if(!state.isAir() && state.getBlock().getBlastResistance() <= 200) {
-							state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
+							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 				});
@@ -215,7 +215,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 				if(LuckyTNTConfigValues.CUSTOM_TNT_THIRD_EXPLOSION.get() != CustomTNTConfig.NO_EXPLOSION) {
 					for(int count = 0; count < 3; count++) {
 						PrimedLTNT custom = EntityRegistry.CUSTOM_TNT.get().create(ent.getLevel());
-						custom.setPosition(ent.getPos());
+						custom.setPos(ent.getPos());
 						custom.setOwner(ent.owner());
 						custom.setDeltaMovement(Math.random() * 2f - 1f, Math.random() * 2f, Math.random() * 2f - 1f);
 						CompoundTag tag = custom.getPersistentData();
@@ -230,9 +230,9 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-						if(!state.isAir() && state.getBlock().getBlastResistance() <= 200) {
-							state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
+							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 				});
@@ -240,7 +240,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 				if(LuckyTNTConfigValues.CUSTOM_TNT_THIRD_EXPLOSION.get() != CustomTNTConfig.NO_EXPLOSION) {
 					for(int count = 0; count < 3; count++) {
 						PrimedLTNT custom = EntityRegistry.CUSTOM_TNT.get().create(ent.getLevel());
-						custom.setPosition(ent.getPos());
+						custom.setPos(ent.getPos());
 						custom.setOwner(ent.owner());
 						custom.setDeltaMovement(Math.random() * 2f - 1f, Math.random() * 2f, Math.random() * 2f - 1f);
 						CompoundTag tag = custom.getPersistentData();
@@ -257,13 +257,13 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(Math.random() < 0.66f && !state.isAir()) {
-							state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+							state.getBlock().wasExploded(level, pos, explosion);
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							if(Math.random() < 0.5f) {
-								ent.getLevel().setBlockState(pos, Blocks.MELON.getDefaultState());
+								ent.getLevel().setBlock(pos, Blocks.MELON.defaultBlockState());
 							}
 							else {
-								ent.getLevel().setBlockState(pos, Blocks.PUMPKIN.getDefaultState());
+								ent.getLevel().setBlock(pos, Blocks.PUMPKIN.defaultBlockState());
 							}
 						}
 					}
@@ -272,7 +272,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 				if(LuckyTNTConfigValues.CUSTOM_TNT_THIRD_EXPLOSION.get() != CustomTNTConfig.NO_EXPLOSION) {
 					for(int count = 0; count < 1 * LuckyTNTConfigValues.CUSTOM_TNT_SECOND_EXPLOSION_INTENSITY.get().intValue(); count++) {
 						PrimedLTNT custom = EntityRegistry.CUSTOM_TNT.get().create(ent.getLevel());
-						custom.setPosition(ent.getPos());
+						custom.setPos(ent.getPos());
 						custom.setOwner(ent.owner());
 						custom.setDeltaMovement(Math.random() * 2f - 1f, Math.random() * 2f, Math.random() * 2f - 1f);
 						CompoundTag tag = custom.getPersistentData();
@@ -285,7 +285,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 			if(config == CustomTNTConfig.FIREWORK) {
 				for(int count = 0; count < 15 * LuckyTNTConfigValues.CUSTOM_TNT_SECOND_EXPLOSION_INTENSITY.get().intValue(); count++) {
 					PrimedLTNT custom = EntityRegistry.CUSTOM_TNT.get().create(ent.getLevel());
-					custom.setPosition(ent.getPos());
+					custom.setPos(ent.getPos());
 					custom.setOwner(ent.owner());
 					custom.setDeltaMovement(Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f);
 					CompoundTag tag = custom.getPersistentData();
@@ -307,9 +307,9 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-						if(!state.isAir() && state.getBlock().getBlastResistance() <= 200) {
-							state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
+							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 				});
@@ -319,9 +319,9 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-						if(!state.isAir() && state.getBlock().getBlastResistance() <= 200) {
-							state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						if(!state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
+							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 				});
@@ -333,13 +333,13 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 						if(Math.random() < 0.66f && !state.isAir()) {
-							state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+							state.getBlock().wasExploded(level, pos, explosion);
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							if(Math.random() < 0.5f) {
-								ent.getLevel().setBlockState(pos, Blocks.MELON.getDefaultState());
+								ent.getLevel().setBlock(pos, Blocks.MELON.defaultBlockState());
 							}
 							else {
-								ent.getLevel().setBlockState(pos, Blocks.PUMPKIN.getDefaultState());
+								ent.getLevel().setBlock(pos, Blocks.PUMPKIN.defaultBlockState());
 							}
 						}
 					}
@@ -348,7 +348,7 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 			if(config == CustomTNTConfig.FIREWORK) {
 				for(int count = 0; count < 15 * LuckyTNTConfigValues.CUSTOM_TNT_THIRD_EXPLOSION_INTENSITY.get().intValue(); count++) {
 					PrimedLTNT custom = EntityRegistry.TNT.get().create(ent.getLevel());
-					custom.setPosition(ent.getPos());
+					custom.setPos(ent.getPos());
 					custom.setOwner(ent.owner());
 					custom.setDeltaMovement(Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f);
 					ent.getLevel().addFreshEntity(custom);
@@ -359,10 +359,10 @@ public class CustomTNTEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
-		ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 0f, 0f), 1f), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
-		ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 1f, 0f), 1f), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
-		ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0f, 1f), 1f), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
-		if(ent.getLevel().isClient()) {
+		ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 0f, 0f), 1f), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
+		ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 1f, 0f), 1f), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
+		ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 1f), 1f), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
+		if(ent.getLevel().isClientSide()) {
 			CustomTNTConfig config = LuckyTNTConfigValues.CUSTOM_TNT_FIRST_EXPLOSION.get();
 			if(ent.getPersistentData().getInt("level") == 0) {
 				if(config == CustomTNTConfig.FIREWORK) {

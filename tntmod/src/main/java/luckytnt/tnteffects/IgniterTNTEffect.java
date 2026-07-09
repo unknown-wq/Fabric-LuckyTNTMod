@@ -31,8 +31,8 @@ public class IgniterTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock() instanceof TntBlock block) {
-					block.onDestroyedByExplosion(level, pos, new Explosion(level, (Entity)entity, null, null, pos.getX(), pos.getY(), pos.getZ(), 0, false, Explosion.DestructionType.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.ENTITY_GENERIC_EXPLODE));
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+					block.wasExploded(level, pos, new Explosion(level, (Entity)entity, null, null, pos.getX(), pos.getY(), pos.getZ(), 0, false, Explosion.DestructionType.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}
 		});

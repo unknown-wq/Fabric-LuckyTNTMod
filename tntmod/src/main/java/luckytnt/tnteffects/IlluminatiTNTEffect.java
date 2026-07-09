@@ -27,10 +27,10 @@ public class IlluminatiTNTEffect extends PrimedTNTEffect {
 		Vec3 EC = new Vec3(C.getX() - E.getX(), C.getY() - E.getY(), C.getZ() - E.getZ());
 		Vec3 ED = new Vec3(D.getX() - E.getX(), D.getY() - E.getY(), D.getZ() - E.getZ());
 		
-		Vec3 NEAB = EB.crossProduct(EA);
-		Vec3 NEAD = EA.crossProduct(ED);
-		Vec3 NEDC = ED.crossProduct(EC);
-		Vec3 NECB = EC.crossProduct(EB);
+		Vec3 NEAB = EB.cross(EA);
+		Vec3 NEAD = EA.cross(ED);
+		Vec3 NEDC = ED.cross(EC);
+		Vec3 NECB = EC.cross(EB);
 		Vec3 NABCD = new Vec3(0, -1, 0);
 		
 		for (int offX = -70; offX <= 70; offX++) {
@@ -41,9 +41,9 @@ public class IlluminatiTNTEffect extends PrimedTNTEffect {
 					if (distance(vec, NEAB, E) <= 0 && distance(vec, NEAD, E) <= 0 && distance(vec, NEDC, E) <= 0 && distance(vec, NECB, E) <= 0 && distance(vec, NABCD, A) <= 0) {
 						BlockPos pos5 = toBlockPos(ent.getPos()).add(offX, offY, offZ);
 
-						if (ent.getLevel().getBlockState(pos5).getBlock().getBlastResistance() <= 200) {
-							ent.getLevel().getBlockState(pos5).getBlock().onDestroyedByExplosion(ent.getLevel(), pos5, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-							ent.getLevel().setBlockState(pos5, Blocks.AIR.getDefaultState(), 3);
+						if (ent.getLevel().getBlockState(pos5).getBlock().getExplosionResistance() <= 200) {
+							ent.getLevel().getBlockState(pos5).getBlock().wasExploded(ent.getLevel(), pos5, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							ent.getLevel().setBlock(pos5, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 				}

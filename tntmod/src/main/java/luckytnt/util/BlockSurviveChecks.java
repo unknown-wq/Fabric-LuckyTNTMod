@@ -8,25 +8,25 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.level.LevelReader;
 
 public class BlockSurviveChecks {
 	
-	public static boolean canSnowPlaceAt(BlockState state, WorldView reader, BlockPos pos) {
-		BlockState blockstate = reader.getBlockState(pos.down());
-		if (blockstate.isIn(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON)) {
+	public static boolean canSnowPlaceAt(BlockState state, LevelReader reader, BlockPos pos) {
+		BlockState blockstate = reader.getBlockState(pos.below());
+		if (blockstate.is(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON)) {
 			return false;
 		} else {
-			return blockstate.isIn(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON) ? true : Block.isFaceFullSquare(blockstate.getCollisionShape(reader, pos.down()), Direction.UP) || blockstate.isOf(Blocks.SNOW) && blockstate.get(SnowLayerBlock.LAYERS) == 8;
+			return blockstate.is(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON) ? true : Block.isFaceSturdy(blockstate.getCollisionShape(reader, pos.below()), Direction.UP) || blockstate.is(Blocks.SNOW) && blockstate.get(SnowLayerBlock.LAYERS) == 8;
 		}
 	}
 	
-	public static boolean canFirePlaceAt(BlockState state, WorldView reader, BlockPos pos) {
-        BlockPos blockpos = pos.down();
-        return reader.getBlockState(blockpos).isSideSolidFullSquare(reader, blockpos, Direction.UP) || isValidFireLocation(reader, pos);
+	public static boolean canFirePlaceAt(BlockState state, LevelReader reader, BlockPos pos) {
+        BlockPos blockpos = pos.below();
+        return reader.getBlockState(blockpos).isFaceSturdy(reader, blockpos, Direction.UP) || isValidFireLocation(reader, pos);
     }
 	
-	private static boolean isValidFireLocation(WorldView reader, BlockPos pos) {
+	private static boolean isValidFireLocation(LevelReader reader, BlockPos pos) {
         for (Direction direction : Direction.values()) {
             if (Blocks.FIRE instanceof FireBlockExtension efire && efire.canBurn(reader.getBlockState(pos.offset(direction)))) {
                 return true;

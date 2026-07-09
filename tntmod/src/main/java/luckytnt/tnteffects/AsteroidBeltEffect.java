@@ -19,7 +19,7 @@ public class AsteroidBeltEffect extends PrimedTNTEffect {
 			double x = ent.x() + 160 * Math.cos(angle * Math.PI / 180);
 			double z = ent.z() + 160 * Math.sin(angle * Math.PI / 180);
 			double y = RingTNTEffect.getFirstMotionBlockingBlock(ent.getLevel(), x, z);
-			tnt.setPosition(x, y + 1D, z);
+			tnt.setPos(x, y + 1D, z);
 			ent.getLevel().addFreshEntity(tnt);
 		}
 	}

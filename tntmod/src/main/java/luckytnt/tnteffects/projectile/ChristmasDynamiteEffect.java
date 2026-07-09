@@ -28,7 +28,7 @@ public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 		if(entity instanceof LExplosiveProjectile ent) {
 			if(ent.inGround() && ent.getTNTFuse() < 60) {
 				if(level instanceof ServerLevel) {
-					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
 					serverExplosion(ent);
 				}
 				ent.destroy();
@@ -37,7 +37,7 @@ public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 				explosionTick(ent);
 				ent.setTNTFuse(ent.getTNTFuse() - 1);
 			}
-			if(level.isClient) {
+			if(level.isClientSide) {
 				spawnParticles(entity);
 			}
 		}
@@ -47,7 +47,7 @@ public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 	public void serverExplosion(IExplosiveEntity entity) {
 		SnowTNTEffect snowEffect = new SnowTNTEffect(25);
 		snowEffect.serverExplosion(entity);
-		((ServerLevel)entity.getLevel()).spawnParticles(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + Math.random() - 0.5f, entity.z() + Math.random() - 0.5f, 500, 0.5f, 0.5f, 0.5f, 0f);
+		((ServerLevel)entity.getLevel()).sendParticles(ParticleTypes.WAX_OFF, entity.x() + Math.random() - 0.5f, entity.y() + Math.random() - 0.5f, entity.z() + Math.random() - 0.5f, 500, 0.5f, 0.5f, 0.5f, 0f);
 	}
 	
 	@Override
@@ -62,7 +62,7 @@ public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 			((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDouble("vecx"), 0, entity.getPersistentData().getDouble("vecz")).normalize().multiply(0.25f));
 			if(entity.getTNTFuse() % 20 == 0) {
 				LExplosiveProjectile dynamite = EntityRegistry.CHRISTMAS_DYNAMITE_PROJECTILE.get().create(entity.getLevel());
-				dynamite.setPosition(entity.getPos());
+				dynamite.setPos(entity.getPos());
 				dynamite.setOwner(entity.owner());
 				double randomX = Math.random();
 				randomX *= new Random().nextBoolean() ? 1 : -1;

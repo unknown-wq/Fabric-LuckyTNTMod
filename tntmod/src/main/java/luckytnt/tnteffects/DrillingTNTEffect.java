@@ -35,7 +35,7 @@ public class DrillingTNTEffect extends PrimedTNTEffect{
 						BlockPos pos = toBlockPos(entity.getPos().add(x, -y, z));
 						BlockState blockState = entity.getLevel().getBlockState(pos);
 						FluidState fluidState = entity.getLevel().getFluidState(pos);
-						Optional<Float> explosionResistance = damageCalculator.getBlastResistance(dummyExplosion, entity.getLevel(), pos, blockState, fluidState);
+						Optional<Float> explosionResistance = damageCalculator.getExplosionResistance(dummyExplosion, entity.getLevel(), pos, blockState, fluidState);
 						if(explosionResistance.isPresent() && explosionResistance.get() > MAX_RESISTANCE) {
 							y += 100f;
 						}
@@ -47,8 +47,8 @@ public class DrillingTNTEffect extends PrimedTNTEffect{
 			}
 		}
 		for(BlockPos pos : blocks) {
-			entity.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(entity.getLevel(), pos, dummyExplosion);
-			entity.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+			entity.getLevel().getBlockState(pos).getBlock().wasExploded(entity.getLevel(), pos, dummyExplosion);
+			entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 		}
 	}
 	

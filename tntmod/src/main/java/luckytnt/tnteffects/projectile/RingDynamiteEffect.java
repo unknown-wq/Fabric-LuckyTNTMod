@@ -18,7 +18,7 @@ public class RingDynamiteEffect extends PrimedTNTEffect {
 		
 		Vec3 left = (int)Math.round(vec.x) == 0 && (int)Math.round(vec.z) == 0 ? new Vec3(1, 0, 0) : new Vec3(vec.x * Math.cos(0.5 * Math.PI) + vec.z * Math.sin(0.5 * Math.PI), 0, -vec.x * Math.sin(0.5 * Math.PI) + vec.z * Math.cos(0.5 * Math.PI)).normalize();
 		Vec3 right = left.negate().normalize();
-		Vec3 up = left.crossProduct(vec).normalize();
+		Vec3 up = left.cross(vec).normalize();
 		Vec3 down = up.negate().normalize();
 		
 		Vec3 rightup = right.add(up).normalize();
@@ -40,7 +40,7 @@ public class RingDynamiteEffect extends PrimedTNTEffect {
 		for(int i = 1; i <= 8; i++) {
 			LExplosiveProjectile dynamite = EntityRegistry.DYNAMITE.get().create(ent.getLevel());
 			dynamite.setOwner(ent.owner());
-			dynamite.setPosition(ent.getPos());
+			dynamite.setPos(ent.getPos());
 			dynamite.setDeltaMovement(array[i].multiply(2D));
 			ent.getLevel().addFreshEntity(dynamite);
 		}

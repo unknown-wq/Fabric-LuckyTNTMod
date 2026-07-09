@@ -21,6 +21,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.core.Holder;
 
 public class HailstoneProjectile extends LExplosiveProjectile {
 
@@ -33,7 +34,7 @@ public class HailstoneProjectile extends LExplosiveProjectile {
 		super.onBlockHit(result);
 		getWorld().playSound(null, new BlockPos(Mth.floor(x()), Mth.floor(y()), Mth.floor(z())), SoundEvents.BLOCK_GLASS_BREAK, SoundSource.BLOCKS, 0.5f, 1f);
 		for(int count = 0; count < 10; count++)
-			getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.SNOW.getDefaultState()), x(), y(), z(), 0, 0, 0);
+			getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.SNOW.defaultBlockState()), x(), y(), z(), 0, 0, 0);
 		destroy();
 	}
 	
@@ -41,7 +42,7 @@ public class HailstoneProjectile extends LExplosiveProjectile {
 	public void onEntityHit(EntityHitResult result) {
 		super.onEntityHit(result);
 		if(result.getEntity() instanceof LivingEntity lent) {
-			Reference<DamageType> type = getLevel().getRegistryManager().get(Registries.DAMAGE_TYPE).entryOf(ResourceKey.of(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "hailstone")));
+			Reference<DamageType> type = getLevel().registryAccess().get(Registries.DAMAGE_TYPE).entryOf(ResourceKey.of(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "hailstone")));
 			DamageSource source = new DamageSource(type, this, owner());
 			
 			lent.damage(source, 4f);

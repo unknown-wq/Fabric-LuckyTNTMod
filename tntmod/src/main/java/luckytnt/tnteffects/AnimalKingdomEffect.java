@@ -79,6 +79,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.EntityTypes;
 
 public class AnimalKingdomEffect extends PrimedTNTEffect {
 
@@ -344,8 +345,8 @@ public class AnimalKingdomEffect extends PrimedTNTEffect {
 			for(int y = ent.getLevel().getTopY(); y > ent.getLevel().getBottomY(); y--) {
 				BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, y, ent.z() + offZ));
 				BlockState state = ent.getLevel().getBlockState(pos);
-				if(Block.isFaceFullSquare(ent.getLevel().getBlockState(pos.down()).getCollisionShape(ent.getLevel(), pos.down()), Direction.UP) && !Block.isFaceFullSquare(state.getCollisionShape(ent.getLevel(), pos), Direction.UP)) {
-					mob.setPosition(pos.getX(), pos.getY(), pos.getZ());
+				if(Block.isFaceSturdy(ent.getLevel().getBlockState(pos.below()).getCollisionShape(ent.getLevel(), pos.below()), Direction.UP) && !Block.isFaceSturdy(state.getCollisionShape(ent.getLevel(), pos), Direction.UP)) {
+					mob.setPos(pos.getX(), pos.getY(), pos.getZ());
 					if(ent.getLevel() instanceof ServerLevel sl) {
 						mob.initialize(sl, ent.getLevel().getLocalDifficulty(pos), EntitySpawnReason.MOB_SUMMONED, null);
 					}

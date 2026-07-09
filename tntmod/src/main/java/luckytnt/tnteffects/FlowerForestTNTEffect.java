@@ -24,7 +24,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeKeys;
@@ -42,13 +42,13 @@ public class FlowerForestTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(distance <= 50 && state.getBlock().getBlastResistance() <= 200) {
-					if((!state.isFullCube(level, pos) || state.isOf(Blocks.FIRE) || state.isOf(Blocks.SOUL_FIRE) 
-					|| state.isIn(BlockTags.LEAVES) || Materials.isPlant(state) || state.isIn(BlockTags.SNOW)
+				if(distance <= 50 && state.getBlock().getExplosionResistance() <= 200) {
+					if((!state.isCollisionShapeFullBlock(level, pos) || state.is(Blocks.FIRE) || state.is(Blocks.SOUL_FIRE) 
+					|| state.is(BlockTags.LEAVES) || Materials.isPlant(state) || state.is(BlockTags.SNOW)
 					|| Materials.isWood(state)) && !(state.getBlock() instanceof GrassBlock) && !(state.getBlock() instanceof MyceliumBlock)) 
 					{
-						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-						level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}
 			}
@@ -59,27 +59,27 @@ public class FlowerForestTNTEffect extends PrimedTNTEffect {
 				double distance = Math.sqrt(offX * offX + offZ * offZ);
 				int y = LevelEvents.getTopBlock(ent.getLevel(), ent.x() + offX, ent.z() + offZ, true);
 				BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, y, ent.z() + offZ));
-				if(distance <= 75 && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200 && ent.getLevel().getBlockState(pos.up()).isAir()) {
-					ent.getLevel().setBlockState(pos, Blocks.GRASS_BLOCK.getDefaultState(), 3);
+				if(distance <= 75 && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200 && ent.getLevel().getBlockState(pos.above()).isAir()) {
+					ent.getLevel().setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
 				}
 			}
 		}
 		
-		Registry<Biome> registry = ent.getLevel().getRegistryManager().get(Registries.BIOME);
-		RegistryEntry<Biome> biome = registry.entryOf(BiomeKeys.FLOWER_FOREST);
+		Registry<Biome> registry = ent.getLevel().registryAccess().get(Registries.BIOME);
+		Holder<Biome> biome = registry.entryOf(BiomeKeys.FLOWER_FOREST);
 		for(double offX = -75; offX < 75; offX++) {
 			for(double offZ = -75; offZ < 75; offZ++) {
 				boolean foundBlock = false;
 				double distance = Math.sqrt(offX * offX + offZ * offZ);
-				if(!ent.getLevel().isClient()) {
+				if(!ent.getLevel().isClientSide()) {
 					if(distance < 75) {
 						if(offX % 16 == 0 && offZ % 16 == 0) {
 							for(ChunkSection section : ent.getLevel().getChunk(toBlockPos(new Vec3(ent.x() + offX, 0, ent.z() + offZ))).getSectionArray()) {
-								ReadableContainer<RegistryEntry<Biome>> biomesRO = section.getBiomeContainer();
+								ReadableContainer<Holder<Biome>> biomesRO = section.getBiomeContainer();
 								for(int i = 0; i < 4; ++i) {
 									for(int j = 0; j < 4; ++j) {
 										for(int k = 0; k < 4; ++k) {
-											if(biomesRO instanceof PalettedContainer<RegistryEntry<Biome>> biomes && biomes.get(i, j, k) != registry.entryOf(BiomeKeys.FLOWER_FOREST)) {
+											if(biomesRO instanceof PalettedContainer<Holder<Biome>> biomes && biomes.get(i, j, k) != registry.entryOf(BiomeKeys.FLOWER_FOREST)) {
 												biomes.swapUnsafe(i, j, k, biome);
 											}
 										}
@@ -93,17 +93,17 @@ public class FlowerForestTNTEffect extends PrimedTNTEffect {
 						for(double offY = 320; offY > -64; offY--) {
 							BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, ent.y() + offY, ent.z() + offZ));
 							BlockState state = ent.getLevel().getBlockState(pos);
-							Registry<ConfiguredFeature<?, ?>> features = ent.getLevel().getRegistryManager().get(Registries.CONFIGURED_FEATURE);
-							if(!foundBlock && state.isFullCube(ent.getLevel(), pos) && !state.isAir() && !(ent.getLevel().getBlockState(pos.up()).getBlock() instanceof LiquidBlock)) {
+							Registry<ConfiguredFeature<?, ?>> features = ent.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE);
+							if(!foundBlock && state.isCollisionShapeFullBlock(ent.getLevel(), pos) && !state.isAir() && !(ent.getLevel().getBlockState(pos.above()).getBlock() instanceof LiquidBlock)) {
 								double random = Math.random();
 								if(random <= 0.1D) {
-									features.get(VegetationConfiguredFeatures.TREES_FLOWER_FOREST).generate((StructureWorldAccess)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkManager().getChunkGenerator(), Random.create(), pos.up());
+									features.get(VegetationConfiguredFeatures.TREES_FLOWER_FOREST).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), Random.create(), pos.above());
 								} else if(random > 0.1D && random <= 0.1125D) {
-									features.get(VegetationConfiguredFeatures.FOREST_FLOWERS).generate((StructureWorldAccess)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkManager().getChunkGenerator(), Random.create(), pos.up());
+									features.get(VegetationConfiguredFeatures.FOREST_FLOWERS).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), Random.create(), pos.above());
 								} else if(random > 0.15D && random <= 0.1625D) {
-									features.get(VegetationConfiguredFeatures.FLOWER_FLOWER_FOREST).generate((StructureWorldAccess)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkManager().getChunkGenerator(), Random.create(), pos.up());
+									features.get(VegetationConfiguredFeatures.FLOWER_FLOWER_FOREST).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), Random.create(), pos.above());
 								} else if(random > 0.2D && random <= 0.2125D) {
-									features.get(VegetationConfiguredFeatures.PATCH_GRASS).generate((StructureWorldAccess)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkManager().getChunkGenerator(), Random.create(), pos.up());
+									features.get(VegetationConfiguredFeatures.PATCH_GRASS).generate((WorldGenLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getChunkSource().getChunkGenerator(), Random.create(), pos.above());
 								}
 								foundBlock = true;
 							}

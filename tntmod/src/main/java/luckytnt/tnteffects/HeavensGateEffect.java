@@ -24,9 +24,9 @@ public class HeavensGateEffect extends PrimedTNTEffect{
 				BlockPos posTop = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				
-				if(state.getBlock().getBlastResistance() < 200 && stateTop.isAir() && !state.isAir() && Math.abs(entity.y() - pos.getY()) <= 20) {
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-					level.setBlockState(posTop, state, 3);
+				if(state.getBlock().getExplosionResistance() < 200 && stateTop.isAir() && !state.isAir() && Math.abs(entity.y() - pos.getY()) <= 20) {
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+					level.setBlock(posTop, state, 3);
 				}
 			}
 		});

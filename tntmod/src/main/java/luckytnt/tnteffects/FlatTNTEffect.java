@@ -41,9 +41,9 @@ public class FlatTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(pos.getY() >= entity.y() - 0.5f) {
-					if(state.getBlock().getBlastResistance() <= 100) {
-						state.getBlock().onDestroyedByExplosion(level, pos, dummyExplosion);
-						level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+					if(state.getBlock().getExplosionResistance() <= 100) {
+						state.getBlock().wasExploded(level, pos, dummyExplosion);
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}
 			}

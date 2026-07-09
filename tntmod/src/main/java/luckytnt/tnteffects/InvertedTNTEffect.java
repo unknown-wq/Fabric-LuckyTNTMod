@@ -21,8 +21,8 @@ public class InvertedTNTEffect extends PrimedTNTEffect{
 				for(int j = 1; j < magnitude; j++) {
 					BlockPos pos = new BlockPos(Mth.floor(entity.x() + offX * j / magnitude), Mth.floor(entity.y() + offY * j / magnitude), Mth.floor(entity.z() + offZ * j / magnitude));
 					if(entity.getLevel().getBlockState(pos).isAir() || Materials.isPlant(entity.getLevel().getBlockState(pos))) {
-						if(entity.getLevel().getBlockState(new BlockPos(pos.getX(), pos.getY() - 30 * 2, pos.getZ())).getBlock().getBlastResistance() < 100) {
-							entity.getLevel().setBlockState(pos, entity.getLevel().getBlockState(new BlockPos(pos.getX(), pos.getY() - 30 * 2, pos.getZ())), 3);
+						if(entity.getLevel().getBlockState(new BlockPos(pos.getX(), pos.getY() - 30 * 2, pos.getZ())).getBlock().getExplosionResistance() < 100) {
+							entity.getLevel().setBlock(pos, entity.getLevel().getBlockState(new BlockPos(pos.getX(), pos.getY() - 30 * 2, pos.getZ())), 3);
 						}
 					}
 				}

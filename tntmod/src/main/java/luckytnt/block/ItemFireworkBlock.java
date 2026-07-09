@@ -22,7 +22,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.util.ItemActionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -40,7 +40,7 @@ public class ItemFireworkBlock extends LTNTBlock implements EntityBlock {
 			BlockEntity blockEntity = level.getBlockEntity(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)));
 			PrimedItemFirework tnt = new PrimedItemFirework(EntityRegistry.ITEM_FIREWORK.get(), level);
 			tnt.setFuse(40);
-			tnt.setPosition(x + 0.5f, y, z + 0.5f);
+			tnt.setPos(x + 0.5f, y, z + 0.5f);
 			tnt.setOwner(igniter);
 			if(blockEntity != null && blockEntity instanceof ItemFireworkBlockEntity block) {
 				tnt.item = block.item;
@@ -52,7 +52,7 @@ public class ItemFireworkBlock extends LTNTBlock implements EntityBlock {
 			level.addFreshEntity(tnt);
 			level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.ENTITY_TNT_PRIMED, SoundSource.MASTER, 1, 1);
 			if(level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).getBlock() == this) {
-				level.setBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), Blocks.AIR.getDefaultState(), 3);
+				level.setBlock(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), Blocks.AIR.defaultBlockState(), 3);
 			}
 			return tnt;
 		}
@@ -65,7 +65,7 @@ public class ItemFireworkBlock extends LTNTBlock implements EntityBlock {
 	}
 
 	@Override
-	public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+	public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
 		Item item = stack.getItem();
 		if(stack != ItemStack.EMPTY && item != Items.FLINT_AND_STEEL && level.getBlockEntity(pos) != null && level.getBlockEntity(pos) instanceof ItemFireworkBlockEntity block) {
 			block.item = item;
@@ -75,8 +75,8 @@ public class ItemFireworkBlock extends LTNTBlock implements EntityBlock {
 				stack.shrink(1);
 			}
 			player.incrementStat(Stats.USED.getOrCreateStat(item));
-			return ItemActionResult.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}
-		return super.onUseWithItem(stack, state, level, pos, player, hand, result);
+		return super.useItemOn(stack, state, level, pos, player, hand, result);
 	}
 }

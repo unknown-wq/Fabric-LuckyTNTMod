@@ -21,7 +21,7 @@ public class DropProjectileTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		LExplosiveProjectile meteor = projectile.get().get().create(entity.getLevel());
-		meteor.setPosition(entity.x(), entity.y() + LuckyTNTConfigValues.DROP_HEIGHT.get(), entity.z());
+		meteor.setPos(entity.x(), entity.y() + LuckyTNTConfigValues.DROP_HEIGHT.get(), entity.z());
 		meteor.setOwner(entity.owner());
 		entity.getLevel().addFreshEntity(meteor);
 	}

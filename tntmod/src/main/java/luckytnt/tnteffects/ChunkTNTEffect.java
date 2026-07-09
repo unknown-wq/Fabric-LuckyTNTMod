@@ -7,6 +7,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.EntityTypes;
 
 public class ChunkTNTEffect extends CubicTNTEffect {
 
@@ -18,7 +19,7 @@ public class ChunkTNTEffect extends CubicTNTEffect {
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() == 160) {
 			Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, ent.getLevel());
-			lighting.setPosition(ent.getPos());
+			lighting.setPos(ent.getPos());
 			ent.getLevel().addFreshEntity(lighting);
 		}
 	}

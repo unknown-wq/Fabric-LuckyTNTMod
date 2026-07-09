@@ -28,14 +28,14 @@ public class ChicxulubMeteorEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(distance <= 55 && state.getBlock().getBlastResistance() <= 100) {
-					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-				} else if(Math.random() < 0.6f && state.getBlock().getBlastResistance() <= 100) {
-					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-					if(Math.random() < 0.25f && level.getBlockState(pos.down()).isSideSolidFullSquare(level, pos, Direction.UP)) {
-						level.setBlockState(pos, AbstractFireBlock.getState(level, pos));
+				if(distance <= 55 && state.getBlock().getExplosionResistance() <= 100) {
+					state.getBlock().wasExploded(level, pos, explosion);
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+				} else if(Math.random() < 0.6f && state.getBlock().getExplosionResistance() <= 100) {
+					state.getBlock().wasExploded(level, pos, explosion);
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+					if(Math.random() < 0.25f && level.getBlockState(pos.below()).isFaceSturdy(level, pos, Direction.UP)) {
+						level.setBlock(pos, AbstractFireBlock.getState(level, pos));
 					}
 				}
 			}
@@ -43,7 +43,7 @@ public class ChicxulubMeteorEffect extends PrimedTNTEffect {
 		
 		for(int count = 0; count < 300; count++) {
 			LExplosiveProjectile pompeii = EntityRegistry.POMPEII_PROJECTILE.get().create(entity.getLevel());
-			pompeii.setPosition(entity.getPos());
+			pompeii.setPos(entity.getPos());
 			pompeii.setOwner(entity.owner());
 			pompeii.setDeltaMovement(Math.random() * 8D - 4D, 3 + Math.random() * 2, Math.random() * 8D - 4D);
 			pompeii.setTNTFuse(100000);

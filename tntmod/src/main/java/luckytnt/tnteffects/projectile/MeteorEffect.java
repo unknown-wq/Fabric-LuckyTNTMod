@@ -34,15 +34,15 @@ public class MeteorEffect extends PrimedTNTEffect{
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(distance <= (strength - strength / 8) && state.getBlock().getBlastResistance() <= 100) {
-					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+				if(distance <= (strength - strength / 8) && state.getBlock().getExplosionResistance() <= 100) {
+					state.getBlock().wasExploded(level, pos, explosion);
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
-				else if(Math.random() < 0.6f && state.getBlock().getBlastResistance() <= 100) {
-					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-					if(Math.random() < 0.25f && level.getBlockState(pos.down()).isSideSolidFullSquare(level, pos, Direction.UP)) {
-						level.setBlockState(pos, AbstractFireBlock.getState(level, pos));
+				else if(Math.random() < 0.6f && state.getBlock().getExplosionResistance() <= 100) {
+					state.getBlock().wasExploded(level, pos, explosion);
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+					if(Math.random() < 0.25f && level.getBlockState(pos.below()).isFaceSturdy(level, pos, Direction.UP)) {
+						level.setBlock(pos, AbstractFireBlock.getState(level, pos));
 					}
 				}
 			}

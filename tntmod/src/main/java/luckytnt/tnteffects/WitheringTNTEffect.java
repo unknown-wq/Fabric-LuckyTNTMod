@@ -17,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntityTypes;
 
 public class WitheringTNTEffect extends PrimedTNTEffect {
 
@@ -35,9 +36,9 @@ public class WitheringTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.isFullCube(level, pos)) {
-					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-					level.setBlockState(pos, Math.random() < 0.5f ? Blocks.SOUL_SAND.getDefaultState() : Blocks.SOUL_SOIL.getDefaultState());
+				if(state.isCollisionShapeFullBlock(level, pos)) {
+					state.getBlock().wasExploded(level, pos, explosion);
+					level.setBlock(pos, Math.random() < 0.5f ? Blocks.SOUL_SAND.defaultBlockState() : Blocks.SOUL_SOIL.defaultBlockState());
 				}
 			}
 		});
@@ -51,8 +52,8 @@ public class WitheringTNTEffect extends PrimedTNTEffect {
 			for(int y = entity.getLevel().getTopY(); y >= entity.getLevel().getBottomY(); y--) {
 				BlockPos pos = new BlockPos(Mth.floor(entity.x() + offX), y, Mth.floor(entity.z() + offZ));
 				BlockState state = entity.getLevel().getBlockState(pos);
-				if(!Block.isFaceFullSquare(state.getCollisionShape(entity.getLevel(), pos), Direction.UP) && Block.isFaceFullSquare(entity.getLevel().getBlockState(pos.down()).getCollisionShape(entity.getLevel(), pos.down()), Direction.UP)) {
-					skeleton.setPosition(pos.getX() + 0.5f, y, pos.getZ() + 0.5f);
+				if(!Block.isFaceSturdy(state.getCollisionShape(entity.getLevel(), pos), Direction.UP) && Block.isFaceSturdy(entity.getLevel().getBlockState(pos.below()).getCollisionShape(entity.getLevel(), pos.below()), Direction.UP)) {
+					skeleton.setPos(pos.getX() + 0.5f, y, pos.getZ() + 0.5f);
 					break;
 				}
 			}

@@ -13,7 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.world.LightType;
+import net.minecraft.world.level.LightLayer;
 
 public class EntityLivingEvent {
 
@@ -32,14 +32,14 @@ public class EntityLivingEvent {
 			if(ent.level() instanceof ServerLevel sLevel && ent instanceof LuckyTNTEntityExtension lentity) {
 				if(LevelVariables.get(sLevel).iceAgeTime > 0) {
 					if((ent instanceof Player pl && !pl.isCreative()) || !(ent instanceof Player)) {
-						if(sLevel.getLightLevel(LightType.BLOCK, new BlockPos(Mth.floor(ent.getX()), Mth.floor(ent.getY()), Mth.floor(ent.getZ()))) < 11) {
+						if(sLevel.getLightLevel(LightLayer.BLOCK, new BlockPos(Mth.floor(ent.getX()), Mth.floor(ent.getY()), Mth.floor(ent.getZ()))) < 11) {
 							CompoundTag tag = lentity.getAdditionalPersistentData();
 							tag.putInt("freezeTime", lentity.getAdditionalPersistentData().getInt("freezeTime") + LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get().intValue());
 							lentity.setAdditionalPersistentData(tag);
 						}
 						else if(lentity.getAdditionalPersistentData().getInt("freezeTime") > 0){
 							CompoundTag tag = lentity.getAdditionalPersistentData();
-							tag.putInt("freezeTime", (int)Mth.clamp(lentity.getAdditionalPersistentData().getInt("freezeTime") - 0.5f * sLevel.getLightLevel(LightType.BLOCK, new BlockPos(Mth.floor(ent.getX()), Mth.floor(ent.getY()), Mth.floor(ent.getZ()))), 0, Double.POSITIVE_INFINITY));
+							tag.putInt("freezeTime", (int)Mth.clamp(lentity.getAdditionalPersistentData().getInt("freezeTime") - 0.5f * sLevel.getLightLevel(LightLayer.BLOCK, new BlockPos(Mth.floor(ent.getX()), Mth.floor(ent.getY()), Mth.floor(ent.getZ()))), 0, Double.POSITIVE_INFINITY));
 							lentity.setAdditionalPersistentData(tag);
 						}
 					}
@@ -58,14 +58,14 @@ public class EntityLivingEvent {
 					ent.addStatusEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, lentity.getAdditionalPersistentData().getInt("freezeTime") / 900));
 				}
 				if(lentity.getAdditionalPersistentData().getInt("freezeTime") >= 1200 && lentity.getAdditionalPersistentData().getInt("freezeTime") % 10 == 0) {
-					DamageSources sources = ent.level().getDamageSources();
+					DamageSources sources = ent.level().damageSources();
 					ent.damage(sources.freeze(), 1);
 				}
 				
 				
 				if(LevelVariables.get(sLevel).heatDeathTime > 0) {
 					if((ent instanceof Player pl && !pl.isCreative()) || !(ent instanceof Player)) {
-						if(!sLevel.getBlockState(ent.getBlockPos()).isOf(Blocks.WATER)) {
+						if(!sLevel.getBlockState(ent.getBlockPos()).is(Blocks.WATER)) {
 							CompoundTag tag = lentity.getAdditionalPersistentData();
 							tag.putInt("heatTime", lentity.getAdditionalPersistentData().getInt("heatTime") + LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get().intValue());
 							lentity.setAdditionalPersistentData(tag);

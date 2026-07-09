@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
@@ -29,7 +29,7 @@ public class EasterEggEffect extends PrimedTNTEffect{
 		if(((Entity)entity).onGround() && entity.getPersistentData().getInt("level") > 0) {
 			serverExplosion(entity);
 			Level level = entity.getLevel();
-			entity.getLevel().playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+			entity.getLevel().playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
 			entity.destroy();
 		}
 	}
@@ -43,12 +43,12 @@ public class EasterEggEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(Math.random() < 0.66f && !state.isAir()) {
-					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
+					state.getBlock().wasExploded(level, pos, explosion);
 					if(Math.random() < 0.5f) {
-						entity.getLevel().setBlockState(pos, Blocks.MELON.getDefaultState());
+						entity.getLevel().setBlock(pos, Blocks.MELON.defaultBlockState());
 					}
 					else {
-						entity.getLevel().setBlockState(pos, Blocks.PUMPKIN.getDefaultState());
+						entity.getLevel().setBlock(pos, Blocks.PUMPKIN.defaultBlockState());
 					}
 				}
 			}
@@ -59,7 +59,7 @@ public class EasterEggEffect extends PrimedTNTEffect{
 		else {
 			for(int count = 0; count < 4; count++) {
 				PrimedLTNT tnt = EntityRegistry.EASTER_EGG.get().create(entity.getLevel());
-				tnt.setPosition(entity.getPos());
+				tnt.setPos(entity.getPos());
 				tnt.setOwner(entity.owner());
 				tnt.setDeltaMovement(Math.random() * 2 - 1, 1 + Math.random(), Math.random() * 2 - 1);
 				CompoundTag tag = tnt.getPersistentData();
@@ -72,11 +72,11 @@ public class EasterEggEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0.5f, 0f), 1), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 0.5f, 0f), 1), entity.x() + 0.2f, entity.y() + 1f, entity.z() + 0.2f, 0, 0, 0);
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 0.5f, 0f), 1), entity.x() - 0.2f, entity.y() + 1f, entity.z() - 0.2f, 0, 0, 0);
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 0.5f, 0f), 1), entity.x() + 0.2f, entity.y() + 1f, entity.z() - 0.2f, 0, 0, 0);
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 0.5f, 0f), 1), entity.x() - 0.2f, entity.y() + 1f, entity.z() + 0.2f, 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0.5f, 0f), 1), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 0.5f, 0f), 1), entity.x() + 0.2f, entity.y() + 1f, entity.z() + 0.2f, 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 0.5f, 0f), 1), entity.x() - 0.2f, entity.y() + 1f, entity.z() - 0.2f, 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 0.5f, 0f), 1), entity.x() + 0.2f, entity.y() + 1f, entity.z() - 0.2f, 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 0.5f, 0f), 1), entity.x() - 0.2f, entity.y() + 1f, entity.z() + 0.2f, 0, 0, 0);
 	}
 	
 	@Override

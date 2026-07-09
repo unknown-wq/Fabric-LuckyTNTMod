@@ -23,7 +23,7 @@ public class ParticlePhysicsTNTEffect extends PrimedTNTEffect {
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				FallingBlockEntity block = FallingBlockEntity.spawnFromBlock(level, pos, state);
-				level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+				level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				block.setDeltaMovement(Math.random() * 2 - Math.random() * 2, 1f + Math.random() * 3, Math.random() * 2 - Math.random() * 2);
 				level.addFreshEntity(block);
 			}

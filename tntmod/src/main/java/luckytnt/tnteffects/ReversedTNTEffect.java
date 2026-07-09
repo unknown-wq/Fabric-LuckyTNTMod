@@ -23,8 +23,8 @@ public class ReversedTNTEffect extends PrimedTNTEffect {
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				BlockPos posTop = new BlockPos(pos.getX(), Mth.floor(ent.y() + (-(pos.getY() - ent.y())) + LuckyTNTConfigValues.ISLAND_HEIGHT.get()), pos.getZ());
 				BlockState stateTop = level.getBlockState(posTop);
-				if(state.getBlock().getBlastResistance() <= 200 && stateTop.isAir() && !state.isAir() && Math.abs(ent.y() - pos.getY()) <= 20D) {
-					level.setBlockState(posTop, state, 3);
+				if(state.getBlock().getExplosionResistance() <= 200 && stateTop.isAir() && !state.isAir() && Math.abs(ent.y() - pos.getY()) <= 20D) {
+					level.setBlock(posTop, state, 3);
 				}
 			}
 		});

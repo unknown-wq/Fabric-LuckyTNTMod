@@ -33,38 +33,38 @@ public class NetherGroveTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		RegistryEntry<ConfiguredFeature<?, ?>> tree;
-		RegistryEntry<ConfiguredFeature<?, ?>> vegetation;
+		Holder<ConfiguredFeature<?, ?>> tree;
+		Holder<ConfiguredFeature<?, ?>> vegetation;
 		Block topBlock;
 		if (Math.random() < 0.5D) {
-			tree = entity.getLevel().getRegistryManager().get(Registries.CONFIGURED_FEATURE).entryOf(TreeConfiguredFeatures.CRIMSON_FUNGUS);
-			vegetation = entity.getLevel().getRegistryManager().get(Registries.CONFIGURED_FEATURE).entryOf(NetherConfiguredFeatures.CRIMSON_FOREST_VEGETATION_BONEMEAL);
+			tree = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(TreeConfiguredFeatures.CRIMSON_FUNGUS);
+			vegetation = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(NetherConfiguredFeatures.CRIMSON_FOREST_VEGETATION_BONEMEAL);
 			topBlock = Blocks.CRIMSON_NYLIUM;
 		} else {
-			tree = entity.getLevel().getRegistryManager().get(Registries.CONFIGURED_FEATURE).entryOf(TreeConfiguredFeatures.WARPED_FUNGUS);
-			vegetation = entity.getLevel().getRegistryManager().get(Registries.CONFIGURED_FEATURE).entryOf(NetherConfiguredFeatures.WARPED_FOREST_VEGETATION_BONEMEAL);
+			tree = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(TreeConfiguredFeatures.WARPED_FUNGUS);
+			vegetation = entity.getLevel().registryAccess().get(Registries.CONFIGURED_FEATURE).entryOf(NetherConfiguredFeatures.WARPED_FOREST_VEGETATION_BONEMEAL);
 			topBlock = Blocks.WARPED_NYLIUM;
 		}
 		ExplosionHelper.doTopBlockExplosion(entity.getLevel(), entity.getPos(), radius, new IBlockExplosionCondition() {
 			
 			@Override
 			public boolean conditionMet(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.isIn(BlockTags.LEAVES) || state.isIn(BlockTags.LOGS) || state.isIn(BlockTags.FLOWERS) || state.isIn(BlockTags.WART_BLOCKS) || (!state.isFullCube(level, pos) && state.getBlock().getBlastResistance() < 100)) {
-					state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+				if(state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS) || state.is(BlockTags.FLOWERS) || state.is(BlockTags.WART_BLOCKS) || (!state.isCollisionShapeFullBlock(level, pos) && state.getBlock().getExplosionResistance() < 100)) {
+					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					return false;
 				}
-				return (state.isFullCube(level, pos) || state.isSideSolidFullSquare(level, pos, Direction.UP)) && (level.getBlockState(pos.up()).isAir() || level.getBlockState(pos.up()).canReplace(new AutomaticItemPlacementContext(level, pos.up(), Direction.DOWN, ItemStack.EMPTY, Direction.UP)) || !level.getBlockState(pos.up()).isFullCube(level, pos.up()) || level.getBlockState(pos.up()).isIn(BlockTags.FLOWERS));
+				return (state.isCollisionShapeFullBlock(level, pos) || state.isFaceSturdy(level, pos, Direction.UP)) && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.above()).canReplace(new AutomaticItemPlacementContext(level, pos.above(), Direction.DOWN, ItemStack.EMPTY, Direction.UP)) || !level.getBlockState(pos.above()).isCollisionShapeFullBlock(level, pos.above()) || level.getBlockState(pos.above()).is(BlockTags.FLOWERS));
 			}
 		}, new IForEachBlockExplosionEffect() {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posBelow = pos.down();
+				BlockPos posBelow = pos.below();
 				BlockState stateBelow = level.getBlockState(posBelow);
-				if(stateBelow.getBlock().getBlastResistance() < 100) {
-					stateBelow.getBlock().onDestroyedByExplosion(level, posBelow, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlockState(posBelow, topBlock.getDefaultState());
+				if(stateBelow.getBlock().getExplosionResistance() < 100) {
+					stateBelow.getBlock().wasExploded(level, posBelow, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					level.setBlock(posBelow, topBlock.defaultBlockState());
 				}
 			}
 		});
@@ -74,10 +74,10 @@ public class NetherGroveTNTEffect extends PrimedTNTEffect{
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(level instanceof ServerLevel sLevel) {
 					if(Math.random() < 0.05f) {
-						tree.value().generate(sLevel, sLevel.getChunkManager().getChunkGenerator(), sLevel.random, pos);
+						tree.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
 					}
 					if(Math.random() < 0.1f) {
-						vegetation.value().generate(sLevel, sLevel.getChunkManager().getChunkGenerator(), sLevel.random, pos);
+						vegetation.value().generate(sLevel, sLevel.getChunkSource().getChunkGenerator(), sLevel.random, pos);
 					}
 				}
 			}

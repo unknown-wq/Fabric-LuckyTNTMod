@@ -18,8 +18,8 @@ public class MiniIceMeteorEffect extends PrimedTNTEffect {
 		explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
 		
 		for (BlockPos pos : explosion.getAffectedBlocks()) {
-			if (Math.random() > 0.75f && ent.getLevel().getBlockState(pos).isAir() && ent.getLevel().getBlockState(pos.down()).isOpaqueFullCube(ent.getLevel(), pos)) {
-				ent.getLevel().setBlockState(pos, Math.random() < 0.5f ? Blocks.BLUE_ICE.getDefaultState() : Blocks.PACKED_ICE.getDefaultState());
+			if (Math.random() > 0.75f && ent.getLevel().getBlockState(pos).isAir() && ent.getLevel().getBlockState(pos.below()).isOpaqueFullCube(ent.getLevel(), pos)) {
+				ent.getLevel().setBlock(pos, Math.random() < 0.5f ? Blocks.BLUE_ICE.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState());
 			}
 		}
 	}

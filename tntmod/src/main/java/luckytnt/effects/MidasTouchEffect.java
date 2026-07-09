@@ -51,87 +51,87 @@ public class MidasTouchEffect extends MobEffect {
 	@Override
 	public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
 		Level level = entity.level();
-		if(!level.isClient) {
+		if(!level.isClientSide) {
 
-			BlockHitResult result = level.raycast(new RaycastContext(entity.getLerpedPos(1), entity.getLerpedPos(1).add(0, -1, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity));
+			BlockHitResult result = level.raycast(new RaycastContext(entity.getPosition(1), entity.getPosition(1).add(0, -1, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity));
 			if(result != null) {
 				BlockState state = level.getBlockState(result.getBlockPos());
-				if(state.getBlock().getBlastResistance() < 100 && !state.isAir()) {
-					level.setBlockState(result.getBlockPos(), Blocks.GOLD_BLOCK.getDefaultState(), 3);
+				if(state.getBlock().getExplosionResistance() < 100 && !state.isAir()) {
+					level.setBlock(result.getBlockPos(), Blocks.GOLD_BLOCK.defaultBlockState(), 3);
 				}
 			}
 			
-			result = level.raycast(new RaycastContext(entity.getLerpedPos(1).add(0, entity.getStandingEyeHeight(), 0), entity.getLerpedPos(1).add(0, entity.getStandingEyeHeight(), 0).add(entity.getRotationVec(1).multiply(5)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity));
+			result = level.raycast(new RaycastContext(entity.getPosition(1).add(0, entity.getStandingEyeHeight(), 0), entity.getPosition(1).add(0, entity.getStandingEyeHeight(), 0).add(entity.getRotationVec(1).multiply(5)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity));
 			if(result != null) {
 				BlockState state = level.getBlockState(result.getBlockPos());
-				if(state.getBlock().getBlastResistance() < 100 && !state.isAir()) {
-					level.setBlockState(result.getBlockPos(), Blocks.GOLD_BLOCK.getDefaultState(), 3);
+				if(state.getBlock().getExplosionResistance() < 100 && !state.isAir()) {
+					level.setBlock(result.getBlockPos(), Blocks.GOLD_BLOCK.defaultBlockState(), 3);
 				}
 			}
 			if(entity.getMainHandStack() != ItemStack.EMPTY) {
 				Item item = entity.getMainHandStack().getItem();
 				if(item instanceof SwordItem && item != Items.GOLDEN_SWORD) {
-					entity.setStackInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_SWORD));
+					entity.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_SWORD));
 				}
 				else if(item instanceof ShovelItem && item != Items.GOLDEN_SHOVEL) {
-					entity.setStackInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_SHOVEL));
+					entity.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_SHOVEL));
 				}
 				else if(item instanceof PickaxeItem && item != Items.GOLDEN_PICKAXE) {
-					entity.setStackInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_PICKAXE));
+					entity.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_PICKAXE));
 				}
 				else if(item instanceof AxeItem && item != Items.GOLDEN_AXE) {
-					entity.setStackInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_AXE));
+					entity.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_AXE));
 				}
 				else if(item instanceof HoeItem && item != Items.GOLDEN_HOE) {
-					entity.setStackInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_HOE));
+					entity.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_HOE));
 				}
 				else if(item == Items.APPLE) {
-					entity.setStackInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_APPLE, entity.getMainHandStack().getCount()));					
+					entity.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_APPLE, entity.getMainHandStack().getCount()));					
 				}
 				else if(item == Items.CARROT) {
-					entity.setStackInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_CARROT, entity.getMainHandStack().getCount()));		
+					entity.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_CARROT, entity.getMainHandStack().getCount()));		
 				}
 				else if(item == Items.MELON_SLICE) {
-					entity.setStackInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLISTERING_MELON_SLICE, entity.getMainHandStack().getCount()));					
+					entity.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLISTERING_MELON_SLICE, entity.getMainHandStack().getCount()));					
 				}
 				else if(item instanceof BlockItem && item != Items.GOLD_BLOCK){
-					entity.setStackInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLD_BLOCK, entity.getMainHandStack().getCount()));										
+					entity.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLD_BLOCK, entity.getMainHandStack().getCount()));										
 				}
 				else if(!(item instanceof BlockItem) && !(item instanceof ToolItem) && item != Items.GOLDEN_APPLE && item != Items.GOLDEN_CARROT && item != Items.GLISTERING_MELON_SLICE){
-					entity.setStackInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLD_INGOT, entity.getMainHandStack().getCount()));										
+					entity.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLD_INGOT, entity.getMainHandStack().getCount()));										
 				}
 			}
 			if(entity.getOffHandStack() != ItemStack.EMPTY) {
 				Item item = entity.getOffHandStack().getItem();
 				if(item instanceof SwordItem && item != Items.GOLDEN_SWORD) {
-					entity.setStackInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_SWORD));
+					entity.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_SWORD));
 				}
 				else if(item instanceof ShovelItem && item != Items.GOLDEN_SHOVEL) {
-					entity.setStackInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_SHOVEL));
+					entity.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_SHOVEL));
 				}
 				else if(item instanceof PickaxeItem && item != Items.GOLDEN_PICKAXE) {
-					entity.setStackInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_PICKAXE));
+					entity.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_PICKAXE));
 				}
 				else if(item instanceof AxeItem && item != Items.GOLDEN_AXE) {
-					entity.setStackInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_AXE));
+					entity.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_AXE));
 				}
 				else if(item instanceof HoeItem && item != Items.GOLDEN_HOE) {
-					entity.setStackInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_HOE));
+					entity.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_HOE));
 				}
 				else if(item == Items.APPLE) {
-					entity.setStackInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_APPLE, entity.getOffHandStack().getCount()));					
+					entity.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_APPLE, entity.getOffHandStack().getCount()));					
 				}
 				else if(item == Items.CARROT) {
-					entity.setStackInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_CARROT, entity.getOffHandStack().getCount()));		
+					entity.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_CARROT, entity.getOffHandStack().getCount()));		
 				}
 				else if(item == Items.MELON_SLICE) {
-					entity.setStackInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GLISTERING_MELON_SLICE, entity.getOffHandStack().getCount()));					
+					entity.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GLISTERING_MELON_SLICE, entity.getOffHandStack().getCount()));					
 				}
 				else if(item instanceof BlockItem && item != Items.GOLD_BLOCK){
-					entity.setStackInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLD_BLOCK, entity.getOffHandStack().getCount()));										
+					entity.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLD_BLOCK, entity.getOffHandStack().getCount()));										
 				}
 				else if(!(item instanceof BlockItem) && !(item instanceof ToolItem) && item != Items.GOLDEN_APPLE && item != Items.GOLDEN_CARROT && item != Items.GLISTERING_MELON_SLICE){
-					entity.setStackInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLD_INGOT, entity.getOffHandStack().getCount()));										
+					entity.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLD_INGOT, entity.getOffHandStack().getCount()));										
 				}
 			}
 			if(entity.getEquippedStack(EquipmentSlot.HEAD) != ItemStack.EMPTY && entity.getEquippedStack(EquipmentSlot.HEAD).getItem() != Items.GOLDEN_HELMET) {

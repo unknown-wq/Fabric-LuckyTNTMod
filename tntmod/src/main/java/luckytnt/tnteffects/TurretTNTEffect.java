@@ -17,8 +17,8 @@ public class TurretTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
-		if(!level.isClient && entity.getTNTFuse() <= 300) {
-			List<Player> players = level.getNonSpectatingEntities(Player.class, new Box(entity.getPos().add(-100, -100, -100), entity.getPos().add(100, 100, 100)));
+		if(!level.isClientSide && entity.getTNTFuse() <= 300) {
+			List<Player> players = level.getEntitiesOfClass(Player.class, new AABB(entity.getPos().add(-100, -100, -100), entity.getPos().add(100, 100, 100)));
 			for(Player player : players) {
 				if(!player.equals(entity.owner())) {
 					double xVel = player.getX() - entity.x();

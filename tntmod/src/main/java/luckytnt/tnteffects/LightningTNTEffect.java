@@ -10,6 +10,7 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityTypes;
 
 public class LightningTNTEffect extends PrimedTNTEffect{
 
@@ -24,7 +25,7 @@ public class LightningTNTEffect extends PrimedTNTEffect{
 				for(int offY = 320; offY > -64; offY--) {
 					if(!entity.getLevel().getBlockState(new BlockPos(Mth.floor(x + offX), offY, Mth.floor(z + offZ))).isAir()) {
 						Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, entity.getLevel());
-						lighting.setPosition(x + offX, offY, z + offZ);
+						lighting.setPos(x + offX, offY, z + offZ);
 						entity.getLevel().addFreshEntity(lighting);
 						break;
 					}

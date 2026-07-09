@@ -16,7 +16,7 @@ public class MeteorShowerEffect extends PrimedTNTEffect{
 			for(int count = 0; count <= 5; count++) {
 				LExplosiveProjectile meteor = EntityRegistry.MINI_METEOR.get().create(entity.getLevel());
 				meteor.setOwner(entity.owner());
-				meteor.setPosition(entity.getPos().add(Math.random() * 400 - 200, LuckyTNTConfigValues.DROP_HEIGHT.get() + Math.random() * 50, Math.random() * 400 - 200));
+				meteor.setPos(entity.getPos().add(Math.random() * 400 - 200, LuckyTNTConfigValues.DROP_HEIGHT.get() + Math.random() * 50, Math.random() * 400 - 200));
 				entity.getLevel().addFreshEntity(meteor);
 			}
 		}

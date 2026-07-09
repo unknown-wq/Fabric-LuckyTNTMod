@@ -9,7 +9,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.item.ItemPlacementContext;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.particles.ParticleTypes;
@@ -27,11 +27,11 @@ public class HeatWaveEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getBlastResistance() <= 200) {
+				if(state.getBlock().getExplosionResistance() <= 200) {
 					if(state.isAir() && BlockSurviveChecks.canFirePlaceAt(state, level, pos)) {
-						ItemPlacementContext ctx = new ItemPlacementContext(level, null, InteractionHand.MAIN_HAND, new ItemStack(Items.FLINT_AND_STEEL), new BlockHitResult(ent.getPos(), Direction.DOWN, pos, true));
+						BlockPlaceContext ctx = new BlockPlaceContext(level, null, InteractionHand.MAIN_HAND, new ItemStack(Items.FLINT_AND_STEEL), new BlockHitResult(ent.getPos(), Direction.DOWN, pos, true));
 						BlockState stateForPlacement = Blocks.FIRE.getPlacementState(ctx);
-						level.setBlockState(pos, stateForPlacement, 3);
+						level.setBlock(pos, stateForPlacement, 3);
 					}
 				}
 			}

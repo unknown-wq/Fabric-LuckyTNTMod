@@ -27,8 +27,8 @@ public class FireTNTEffect extends PrimedTNTEffect{
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-				level.setBlockState(pos, AbstractFireBlock.getState(level, pos));
+				state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+				level.setBlock(pos, AbstractFireBlock.getState(level, pos));
 			}
 		});
 	}

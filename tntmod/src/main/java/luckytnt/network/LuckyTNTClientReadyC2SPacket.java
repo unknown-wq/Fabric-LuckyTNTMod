@@ -11,8 +11,8 @@ import net.minecraft.resources.Identifier;
 public class LuckyTNTClientReadyC2SPacket extends ClientReadyC2SPacket {
 
 	public static final Identifier NAME = Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "lucky_tnt_client_ready_c2s");
-	public static final CustomPacketPayload.Id<LuckyTNTClientReadyC2SPacket> ID = new CustomPacketPayload.Id<>(NAME);
-    public static final StreamCodec<RegistryFriendlyByteBuf, LuckyTNTClientReadyC2SPacket> CODEC = StreamCodec.of(ClientReadyC2SPacket::write, LuckyTNTClientReadyC2SPacket::new);
+	public static final CustomPacketPayload.Type<LuckyTNTClientReadyC2SPacket> ID = new CustomPacketPayload.Type<>(NAME);
+    public static final StreamCodec<RegistryFriendlyByteBuf, LuckyTNTClientReadyC2SPacket> CODEC = StreamCodec.ofMember(ClientReadyC2SPacket::write, LuckyTNTClientReadyC2SPacket::new);
 	
 	public LuckyTNTClientReadyC2SPacket() {
 	}
@@ -21,7 +21,7 @@ public class LuckyTNTClientReadyC2SPacket extends ClientReadyC2SPacket {
 	}
 	
 	@Override
-	public Id<? extends CustomPacketPayload> getId() {
+	public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 }

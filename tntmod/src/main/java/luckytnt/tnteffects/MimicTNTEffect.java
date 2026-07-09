@@ -14,10 +14,10 @@ public class MimicTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		((Entity)ent).setDeltaMovement(0, 0, 0);
-		((Entity)ent).setPosition(((Entity) ent).prevX, ((Entity) ent).prevY, ((Entity) ent).prevZ);
+		((Entity)ent).setPos(((Entity) ent).xo, ((Entity) ent).yo, ((Entity) ent).zo);
 		if (ent.getLevel().getClosestPlayer((Entity) ent, 5) != null && ent.getLevel().getClosestPlayer((Entity) ent, 5) != ent.owner()) {
-			ent.getLevel().playSound((Entity)ent, toBlockPos(ent.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (ent.getLevel().getRandom().nextFloat() - ent.getLevel().getRandom().nextFloat()) * 0.2f) * 0.7f);
-			if(!ent.getLevel().isClient()) {
+			ent.getLevel().playSound((Entity)ent, toBlockPos(ent.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (ent.getLevel().getRandom().nextFloat() - ent.getLevel().getRandom().nextFloat()) * 0.2f) * 0.7f);
+			if(!ent.getLevel().isClientSide()) {
 				serverExplosion(ent);
 				ent.destroy();
 			}
@@ -38,7 +38,7 @@ public class MimicTNTEffect extends PrimedTNTEffect {
 
 	@Override
 	public BlockState getBlockState(IExplosiveEntity ent) {
-		return ent.getLevel().getBlockState(toBlockPos(ent.getPos()).down()).isAir() ? BlockRegistry.MIMIC_TNT.get().getDefaultState() : ent.getLevel().getBlockState(toBlockPos(ent.getPos()).down());
+		return ent.getLevel().getBlockState(toBlockPos(ent.getPos()).below()).isAir() ? BlockRegistry.MIMIC_TNT.get().defaultBlockState() : ent.getLevel().getBlockState(toBlockPos(ent.getPos()).below());
 	}
 
 	@Override

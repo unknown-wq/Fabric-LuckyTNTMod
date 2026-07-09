@@ -32,12 +32,12 @@ public class IcyTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if (distance <= 40 && state.getBlock().getBlastResistance() <= 100) {
-					if(WastelandTNTEffect.GRASS.contains(state.getBlock()) || state.isIn(BlockTags.LEAVES) || state.isIn(BlockTags.SAND)) {
-						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel())); 
-						level.setBlockState(pos, Blocks.BLUE_ICE.getDefaultState(), 3);
+				if (distance <= 40 && state.getBlock().getExplosionResistance() <= 100) {
+					if(WastelandTNTEffect.GRASS.contains(state.getBlock()) || state.is(BlockTags.LEAVES) || state.is(BlockTags.SAND)) {
+						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel())); 
+						level.setBlock(pos, Blocks.BLUE_ICE.defaultBlockState(), 3);
 					} if(state.getBlock() instanceof LiquidBlock) {
-						level.setBlockState(pos, Blocks.ICE.getDefaultState(), 3);
+						level.setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
 					}
 				}
 			}
@@ -47,8 +47,8 @@ public class IcyTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getBlastResistance() < 100) {
-					level.setBlockState(pos, Blocks.SNOW.getDefaultState(), 3);
+				if(state.getBlock().getExplosionResistance() < 100) {
+					level.setBlock(pos, Blocks.SNOW.defaultBlockState(), 3);
 				}
 			}
 		});

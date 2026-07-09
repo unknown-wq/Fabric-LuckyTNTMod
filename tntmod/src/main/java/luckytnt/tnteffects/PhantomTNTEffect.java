@@ -27,8 +27,8 @@ public class PhantomTNTEffect extends PrimedTNTEffect{
 			for(int offY = 320; offY > -64; offY--) {
 	      		BlockPos pos = new BlockPos(Mth.floor(entity.x() + offX), offY, Mth.floor(entity.z() + offZ));
 	      		BlockState state = entity.getLevel().getBlockState(pos);
-	      		if(state.isFullCube(entity.getLevel(), pos) && !state.isAir() && !foundBlock) {
-	      			((Entity)entity).setPosition(entity.x() + offX, offY + 1, entity.z() + offZ);
+	      		if(state.isCollisionShapeFullBlock(entity.getLevel(), pos) && !state.isAir() && !foundBlock) {
+	      			((Entity)entity).setPos(entity.x() + offX, offY + 1, entity.z() + offZ);
 	      			foundBlock = true;
 	      		}
 			}

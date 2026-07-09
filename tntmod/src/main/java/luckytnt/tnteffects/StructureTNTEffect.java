@@ -46,7 +46,7 @@ import net.minecraft.world.gen.structure.StructureKeys;
 
 public class StructureTNTEffect extends PrimedTNTEffect {
 	
-	public Predicate<RegistryEntry<Biome>> PREDICATE = (holder) -> {
+	public Predicate<Holder<Biome>> PREDICATE = (holder) -> {
 		return true;
 	};
 
@@ -54,20 +54,20 @@ public class StructureTNTEffect extends PrimedTNTEffect {
 	public void serverExplosion(IExplosiveEntity ent) {
 		String value = ent.getPersistentData().getString("structure");
 		if(ent.getLevel() instanceof ServerLevel sLevel) {
-			DynamicRegistryManager rAccess = sLevel.getRegistryManager();
-			ChunkGenerator chunkGenerator = sLevel.getChunkManager().getChunkGenerator();
-			BiomeSource biomeSource = sLevel.getChunkManager().getChunkGenerator().getBiomeSource();
-			StructureTemplateManager sManager = sLevel.getStructureTemplateManager();
+			DynamicRegistryManager rAccess = sLevel.registryAccess();
+			ChunkGenerator chunkGenerator = sLevel.getChunkSource().getChunkGenerator();
+			BiomeSource biomeSource = sLevel.getChunkSource().getChunkGenerator().getBiomeSource();
+			StructureTemplateManager sManager = sLevel.getStructureManager();
 			StructureAccessor sFManager = sLevel.getStructureAccessor();
 			BlockBox bb = new BlockBox((int)ent.x() - 150, (int)ent.y() - 150, (int)ent.z() - 150, (int)ent.x() + 150, (int)ent.y() + 150, (int)ent.z() + 150);
 			ChunkPos chunkPosition = ((Entity)ent).getChunkPos();
 			Random random = sLevel.getRandom();
-			NoiseConfig randomState = sLevel.getChunkManager().getNoiseConfig();
+			NoiseConfig randomState = sLevel.getChunkSource().getNoiseConfig();
 			
 			Registry<Structure> registry = rAccess.get(Registries.STRUCTURE);
 			Registry<StructurePool> pools = rAccess.get(Registries.TEMPLATE_POOL);
 
-			RegistryEntry<StructurePool> pool = pools.entryOf(BastionRemnantGenerator.STRUCTURE_POOLS);
+			Holder<StructurePool> pool = pools.entryOf(BastionRemnantGenerator.STRUCTURE_POOLS);
 			
 			Structure pillager_outpost = registry.get(StructureKeys.PILLAGER_OUTPOST);
 			Structure mansion = registry.get(StructureKeys.MANSION);
@@ -158,9 +158,9 @@ public class StructureTNTEffect extends PrimedTNTEffect {
 			}
 		}
 		if(bool) {
-			return BlockRegistry.STRUCTURE_TNT.get().getDefaultState().with(StructureTNTBlock.STRUCTURE, StructureTNTBlock.STRUCTURE.parse(ent.getPersistentData().getString("structure")).get());
+			return BlockRegistry.STRUCTURE_TNT.get().defaultBlockState().setValue(StructureTNTBlock.STRUCTURE, StructureTNTBlock.STRUCTURE.parse(ent.getPersistentData().getString("structure")).get());
 		}
-		return BlockRegistry.STRUCTURE_TNT.get().getDefaultState();
+		return BlockRegistry.STRUCTURE_TNT.get().defaultBlockState();
 	}
 	
 	@Override

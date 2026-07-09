@@ -8,7 +8,7 @@ import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
@@ -32,10 +32,10 @@ public class TetrahedronTNTEffect extends PrimedTNTEffect {
 		Vec3 AB = new Vec3(B.getX() - A.getX(), B.getY() - A.getY(), B.getZ() - A.getZ());
 		Vec3 AC = new Vec3(C.getX() - A.getX(), C.getY() - A.getY(), C.getZ() - A.getZ());
 		
-		Vec3 NDAB = DB.crossProduct(DA);
-		Vec3 NDAC = DA.crossProduct(DC);
-		Vec3 NDCB = DC.crossProduct(DB);
-		Vec3 NABC = AB.crossProduct(AC);
+		Vec3 NDAB = DB.cross(DA);
+		Vec3 NDAC = DA.cross(DC);
+		Vec3 NDCB = DC.cross(DB);
+		Vec3 NABC = AB.cross(AC);
 		
 		for (int offX = -40; offX <= 40; offX++) {
 			for (int offY = -40; offY <= 40; offY++) {
@@ -45,9 +45,9 @@ public class TetrahedronTNTEffect extends PrimedTNTEffect {
 					if (distance(vec, NDAB, D) <= 0 && distance(vec, NDAC, D) <= 0 && distance(vec, NDCB, D) <= 0 && distance(vec, NABC, A) <= 0) {
 						BlockPos pos5 = toBlockPos(ent.getPos()).add(offX, offY, offZ);
 
-						if (ent.getLevel().getBlockState(pos5).getBlock().getBlastResistance() <= 200) {
-							ent.getLevel().getBlockState(pos5).getBlock().onDestroyedByExplosion(ent.getLevel(), pos5, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-							ent.getLevel().setBlockState(pos5, Blocks.AIR.getDefaultState(), 3);
+						if (ent.getLevel().getBlockState(pos5).getBlock().getExplosionResistance() <= 200) {
+							ent.getLevel().getBlockState(pos5).getBlock().wasExploded(ent.getLevel(), pos5, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							ent.getLevel().setBlock(pos5, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 				}
@@ -58,15 +58,15 @@ public class TetrahedronTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		for(double i = 0D; i <= 1D; i += 0.05D) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() - 0.5D + i, ent.y() + 1D, ent.z() - 0.5D, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() - 0.5D + i, ent.y() + 1D, ent.z() - 0.5D, 0, 0, 0);
 		}
 		
 		Vec3 vec1 = new Vec3(0.5D, 0D, 1D);
 		Vec3 vec2 = new Vec3(-0.5D, 0D, 1D);
 		
 		for(double i = 0; i <= vec1.length(); i += vec1.length() / 20D) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() - 0.5D + vec1.x * i, ent.y() + 1D, ent.z() - 0.5D + vec1.z * i, 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() + 0.5D + vec2.x * i, ent.y() + 1D, ent.z() - 0.5D + vec2.z * i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() - 0.5D + vec1.x * i, ent.y() + 1D, ent.z() - 0.5D + vec1.z * i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() + 0.5D + vec2.x * i, ent.y() + 1D, ent.z() - 0.5D + vec2.z * i, 0, 0, 0);
 		}
 		
 		Vec3 vec3 = new Vec3(0.5D, 0.75D, 0.5D);
@@ -74,12 +74,12 @@ public class TetrahedronTNTEffect extends PrimedTNTEffect {
 		Vec3 vec5 = new Vec3(0D, 0.75D, -0.5D);
 		
 		for(double i = 0; i <= vec3.length(); i += vec3.length() / 20D) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() - 0.5D + vec3.x * i, ent.y() + 1D + vec3.y * i, ent.z() - 0.5D + vec3.z * i, 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() + 0.5D + vec4.x * i, ent.y() + 1D + vec3.y * i, ent.z() - 0.5D + vec4.z * i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() - 0.5D + vec3.x * i, ent.y() + 1D + vec3.y * i, ent.z() - 0.5D + vec3.z * i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.5f), ent.x() + 0.5D + vec4.x * i, ent.y() + 1D + vec3.y * i, ent.z() - 0.5D + vec4.z * i, 0, 0, 0);
 		}
 		
 		for(double i = 0; i <= vec5.length(); i += vec5.length() / 20D) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0f, 0f), 0.5f), ent.x(), ent.y() + 1D + vec5.y * i, ent.z() + 0.5D + vec5.z * i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.5f), ent.x(), ent.y() + 1D + vec5.y * i, ent.z() + 0.5D + vec5.z * i, 0, 0, 0);
 		}
 	}
 	

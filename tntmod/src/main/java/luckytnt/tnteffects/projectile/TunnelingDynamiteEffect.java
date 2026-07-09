@@ -19,7 +19,7 @@ public class TunnelingDynamiteEffect extends PrimedTNTEffect{
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		Vec3 direction = entity.getPos().subtract(((Entity)entity).prevX, ((Entity)entity).prevY, ((Entity)entity).prevZ).normalize();
+		Vec3 direction = entity.getPos().subtract(((Entity)entity).xo, ((Entity)entity).yo, ((Entity)entity).zo).normalize();
 		for(float length = 0; length <= 40; length += 1f) {
 			BlockPos pos = toBlockPos(entity.getPos().add(direction.multiply(length)));
 			ExplosionHelper.doSphericalExplosion(entity.getLevel(), new Vec3(pos.getX(), pos.getY(), pos.getZ()), 4, new IForEachBlockExplosionEffect() {
@@ -27,9 +27,9 @@ public class TunnelingDynamiteEffect extends PrimedTNTEffect{
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if(distance < 4) {
-						if(state.getBlock().getBlastResistance() < 100) {
-							state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						if(state.getBlock().getExplosionResistance() < 100) {
+							state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 				}

@@ -35,7 +35,7 @@ public class EarthquakeTNTEffect extends PrimedTNTEffect{
 	      	tag.putDouble("z", entity.z());
 	      	entity.setPersistentData(tag);
 	      	
-	      	List<Player> list = entity.getLevel().getNonSpectatingEntities(Player.class, new Box(entity.x() - 100, entity.y() - 100, entity.z() - 100, entity.x() + 100, entity.y() + 100, entity.z() + 100));
+	      	List<Player> list = entity.getLevel().getEntitiesOfClass(Player.class, new AABB(entity.x() - 100, entity.y() - 100, entity.z() - 100, entity.x() + 100, entity.y() + 100, entity.z() + 100));
 	      	for(Player player : list) {
 	      		if(player instanceof LuckyTNTEntityExtension lplayer) {
 		      		CompoundTag etag = lplayer.getAdditionalPersistentData();
@@ -45,7 +45,7 @@ public class EarthquakeTNTEffect extends PrimedTNTEffect{
 	      	}
 		}
 		
-		if(entity.getTNTFuse() <= 200 && entity.getTNTFuse() % 20 == 0 && !entity.getLevel().isClient()) {
+		if(entity.getTNTFuse() <= 200 && entity.getTNTFuse() % 20 == 0 && !entity.getLevel().isClientSide()) {
 			BlockPos origin = toBlockPos(new Vec3(entity.getPersistentData().getDouble("x"), entity.getPersistentData().getDouble("y"), entity.getPersistentData().getDouble("z")));
 			BlockPos start = origin.add(toBlockPos(new Vec3(entity.getPersistentData().getDouble("vecx") * -40, 0, entity.getPersistentData().getDouble("vecz") * -40)));
 			Vec3 vec = new Vec3(entity.getPersistentData().getDouble("vecx"), 0, entity.getPersistentData().getDouble("vecz"));
@@ -58,24 +58,24 @@ public class EarthquakeTNTEffect extends PrimedTNTEffect{
 						if(distance <= 3) {
 							if(Math.random() > 0.1D) {
 								BlockPos pos1 = new BlockPos(pos.getX(), entity.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
-								if(entity.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 100) {
-									entity.getLevel().setBlockState(pos1, Blocks.AIR.getDefaultState(), 3);
+								if(entity.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
+									entity.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
 							}
 						}
 						if(distance <= 5 && distance > 3) {
 							if(Math.random() > 0.5D) {
 								BlockPos pos1 = new BlockPos(pos.getX(), entity.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
-								if(entity.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 100) {
-									entity.getLevel().setBlockState(pos1, Blocks.AIR.getDefaultState(), 3);
+								if(entity.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
+									entity.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
 							}
 						}
 						if(distance <= 6 && distance > 5) {
 							if(Math.random() > 0.9D) {
 								BlockPos pos1 = new BlockPos(pos.getX(), entity.getLevel().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1, pos.getZ());
-								if(entity.getLevel().getBlockState(pos1).getBlock().getBlastResistance() <= 100) {
-									entity.getLevel().setBlockState(pos1, Blocks.AIR.getDefaultState(), 3);
+								if(entity.getLevel().getBlockState(pos1).getBlock().getExplosionResistance() <= 100) {
+									entity.getLevel().setBlock(pos1, Blocks.AIR.defaultBlockState(), 3);
 								}
 							}
 						}

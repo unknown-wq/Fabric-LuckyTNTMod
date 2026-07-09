@@ -38,9 +38,9 @@ public class DividingTNTEffect extends PrimedTNTEffect{
 				for(int offZ = -50; offZ < 50; offZ += 10) {
 					findBlock: for(int offY = 320; offY > -64; offY--) {
 						BlockPos pos = toBlockPos(new Vec3(entity.x() + offX, entity.y() + offY, entity.z() + offZ));
-						if(entity.getLevel().getBlockState(pos).isFullCube(entity.getLevel(), pos) && !entity.getLevel().getBlockState(pos.up()).isFullCube(entity.getLevel(), pos.up())) {
+						if(entity.getLevel().getBlockState(pos).isCollisionShapeFullBlock(entity.getLevel(), pos) && !entity.getLevel().getBlockState(pos.above()).isCollisionShapeFullBlock(entity.getLevel(), pos.above())) {
 							PrimedLTNT projectile = EntityRegistry.DIVIDING_TNT.get().create(entity.getLevel());
-							projectile.setPosition(entity.getPos().add(offX, offY, offZ));
+							projectile.setPos(entity.getPos().add(offX, offY, offZ));
 							projectile.setOwner(entity.owner() instanceof LivingEntity ? (LivingEntity)entity.owner() : null);
 							CompoundTag tag = projectile.getPersistentData();
 							tag.putInt("maxLevel", new Random().nextInt(5));
@@ -63,7 +63,7 @@ public class DividingTNTEffect extends PrimedTNTEffect{
 				explosion.doBlockExplosion();
 				if(entity.getPersistentData().getInt("level") >= entity.getPersistentData().getInt("maxLevel")) {
 					Level level = entity.getLevel();
-					entity.getLevel().playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
+					entity.getLevel().playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
 				}
 				entity.destroy();
 			}
@@ -73,7 +73,7 @@ public class DividingTNTEffect extends PrimedTNTEffect{
 				explosion.doBlockExplosion();
 				PrimedLTNT projectile = EntityRegistry.DIVIDING_TNT.get().create(entity.getLevel());
 				projectile.setOwner(entity.owner() instanceof LivingEntity ? (LivingEntity)entity.owner() : null);
-				projectile.setPosition(entity.getPos());
+				projectile.setPos(entity.getPos());
 				projectile.setDeltaMovement(Math.random() - Math.random(), 1 + Math.random() * 0.75f, Math.random() - Math.random());
 				CompoundTag tag = projectile.getPersistentData();
 				tag.putInt("maxLevel", entity.getPersistentData().getInt("maxLevel"));

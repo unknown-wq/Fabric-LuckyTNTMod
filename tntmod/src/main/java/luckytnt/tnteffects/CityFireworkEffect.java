@@ -34,7 +34,7 @@ public class CityFireworkEffect extends PrimedTNTEffect {
 			
 			if(type != null) {
 				PrimedLTNT tnt = type.get().create(ent.getLevel());
-				tnt.setPosition(ent.getPos());
+				tnt.setPos(ent.getPos());
 				tnt.setOwner(ent.owner() instanceof LivingEntity ? (LivingEntity)ent.owner() : null);
 				tnt.setDeltaMovement(Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f  - Math.random() * 1.5f);
 				ent.getLevel().addFreshEntity(tnt);

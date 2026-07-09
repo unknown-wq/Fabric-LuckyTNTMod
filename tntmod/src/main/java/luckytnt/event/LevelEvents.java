@@ -16,7 +16,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemPlacementContext;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -35,6 +35,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeKeys;
 import net.minecraft.world.level.chunk.ChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
+import net.minecraft.world.entity.EntityTypes;
 
 public class LevelEvents {
 
@@ -65,17 +66,17 @@ public class LevelEvents {
 					if(variables.doomsdayTime > 0) {
 						for(int count = 0; count < 6; count++) {
 							Entity ent = EntityRegistry.HAILSTONE.get().create(level);
-							ent.setPosition(x + Math.random() * 100 - Math.random() * 100, y + LuckyTNTConfigValues.DROP_HEIGHT.get() / 4 + Math.random() * LuckyTNTConfigValues.DROP_HEIGHT.get() / 4, z + Math.random() * 100 - Math.random() * 100);
+							ent.setPos(x + Math.random() * 100 - Math.random() * 100, y + LuckyTNTConfigValues.DROP_HEIGHT.get() / 4 + Math.random() * LuckyTNTConfigValues.DROP_HEIGHT.get() / 4, z + Math.random() * 100 - Math.random() * 100);
 							level.addFreshEntity(ent);
 						}
 						if(Math.random() < 0.00675f * LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get()) {
 							LExplosiveProjectile ent = EntityRegistry.LITTLE_METEOR.get().create(level);
-							ent.setPosition(x + Math.random() * 200 - Math.random() * 200, y + LuckyTNTConfigValues.DROP_HEIGHT.get(), z + Math.random() * 200 - Math.random() * 200);
+							ent.setPos(x + Math.random() * 200 - Math.random() * 200, y + LuckyTNTConfigValues.DROP_HEIGHT.get(), z + Math.random() * 200 - Math.random() * 200);
 							level.addFreshEntity(ent);
 						}
 						if(Math.random() < 0.025f * LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get()) {
 							Entity ent = EntityRegistry.MINI_METEOR.get().create(level);
-							ent.setPosition(x + Math.random() * 200 - Math.random() * 200, y + LuckyTNTConfigValues.DROP_HEIGHT.get(), z + Math.random() * 200 - Math.random() * 200);
+							ent.setPos(x + Math.random() * 200 - Math.random() * 200, y + LuckyTNTConfigValues.DROP_HEIGHT.get(), z + Math.random() * 200 - Math.random() * 200);
 							level.addFreshEntity(ent);
 						}
 						if(Math.random() < 0.1f * LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get()) {
@@ -85,7 +86,7 @@ public class LevelEvents {
 								for(double offY = 320; offY > -64; offY--) {
 									if(!level.getBlockState(new BlockPos(Mth.floor(x + offX), Mth.floor(offY), Mth.floor(z + offZ))).isAir()) {
 										Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT,  level);
-										lighting.setPosition(x + offX, offY, z + offZ);
+										lighting.setPos(x + offX, offY, z + offZ);
 										level.addFreshEntity(lighting);
 										break;
 									}
@@ -96,15 +97,15 @@ public class LevelEvents {
 					if(variables.toxicCloudsTime > 0) {
 						if(Math.random() < 0.005f * LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get()) {
 							BlockPos pos = new BlockPos(Mth.floor(x + Math.random() * 100 - Math.random() * 100), Mth.floor(y + Math.random() * 50 - Math.random() * 50), Mth.floor(z + Math.random() * 100 - Math.random() * 100));
-							if(!level.getBlockState(pos).isFullCube(level, pos) || level.getBlockState(pos).isAir()) {
+							if(!level.getBlockState(pos).isCollisionShapeFullBlock(level, pos) || level.getBlockState(pos).isAir()) {
 								PrimedLTNT cloud = EntityRegistry.TOXIC_CLOUD.get().create(level);
-								cloud.setPosition(pos.getX(), pos.getY(), pos.getZ());
+								cloud.setPos(pos.getX(), pos.getY(), pos.getZ());
 								level.addFreshEntity(cloud);
 							}						
 						}
 					}
 					if(variables.iceAgeTime > 0) {
-						Registry<Biome> registry = level.getRegistryManager().get(Registries.BIOME);
+						Registry<Biome> registry = level.registryAccess().get(Registries.BIOME);
 						Holder<Biome> biome = registry.entryOf(BiomeKeys.SNOWY_TAIGA);
 						if(player instanceof ServerPlayer sPlayer) {	
 							for(double offX = -32; offX <= 32; offX += 16) {
@@ -130,7 +131,7 @@ public class LevelEvents {
 						}
 					}
 					if(variables.heatDeathTime > 0) {
-						Registry<Biome> registry = level.getRegistryManager().get(Registries.BIOME);
+						Registry<Biome> registry = level.registryAccess().get(Registries.BIOME);
 						Holder<Biome> biome = registry.entryOf(BiomeKeys.DESERT);
 						if(player instanceof ServerPlayer sPlayer) {	
 							for(double offX = -32; offX <= 32; offX += 16) {
@@ -159,13 +160,13 @@ public class LevelEvents {
 								int posY = getTopBlock(sPlayer.level(), sPlayer.getX() + offX, sPlayer.getZ() + offZ, false);
 								BlockPos pos = new BlockPos(Mth.floor(sPlayer.getX() + offX), Mth.floor(posY + 1), Mth.floor(sPlayer.getZ() + offZ));
 								BlockState state = sPlayer.level().getBlockState(pos);
-								if((Materials.isPlant(state) || state.isAir()) && state.getBlock().getBlastResistance() <= 100) {
+								if((Materials.isPlant(state) || state.isAir()) && state.getBlock().getExplosionResistance() <= 100) {
 									if(Math.random() > 0.1D) {
 										BlockHitResult result = new BlockHitResult(new Vec3(sPlayer.getX(), sPlayer.getY(), sPlayer.getZ()), Direction.UP, pos, false);
-										ItemPlacementContext ctx = new ItemPlacementContext(sPlayer, InteractionHand.MAIN_HAND, sPlayer.getItemInHand(InteractionHand.MAIN_HAND), result);
-										level.setBlockState(pos, Blocks.FIRE.getPlacementState(ctx), 3);
+										BlockPlaceContext ctx = new BlockPlaceContext(sPlayer, InteractionHand.MAIN_HAND, sPlayer.getItemInHand(InteractionHand.MAIN_HAND), result);
+										level.setBlock(pos, Blocks.FIRE.getStateForPlacement(ctx), 3);
 									} else {
-										level.setBlockState(pos, Blocks.LAVA.getDefaultState(), 3);
+										level.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
 									}
 								}
 							}
@@ -175,10 +176,10 @@ public class LevelEvents {
 								int posY = getTopBlock(sPlayer.level(), sPlayer.getX() + offX, sPlayer.getZ() + offZ, true);
 								BlockPos pos = new BlockPos(Mth.floor(sPlayer.getX() + offX), posY, Mth.floor(sPlayer.getZ() + offZ));
 								BlockState state = sPlayer.level().getBlockState(pos);
-								if(state.isOf(Blocks.GRASS_BLOCK)) {
-									level.setBlockState(pos, Math.random() > 0.5D ? Blocks.COARSE_DIRT.getDefaultState() : Blocks.DIRT.getDefaultState(), 3);
-								} else if(sPlayer.level().getBlockState(pos.up()).isOf(Blocks.WATER) && Math.random() > 0.6D) {
-									level.setBlockState(pos, Blocks.MAGMA_BLOCK.getDefaultState(), 3);
+								if(state.is(Blocks.GRASS_BLOCK)) {
+									level.setBlock(pos, Math.random() > 0.5D ? Blocks.COARSE_DIRT.defaultBlockState() : Blocks.DIRT.defaultBlockState(), 3);
+								} else if(sPlayer.level().getBlockState(pos.above()).is(Blocks.WATER) && Math.random() > 0.6D) {
+									level.setBlock(pos, Blocks.MAGMA_BLOCK.defaultBlockState(), 3);
 								}
 							}
 							for(int offX = -30; offX < 30; offX += 2) {
@@ -186,8 +187,8 @@ public class LevelEvents {
 									int posY = getTopBlock(sPlayer.level(), sPlayer.getX() + offX, sPlayer.getZ() + offZ, true);
 									BlockPos pos = new BlockPos(Mth.floor(sPlayer.getX() + offX), posY + 1, Mth.floor(sPlayer.getZ() + offZ));
 									BlockState state = sPlayer.level().getBlockState(pos);
-									if((Materials.isPlant(state) || state.isAir()) && Blocks.DEAD_BUSH.getDefaultState().canPlaceAt(level, pos) && state.getBlock().getBlastResistance() <= 100 && state.getBlock() != Blocks.DEAD_BUSH) {
-										level.setBlockState(pos, Blocks.DEAD_BUSH.getDefaultState(), 3);
+									if((Materials.isPlant(state) || state.isAir()) && Blocks.DEAD_BUSH.defaultBlockState().canPlaceAt(level, pos) && state.getBlock().getExplosionResistance() <= 100 && state.getBlock() != Blocks.DEAD_BUSH) {
+										level.setBlock(pos, Blocks.DEAD_BUSH.defaultBlockState(), 3);
 									}
 								}
 							}
@@ -202,7 +203,7 @@ public class LevelEvents {
 						} else if(LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get().intValue() > 15) {
 							i = 1;
 						}
-						if (!level.isClient() && variables.tntRainTime % i == 0) {
+						if (!level.isClientSide() && variables.tntRainTime % i == 0) {
 							Entity ent;
 							int rand = new Random().nextInt(100);
 							if (rand == 0) {
@@ -242,7 +243,7 @@ public class LevelEvents {
 							} else {
 								ent = EntityRegistry.TNT.get().create(level);
 							}
-							ent.setPosition(player.getX() + (Math.random() * 80D - 40D), player.getY() + 20D + Math.random() * 10D, player.getZ() + (Math.random() * 80D - 40D));
+							ent.setPos(player.getX() + (Math.random() * 80D - 40D), player.getY() + 20D + Math.random() * 10D, player.getZ() + (Math.random() * 80D - 40D));
 							if(ent instanceof PrimedLTNT tnt) {
 								tnt.setFuse(120);
 							}
@@ -258,7 +259,7 @@ public class LevelEvents {
 	}
 	
 	public static int getTopBlock(Level level, double x, double z, boolean ignoreLeaves) {
-		if(!level.isClient) {
+		if(!level.isClientSide) {
 			boolean blockFound = false;
 			int y = 0;
 			for(int offY = level.getTopY(); offY >= level.getBottomY(); offY--) {	
@@ -266,14 +267,14 @@ public class LevelEvents {
 				BlockPos posUp = new BlockPos(Mth.floor(x), offY + 1, Mth.floor(z));
 				BlockState state = level.getBlockState(pos);
 				BlockState stateUp = level.getBlockState(posUp);				
-				if(state.getBlock().getBlastResistance() < 200 && stateUp.getBlock().getBlastResistance() < 200 && !blockFound) {
+				if(state.getBlock().getExplosionResistance() < 200 && stateUp.getBlock().getExplosionResistance() < 200 && !blockFound) {
 					if(ignoreLeaves) {
-						if(state.isFullCube(level, pos) && !stateUp.isFullCube(level, posUp) && !state.isIn(BlockTags.LEAVES)) {
+						if(state.isCollisionShapeFullBlock(level, pos) && !stateUp.isCollisionShapeFullBlock(level, posUp) && !state.is(BlockTags.LEAVES)) {
 							blockFound = true;
 							y = offY;
 						}	
 					} else {
-						if(state.isFullCube(level, pos) && !stateUp.isFullCube(level, posUp)) {
+						if(state.isCollisionShapeFullBlock(level, pos) && !stateUp.isCollisionShapeFullBlock(level, posUp)) {
 							blockFound = true;
 							y = offY;
 						}	

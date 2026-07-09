@@ -30,7 +30,7 @@ public class ContaminatedEffect extends MobEffect {
 	public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
 		MobEffectInstance instance = entity.getActiveStatusEffects().get(Holder.of(this));
 		int duration = instance == null ? 0 : instance.getDuration();
-		DamageSources sources = entity.level().getDamageSources();
+		DamageSources sources = entity.level().damageSources();
 		
 		if(entity instanceof Player player && player.getHungerManager() instanceof HungerManagerExtension hunger) {
 			hunger.setFoodTickTimerRaw(0);

@@ -18,7 +18,7 @@ import net.minecraft.block.PlantBlock;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -48,8 +48,8 @@ public class NuclearTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(state.getBlock() instanceof PlantBlock || state.getBlock() instanceof LeavesBlock) {
-					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+					state.getBlock().wasExploded(level, pos, explosion);
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}
 		});
@@ -57,9 +57,9 @@ public class NuclearTNTEffect extends PrimedTNTEffect{
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockState stateAbove = level.getBlockState(pos.up());
+				BlockState stateAbove = level.getBlockState(pos.above());
 				if(stateAbove.isAir() && !state.isAir() && Math.random() < 0.33f) {
-					level.setBlockState(pos.up(), BlockRegistry.NUCLEAR_WASTE.get().getDefaultState());
+					level.setBlock(pos.above(), BlockRegistry.NUCLEAR_WASTE.get().defaultBlockState());
 				}
 			}
 		});
@@ -67,7 +67,7 @@ public class NuclearTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.9f, 1f, 0f), 1), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.9f, 1f, 0f), 1), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
 	}
 	
 	@Override

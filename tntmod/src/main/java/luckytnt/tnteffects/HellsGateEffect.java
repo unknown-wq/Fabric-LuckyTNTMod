@@ -28,16 +28,16 @@ public class HellsGateEffect extends PrimedTNTEffect{
 				BlockPos posTop = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				
-				if(state.getBlock().getBlastResistance() < 200 && stateTop.isAir() && !state.isAir() && Math.abs(entity.y() - pos.getY()) <= 20) {
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+				if(state.getBlock().getExplosionResistance() < 200 && stateTop.isAir() && !state.isAir() && Math.abs(entity.y() - pos.getY()) <= 20) {
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					if(Materials.isWood(state)) {
-						level.setBlockState(posTop, Blocks.OBSIDIAN.getDefaultState(), 3);
-					} else if(state.isIn(BlockTags.LEAVES)) {
-						level.setBlockState(posTop, Blocks.NETHER_BRICKS.getDefaultState(), 3);
+						level.setBlock(posTop, Blocks.OBSIDIAN.defaultBlockState(), 3);
+					} else if(state.is(BlockTags.LEAVES)) {
+						level.setBlock(posTop, Blocks.NETHER_BRICKS.defaultBlockState(), 3);
 					} else if(state.getBlock() instanceof LiquidBlock) {
-						level.setBlockState(posTop, Blocks.LAVA.getDefaultState(), 3);
+						level.setBlock(posTop, Blocks.LAVA.defaultBlockState(), 3);
 					} else {
-						level.setBlockState(posTop, Blocks.NETHERRACK.getDefaultState(), 3);
+						level.setBlock(posTop, Blocks.NETHERRACK.defaultBlockState(), 3);
 					}
 				}
 			}
@@ -52,8 +52,8 @@ public class HellsGateEffect extends PrimedTNTEffect{
 				BlockPos posAbove = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get() + 1, 0);
 				BlockState stateAbove = level.getBlockState(posAbove);
 				
-				if(stateAbove.isAir() && Block.isFaceFullSquare(stateTop.getCollisionShape(level, posTop), Direction.UP) && Math.random() <= 0.1D) {
-					level.setBlockState(posAbove, Blocks.FIRE.getDefaultState(), 3);
+				if(stateAbove.isAir() && Block.isFaceSturdy(stateTop.getCollisionShape(level, posTop), Direction.UP) && Math.random() <= 0.1D) {
+					level.setBlock(posAbove, Blocks.FIRE.defaultBlockState(), 3);
 				}
 			}
 		});

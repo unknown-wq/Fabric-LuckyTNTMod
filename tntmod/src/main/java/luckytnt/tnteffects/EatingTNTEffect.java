@@ -25,10 +25,10 @@ public class EatingTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		if(entity.getPersistentData().getInt("eatLevel") < 300) {
-			List<ItemEntity> items = entity.getLevel().getNonSpectatingEntities(ItemEntity.class, new Box(entity.getPos().add(-10, -10, -10), entity.getPos().add(10, 10, 10)));
+			List<ItemEntity> items = entity.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(entity.getPos().add(-10, -10, -10), entity.getPos().add(10, 10, 10)));
 			for(ItemEntity item : items) {
-				item.setDeltaMovement(entity.getPos().add(item.getLerpedPos(1).multiply(-1)).normalize());
-				if(entity.getPos().distanceTo(item.getLerpedPos(1)) < 1) {
+				item.setDeltaMovement(entity.getPos().add(item.getPosition(1).multiply(-1)).normalize());
+				if(entity.getPos().distanceTo(item.getPosition(1)) < 1) {
 					CompoundTag tag = entity.getPersistentData();
 					tag.putInt("eatLevel", Mth.clamp(entity.getPersistentData().getInt("eatLevel") + item.getStack().getCount(), 0, 300));
 					entity.setPersistentData(tag);

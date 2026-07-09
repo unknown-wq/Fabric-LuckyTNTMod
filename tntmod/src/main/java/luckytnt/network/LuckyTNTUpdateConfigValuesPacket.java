@@ -14,8 +14,8 @@ import net.minecraft.resources.Identifier;
 public class LuckyTNTUpdateConfigValuesPacket extends UpdateConfigValuesPacket {
 
 	public static final Identifier NAME = Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "lucky_tnt_update_config_values");
-	public static final CustomPacketPayload.Id<LuckyTNTUpdateConfigValuesPacket> ID = new CustomPacketPayload.Id<>(NAME);
-    public static final StreamCodec<RegistryFriendlyByteBuf, LuckyTNTUpdateConfigValuesPacket> CODEC = StreamCodec.of(UpdateConfigValuesPacket::write, LuckyTNTUpdateConfigValuesPacket::new);
+	public static final CustomPacketPayload.Type<LuckyTNTUpdateConfigValuesPacket> ID = new CustomPacketPayload.Type<>(NAME);
+    public static final StreamCodec<RegistryFriendlyByteBuf, LuckyTNTUpdateConfigValuesPacket> CODEC = StreamCodec.ofMember(UpdateConfigValuesPacket::write, LuckyTNTUpdateConfigValuesPacket::new);
 	
 	public LuckyTNTUpdateConfigValuesPacket(List<ConfigValue<?>> configValues) {
 		super(configValues);
@@ -26,7 +26,7 @@ public class LuckyTNTUpdateConfigValuesPacket extends UpdateConfigValuesPacket {
 	}
 	
 	@Override
-	public Id<? extends CustomPacketPayload> getId() {
+	public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 }

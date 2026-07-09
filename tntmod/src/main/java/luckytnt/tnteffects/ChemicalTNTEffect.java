@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
@@ -24,7 +24,7 @@ public class ChemicalTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
 		if(entity instanceof LExplosiveProjectile) {
-			if(!entity.getLevel().isClient) {
+			if(!entity.getLevel().isClientSide) {
 				explosionTick(entity);
 			}
 			else {
@@ -47,9 +47,9 @@ public class ChemicalTNTEffect extends PrimedTNTEffect{
 			ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), 4, new IForEachBlockExplosionEffect() {		
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-					if(distance + Math.random() < 4f && state.getBlock().getBlastResistance() < 100) {
-						state.getBlock().onDestroyedByExplosion(level, pos, dummyExplosion);
-						level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+					if(distance + Math.random() < 4f && state.getBlock().getExplosionResistance() < 100) {
+						state.getBlock().wasExploded(level, pos, dummyExplosion);
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}
 			});
@@ -60,7 +60,7 @@ public class ChemicalTNTEffect extends PrimedTNTEffect{
 	public void serverExplosion(IExplosiveEntity entity) {
 		for(int count = 0; count < 30; count++) {
 			LExplosiveProjectile projectile = EntityRegistry.CHEMICAL_PROJECTILE.get().create(entity.getLevel());
-			projectile.setPosition(entity.getPos());
+			projectile.setPos(entity.getPos());
 			projectile.setOwner(entity.owner());
 			projectile.setDeltaMovement(Math.random() * 1.5f - Math.random() * 1.5f, 0.2f, Math.random() * 1.5f - Math.random() * 1.5f);
 			entity.getLevel().addFreshEntity(projectile);
@@ -69,10 +69,10 @@ public class ChemicalTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.1f, 1f, 0.6f), 1), entity.x() + 0.2f, entity.y() + 1f, entity.z(), 0, 0, 0);
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.6f, 0.8f, 0.4f), 1), entity.x() - 0.2f, entity.y() + 1f, entity.z(), 0, 0, 0);
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.8f, 1f, 0.8f), 1), entity.x(),+ entity.y() + 1f, entity.z() + 0.2f, 0, 0, 0);
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.1f, 1f, 0.2f), 1), entity.x(),+ entity.y() + 1f, entity.z() - 0.2f, 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.1f, 1f, 0.6f), 1), entity.x() + 0.2f, entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.6f, 0.8f, 0.4f), 1), entity.x() - 0.2f, entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.8f, 1f, 0.8f), 1), entity.x(),+ entity.y() + 1f, entity.z() + 0.2f, 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.1f, 1f, 0.2f), 1), entity.x(),+ entity.y() + 1f, entity.z() - 0.2f, 0, 0, 0);
 	}
 	
 	@Override

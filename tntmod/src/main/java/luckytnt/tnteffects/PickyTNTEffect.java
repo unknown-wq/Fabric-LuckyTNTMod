@@ -34,7 +34,7 @@ public class PickyTNTEffect extends PrimedTNTEffect{
 	public void serverExplosion(IExplosiveEntity entity) {
 		Block template;
 		if(entity instanceof PrimedLTNT || entity instanceof LTNTMinecart) {
-			template = entity.getLevel().getBlockState(toBlockPos(entity.getPos()).down()).getBlock();
+			template = entity.getLevel().getBlockState(toBlockPos(entity.getPos()).below()).getBlock();
 		}
 		else {
 			BlockHitResult result = entity.getLevel().raycast(new RaycastContext(entity.getPos(), entity.getPos().add(((Entity)entity).getDeltaMovement().normalize().multiply(0.5f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, (Entity)entity));
@@ -48,14 +48,14 @@ public class PickyTNTEffect extends PrimedTNTEffect{
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), radius, new IForEachBlockExplosionEffect() {		
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getBlastResistance() < 100 && !state.isAir() && state.getBlock() == template) {
+				if(state.getBlock().getExplosionResistance() < 100 && !state.isAir() && state.getBlock() == template) {
 					List<ItemStack> drops = Block.getDroppedStacks(state, (ServerLevel)level, pos, level.getBlockEntity(pos));
 					for(ItemStack stack : drops) {
 						ItemEntity item = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), stack);
 						level.addFreshEntity(item);
 					}
-					state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}
 		});

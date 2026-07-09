@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.EntityTypes;
 
 public class SupernovaEffect extends SphereTNTEffect {
 
@@ -17,7 +18,7 @@ public class SupernovaEffect extends SphereTNTEffect {
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() == 300) {
 			Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, ent.getLevel());
-			lighting.setPosition(ent.x(), ent.y(), ent.z());
+			lighting.setPos(ent.x(), ent.y(), ent.z());
 			ent.getLevel().addFreshEntity(lighting);
 		}
 	}

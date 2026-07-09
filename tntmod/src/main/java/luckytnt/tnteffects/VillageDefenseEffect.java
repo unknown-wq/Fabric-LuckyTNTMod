@@ -6,6 +6,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.EntityTypes;
 
 public class VillageDefenseEffect extends PrimedTNTEffect{
 
@@ -13,7 +14,7 @@ public class VillageDefenseEffect extends PrimedTNTEffect{
 	public void serverExplosion(IExplosiveEntity entity) {
 		for(int count = 0; count <= 15; count++) {
 			IronGolem golem = new IronGolem(EntityTypes.IRON_GOLEM, entity.getLevel());
-			golem.setPosition(entity.getPos());
+			golem.setPos(entity.getPos());
 			golem.setPlayerCreated(true);
 			entity.getLevel().addFreshEntity(golem);
 		}

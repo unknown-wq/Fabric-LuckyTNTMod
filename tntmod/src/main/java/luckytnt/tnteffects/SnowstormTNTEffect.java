@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -27,11 +27,11 @@ public class SnowstormTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(distance <= 10 && state.getBlock().getBlastResistance() < 200 && Block.isFaceFullSquare(state.getCollisionShape(level, pos), Direction.UP)) {
-					state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-					level.setBlockState(pos, Blocks.BLUE_ICE.getDefaultState(), 3);
-				} else if(distance > 10 && state.getBlock().getBlastResistance() < 200 && state.getBlock() == Blocks.WATER) {
-					level.setBlockState(pos, Blocks.ICE.getDefaultState(), 3);
+				if(distance <= 10 && state.getBlock().getExplosionResistance() < 200 && Block.isFaceSturdy(state.getCollisionShape(level, pos), Direction.UP)) {
+					state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+					level.setBlock(pos, Blocks.BLUE_ICE.defaultBlockState(), 3);
+				} else if(distance > 10 && state.getBlock().getExplosionResistance() < 200 && state.getBlock() == Blocks.WATER) {
+					level.setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
 				}
 			}
 		});
@@ -40,7 +40,7 @@ public class SnowstormTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				level.setBlockState(pos, Blocks.SNOW.getDefaultState(), 3);
+				level.setBlock(pos, Blocks.SNOW.defaultBlockState(), 3);
 			}
 		});
 	}
@@ -92,7 +92,7 @@ public class SnowstormTNTEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
-		ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 1f), 1f), ent.x(), ent.y() + 1D, ent.z(), 0, 0, 0);
+		ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 1f), 1f), ent.x(), ent.y() + 1D, ent.z(), 0, 0, 0);
 	}
 
 	@Override

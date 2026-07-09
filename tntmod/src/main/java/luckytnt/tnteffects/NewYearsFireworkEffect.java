@@ -33,7 +33,7 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 				Vec3 vel = ((Entity)ent).getRotationVec(1).normalize();
 				PrimedLTNT firework = EntityRegistry.NEW_YEARS_FIREWORK.get().create(ent.getLevel());
 				firework.setTNTFuse(40);
-				firework.setPosition(ent.getPos());
+				firework.setPos(ent.getPos());
 				firework.setDeltaMovement(vel.multiply(2));
 				CompoundTag tag = firework.getPersistentData();
 				tag.putInt("type", 1);
@@ -57,12 +57,12 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 										double z = Math.sin(theta) * radius;
 									
 										Vec3 vec = new Vec3((ent.x() + (x * 20)) - ent.x(), (ent.y() + (y * 20)) - ent.y(), (ent.z() + (z * 20)) - ent.z()).normalize().multiply(1D + Math.random() * 0.5D);
-										addFallingBlock(ent.x(), ent.y(), ent.z(), vec.x, vec.y, vec.z, block.getDefaultState(), ent);
+										addFallingBlock(ent.x(), ent.y(), ent.z(), vec.x, vec.y, vec.z, block.defaultBlockState(), ent);
 									}
 								}
 								break;
-				case CREEPER:	createShape(1, new double[][]{{0.0D, 0.2D}, {0.2D, 0.2D}, {0.2D, 0.6D}, {0.6D, 0.6D}, {0.6D, 0.2D}, {0.2D, 0.2D}, {0.2D, 0.0D}, {0.4D, 0.0D}, {0.4D, -0.6D}, {0.2D, -0.6D}, {0.2D, -0.4D}, {0.0D, -0.4D}}, true, block.getDefaultState(), ent); break;
-				case STAR:		createShape(1, new double[][]{{0.0D, 1.0D}, {0.3455D, 0.309D}, {0.9511D, 0.309D}, {0.3795918367346939D, -0.12653061224489795D}, {0.6122448979591837D, -0.8040816326530612D}, {0.0D, -0.35918367346938773D}}, false, block.getDefaultState(), ent); break;
+				case CREEPER:	createShape(1, new double[][]{{0.0D, 0.2D}, {0.2D, 0.2D}, {0.2D, 0.6D}, {0.6D, 0.6D}, {0.6D, 0.2D}, {0.2D, 0.2D}, {0.2D, 0.0D}, {0.4D, 0.0D}, {0.4D, -0.6D}, {0.2D, -0.6D}, {0.2D, -0.4D}, {0.0D, -0.4D}}, true, block.defaultBlockState(), ent); break;
+				case STAR:		createShape(1, new double[][]{{0.0D, 1.0D}, {0.3455D, 0.309D}, {0.9511D, 0.309D}, {0.3795918367346939D, -0.12653061224489795D}, {0.6122448979591837D, -0.8040816326530612D}, {0.0D, -0.35918367346938773D}}, false, block.defaultBlockState(), ent); break;
 				default: break;
 			}
 		}

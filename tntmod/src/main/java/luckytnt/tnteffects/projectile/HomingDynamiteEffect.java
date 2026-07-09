@@ -37,7 +37,7 @@ public class HomingDynamiteEffect extends PrimedTNTEffect{
 				target = setTarget(entity);
 			}
 			else {
-				Vec3 movement = target.getLerpedPos(1f).subtract(entity.getPos()).normalize();
+				Vec3 movement = target.getPosition(1f).subtract(entity.getPos()).normalize();
 				((Entity)entity).setDeltaMovement(movement);
 				if(entity.getLevel() instanceof ServerLevel server) {
 					for(ServerPlayer splayer : server.getPlayers()) {
@@ -52,10 +52,10 @@ public class HomingDynamiteEffect extends PrimedTNTEffect{
 	public Entity setTarget(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
 		Entity target = null;
-		List<Player> players = level.getNonSpectatingEntities(Player.class, new Box(entity.getPos().add(-100, -100, -100), entity.getPos().add(100, 100, 100)));
+		List<Player> players = level.getEntitiesOfClass(Player.class, new AABB(entity.getPos().add(-100, -100, -100), entity.getPos().add(100, 100, 100)));
 		double distance = Math.sqrt(20000);
 		for(Player player : players) {
-			double entityDistance = entity.getPos().distanceTo(player.getLerpedPos(1f));
+			double entityDistance = entity.getPos().distanceTo(player.getPosition(1f));
 			if(!player.equals(entity.owner()) && entityDistance <= distance) {
 				CompoundTag tag = entity.getPersistentData();
 				tag.putInt("targetID", player.getId());
@@ -66,9 +66,9 @@ public class HomingDynamiteEffect extends PrimedTNTEffect{
 		}
 		if(target == null) {
 			distance = Math.sqrt(20000);
-			List<LivingEntity> livingEntities = level.getNonSpectatingEntities(LivingEntity.class, new Box(entity.getPos().add(-100, -100, -100), entity.getPos().add(100, 100, 100)));
+			List<LivingEntity> livingEntities = level.getEntitiesOfClass(LivingEntity.class, new AABB(entity.getPos().add(-100, -100, -100), entity.getPos().add(100, 100, 100)));
 			for(LivingEntity ent : livingEntities) {
-				double entityDistance = entity.getPos().distanceTo(ent.getLerpedPos(1f));
+				double entityDistance = entity.getPos().distanceTo(ent.getPosition(1f));
 				if(!ent.equals(entity.owner()) && entityDistance <= distance) {
 					CompoundTag tag = entity.getPersistentData();
 					tag.putInt("targetID", ent.getId());

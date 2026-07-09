@@ -22,12 +22,12 @@ public class EruptingTNTEffect extends PrimedTNTEffect{
 			if(entity.getTNTFuse() < 60) {
 				if(entity.getTNTFuse() % 3 == 0) {
 					LExplosiveProjectile erupting_tnt = EntityRegistry.ERUPTING_PROJECTILE.get().create(level);
-					erupting_tnt.setPosition(entity.getPos());
+					erupting_tnt.setPos(entity.getPos());
 					erupting_tnt.setOwner(entity.owner());
 					erupting_tnt.setDeltaMovement((Math.random() * 2D - 1D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 2D - 1D) * 0.1f, 3f + level.random.nextFloat() * 2f, 0f);	
 					erupting_tnt.setOnFireFor(1000);
 					level.addFreshEntity(erupting_tnt);
-					level.playSound(null, toBlockPos(entity.getPos()), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundSource.MASTER, 3, 1);
+					level.playSound(null, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.MASTER, 3, 1);
 				}
 			}
 		}

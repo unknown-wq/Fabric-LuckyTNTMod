@@ -22,13 +22,13 @@ public class UraniumOreBlock extends Block {
 	}
 	
 	@Override
-	public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+	public List<ItemStack> getDroppedStacks(BlockState state, LootParams.Builder builder) {
 		return Collections.singletonList(new ItemStack(this, 1));
 	}
 	
     @Override
     public void onDestroyedByExplosion(Level level, BlockPos pos, Explosion explosion) {
-    	level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+    	level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
     	ImprovedExplosion explo = new ImprovedExplosion(level, new Vec3(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f), 10);
     	explo.doEntityExplosion(1.5f, true);
     	explo.doBlockExplosion();

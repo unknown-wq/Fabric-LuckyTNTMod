@@ -19,6 +19,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntityTypes;
 
 public class HellfireTNTEffect extends PrimedTNTEffect{
 	
@@ -42,24 +43,24 @@ public class HellfireTNTEffect extends PrimedTNTEffect{
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(distance <= 25) {
 					if(Math.random() < 0.9f) {
-						state.getBlock().onDestroyedByExplosion(level, pos, netherExplosion);
-						level.setBlockState(pos, Blocks.NETHERRACK.getDefaultState());
+						state.getBlock().wasExploded(level, pos, netherExplosion);
+						level.setBlock(pos, Blocks.NETHERRACK.defaultBlockState());
 						if(Math.random() < 0.1f) {
-							if(level.getBlockState(pos.up()).isAir()) {
-								level.setBlockState(pos.up(), AbstractFireBlock.getState(level, pos.up()));
+							if(level.getBlockState(pos.above()).isAir()) {
+								level.setBlock(pos.above(), AbstractFireBlock.getState(level, pos.above()));
 							}
 						}
 					}
 					else if(Math.random() < 0.3f) {
-						state.getBlock().onDestroyedByExplosion(level, pos, netherExplosion);
-						level.setBlockState(pos, Blocks.LAVA.getDefaultState());
+						state.getBlock().wasExploded(level, pos, netherExplosion);
+						level.setBlock(pos, Blocks.LAVA.defaultBlockState());
 					}
 				}
 			}
 		});
 		for(int i = 0; i < ghastCount; i++) {
 			Ghast ghast = new Ghast(EntityTypes.GHAST, entity.getLevel());
-			ghast.setPosition(entity.getPos().add(0, 20 + Math.random() * 20, 0));
+			ghast.setPos(entity.getPos().add(0, 20 + Math.random() * 20, 0));
 			entity.getLevel().playSound(ghast, ghast.getBlockPos(), SoundEvents.ENTITY_GHAST_HURT, SoundSource.HOSTILE, 3f, 1f);
 			entity.getLevel().addFreshEntity(ghast);
 		}

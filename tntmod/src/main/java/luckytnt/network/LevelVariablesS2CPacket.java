@@ -12,8 +12,8 @@ import net.minecraft.resources.Identifier;
 public class LevelVariablesS2CPacket implements CustomPacketPayload {
 
 	public static final Identifier NAME = Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "level_variables_s2c");
-	public static final CustomPacketPayload.Id<LevelVariablesS2CPacket> ID = new CustomPacketPayload.Id<>(NAME);
-    public static final StreamCodec<RegistryFriendlyByteBuf, LevelVariablesS2CPacket> CODEC = StreamCodec.of(LevelVariablesS2CPacket::write, LevelVariablesS2CPacket::new);
+	public static final CustomPacketPayload.Type<LevelVariablesS2CPacket> ID = new CustomPacketPayload.Type<>(NAME);
+    public static final StreamCodec<RegistryFriendlyByteBuf, LevelVariablesS2CPacket> CODEC = StreamCodec.ofMember(LevelVariablesS2CPacket::write, LevelVariablesS2CPacket::new);
 	
 	public final LevelVariables variables;
 	
@@ -26,11 +26,11 @@ public class LevelVariablesS2CPacket implements CustomPacketPayload {
 	}
 	
 	public void write(FriendlyByteBuf buf) {
-		buf.writeNbt(variables.writeNbt(new CompoundTag(), null));
+		buf.writeNbt(variables.writeNbt(new CompoundTag()));
 	}
 
 	@Override
-	public Id<? extends CustomPacketPayload> getId() {
+	public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 	

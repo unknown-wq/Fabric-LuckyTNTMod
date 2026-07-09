@@ -42,14 +42,14 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 						entity.setPersistentData(tag); break;
 			}
 			ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundSource.MASTER, 3, 1);
-			entity.setPosition(ent.getPos());
+			entity.setPos(ent.getPos());
 			entity.setOwner(ent.owner());
 			entity.setDeltaMovement(Math.random() * 5 - Math.random() * 5, 0, Math.random() * 5 - Math.random() * 5);
 			entity.setTNTFuse(40 + new Random().nextInt(41));
 			ent.getLevel().addFreshEntity(entity);
 		}
-		ent.getLevel().setBlockState(toBlockPos(ent.getPos()), Blocks.AIR.getDefaultState(), 3);
-		ent.getLevel().setBlockState(toBlockPos(ent.getPos()).add(0, 1, 0), Blocks.AIR.getDefaultState(), 3);
+		ent.getLevel().setBlock(toBlockPos(ent.getPos()), Blocks.AIR.defaultBlockState(), 3);
+		ent.getLevel().setBlock(toBlockPos(ent.getPos()).add(0, 1, 0), Blocks.AIR.defaultBlockState(), 3);
 		if(ent.getTNTFuse() <= 40) {
 			((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 1.6f, ((Entity)ent).getDeltaMovement().z);
 			ent.getLevel().addParticle(ParticleTypes.LARGE_SMOKE, ent.x(), ent.y(), ent.z(), 0, -0.5f, 0);
@@ -77,7 +77,7 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 						Class[] classes = new Class[]{Level.class, double.class, double.class, double.class, BlockState.class};
 						Constructor<FallingBlockEntity> constructor = FallingBlockEntity.class.getDeclaredConstructor(classes);
 						constructor.setAccessible(true);
-						block = constructor.newInstance(ent.getLevel(), ent.x(), ent.y(), ent.z(), template.getDefaultState());
+						block = constructor.newInstance(ent.getLevel(), ent.x(), ent.y(), ent.z(), template.defaultBlockState());
 					} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 						e.printStackTrace();
 					}
@@ -90,7 +90,7 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 				for(int count = 0; count < 500; count++) {
 					PrimedLTNT tnt = EntityRegistry.TNT.get().create(ent.getLevel());
 					tnt.setOwner(ent.owner());
-					tnt.setPosition(ent.getPos());
+					tnt.setPos(ent.getPos());
 					tnt.setTNTFuse(80 + (int)(Math.random() * 100));
 					tnt.setDeltaMovement(Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f);
 					ent.getLevel().addFreshEntity(tnt);

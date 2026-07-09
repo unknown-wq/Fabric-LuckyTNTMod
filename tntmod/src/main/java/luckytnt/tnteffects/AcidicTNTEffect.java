@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.damagesource.DamageSources;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
@@ -31,7 +31,7 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
 		if(entity instanceof LExplosiveProjectile) {
-			if(!entity.getLevel().isClient()) {
+			if(!entity.getLevel().isClientSide()) {
 				explosionTick(entity);
 			} else {
 				spawnParticles(entity);
@@ -55,13 +55,13 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 			if(ent.getTNTFuse() == 0) {
 				ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundSource.MASTER, 1f, 1f);
 			}
-			if(!ent.getLevel().isClient()) {
+			if(!ent.getLevel().isClientSide()) {
 				ExplosionHelper.doCubicalExplosion(ent.getLevel(), ent.getPos(), 7, new IForEachBlockExplosionEffect() {
 					
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-						if(distance <= 5D + Math.random() * 2 && !state.isAir() && state.getBlock().getBlastResistance() <= 200) {
-							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						if(distance <= 5D + Math.random() * 2 && !state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 				});
@@ -69,7 +69,7 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 			if(ent.getTNTFuse() % 20 == 0) {
 				BlockPos min = toBlockPos(ent.getPos()).add(-3, -3, -3);
 				BlockPos max = toBlockPos(ent.getPos()).add(3, 3, 3);
-				List<LivingEntity> list = ent.getLevel().getNonSpectatingEntities(LivingEntity.class, new Box(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));			
+				List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));			
 				DamageSources sources = ent.getLevel().getDamageSources();
 				for(LivingEntity lent : list) {
 					lent.damage(sources.magic(), 3f);
@@ -83,7 +83,7 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 		if(ent instanceof PrimedLTNT) {
 			for(int count = 0; count < 70; count++) {
 				LExplosiveProjectile projectile = EntityRegistry.ACIDIC_PROJECTILE.get().create(ent.getLevel());
-				projectile.setPosition(ent.getPos());
+				projectile.setPos(ent.getPos());
 				projectile.setOwner(ent.owner());
 				projectile.setDeltaMovement(Math.random() * 2.5f - Math.random() * 2.5f, Math.random() - Math.random(), Math.random() * 2.5f - Math.random() * 2.5f);
 				ent.getLevel().addFreshEntity(projectile);
@@ -97,39 +97,39 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 			Vec3 vec31 = new Vec3(0.5D, Math.sqrt(1D - (0.5D * 0.5D)), 0);
 			Vec3 vec32 = new Vec3(-0.5D, Math.sqrt(1D - (0.5D * 0.5D)), 0);
 			for(int count = 0; count <= 10; count++) {
-				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0, 0, 0), 0.5f), ent.x() - 0.5D + 0.1D * count, ent.y() + 1.25D, ent.z(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0, 0, 0), 0.5f), ent.x() - 0.5D + 0.1D * count, ent.y() + 1.25D, ent.z(), 0, 0, 0);
 			}
 			for(double i = 0; i < 1; i += 0.1D) {
-				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0, 0, 0), 0.5f), ent.x() + 0.5D + i * vec32.x, ent.y() + 1.25D + i * vec32.y, ent.z(), 0, 0, 0);
-				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0, 0, 0), 0.5f), ent.x() - 0.5D + i * vec31.x, ent.y() + 1.25D + i * vec31.y, ent.z(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0, 0, 0), 0.5f), ent.x() + 0.5D + i * vec32.x, ent.y() + 1.25D + i * vec32.y, ent.z(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0, 0, 0), 0.5f), ent.x() - 0.5D + i * vec31.x, ent.y() + 1.25D + i * vec31.y, ent.z(), 0, 0, 0);
 			}
 			for(double i = 0; i < 0.7; i += 0.1D) {
-				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 0.5f), ent.x() - 0.1D, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
-				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 0.5f), ent.x() + 0.1D, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 0.5f), ent.x() - 0.1D, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 0.5f), ent.x() + 0.1D, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
 			}
 			for(double i = 0; i < 0.4; i += 0.1D) {
-				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 0.5f), ent.x() - 0.2D, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
-				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 0.5f), ent.x() + 0.2D, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 0.5f), ent.x() - 0.2D, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 0.5f), ent.x() + 0.2D, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
 			}
 			for(double i = 0; i < 0.2; i += 0.1D) {
-				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 0.5f), ent.x() - 0.3D, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
-				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 0.5f), ent.x() + 0.3D, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 0.5f), ent.x() - 0.3D, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 0.5f), ent.x() + 0.3D, ent.y() + 1.35D + i * vec31.y, ent.z(), 0, 0, 0);
 			}
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 0.5f), ent.x() - 0.4D, ent.y() + 1.35D, ent.z(), 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 0.5f), ent.x() + 0.4D, ent.y() + 1.35D, ent.z(), 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 0.5f), ent.x(), ent.y() + 1.35D, ent.z(), 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0, 0, 0), 0.5f), ent.x(), ent.y() + 1.45D, ent.z(), 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 0.5f), ent.x(), ent.y() + 1.55D, ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 0.5f), ent.x() - 0.4D, ent.y() + 1.35D, ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 0.5f), ent.x() + 0.4D, ent.y() + 1.35D, ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 0.5f), ent.x(), ent.y() + 1.35D, ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0, 0, 0), 0.5f), ent.x(), ent.y() + 1.45D, ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 0.5f), ent.x(), ent.y() + 1.55D, ent.z(), 0, 0, 0);
 			for(double i = 0; i < 0.3; i += 0.1D) {
-				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0, 0, 0), 0.5f), ent.x(), ent.y() + 1.65D + i * vec31.y, ent.z(), 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0, 0, 0), 0.5f), ent.x(), ent.y() + 1.65D + i * vec31.y, ent.z(), 0, 0, 0);
 			}
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 0.5f), ent.x(), ent.y() + 1.95D, ent.z(), 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 0.5f), ent.x(), ent.y() + 2.05D, ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 0.5f), ent.x(), ent.y() + 1.95D, ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 0.5f), ent.x(), ent.y() + 2.05D, ent.z(), 0, 0, 0);
 		} else {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0, 0, 0), 1), ent.x() + 0.2f, ent.y() + 1f, ent.z(), 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0, 0, 0), 1), ent.x() - 0.2f, ent.y() + 1f, ent.z(), 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 1), ent.x(), ent.y() + 1f, ent.z() + 0.2f, 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0), 1), ent.x(), ent.y() + 1f, ent.z() - 0.2f, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0, 0, 0), 1), ent.x() + 0.2f, ent.y() + 1f, ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0, 0, 0), 1), ent.x() - 0.2f, ent.y() + 1f, ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 1), ent.x(), ent.y() + 1f, ent.z() + 0.2f, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 0), 1), ent.x(), ent.y() + 1f, ent.z() - 0.2f, 0, 0, 0);
 		}
 	}
 	

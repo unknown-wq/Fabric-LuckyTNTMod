@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemPlacementContext;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.util.ItemActionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -40,12 +40,12 @@ public class TunnelingTNTBlock extends LTNTBlock{
 	
     @Override
     public BlockState rotate(BlockState state, BlockRotation rotation) {  	
-    	return state.with(FACING, rotation.rotate(state.get(FACING)));
+    	return state.setValue(FACING, rotation.rotate(state.get(FACING)));
     }
     
     @Override
-    public BlockState getPlacementState(ItemPlacementContext context) {
-    	return getDefaultState().with(FACING, context.getHorizontalPlayerFacing());
+    public BlockState getPlacementState(BlockPlaceContext context) {
+    	return getDefaultState().setValue(FACING, context.getHorizontalPlayerFacing());
     }
 
     @Override
@@ -55,15 +55,15 @@ public class TunnelingTNTBlock extends LTNTBlock{
     }
     
 	@Override
-	public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+	public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
 		ItemStack itemstack = player.getItemInHand(hand);
-		if (!itemstack.isOf(Items.FLINT_AND_STEEL) && !itemstack.isOf(Items.FIRE_CHARGE)) {
-			return super.onUseWithItem(stack, state, level, pos, player, hand, result);
+		if (!itemstack.is(Items.FLINT_AND_STEEL) && !itemstack.is(Items.FIRE_CHARGE)) {
+			return super.useItemOn(stack, state, level, pos, player, hand, result);
 		} else {
 			explode(level, false, pos.getX(), pos.getY(), pos.getZ(), player);
 			Item item = itemstack.getItem();
 			if (!player.isCreative()) {
-				if (itemstack.isOf(Items.FLINT_AND_STEEL)) {
+				if (itemstack.is(Items.FLINT_AND_STEEL)) {
 					itemstack.damage(1, player, LivingEntity.getSlotForHand(hand));
 				} else {
 					itemstack.shrink(1);
@@ -71,7 +71,7 @@ public class TunnelingTNTBlock extends LTNTBlock{
 			}
 
 			player.incrementStat(Stats.USED.getOrCreateStat(item));
-			return ItemActionResult.success(level.isClient);
+			return InteractionResult.success(level.isClientSide);
 		}
 	}
 
@@ -80,7 +80,7 @@ public class TunnelingTNTBlock extends LTNTBlock{
 		if(TNT != null) {
 			PrimedLTNT tnt = TNT.get().create(level);
 			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(Mth.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
-			tnt.setPosition(x + 0.5f, y, z + 0.5f);
+			tnt.setPos(x + 0.5f, y, z + 0.5f);
 			tnt.setOwner(igniter);
 			CompoundTag tag = tnt.getPersistentData();
 			tag.putString("direction", level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).getBlock() instanceof TunnelingTNTBlock ? level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).get(FACING).getName() : "east");
@@ -88,7 +88,7 @@ public class TunnelingTNTBlock extends LTNTBlock{
 			level.addFreshEntity(tnt);
 			level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.ENTITY_TNT_PRIMED, SoundSource.MASTER, 1, 1);
 			if(level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).getBlock() == this) {
-				level.setBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), Blocks.AIR.getDefaultState(), 3);
+				level.setBlock(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), Blocks.AIR.defaultBlockState(), 3);
 			}
 			return tnt;
 		}

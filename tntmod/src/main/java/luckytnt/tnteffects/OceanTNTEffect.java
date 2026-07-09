@@ -17,6 +17,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntityTypes;
 
 public class OceanTNTEffect extends PrimedTNTEffect {
 	private final int radius;
@@ -45,9 +46,9 @@ public class OceanTNTEffect extends PrimedTNTEffect {
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(pos.getY() <= entity.getPos().y) {
-					if((!state.isSideSolidFullSquare(level, pos, Direction.UP) && state.getBlock().getBlastResistance() < 100) || state.getBlock().getBlastResistance() < 4) {
-						state.getBlock().onDestroyedByExplosion(level, pos, dummyExplosion);
-						level.setBlockState(pos, Blocks.WATER.getDefaultState());
+					if((!state.isFaceSturdy(level, pos, Direction.UP) && state.getBlock().getExplosionResistance() < 100) || state.getBlock().getExplosionResistance() < 4) {
+						state.getBlock().wasExploded(level, pos, dummyExplosion);
+						level.setBlock(pos, Blocks.WATER.defaultBlockState());
 					}
 				}
 			}
@@ -55,7 +56,7 @@ public class OceanTNTEffect extends PrimedTNTEffect {
 		
 		for(int i = 0; i < squidCound; i++) {
 			Squid squid = new Squid(EntityTypes.SQUID, entity.getLevel());
-			squid.setPosition(entity.x() + (Math.random() * radius * 2 - radius), entity.y(), entity.z() + (Math.random() * radius * 2 - radius));
+			squid.setPos(entity.x() + (Math.random() * radius * 2 - radius), entity.y(), entity.z() + (Math.random() * radius * 2 - radius));
 			entity.getLevel().addFreshEntity(squid);
 		}
 	}

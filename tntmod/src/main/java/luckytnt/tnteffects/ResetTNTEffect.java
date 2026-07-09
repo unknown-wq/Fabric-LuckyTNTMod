@@ -37,13 +37,13 @@ public class ResetTNTEffect extends PrimedTNTEffect {
 		if(entity instanceof PrimedResetTNT ent) {
 			for(Pair<BlockPos, BlockState> pair : ent.blocks) {
 				if(!ent.getLevel().getBlockState(pair.getFirst()).equals(pair.getSecond())) {
-					ent.getLevel().setBlockState(pair.getFirst(), pair.getSecond(), 3);
+					ent.getLevel().setBlock(pair.getFirst(), pair.getSecond(), 3);
 				}
 			}
 			
 			for(Pair<Vec3, Entity> pair : ent.entities) {
 	    		if(pair.getSecond().isAlive() && !(pair.getSecond() instanceof Player)) {
-	    			pair.getSecond().setPosition(pair.getFirst());
+	    			pair.getSecond().setPos(pair.getFirst());
 	    		} else if(pair.getSecond() instanceof Player pla) {
 	    			if(pla instanceof ServerPlayer player) {
 	    				player.requestTeleport(pair.getFirst().x, pair.getFirst().y, pair.getFirst().z);
@@ -68,7 +68,7 @@ public class ResetTNTEffect extends PrimedTNTEffect {
 	
 	public void saveEntities(PrimedResetTNT ent) {
 		ent.entities = Lists.newArrayList();
-		List<Entity> list = ent.getLevel().getOtherEntities(ent, new Box(ent.x() - 100, ent.y() - 100, ent.z() - 100, ent.x() + 100, ent.y() + 100, ent.z() + 100));
+		List<Entity> list = ent.getLevel().getOtherEntities(ent, new AABB(ent.x() - 100, ent.y() - 100, ent.z() - 100, ent.x() + 100, ent.y() + 100, ent.z() + 100));
 
     	for(int i = 0; i < list.size(); i++) {
     		Entity entity = list.get(i);

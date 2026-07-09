@@ -27,12 +27,12 @@ public class BigTNTEffect extends PrimedTNTEffect{
 	public BlockState getBlockState(IExplosiveEntity ent) {
 		if(ent instanceof LTNTMinecart) {
 			if(ent.getTNTFuse() > -1) {
-				return BlockRegistry.TNT.get().getDefaultState();
+				return BlockRegistry.TNT.get().defaultBlockState();
 			} else {
-				return BlockRegistry.BIG_TNT.get().getDefaultState();
+				return BlockRegistry.BIG_TNT.get().defaultBlockState();
 			}
 		} else {
-			return BlockRegistry.TNT.get().getDefaultState();
+			return BlockRegistry.TNT.get().defaultBlockState();
 		}
 	}
 	

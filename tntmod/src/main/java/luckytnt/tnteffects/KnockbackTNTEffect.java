@@ -15,7 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -24,7 +24,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() > 1) {
-			List<LivingEntity> ents = ent.getLevel().getNonSpectatingEntities(LivingEntity.class, new Box(ent.x() - 75, ent.y() - 75, ent.z() - 75, ent.x() + 75, ent.y() + 75, ent.z() + 75));
+			List<LivingEntity> ents = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() - 75, ent.y() - 75, ent.z() - 75, ent.x() + 75, ent.y() + 75, ent.z() + 75));
 			for (LivingEntity lent : ents) {
 				if(lent instanceof LuckyTNTEntityExtension elent) {
 					if (elent.getAdditionalPersistentData().getInt("knockbacktime") > 0) {
@@ -67,7 +67,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		List<Entity> entities = ent.getLevel().getOtherEntities((Entity)ent, new Box(ent.x() - 75, ent.y() - 75, ent.z() - 75, ent.x() + 75, ent.y() + 75, ent.z() + 75));
+		List<Entity> entities = ent.getLevel().getOtherEntities((Entity)ent, new AABB(ent.x() - 75, ent.y() - 75, ent.z() - 75, ent.x() + 75, ent.y() + 75, ent.z() + 75));
 		for(Entity entity : entities) {
 			if(!entity.isImmuneToExplosion(ImprovedExplosion.dummyExplosion(ent.getLevel()))) {
 				double distance = Math.sqrt(entity.squaredDistanceTo(ent.getPos())) / (75 * 2);
@@ -101,7 +101,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 			double x = Math.cos(theta) * radius;
 			double z = Math.sin(theta) * radius;
 			
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.8f, 0.2f), 0.75f), ent.x() + x * 2, ent.y() + 0.5D + y * 2, ent.z() + 2 * z, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0.2f, 0.8f, 0.2f), 0.75f), ent.x() + x * 2, ent.y() + 0.5D + y * 2, ent.z() + 2 * z, 0, 0, 0);
 		}
 	}
 	

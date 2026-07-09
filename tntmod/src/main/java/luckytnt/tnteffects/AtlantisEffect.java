@@ -41,10 +41,11 @@ import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraft.world.level.chunk.ReadableContainer;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.gen.structure.StructureKeys;
+import net.minecraft.world.entity.EntityTypes;
 
 public class AtlantisEffect extends PrimedTNTEffect {
 	
-	Predicate<RegistryEntry<Biome>> predicate = (holder) -> {
+	Predicate<Holder<Biome>> predicate = (holder) -> {
 		return true;
 	};
 	
@@ -60,8 +61,8 @@ public class AtlantisEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		Registry<Biome> registry = ent.getLevel().getRegistryManager().get(Registries.BIOME);
-		RegistryEntry<Biome> biome = registry.getEntry(registry.get(BiomeKeys.WARM_OCEAN));
+		Registry<Biome> registry = ent.getLevel().registryAccess().get(Registries.BIOME);
+		Holder<Biome> biome = registry.getEntry(registry.get(BiomeKeys.WARM_OCEAN));
 		for(double offX = -100; offX < 100; offX++) {
 			for(double offZ = -100; offZ < 100; offZ++) {
 				boolean foundBlock = false;
@@ -70,11 +71,11 @@ public class AtlantisEffect extends PrimedTNTEffect {
 					if(distance < 100) {
 						if(offX % 16 == 0 && offZ % 16 == 0) {
 							for(ChunkSection section : ent.getLevel().getChunk(toBlockPos(new Vec3(ent.x() + offX, 0, ent.z() + offZ))).getSectionArray()) {
-								ReadableContainer<RegistryEntry<Biome>> biomesRO = section.getBiomeContainer();
+								ReadableContainer<Holder<Biome>> biomesRO = section.getBiomeContainer();
 								for(int i = 0; i < 4; ++i) {
 									for(int j = 0; j < 4; ++j) {
 										for(int k = 0; k < 4; ++k) {
-											if(biomesRO instanceof PalettedContainer<RegistryEntry<Biome>> biomes && biomes.get(i, j, k) != biome) {
+											if(biomesRO instanceof PalettedContainer<Holder<Biome>> biomes && biomes.get(i, j, k) != biome) {
 												biomes.swapUnsafe(i, j, k, biome);
 											}
 										}
@@ -87,17 +88,17 @@ public class AtlantisEffect extends PrimedTNTEffect {
 						player.networkHandler.sendPacket(new ChunkDataS2CPacket(ent.getLevel().getWorldChunk(toBlockPos(new Vec3(ent.x() + offX, 0, ent.z() + offZ))), ent.getLevel().getLightingProvider(), null, null));
 					}
 					if(distance < 50) {
-						Registry<Structure> structures = ent.getLevel().getRegistryManager().get(Registries.STRUCTURE);
+						Registry<Structure> structures = ent.getLevel().registryAccess().get(Registries.STRUCTURE);
 						
 						Structure ocean_ruin = structures.get(StructureKeys.OCEAN_RUIN_WARM);
 						
 						for(double offY = ent.getLevel().getTopY(); offY > ent.getLevel().getBottomY(); offY--) {
 							BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, offY, ent.z() + offZ));
 							BlockState state = ent.getLevel().getBlockState(pos);
-							if(!foundBlock && state.isFullCube(ent.getLevel(), pos) && !state.isAir()) {
+							if(!foundBlock && state.isCollisionShapeFullBlock(ent.getLevel(), pos) && !state.isAir()) {
 								if(Math.random() < 0.0005f) {
-									StructureStart start = ocean_ruin.createStructureStart(sLevel.getRegistryManager(), sLevel.getChunkManager().getChunkGenerator(), sLevel.getChunkManager().getChunkGenerator().getBiomeSource(), sLevel.getChunkManager().getNoiseConfig(), sLevel.getStructureTemplateManager(), sLevel.getSeed(), new ChunkPos(pos), 20, ent.getLevel(), predicate);
-									start.place(sLevel, sLevel.getStructureAccessor(), sLevel.getChunkManager().getChunkGenerator(), Random.create(), new BlockBox((int)ent.x() - 150, (int)ent.y() - 150, (int)ent.z() - 150, (int)ent.x() + 150, (int)ent.y() + 150, (int)ent.z() + 150), new ChunkPos(pos));
+									StructureStart start = ocean_ruin.createStructureStart(sLevel.registryAccess(), sLevel.getChunkSource().getChunkGenerator(), sLevel.getChunkSource().getChunkGenerator().getBiomeSource(), sLevel.getChunkSource().getNoiseConfig(), sLevel.getStructureManager(), sLevel.getSeed(), new ChunkPos(pos), 20, ent.getLevel(), predicate);
+									start.place(sLevel, sLevel.getStructureAccessor(), sLevel.getChunkSource().getChunkGenerator(), Random.create(), new BlockBox((int)ent.x() - 150, (int)ent.y() - 150, (int)ent.z() - 150, (int)ent.x() + 150, (int)ent.y() + 150, (int)ent.z() + 150), new ChunkPos(pos));
 								}
 								foundBlock = true;
 							}
@@ -117,13 +118,13 @@ public class AtlantisEffect extends PrimedTNTEffect {
 				BlockState stateTop = level.getBlockState(posTop);
 				
 				if(((ent.y() + 8) - pos.getY()) >= 0 && ((ent.y() + 8) - pos.getY()) <= 50) {
-					if((state.getBlock().getBlastResistance() < 0 || state.getBlock() instanceof LiquidBlock || state.isAir()) && !Materials.isStone(state)) {
-						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-						level.setBlockState(pos, Blocks.WATER.getDefaultState(), 3);
+					if((state.getBlock().getExplosionResistance() < 0 || state.getBlock() instanceof LiquidBlock || state.isAir()) && !Materials.isStone(state)) {
+						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						level.setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
 					}
-					if((stateTop.getFluidState().isOf(Fluids.WATER) || stateTop.getFluidState().isOf(Fluids.FLOWING_WATER)) && !state.isAir() && (state.getBlock() == Blocks.GRASS_BLOCK || state.getBlock() == Blocks.STONE || state.getBlock() == Blocks.DEEPSLATE || state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.GRAVEL) && level.getBlockState(pos.up()).getBlock() != Blocks.SAND) {
-						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-						level.setBlockState(pos, Blocks.SAND.getDefaultState(), 3);
+					if((stateTop.getFluidState().is(Fluids.WATER) || stateTop.getFluidState().is(Fluids.FLOWING_WATER)) && !state.isAir() && (state.getBlock() == Blocks.GRASS_BLOCK || state.getBlock() == Blocks.STONE || state.getBlock() == Blocks.DEEPSLATE || state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.GRAVEL) && level.getBlockState(pos.above()).getBlock() != Blocks.SAND) {
+						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						level.setBlock(pos, Blocks.SAND.defaultBlockState(), 3);
 					}
 				}
 			}
@@ -131,7 +132,7 @@ public class AtlantisEffect extends PrimedTNTEffect {
 		
 		for(int count = 0; count < 40; count++) {
 			Entity squid = new Squid(EntityTypes.SQUID, ent.getLevel());
-			squid.setPosition(ent.x() + 50 * Math.random() - 50 * Math.random(), ent.y() + 8, ent.z() + 50 * Math.random() - 50 * Math.random());
+			squid.setPos(ent.x() + 50 * Math.random() - 50 * Math.random(), ent.y() + 8, ent.z() + 50 * Math.random() - 50 * Math.random());
 			ent.getLevel().addFreshEntity(squid);
 		}
 	}

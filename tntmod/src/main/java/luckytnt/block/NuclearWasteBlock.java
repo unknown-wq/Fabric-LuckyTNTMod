@@ -21,7 +21,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -33,7 +33,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Explosion;
 
 public class NuclearWasteBlock extends FallingBlock {
@@ -49,9 +49,9 @@ public class NuclearWasteBlock extends FallingBlock {
 	}
 
 	@Override
-	public boolean canPlaceAt(BlockState state, WorldView level, BlockPos pos) {
+	public boolean canPlaceAt(BlockState state, LevelReader level, BlockPos pos) {
 		BlockPos posDown = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
-		if(Block.isFaceFullSquare(level.getBlockState(posDown).getCollisionShape(level, posDown), Direction.UP) || level.getBlockState(posDown).isAir()){
+		if(Block.isFaceSturdy(level.getBlockState(posDown).getCollisionShape(level, posDown), Direction.UP) || level.getBlockState(posDown).isAir()){
 			return true;
 		}
 		return super.canPlaceAt(state, level, pos);
@@ -61,20 +61,20 @@ public class NuclearWasteBlock extends FallingBlock {
 	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, Random random) {
 		super.randomTick(state, level, pos, random);
 		if(Math.random() < 0.2f) {
-			if(level.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())).getBlock().getBlastResistance() < 100) {
-				level.setBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ()), Blocks.AIR.getDefaultState(), 3);
+			if(level.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())).getBlock().getExplosionResistance() < 100) {
+				level.setBlock(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ()), Blocks.AIR.defaultBlockState(), 3);
 				level.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundSource.BLOCKS, 1, 1);
 				if(Math.random() < 0.05f) {
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-					level.spawnParticles(new DustParticleEffect(new Vector3f(1f, 1f, 0.1f), 1), pos.getX(), pos.getY(), pos.getZ(), 40, 0.6f, 0.6f, 0.6f, 0);
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+					level.sendParticles(new DustParticleOptions(new Vector3f(1f, 1f, 0.1f), 1), pos.getX(), pos.getY(), pos.getZ(), 40, 0.6f, 0.6f, 0.6f, 0);
 				}
-				level.spawnParticles(new DustParticleEffect(new Vector3f(1f, 1f, 0.1f), 1), pos.getX(), pos.getY() - 1, pos.getZ(), 40, 0.6f, 0.6f, 0.6f, 0);
+				level.sendParticles(new DustParticleOptions(new Vector3f(1f, 1f, 0.1f), 1), pos.getX(), pos.getY() - 1, pos.getZ(), 40, 0.6f, 0.6f, 0.6f, 0);
 			}
 		}
 	}
 	
 	@Override
-	public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+	public List<ItemStack> getDroppedStacks(BlockState state, LootParams.Builder builder) {
 		return Collections.singletonList(ItemStack.EMPTY);
 	}
 		

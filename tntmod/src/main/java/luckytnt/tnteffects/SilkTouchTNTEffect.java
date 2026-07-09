@@ -22,13 +22,13 @@ public class SilkTouchTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getBlastResistance() < 100 && !state.isAir() && Math.abs(ent.y() - pos.getY()) <= 5) {
+				if(state.getBlock().getExplosionResistance() < 100 && !state.isAir() && Math.abs(ent.y() - pos.getY()) <= 5) {
 					Block block = state.getBlock();
-					block.onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+					block.wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					ItemEntity item = new ItemEntity(level, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, new ItemStack(block));
 					level.addFreshEntity(item);
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}
 		});

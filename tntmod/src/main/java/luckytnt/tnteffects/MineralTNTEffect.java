@@ -27,13 +27,13 @@ public class MineralTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(distance <= 50 && state.getBlock().getBlastResistance() <= 200) {
-					if((!state.isFullCube(level, pos) || state.isOf(Blocks.FIRE) || state.isOf(Blocks.SOUL_FIRE) 
-					|| state.isIn(BlockTags.LEAVES) || Materials.isPlant(state) || state.isIn(BlockTags.SNOW)
+				if(distance <= 50 && state.getBlock().getExplosionResistance() <= 200) {
+					if((!state.isCollisionShapeFullBlock(level, pos) || state.is(Blocks.FIRE) || state.is(Blocks.SOUL_FIRE) 
+					|| state.is(BlockTags.LEAVES) || Materials.isPlant(state) || state.is(BlockTags.SNOW)
 					|| Materials.isWood(state)) && !(state.getBlock() instanceof GrassBlock) && !(state.getBlock() instanceof MyceliumBlock)) 
 					{
-						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-						level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}
 			}
@@ -44,9 +44,9 @@ public class MineralTNTEffect extends PrimedTNTEffect {
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				double distanceRe = Math.sqrt(Math.pow(ent.x() - pos.getX(), 2D) + Math.pow(ent.y() - pos.getY(), 2D) * 25 + Math.pow(ent.z() - pos.getZ(), 2D));
-				if(distanceRe <= 30 + Math.random() * 2 - Math.random() * 2 && state.getBlock().getBlastResistance() <= 200) {
-					level.getBlockState(pos).getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+				if(distanceRe <= 30 + Math.random() * 2 - Math.random() * 2 && state.getBlock().getExplosionResistance() <= 200) {
+					level.getBlockState(pos).getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}
 		});
@@ -56,10 +56,10 @@ public class MineralTNTEffect extends PrimedTNTEffect {
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				double distanceRe = Math.sqrt(Math.pow(ent.x() - pos.getX(), 2D) + Math.pow(ent.y() - pos.getY(), 2D) * 25 + Math.pow(ent.z() - pos.getZ(), 2D));
-				if(distanceRe <= 37 && state.getBlock().getBlastResistance() <= 200 && state.isFullCube(level, pos) && !state.isIn(BlockTags.LEAVES) && !Materials.isWood(state)) {
+				if(distanceRe <= 37 && state.getBlock().getExplosionResistance() <= 200 && state.isCollisionShapeFullBlock(level, pos) && !state.is(BlockTags.LEAVES) && !Materials.isWood(state)) {
 					if(touchesAir(ent, pos)) {
-						level.getBlockState(pos).getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-						level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						level.getBlockState(pos).getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						double randomNumber = Math.random();
 						if(randomNumber < 0.9D) {
 							Block block = null;
@@ -74,11 +74,11 @@ public class MineralTNTEffect extends PrimedTNTEffect {
 								case 6: block = Blocks.LAPIS_BLOCK; break;
 								default: block = Blocks.COAL_BLOCK; break;
 							}
-							level.setBlockState(pos, block.getDefaultState(), 3);
+							level.setBlock(pos, block.defaultBlockState(), 3);
 						} else if(randomNumber >= 0.9D && randomNumber < 0.96D) {
-							level.setBlockState(pos, Blocks.DIAMOND_BLOCK.getDefaultState(), 3);
+							level.setBlock(pos, Blocks.DIAMOND_BLOCK.defaultBlockState(), 3);
 						} else if(randomNumber >= 0.96D) {
-							level.setBlockState(pos, Blocks.NETHERITE_BLOCK.getDefaultState(), 3);
+							level.setBlock(pos, Blocks.NETHERITE_BLOCK.defaultBlockState(), 3);
 						}
 					}
 				}

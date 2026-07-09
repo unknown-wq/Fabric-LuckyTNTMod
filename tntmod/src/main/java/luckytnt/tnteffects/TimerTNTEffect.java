@@ -6,7 +6,7 @@ import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 
 public class TimerTNTEffect extends PrimedTNTEffect{
 	
@@ -14,7 +14,7 @@ public class TimerTNTEffect extends PrimedTNTEffect{
 	public void spawnParticles(IExplosiveEntity entity) {
 		float r = entity.getTNTFuse() < 400 ? 1f : 2f - 0.0025f * entity.getTNTFuse();
 		float g = entity.getTNTFuse() >= 400 ? 1f : 0.0025f * entity.getTNTFuse();
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(r, g, 0), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(new Vector3f(r, g, 0), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
 	}
 	
 	@Override

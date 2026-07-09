@@ -15,7 +15,7 @@ public class AirStrikeEffect extends PrimedTNTEffect{
 		if(entity.getTNTFuse() <= 320 && entity.getTNTFuse() % 5 == 0) {
 			for(int count = 0; count <= 5; count++) {
 				LExplosiveProjectile bomb = EntityRegistry.BOMB.get().create(entity.getLevel());
-				bomb.setPosition(entity.getPos().add(Math.random() * 100 - 50, LuckyTNTConfigValues.DROP_HEIGHT.get() + Math.random() * 50, Math.random() * 100 - 50));
+				bomb.setPos(entity.getPos().add(Math.random() * 100 - 50, LuckyTNTConfigValues.DROP_HEIGHT.get() + Math.random() * 50, Math.random() * 100 - 50));
 				bomb.setOwner(entity.owner());
 				entity.getLevel().addFreshEntity(bomb);
 			}

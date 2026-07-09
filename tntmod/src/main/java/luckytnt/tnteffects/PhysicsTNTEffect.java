@@ -31,8 +31,8 @@ public class PhysicsTNTEffect extends PrimedTNTEffect{
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getBlastResistance() < 100) {
-					level.setBlockState(pos, Blocks.AIR.getDefaultState());
+				if(state.getBlock().getExplosionResistance() < 100) {
+					level.setBlock(pos, Blocks.AIR.defaultBlockState());
 					@SuppressWarnings("rawtypes")
 					Class[] parameters = new Class[]{Level.class, double.class, double.class, double.class, BlockState.class};
 					Constructor<FallingBlockEntity> sandConstructor;

@@ -13,7 +13,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
@@ -25,9 +25,9 @@ public class WinterTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getBlastResistance() < 200) {
-					if(state.isOf(Blocks.BUBBLE_COLUMN) || state.isOf(Blocks.WATER) || Materials.isWaterPlant(state) || state.getBlock() == Blocks.WATER) {
-						level.setBlockState(pos, Blocks.ICE.getDefaultState(), 3);
+				if(state.getBlock().getExplosionResistance() < 200) {
+					if(state.is(Blocks.BUBBLE_COLUMN) || state.is(Blocks.WATER) || Materials.isWaterPlant(state) || state.getBlock() == Blocks.WATER) {
+						level.setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
 					}
 				}
 			}
@@ -37,8 +37,8 @@ public class WinterTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getBlastResistance() < 200 && BlockSurviveChecks.canSnowPlaceAt(state, level, pos)) {
-					level.setBlockState(pos, Blocks.SNOW.getDefaultState(), 3);
+				if(state.getBlock().getExplosionResistance() < 200 && BlockSurviveChecks.canSnowPlaceAt(state, level, pos)) {
+					level.setBlock(pos, Blocks.SNOW.defaultBlockState(), 3);
 				}
 			}
 		});
@@ -55,7 +55,7 @@ public class WinterTNTEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
-		ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 1f), 1f), ent.x(), ent.y() + 1D, ent.z(), 0, 0, 0);
+		ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(1f, 1f, 1f), 1f), ent.x(), ent.y() + 1D, ent.z(), 0, 0, 0);
 	}
 	
 	@Override

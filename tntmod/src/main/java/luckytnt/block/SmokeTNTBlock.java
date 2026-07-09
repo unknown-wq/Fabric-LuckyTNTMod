@@ -18,12 +18,12 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.util.ItemActionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -41,7 +41,7 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 			BlockEntity blockEntity = level.getBlockEntity(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)));
 			PrimedLTNT tnt = TNT.get().create(level);
 			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(Mth.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
-			tnt.setPosition(x + 0.5f, y, z + 0.5f);
+			tnt.setPos(x + 0.5f, y, z + 0.5f);
 			tnt.setOwner(igniter);
 			if(blockEntity != null && blockEntity instanceof SmokeTNTBlockEntity smoke) {
 				CompoundTag tag = tnt.getPersistentData();
@@ -53,7 +53,7 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 			level.addFreshEntity(tnt);
 			level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.ENTITY_TNT_PRIMED, SoundSource.MASTER, 1, 1);
 			if(level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).getBlock() == this) {
-				level.setBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), Blocks.AIR.getDefaultState(), 3);
+				level.setBlock(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), Blocks.AIR.defaultBlockState(), 3);
 			}
 			return tnt;
 		}
@@ -61,7 +61,7 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 	}
 	
 	@Override
-	public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+	public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
         BlockEntity block = level.getBlockEntity(pos);	
 		if(player.getItemInHand(hand).getItem() instanceof DyeItem dye && block != null && block instanceof SmokeTNTBlockEntity blockEntity) {
 			if(dye == Items.BLACK_DYE) {
@@ -74,9 +74,9 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 				blockEntity.getPersistentData().putFloat("g", Mth.clamp(blockEntity.getPersistentData().getFloat("g") - 0.1f, 0f, 1f));
 				blockEntity.getPersistentData().putFloat("b", Mth.clamp(blockEntity.getPersistentData().getFloat("b") - 0.1f, 0f, 1f));
 				if(level instanceof ServerLevel sLevel) {
-					sLevel.spawnParticles(new DustParticleEffect(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
+					sLevel.sendParticles(new DustParticleOptions(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
 				}
-				return ItemActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 			if(dye == Items.WHITE_DYE) {
 				if(blockEntity.getPersistentData().getFloat("r") < 1 || blockEntity.getPersistentData().getFloat("g") < 1 || blockEntity.getPersistentData().getFloat("b") < 1) {
@@ -88,9 +88,9 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 				blockEntity.getPersistentData().putFloat("g", Mth.clamp(blockEntity.getPersistentData().getFloat("g") + 0.1f, 0f, 1f));
 				blockEntity.getPersistentData().putFloat("b", Mth.clamp(blockEntity.getPersistentData().getFloat("b") + 0.1f, 0f, 1f));
 				if(level instanceof ServerLevel sLevel) {
-					sLevel.spawnParticles(new DustParticleEffect(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
+					sLevel.sendParticles(new DustParticleOptions(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
 				}
-				return ItemActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 			if(dye == Items.RED_DYE) {
 				if(blockEntity.getPersistentData().getFloat("r") < 1) {
@@ -100,9 +100,9 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 				}
 				blockEntity.getPersistentData().putFloat("r", Mth.clamp(blockEntity.getPersistentData().getFloat("r") + 0.1f, 0f, 1f));
 				if(level instanceof ServerLevel sLevel) {
-					sLevel.spawnParticles(new DustParticleEffect(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
+					sLevel.sendParticles(new DustParticleOptions(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
 				}
-				return ItemActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 			if(dye == Items.GREEN_DYE) {
 				if(blockEntity.getPersistentData().getFloat("g") < 1) {
@@ -112,9 +112,9 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 				}
 				blockEntity.getPersistentData().putFloat("g", Mth.clamp(blockEntity.getPersistentData().getFloat("g") + 0.1f, 0f, 1f));
 				if(level instanceof ServerLevel sLevel) {
-					sLevel.spawnParticles(new DustParticleEffect(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
+					sLevel.sendParticles(new DustParticleOptions(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
 				}
-				return ItemActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 			if(dye == Items.BLUE_DYE) {
 				if(blockEntity.getPersistentData().getFloat("b") < 1) {
@@ -124,12 +124,12 @@ public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 				}
 				blockEntity.getPersistentData().putFloat("b", Mth.clamp(blockEntity.getPersistentData().getFloat("b") + 0.1f, 0f, 1f));
 				if(level instanceof ServerLevel sLevel) {
-					sLevel.spawnParticles(new DustParticleEffect(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
+					sLevel.sendParticles(new DustParticleOptions(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
 				}
-				return ItemActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 		}
-		return super.onUseWithItem(stack, state, level, pos, player, hand, result);
+		return super.useItemOn(stack, state, level, pos, player, hand, result);
 	}
 	
 	@Override

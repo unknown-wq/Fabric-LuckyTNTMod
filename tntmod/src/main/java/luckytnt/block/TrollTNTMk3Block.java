@@ -17,23 +17,23 @@ public class TrollTNTMk3Block extends LTNTBlock{
 
 		@Override
 	    public BlockState onBreak(Level level, BlockPos pos, BlockState state, Player player) {
-	    	if(level.getBlockState(pos.up()).getBlock().getBlastResistance() < 200) {
-	    		level.setBlockState(pos.up(), BlockRegistry.TROLL_TNT_MK3.get().getDefaultState(), 3);
+	    	if(level.getBlockState(pos.above()).getBlock().getExplosionResistance() < 200) {
+	    		level.setBlock(pos.above(), BlockRegistry.TROLL_TNT_MK3.get().defaultBlockState(), 3);
 	    	}
-	    	if(level.getBlockState(pos.down()).getBlock().getBlastResistance() < 200) {
-	    		level.setBlockState(pos.down(), BlockRegistry.TROLL_TNT_MK3.get().getDefaultState(), 3);
+	    	if(level.getBlockState(pos.below()).getBlock().getExplosionResistance() < 200) {
+	    		level.setBlock(pos.below(), BlockRegistry.TROLL_TNT_MK3.get().defaultBlockState(), 3);
 	    	}
-	    	if(level.getBlockState(pos.north()).getBlock().getBlastResistance() < 200) {
-	    		level.setBlockState(pos.north(), BlockRegistry.TROLL_TNT_MK3.get().getDefaultState(), 3);
+	    	if(level.getBlockState(pos.north()).getBlock().getExplosionResistance() < 200) {
+	    		level.setBlock(pos.north(), BlockRegistry.TROLL_TNT_MK3.get().defaultBlockState(), 3);
 	    	}
-	    	if(level.getBlockState(pos.east()).getBlock().getBlastResistance() < 200) {
-	    		level.setBlockState(pos.east(), BlockRegistry.TROLL_TNT_MK3.get().getDefaultState(), 3);
+	    	if(level.getBlockState(pos.east()).getBlock().getExplosionResistance() < 200) {
+	    		level.setBlock(pos.east(), BlockRegistry.TROLL_TNT_MK3.get().defaultBlockState(), 3);
 	    	}
-	    	if(level.getBlockState(pos.south()).getBlock().getBlastResistance() < 200) {
-	    		level.setBlockState(pos.south(), BlockRegistry.TROLL_TNT_MK3.get().getDefaultState(), 3);
+	    	if(level.getBlockState(pos.south()).getBlock().getExplosionResistance() < 200) {
+	    		level.setBlock(pos.south(), BlockRegistry.TROLL_TNT_MK3.get().defaultBlockState(), 3);
 	    	}
-	    	if(level.getBlockState(pos.west()).getBlock().getBlastResistance() < 200) {
-	    		level.setBlockState(pos.west(), BlockRegistry.TROLL_TNT_MK3.get().getDefaultState(), 3);
+	    	if(level.getBlockState(pos.west()).getBlock().getExplosionResistance() < 200) {
+	    		level.setBlock(pos.west(), BlockRegistry.TROLL_TNT_MK3.get().defaultBlockState(), 3);
 	    	}
 	    	return super.onBreak(level, pos, state, player);
 	    }

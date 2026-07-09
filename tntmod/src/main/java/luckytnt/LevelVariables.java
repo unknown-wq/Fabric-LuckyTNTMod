@@ -50,6 +50,12 @@ public class LevelVariables extends SavedData {
 		this.tntRainTime = tntRainTime;
 	}
 
+	public static LevelVariables load(CompoundTag tag) {
+		LevelVariables variables = new LevelVariables();
+		variables.read(tag);
+		return variables;
+	}
+
 	public void read(CompoundTag tag) {
 		doomsdayTime = tag.getIntOr("doomsdayTime", 0);
 		toxicCloudsTime = tag.getIntOr("toxicCloudsTime", 0);

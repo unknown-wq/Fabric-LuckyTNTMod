@@ -16,7 +16,7 @@ public class ChristmasTNTBlock extends LTNTBlock{
 	
 	public ChristmasTNTBlock() {
 		super(BlockBehaviour.Properties.create().mapColor(MapColor.RED).sounds(SoundType.GRASS), EntityRegistry.CHRISTMAS_TNT, false);
-        setDefaultState(getDefaultState().with(ONLY_PRESENT, false));
+        setDefaultState(getDefaultState().setValue(ONLY_PRESENT, false));
 	}
     
     @Override

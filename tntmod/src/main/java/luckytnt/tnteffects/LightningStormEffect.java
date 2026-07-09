@@ -16,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.EntityTypes;
 
 public class LightningStormEffect extends PrimedTNTEffect {
 
@@ -29,7 +30,7 @@ public class LightningStormEffect extends PrimedTNTEffect {
 					for(int offY = ent.getLevel().getTopY(); offY > ent.getLevel().getBottomY(); offY--) {
 						if(!ent.getLevel().getBlockState(new BlockPos(Mth.floor(ent.x() + offX), offY, Mth.floor(ent.z() + offZ))).isAir()) {
 							Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, ent.getLevel());
-							lighting.setPosition(ent.x() + offX, offY, ent.z() + offZ);
+							lighting.setPos(ent.x() + offX, offY, ent.z() + offZ);
 							ent.getLevel().addFreshEntity(lighting);
 							break;
 						}
@@ -41,12 +42,12 @@ public class LightningStormEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		List<LivingEntity> ents = ent.getLevel().getNonSpectatingEntities(LivingEntity.class, new Box(ent.x() - 75, ent.y() - 75, ent.z() - 75, ent.x() + 75, ent.y() + 75, ent.z() + 75));
+		List<LivingEntity> ents = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() - 75, ent.y() - 75, ent.z() - 75, ent.x() + 75, ent.y() + 75, ent.z() + 75));
 		for(LivingEntity lent : ents) {
 			for(int offY = ent.getLevel().getTopY(); offY > ent.getLevel().getBottomY(); offY--) {
 				if(!ent.getLevel().getBlockState(new BlockPos(Mth.floor(lent.getX()), offY, Mth.floor(lent.getZ()))).isAir()) {
 					Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT,  ent.getLevel());
-					lighting.setPosition(lent.getX(), offY, lent.getZ());
+					lighting.setPos(lent.getX(), offY, lent.getZ());
 					ent.getLevel().addFreshEntity(lighting);
 					
 					ImprovedExplosion explosion = new ImprovedExplosion(ent.getLevel(), new Vec3(lent.getX(), offY, lent.getZ()), 3);

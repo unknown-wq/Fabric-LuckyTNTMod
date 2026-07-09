@@ -31,15 +31,15 @@ public class MiningflatTNTEffect extends PrimedTNTEffect{
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(pos.getY() >= entity.y() - 0.5f) {
-					if(state.getBlock().getBlastResistance() < 100) {
-						if(state.isIn(ConventionalBlockTags.ORES)) {
+					if(state.getBlock().getExplosionResistance() < 100) {
+						if(state.is(ConventionalBlockTags.ORES)) {
 							Block.dropStacks(state, level, pos);
 						}
-						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-						level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						state.getBlock().wasExploded(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						if(pos.getY() - Math.round(entity.y()) == 0) {
-							if(Math.random() < 0.05f && Block.sideCoversSmallSquare(level, pos.down(), Direction.UP)) {
-								level.setBlockState(pos, Blocks.TORCH.getDefaultState());
+							if(Math.random() < 0.05f && Block.sideCoversSmallSquare(level, pos.below(), Direction.UP)) {
+								level.setBlock(pos, Blocks.TORCH.defaultBlockState());
 							}
 						}
 					}

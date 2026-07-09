@@ -18,7 +18,7 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.particles.DustParticleEffect;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -35,19 +35,19 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 			((Entity)ent).setDeltaMovement(0, 0, 0);
 		}
 		if(ent.getTNTFuse() < 350) {
-			if(ent.getTNTFuse() % 20 == 0 && !ent.getLevel().isClient()) {
+			if(ent.getTNTFuse() % 20 == 0 && !ent.getLevel().isClientSide()) {
 				for(int i = 0; i <= 400 + (int)Math.round((1D / ((double)ent.getTNTFuse() * 0.5D))) * 1600D; i++) {
 					int offX = new Random().nextInt(75) - new Random().nextInt(75);
 					int offZ = new Random().nextInt(75) - new Random().nextInt(75);
 					int offY = LevelEvents.getTopBlock(ent.getLevel(), (int)Math.round(ent.x()) + offX, (int)Math.round(ent.z()) + offZ, false);
 					BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, offY, ent.z() + offZ));
 					FallingBlockEntity.spawnFromBlock(ent.getLevel(), pos, ent.getLevel().getBlockState(pos));
-					ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+					ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}
 			
-			List<LivingEntity> list = ent.getLevel().getNonSpectatingEntities(LivingEntity.class, new Box(ent.x() + 100, ent.y() + 100, ent.z() + 100, ent.x() - 100, ent.y() - 100, ent.z() - 100));
-			List<FallingBlockEntity> blocks = ent.getLevel().getNonSpectatingEntities(FallingBlockEntity.class, new Box(ent.x() + 100, ent.y() + 100, ent.z() + 100, ent.x() - 100, ent.y() - 100, ent.z() - 100));
+			List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() + 100, ent.y() + 100, ent.z() + 100, ent.x() - 100, ent.y() - 100, ent.z() - 100));
+			List<FallingBlockEntity> blocks = ent.getLevel().getEntitiesOfClass(FallingBlockEntity.class, new AABB(ent.x() + 100, ent.y() + 100, ent.z() + 100, ent.x() - 100, ent.y() - 100, ent.z() - 100));
 			
 			for(FallingBlockEntity block : blocks) {
 				double x = ent.x() - block.getX();
@@ -83,8 +83,8 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 	public void serverExplosion(IExplosiveEntity ent) {
 		EntityRegistry.TNT_X500_EFFECT.build().serverExplosion(ent);
 		
-		List<LivingEntity> list = ent.getLevel().getNonSpectatingEntities(LivingEntity.class, new Box(ent.x() + 100, ent.y() + 100, ent.z() + 100, ent.x() - 100, ent.y() - 100, ent.z() - 100));
-		List<FallingBlockEntity> blocks = ent.getLevel().getNonSpectatingEntities(FallingBlockEntity.class, new Box(ent.x() + 100, ent.y() + 100, ent.z() + 100, ent.x() - 100, ent.y() - 100, ent.z() - 100));
+		List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() + 100, ent.y() + 100, ent.z() + 100, ent.x() - 100, ent.y() - 100, ent.z() - 100));
+		List<FallingBlockEntity> blocks = ent.getLevel().getEntitiesOfClass(FallingBlockEntity.class, new AABB(ent.x() + 100, ent.y() + 100, ent.z() + 100, ent.x() - 100, ent.y() - 100, ent.z() - 100));
 	
 		for(FallingBlockEntity block : blocks) {
 			block.discard();
@@ -112,7 +112,7 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 				double x = Math.cos(theta) * radius;
 				double z = Math.sin(theta) * radius;
 				
-				ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0f, 0f), 0.75f), ent.x() + x * 2, ent.y() + 0.5D  + y * 2, ent.z() + 2 * z, 0, 0, 0);
+				ent.getLevel().addParticle(new DustParticleOptions(new Vector3f(0f, 0f, 0f), 0.75f), ent.x() + x * 2, ent.y() + 0.5D  + y * 2, ent.z() + 2 * z, 0, 0, 0);
 			}
 		}
 	}

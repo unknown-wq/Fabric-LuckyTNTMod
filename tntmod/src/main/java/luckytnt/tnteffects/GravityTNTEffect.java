@@ -25,7 +25,7 @@ public class GravityTNTEffect extends PrimedTNTEffect{
 		if(entity.getTNTFuse() < 200) {
 			BlockPos min = new BlockPos(x - 25, y - 25, z - 25);
 			BlockPos max = new BlockPos(x + 25, y + 25, z + 25);
-			List<Entity> ents = entity.getLevel().getOtherEntities((Entity)entity, new Box(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
+			List<Entity> ents = entity.getLevel().getOtherEntities((Entity)entity, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
 			for(Entity ent : ents) {
 				if(!(ent instanceof PrimedTnt) && !(ent instanceof LTNTMinecart)) {
 					double lx = ent.getX() - x;

@@ -68,11 +68,11 @@ public class VacuumCleaner extends Item {
 		}
 		
 		if(stack.get(DataComponents.CUSTOM_DATA).getNbt().getBoolean("using") && inHand) {
-			if(!level.isClient)
+			if(!level.isClientSide)
 				soundCooldown--;
 			if(soundCooldown == 0) {
 				level.playSoundFromEntity(null, entity, SoundRegistry.VACUUM_CLEANER.get(), SoundSource.MASTER, 2, 1);
-				if(!level.isClient)
+				if(!level.isClientSide)
 					soundCooldown = 22;
 			}
 			if(entity instanceof Player player) {
@@ -82,7 +82,7 @@ public class VacuumCleaner extends Item {
 						stack.shrink(1);
 				}
 				LExplosiveProjectile shot = EntityRegistry.VACUUM_SHOT.get().create(level);
-				shot.setPosition(player.getLerpedPos(1f).add(0, player.getStandingEyeHeight(), 0));
+				shot.setPos(player.getPosition(1f).add(0, player.getStandingEyeHeight(), 0));
 				shot.setDeltaMovement(player.getRotationVec(1).x, player.getRotationVec(1).y, player.getRotationVec(1).z, 4, 0);
 				shot.pickupType = PickupPermission.DISALLOWED;
 				level.addFreshEntity(shot);
