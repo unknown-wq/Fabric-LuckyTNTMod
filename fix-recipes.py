@@ -13,16 +13,22 @@ import json, os, sys, glob
 RECIPE_DIR = sys.argv[1] if len(sys.argv) > 1 else \
     "tntmod/src/main/resources/data/luckytntmod/recipe"
 
+def fix_forge(s):
+    # Forge tag namespace -> Fabric conventional tags
+    if isinstance(s, str):
+        return s.replace("forge:", "c:")
+    return s
+
 def conv_ingredient(v):
-    """{"item":"x"}->"x", {"tag":"x"}->"#x"; lists element-wise; else unchanged."""
+    """{"item":"x"}->"x", {"tag":"x"}->"#x"; lists element-wise; forge:->c:; else unchanged."""
     if isinstance(v, dict):
         if set(v.keys()) == {"item"}:
-            return v["item"]
+            return fix_forge(v["item"])
         if set(v.keys()) == {"tag"}:
-            return "#" + v["tag"]
+            return "#" + fix_forge(v["tag"])
     if isinstance(v, list):
         return [conv_ingredient(e) for e in v]
-    return v
+    return fix_forge(v)
 
 changed = 0
 for path in glob.glob(os.path.join(RECIPE_DIR, "*.json")):
@@ -33,10 +39,15 @@ for path in glob.glob(os.path.join(RECIPE_DIR, "*.json")):
             print("SKIP (bad json):", path, e); continue
     orig = json.dumps(data, sort_keys=True)
 
-    # smelting_mult -> vanilla smelting
-    if data.get("type") == "luckytntmod:smelting_mult":
-        data["type"] = "minecraft:smelting"
-        # vanilla smelting: result may keep {"id":..}; drop count (unsupported)
+    # custom *_mult cooking serializers were never ported -> map to vanilla equivalents
+    MULT = {
+        "luckytntmod:smelting_mult": "minecraft:smelting",
+        "luckytntmod:blasting_mult": "minecraft:blasting",
+        "luckytntmod:smoking_mult": "minecraft:smoking",
+    }
+    if data.get("type") in MULT:
+        data["type"] = MULT[data["type"]]
+        # vanilla cooking result: keep {"id":..}; drop count (unsupported)
         if isinstance(data.get("result"), dict):
             data["result"] = {"id": data["result"].get("id")}
 

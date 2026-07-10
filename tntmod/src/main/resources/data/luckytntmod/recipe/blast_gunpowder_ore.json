@@ -1,10 +1,9 @@
 {
-  "type": "luckytntmod:blasting_mult",
+  "type": "minecraft:blasting",
   "experience": 1,
   "cookingtime": 100,
   "ingredient": "luckytntmod:gunpowder_ore",
   "result": {
-    "id": "minecraft:gunpowder",
-    "count": 5
+    "id": "minecraft:gunpowder"
   }
 }
