@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:timer_tnt"
-    }
+    "luckytntmod:timer_tnt"
   ],
   "result": {
     "id": "luckytntmod:timer_dynamite",

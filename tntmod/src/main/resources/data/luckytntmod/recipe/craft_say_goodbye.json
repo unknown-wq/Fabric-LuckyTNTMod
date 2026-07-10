@@ -6,12 +6,8 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:tnt_x20"
-    },
-    "0": {
-      "item": "luckytntmod:death_ray_ray"
-    }
+    "#": "luckytntmod:tnt_x20",
+    "0": "luckytntmod:death_ray_ray"
   },
   "result": {
     "id": "luckytntmod:say_goodbye",

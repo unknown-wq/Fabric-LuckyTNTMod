@@ -6,12 +6,8 @@
     " 0 "
   ],
   "key": {
-    "0": {
-      "item": "minecraft:feather"
-    },
-    "#": {
-      "item": "luckytntmod:gravity_tnt"
-    }
+    "0": "minecraft:feather",
+    "#": "luckytntmod:gravity_tnt"
   },
   "result": {
     "id": "luckytntmod:physics_tnt",

@@ -6,18 +6,10 @@
     " 7 "
   ],
   "key": {
-    "1": {
-      "item": "luckytntmod:antimatter"
-    },
-    "3": {
-      "item": "luckytntmod:meteor_shower"
-    },
-    "4": {
-      "item": "luckytntmod:chicxulub"
-    },
-    "7": {
-      "item": "luckytntmod:meteor_tnt"
-    }
+    "1": "luckytntmod:antimatter",
+    "3": "luckytntmod:meteor_shower",
+    "4": "luckytntmod:chicxulub",
+    "7": "luckytntmod:meteor_tnt"
   },
   "result": {
     "id": "luckytntmod:meteor_storm",

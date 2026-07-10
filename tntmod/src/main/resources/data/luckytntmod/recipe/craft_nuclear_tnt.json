@@ -6,12 +6,8 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "0": {
-      "item": "luckytntmod:tnt_x100"
-    }
+    "#": "luckytntmod:uranium_ingot",
+    "0": "luckytntmod:tnt_x100"
   },
   "result": {
     "id": "luckytntmod:nuclear_tnt",

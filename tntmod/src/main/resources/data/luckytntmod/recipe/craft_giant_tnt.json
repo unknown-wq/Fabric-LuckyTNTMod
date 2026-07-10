@@ -6,15 +6,9 @@
     " 1 "
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:tnt_x100"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "luckytntmod:big_tnt"
-    }
+    "#": "luckytntmod:tnt_x100",
+    "0": "luckytntmod:uranium_ingot",
+    "1": "luckytntmod:big_tnt"
   },
   "result": {
     "id": "luckytntmod:giant_tnt",

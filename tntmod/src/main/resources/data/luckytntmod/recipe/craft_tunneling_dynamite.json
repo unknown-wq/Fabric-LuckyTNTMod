@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:tunneling_tnt"
-    }
+    "luckytntmod:tunneling_tnt"
   ],
   "result": {
     "id": "luckytntmod:tunneling_dynamite",

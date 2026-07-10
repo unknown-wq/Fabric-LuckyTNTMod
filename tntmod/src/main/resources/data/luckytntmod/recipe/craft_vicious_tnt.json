@@ -6,15 +6,9 @@
     " 0 "
   ],
   "key": {
-    "1": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "0": {
-      "item": "luckytntmod:attacking_tnt"
-    },
-    "2": {
-      "item": "minecraft:diamond_sword"
-    }
+    "1": "luckytntmod:uranium_ingot",
+    "0": "luckytntmod:attacking_tnt",
+    "2": "minecraft:diamond_sword"
   },
   "result": {
     "id": "luckytntmod:vicious_tnt",

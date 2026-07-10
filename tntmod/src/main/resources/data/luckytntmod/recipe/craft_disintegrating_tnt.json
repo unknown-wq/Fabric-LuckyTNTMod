@@ -6,15 +6,9 @@
     "1#1"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:antimatter"
-    },
-    "1": {
-      "item": "luckytntmod:tnt_x100"
-    },
-    "#": {
-      "item": "luckytntmod:acidic_tnt"
-    }
+    "0": "luckytntmod:antimatter",
+    "1": "luckytntmod:tnt_x100",
+    "#": "luckytntmod:acidic_tnt"
   },
   "result": {
     "id": "luckytntmod:disintegrating_tnt",

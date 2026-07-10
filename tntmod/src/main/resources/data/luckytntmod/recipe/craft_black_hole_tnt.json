@@ -6,15 +6,9 @@
     "1#1"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:knockback_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:antimatter"
-    },
-    "1": {
-      "item": "luckytntmod:particle_physics_tnt"
-    }
+    "#": "luckytntmod:knockback_tnt",
+    "0": "luckytntmod:antimatter",
+    "1": "luckytntmod:particle_physics_tnt"
   },
   "result": {
     "id": "luckytntmod:black_hole_tnt",

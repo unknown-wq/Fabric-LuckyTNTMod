@@ -6,15 +6,9 @@
     "1#1"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:netherrack"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "luckytntmod:fire_tnt"
-    }
+    "#": "minecraft:netherrack",
+    "0": "luckytntmod:uranium_ingot",
+    "1": "luckytntmod:fire_tnt"
   },
   "result": {
     "id": "luckytntmod:firestorm_tnt",

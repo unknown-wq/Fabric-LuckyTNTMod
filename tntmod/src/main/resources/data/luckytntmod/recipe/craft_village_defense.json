@@ -6,18 +6,10 @@
     " 7 "
   ],
   "key": {
-    "1": {
-      "item": "minecraft:carved_pumpkin"
-    },
-    "3": {
-      "item": "minecraft:iron_block"
-    },
-    "4": {
-      "item": "luckytntmod:animal_tnt"
-    },
-    "7": {
-      "item": "luckytntmod:day_tnt"
-    }
+    "1": "minecraft:carved_pumpkin",
+    "3": "minecraft:iron_block",
+    "4": "luckytntmod:animal_tnt",
+    "7": "luckytntmod:day_tnt"
   },
   "result": {
     "id": "luckytntmod:village_defense",

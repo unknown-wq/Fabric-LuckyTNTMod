@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:feather"
-    },
-    "0": {
-      "item": "luckytntmod:dynamite_x5"
-    }
+    "#": "minecraft:feather",
+    "0": "luckytntmod:dynamite_x5"
   },
   "result": {
     "id": "luckytntmod:ultralight_dynamite",

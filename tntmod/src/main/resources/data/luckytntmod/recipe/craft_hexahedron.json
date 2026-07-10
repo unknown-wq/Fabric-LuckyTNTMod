@@ -6,15 +6,9 @@
     " 1 "
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "2": {
-      "item": "luckytntmod:cubic_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:tnt_x5"
-    }
+    "0": "luckytntmod:uranium_ingot",
+    "2": "luckytntmod:cubic_tnt",
+    "1": "luckytntmod:tnt_x5"
   },
   "result": {
     "id": "luckytntmod:hexahedron",

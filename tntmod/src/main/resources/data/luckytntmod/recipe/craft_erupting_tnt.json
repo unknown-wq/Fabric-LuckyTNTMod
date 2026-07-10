@@ -6,18 +6,10 @@
     " 3 "
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:tnt_x5"
-    },
-    "1": {
-      "item": "minecraft:fire_charge"
-    },
-    "2": {
-      "item": "minecraft:tnt"
-    },
-    "3": {
-      "item": "minecraft:firework_rocket"
-    }
+    "0": "luckytntmod:tnt_x5",
+    "1": "minecraft:fire_charge",
+    "2": "minecraft:tnt",
+    "3": "minecraft:firework_rocket"
   },
   "result": {
     "id": "luckytntmod:erupting_tnt",

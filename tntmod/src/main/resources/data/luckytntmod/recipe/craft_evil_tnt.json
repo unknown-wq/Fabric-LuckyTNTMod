@@ -6,15 +6,9 @@
     " 0 "
   ],
   "key": {
-    "1": {
-      "item": "luckytntmod:antimatter"
-    },
-    "0": {
-      "item": "luckytntmod:vicious_tnt"
-    },
-    "2": {
-      "item": "minecraft:netherite_sword"
-    }
+    "1": "luckytntmod:antimatter",
+    "0": "luckytntmod:vicious_tnt",
+    "2": "minecraft:netherite_sword"
   },
   "result": {
     "id": "luckytntmod:evil_tnt",

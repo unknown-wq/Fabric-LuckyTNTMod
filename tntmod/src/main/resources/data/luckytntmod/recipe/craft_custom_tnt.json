@@ -6,21 +6,11 @@
     "#2#"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "luckytntmod:sphere_tnt"
-    },
-    "2": {
-      "item": "luckytntmod:cubic_tnt"
-    },
-    "3": {
-      "item": "luckytntmod:fire_tnt"
-    },
-    "#": {
-      "item": "luckytntmod:lucky_tnt"
-    }
+    "0": "luckytntmod:uranium_ingot",
+    "1": "luckytntmod:sphere_tnt",
+    "2": "luckytntmod:cubic_tnt",
+    "3": "luckytntmod:fire_tnt",
+    "#": "luckytntmod:lucky_tnt"
   },
   "result": {
     "id": "luckytntmod:custom_tnt",

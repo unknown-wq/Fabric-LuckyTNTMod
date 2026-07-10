@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:ice_meteor_tnt"
-    }
+    "luckytntmod:ice_meteor_tnt"
   ],
   "result": {
     "id": "luckytntmod:ice_meteor_dynamite",

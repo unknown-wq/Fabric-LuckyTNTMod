@@ -6,15 +6,9 @@
     " 0 "
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:hellfire_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:fire_tnt"
-    },
-    "2": {
-      "item": "luckytntmod:antimatter"
-    }
+    "0": "luckytntmod:hellfire_tnt",
+    "1": "luckytntmod:fire_tnt",
+    "2": "luckytntmod:antimatter"
   },
   "result": {
     "id": "luckytntmod:fiery_hell",

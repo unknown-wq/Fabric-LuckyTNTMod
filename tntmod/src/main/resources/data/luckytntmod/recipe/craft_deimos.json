@@ -6,15 +6,9 @@
     " 2 "
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "luckytntmod:ice_meteor_tnt"
-    },
-    "2": {
-      "item": "luckytntmod:tnt_x100"
-    }
+    "0": "luckytntmod:uranium_ingot",
+    "1": "luckytntmod:ice_meteor_tnt",
+    "2": "luckytntmod:tnt_x100"
   },
   "result": {
     "id": "luckytntmod:deimos",

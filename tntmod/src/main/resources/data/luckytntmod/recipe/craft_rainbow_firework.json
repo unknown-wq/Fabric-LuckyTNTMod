@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "tag": "luckytntmod:concrete_powder"
-    },
-    "0": {
-      "item": "luckytntmod:sand_firework"
-    }
+    "#": "#luckytntmod:concrete_powder",
+    "0": "luckytntmod:sand_firework"
   },
   "result": {
     "id": "luckytntmod:rainbow_firework",

@@ -6,15 +6,9 @@
     "111"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:dust_bowl"
-    },
-    "1": {
-      "item": "luckytntmod:vaporize_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:antimatter"
-    }
+    "#": "luckytntmod:dust_bowl",
+    "1": "luckytntmod:vaporize_tnt",
+    "0": "luckytntmod:antimatter"
   },
   "result": {
     "id": "luckytntmod:wasteland_tnt",

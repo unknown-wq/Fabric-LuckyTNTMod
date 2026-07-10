@@ -6,15 +6,9 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:rotten_flesh"
-    },
-    "0": {
-      "item": "luckytntmod:night_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:animal_tnt"
-    }
+    "#": "minecraft:rotten_flesh",
+    "0": "luckytntmod:night_tnt",
+    "1": "luckytntmod:animal_tnt"
   },
   "result": {
     "id": "luckytntmod:zombie_apocalypse",

@@ -6,12 +6,8 @@
     "000"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:ring_tnt"
-    },
-    "2": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "0": "luckytntmod:ring_tnt",
+    "2": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:eye_of_the_sahara",

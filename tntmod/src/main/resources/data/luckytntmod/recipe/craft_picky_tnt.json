@@ -6,15 +6,9 @@
     " 1 "
   ],
   "key": {
-    "0": {
-      "item": "minecraft:cobblestone"
-    },
-    "#": {
-      "item": "luckytntmod:sphere_tnt"
-    },
-    "1": {
-      "item": "minecraft:iron_pickaxe"
-    }
+    "0": "minecraft:cobblestone",
+    "#": "luckytntmod:sphere_tnt",
+    "1": "minecraft:iron_pickaxe"
   },
   "result": {
     "id": "luckytntmod:picky_tnt",

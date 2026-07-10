@@ -6,12 +6,8 @@
     "#0#"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:dirt"
-    },
-    "0": {
-      "item": "minecraft:tnt"
-    }
+    "#": "minecraft:dirt",
+    "0": "minecraft:tnt"
   },
   "result": {
     "id": "luckytntmod:troll_tnt_mk3",

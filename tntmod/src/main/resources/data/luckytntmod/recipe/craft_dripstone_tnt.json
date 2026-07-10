@@ -6,15 +6,9 @@
     "1#1"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:dripstone_block"
-    },
-    "0": {
-      "item": "minecraft:tnt"
-    },
-    "1": {
-      "item": "minecraft:pointed_dripstone"
-    }
+    "#": "minecraft:dripstone_block",
+    "0": "minecraft:tnt",
+    "1": "minecraft:pointed_dripstone"
   },
   "result": {
     "id": "luckytntmod:dripstone_tnt",

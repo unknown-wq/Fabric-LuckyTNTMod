@@ -6,12 +6,8 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:snow_block"
-    },
-    "0": {
-      "item": "luckytntmod:tnt_x5"
-    }
+    "#": "minecraft:snow_block",
+    "0": "luckytntmod:tnt_x5"
   },
   "result": {
     "id": "luckytntmod:snow_tnt",

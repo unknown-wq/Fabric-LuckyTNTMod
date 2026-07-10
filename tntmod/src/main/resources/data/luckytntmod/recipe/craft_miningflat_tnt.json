@@ -6,15 +6,9 @@
     "000"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:torch"
-    },
-    "1": {
-      "item": "luckytntmod:flat_tnt"
-    },
-    "2": {
-      "item": "luckytntmod:tnt_x100"
-    }
+    "0": "minecraft:torch",
+    "1": "luckytntmod:flat_tnt",
+    "2": "luckytntmod:tnt_x100"
   },
   "result": {
     "id": "luckytntmod:miningflat_tnt",

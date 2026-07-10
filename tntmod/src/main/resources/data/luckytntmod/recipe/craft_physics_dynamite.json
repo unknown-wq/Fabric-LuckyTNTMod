@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:physics_tnt"
-    }
+    "luckytntmod:physics_tnt"
   ],
   "result": {
     "id": "luckytntmod:physics_dynamite",

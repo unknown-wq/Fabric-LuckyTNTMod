@@ -6,18 +6,10 @@
     " 3 "
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:antimatter"
-    },
-    "1": {
-      "item": "luckytntmod:cubic_tnt"
-    },
-    "2": {
-      "item": "luckytntmod:hexahedron"
-    },
-    "3": {
-      "item": "luckytntmod:lightning_tnt"
-    }
+    "0": "luckytntmod:antimatter",
+    "1": "luckytntmod:cubic_tnt",
+    "2": "luckytntmod:hexahedron",
+    "3": "luckytntmod:lightning_tnt"
   },
   "result": {
     "id": "luckytntmod:chunk_tnt",

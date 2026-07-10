@@ -6,15 +6,9 @@
     "101"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:honey_block"
-    },
-    "1": {
-      "item": "minecraft:honeycomb_block"
-    },
-    "#": {
-      "item": "luckytntmod:tnt_x20"
-    }
+    "0": "minecraft:honey_block",
+    "1": "minecraft:honeycomb_block",
+    "#": "luckytntmod:tnt_x20"
   },
   "result": {
     "id": "luckytntmod:honey_tnt",

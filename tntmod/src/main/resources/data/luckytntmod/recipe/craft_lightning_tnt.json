@@ -6,12 +6,8 @@
     "#0#"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:iron_ingot"
-    },
-    "0": {
-      "item": "luckytntmod:tnt_x5"
-    }
+    "#": "minecraft:iron_ingot",
+    "0": "luckytntmod:tnt_x5"
   },
   "result": {
     "id": "luckytntmod:lightning_tnt",

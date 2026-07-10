@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:snow_tnt"
-    }
+    "luckytntmod:snow_tnt"
   ],
   "result": {
     "id": "luckytntmod:snow_dynamite",

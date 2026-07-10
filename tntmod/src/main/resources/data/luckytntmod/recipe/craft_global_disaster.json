@@ -6,15 +6,9 @@
     "000"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:sphere_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "2": {
-      "item": "luckytntmod:tnt_x100"
-    }
+    "0": "luckytntmod:sphere_tnt",
+    "1": "luckytntmod:uranium_ingot",
+    "2": "luckytntmod:tnt_x100"
   },
   "result": {
     "id": "luckytntmod:global_disaster",

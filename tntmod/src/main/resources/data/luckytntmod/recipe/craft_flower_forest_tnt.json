@@ -6,15 +6,9 @@
     "1#1"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:lush_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:grove_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "#": "luckytntmod:lush_tnt",
+    "1": "luckytntmod:grove_tnt",
+    "0": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:flower_forest_tnt",

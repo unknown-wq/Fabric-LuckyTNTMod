@@ -6,15 +6,9 @@
     "1#1"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:lightning_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "minecraft:tnt"
-    }
+    "#": "luckytntmod:lightning_tnt",
+    "0": "luckytntmod:uranium_ingot",
+    "1": "minecraft:tnt"
   },
   "result": {
     "id": "luckytntmod:lightning_storm",

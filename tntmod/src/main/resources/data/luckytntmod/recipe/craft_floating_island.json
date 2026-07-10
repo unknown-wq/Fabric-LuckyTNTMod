@@ -6,18 +6,10 @@
     "333"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:dirt"
-    },
-    "1": {
-      "tag": "minecraft:saplings"
-    },
-    "2": {
-      "item": "luckytntmod:tnt_x20"
-    },
-    "3": {
-      "item": "minecraft:stone"
-    }
+    "0": "minecraft:dirt",
+    "1": "#minecraft:saplings",
+    "2": "luckytntmod:tnt_x20",
+    "3": "minecraft:stone"
   },
   "result": {
     "id": "luckytntmod:floating_island",

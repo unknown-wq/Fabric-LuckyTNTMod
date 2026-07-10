@@ -6,12 +6,8 @@
     "000"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:tetrahedron_tnt"
-    },
-    "2": {
-      "item": "luckytntmod:antimatter"
-    }
+    "0": "luckytntmod:tetrahedron_tnt",
+    "2": "luckytntmod:antimatter"
   },
   "result": {
     "id": "luckytntmod:illuminati_tnt",

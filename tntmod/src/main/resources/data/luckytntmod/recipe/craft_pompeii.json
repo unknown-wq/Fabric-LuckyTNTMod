@@ -6,18 +6,10 @@
     "#0#"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:lava_bucket"
-    },
-    "1": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "#": {
-      "item": "luckytntmod:erupting_tnt"
-    },
-    "2": {
-      "item": "luckytntmod:tnt_x5"
-    }
+    "0": "minecraft:lava_bucket",
+    "1": "luckytntmod:uranium_ingot",
+    "#": "luckytntmod:erupting_tnt",
+    "2": "luckytntmod:tnt_x5"
   },
   "result": {
     "id": "luckytntmod:pompeii",

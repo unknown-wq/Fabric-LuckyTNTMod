@@ -6,12 +6,8 @@
     "000"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:prism_tnt"
-    },
-    "#": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "0": "luckytntmod:prism_tnt",
+    "#": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:tetrahedron_tnt",

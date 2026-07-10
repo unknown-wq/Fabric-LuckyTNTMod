@@ -6,12 +6,8 @@
     "# #"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:obsidian"
-    },
-    "0": {
-      "item": "minecraft:iron_ingot"
-    }
+    "#": "minecraft:obsidian",
+    "0": "minecraft:iron_ingot"
   },
   "result": {
     "id": "luckytntmod:obsidian_rail",

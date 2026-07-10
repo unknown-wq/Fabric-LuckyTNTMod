@@ -6,18 +6,10 @@
     "2#2"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:digging_tnt"
-    },
-    "#": {
-      "item": "luckytntmod:sinkhole_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:antimatter"
-    },
-    "2": {
-      "item": "luckytntmod:drilling_tnt"
-    }
+    "0": "luckytntmod:digging_tnt",
+    "#": "luckytntmod:sinkhole_tnt",
+    "1": "luckytntmod:antimatter",
+    "2": "luckytntmod:drilling_tnt"
   },
   "result": {
     "id": "luckytntmod:kola_borehole_tnt",

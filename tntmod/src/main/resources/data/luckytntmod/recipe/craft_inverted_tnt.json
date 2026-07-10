@@ -6,15 +6,9 @@
     "222"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:tnt_x100"
-    },
-    "1": {
-      "item": "minecraft:stone"
-    },
-    "2": {
-      "item": "minecraft:dirt"
-    }
+    "0": "luckytntmod:tnt_x100",
+    "1": "minecraft:stone",
+    "2": "minecraft:dirt"
   },
   "result": {
     "id": "luckytntmod:inverted_tnt",

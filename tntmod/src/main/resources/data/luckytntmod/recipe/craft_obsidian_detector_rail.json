@@ -6,18 +6,10 @@
     "#2#"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:obsidian"
-    },
-    "0": {
-      "item": "minecraft:iron_ingot"
-    },
-    "1": {
-      "item": "minecraft:stone_pressure_plate"
-    },
-    "2": {
-      "item": "minecraft:redstone"
-    }
+    "#": "minecraft:obsidian",
+    "0": "minecraft:iron_ingot",
+    "1": "minecraft:stone_pressure_plate",
+    "2": "minecraft:redstone"
   },
   "result": {
     "id": "luckytntmod:obsidian_detector_rail",

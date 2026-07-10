@@ -6,15 +6,9 @@
     "1#1"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:hyperion"
-    },
-    "1": {
-      "item": "luckytntmod:grove_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:antimatter"
-    }
+    "#": "luckytntmod:hyperion",
+    "1": "luckytntmod:grove_tnt",
+    "0": "luckytntmod:antimatter"
   },
   "result": {
     "id": "luckytntmod:jungle_tnt",

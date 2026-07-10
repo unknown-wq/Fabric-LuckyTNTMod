@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:dense_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:antimatter"
-    }
+    "#": "luckytntmod:dense_tnt",
+    "0": "luckytntmod:antimatter"
   },
   "result": {
     "id": "luckytntmod:compressed_tnt",

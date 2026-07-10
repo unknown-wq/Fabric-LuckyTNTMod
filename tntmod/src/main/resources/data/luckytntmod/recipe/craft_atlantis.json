@@ -6,12 +6,8 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:poseidons_wave"
-    },
-    "0": {
-      "item": "luckytntmod:antimatter"
-    }
+    "#": "luckytntmod:poseidons_wave",
+    "0": "luckytntmod:antimatter"
   },
   "result": {
     "id": "luckytntmod:atlantis",

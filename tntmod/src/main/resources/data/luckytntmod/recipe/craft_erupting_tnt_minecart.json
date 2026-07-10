@@ -5,12 +5,8 @@
     "B"
   ],
   "key": {
-    "A": {
-      "item": "luckytntmod:erupting_tnt"
-    },
-    "B": {
-      "item": "minecraft:minecart"
-    }
+    "A": "luckytntmod:erupting_tnt",
+    "B": "minecraft:minecart"
   },
   "result": {
     "id": "luckytntmod:erupting_tnt_minecart"

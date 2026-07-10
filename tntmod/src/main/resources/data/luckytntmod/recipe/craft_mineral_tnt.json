@@ -6,18 +6,10 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:netherite_block"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "minecraft:diamond_block"
-    },
-    "2": {
-      "item": "luckytntmod:ore_tnt"
-    }
+    "#": "minecraft:netherite_block",
+    "0": "luckytntmod:uranium_ingot",
+    "1": "minecraft:diamond_block",
+    "2": "luckytntmod:ore_tnt"
   },
   "result": {
     "id": "luckytntmod:mineral_tnt",

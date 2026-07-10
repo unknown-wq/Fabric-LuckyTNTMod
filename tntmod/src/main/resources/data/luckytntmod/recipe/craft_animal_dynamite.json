@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:animal_tnt"
-    }
+    "luckytntmod:animal_tnt"
   ],
   "result": {
     "id": "luckytntmod:animal_dynamite",

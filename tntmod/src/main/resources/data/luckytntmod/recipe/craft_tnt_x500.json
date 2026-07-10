@@ -5,9 +5,7 @@
     "00"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:tnt_x100"
-    }
+    "0": "luckytntmod:tnt_x100"
   },
   "result": {
     "id": "luckytntmod:tnt_x500",

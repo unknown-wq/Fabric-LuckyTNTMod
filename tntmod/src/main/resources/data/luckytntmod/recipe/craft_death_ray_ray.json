@@ -1,18 +1,10 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:tnt_x20"
-    },
-    {
-      "item": "luckytntmod:tnt_x100"
-    },
-    {
-      "item": "luckytntmod:tnt_x5"
-    },
-    {
-      "item": "minecraft:tnt"
-    }
+    "luckytntmod:tnt_x20",
+    "luckytntmod:tnt_x100",
+    "luckytntmod:tnt_x5",
+    "minecraft:tnt"
   ],
   "result": {
     "id": "luckytntmod:death_ray_ray",

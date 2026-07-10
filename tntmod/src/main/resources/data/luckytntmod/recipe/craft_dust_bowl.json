@@ -6,18 +6,10 @@
     "333"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:dirt"
-    },
-    "1": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "2": {
-      "item": "luckytntmod:vaporize_tnt"
-    },
-    "3": {
-      "tag": "minecraft:sand"
-    }
+    "0": "minecraft:dirt",
+    "1": "luckytntmod:uranium_ingot",
+    "2": "luckytntmod:vaporize_tnt",
+    "3": "#minecraft:sand"
   },
   "result": {
     "id": "luckytntmod:dust_bowl",

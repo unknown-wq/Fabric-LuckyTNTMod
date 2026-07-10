@@ -6,24 +6,12 @@
     "525"
   ],
   "key": {
-    "1": {
-      "item": "luckytntmod:sand_firework"
-    },
-    "0": {
-      "item": "luckytntmod:antimatter"
-    },
-    "2": {
-      "item": "luckytntmod:tnt_firework"
-    },
-    "3": {
-      "item": "luckytntmod:gravel_firework"
-    },
-    "4": {
-      "item": "luckytntmod:rainbow_firework"
-    },
-    "5": {
-      "item": "luckytntmod:new_years_firework"
-    }
+    "1": "luckytntmod:sand_firework",
+    "0": "luckytntmod:antimatter",
+    "2": "luckytntmod:tnt_firework",
+    "3": "luckytntmod:gravel_firework",
+    "4": "luckytntmod:rainbow_firework",
+    "5": "luckytntmod:new_years_firework"
   },
   "result": {
     "id": "luckytntmod:grande_finale",

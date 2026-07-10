@@ -6,12 +6,8 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:fire_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:chemical_tnt"
-    }
+    "#": "luckytntmod:fire_tnt",
+    "0": "luckytntmod:chemical_tnt"
   },
   "result": {
     "id": "luckytntmod:reaction_tnt",

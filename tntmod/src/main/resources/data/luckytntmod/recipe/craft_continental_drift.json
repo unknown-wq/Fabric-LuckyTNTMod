@@ -6,15 +6,9 @@
     "010"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:earthquake_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:tnt_x100"
-    },
-    "2": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "0": "luckytntmod:earthquake_tnt",
+    "1": "luckytntmod:tnt_x100",
+    "2": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:continental_drift",

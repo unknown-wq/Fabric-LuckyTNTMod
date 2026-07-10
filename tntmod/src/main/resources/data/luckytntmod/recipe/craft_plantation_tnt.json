@@ -6,15 +6,9 @@
     "1#1"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:easter_egg"
-    },
-    "1": {
-      "item": "luckytntmod:farming_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "#": "luckytntmod:easter_egg",
+    "1": "luckytntmod:farming_tnt",
+    "0": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:plantation_tnt",

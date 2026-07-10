@@ -6,15 +6,9 @@
     "222"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:tnt"
-    },
-    "1": {
-      "item": "minecraft:obsidian"
-    },
-    "2": {
-      "item": "minecraft:water_bucket"
-    }
+    "0": "minecraft:tnt",
+    "1": "minecraft:obsidian",
+    "2": "minecraft:water_bucket"
   },
   "result": {
     "id": "luckytntmod:gravity_tnt",

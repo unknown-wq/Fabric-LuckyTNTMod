@@ -6,15 +6,9 @@
     "101"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:tnt_x100"
-    },
-    "0": {
-      "item": "minecraft:string"
-    },
-    "1": {
-      "item": "luckytntmod:tnt_x20"
-    }
+    "#": "luckytntmod:tnt_x100",
+    "0": "minecraft:string",
+    "1": "luckytntmod:tnt_x20"
   },
   "result": {
     "id": "luckytntmod:dividing_tnt",

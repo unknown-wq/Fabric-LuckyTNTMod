@@ -6,12 +6,8 @@
     "000"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:dynamite_x20"
-    },
-    "#": {
-      "item": "luckytntmod:tnt_x5"
-    }
+    "0": "luckytntmod:dynamite_x20",
+    "#": "luckytntmod:tnt_x5"
   },
   "result": {
     "id": "luckytntmod:turret_tnt",

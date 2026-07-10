@@ -6,15 +6,9 @@
     "0#0"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:drilling_tnt"
-    },
-    "#": {
-      "item": "luckytntmod:sphere_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "0": "luckytntmod:drilling_tnt",
+    "#": "luckytntmod:sphere_tnt",
+    "1": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:sinkhole_tnt",

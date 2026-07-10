@@ -6,12 +6,8 @@
     " 0 "
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:withering_tnt"
-    },
-    "2": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "0": "luckytntmod:withering_tnt",
+    "2": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:wither_storm",
