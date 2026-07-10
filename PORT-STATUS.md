@@ -14,14 +14,20 @@ already ported — do not touch it.
   cd tntmod && JAVA_HOME=/usr/lib/jvm/java-25-openjdk-amd64 /opt/gradle-9.6.1/bin/gradle compileJava --no-daemon 2>&1 | tee /tmp/errors.txt
   ```
 
-## Progress checklist (§5 areas)
+## Progress checklist (§5 areas) — ✅ COMPLETE
 
-- [x] Step 0 — toolchain, build files (`build.gradle`/`gradle.properties`/`settings.gradle`/`fabric.mod.json`/`mixins.json`), `port-rename.sh` first pass, genSources
-- [ ] Agent A — registry/* , block/* , item/* , entity/* compile
-- [ ] Agent B — 7 mixins re-verified against `/opt/mc-src/`
-- [x] Agent C — client renderers (render-state/`submit`), HUD overlay, config GUI (edits done; pending central compile)
-- [ ] Agent D — sweeper: tnteffects/*, feature/*, data JSON, full `build`
-- [ ] runServer smoke test reaches `Done (…)!` with no `/ERROR]` lines
+- [x] Step 0 — toolchain, build files, `port-rename.sh` first pass, genSources
+- [x] Core (registry/block/item/entity/network/event) — compiles
+- [x] Mixins — 7 re-verified against `/opt/mc-src/` (6 loaded, 1 disabled §9)
+- [x] Client — renderers (render-state/`submit`), HUD overlay, config GUI
+- [x] Sweep — tnteffects/*, feature/*, worldgen, recipe data JSON
+- [x] `compileJava` GREEN — all 303 files compile
+- [x] `build` GREEN — jar assembled, mixins applied, resources processed
+- [x] **`runServer` GREEN — boots to `Done (0.411s)!` with ZERO `/ERROR]` lines**
+
+Final result: server boots green on MC 26.2, all TNT registers, mixins apply, 355
+recipe JSON migrated to the 26.2 plain-string format. One harmless mixin WARN remains
+(`FireBlockMixin` `canBurn` @Unique discarded — vanilla `FireBlock` now defines it).
 
 ## Disabled content (§9)
 
@@ -55,3 +61,42 @@ already ported — do not touch it.
   inert). Why: relied on removed PickaxeItem/SwordItem/ToolItem classes + RaycastContext(→ClipContext)
   + renamed item accessors. (Stub pre-existed; Agent CORE removed the now-invalid `isInstantenous()`
   override so it compiles.)
+
+### Mixins (§9)
+- `mixin/InGameHudMixin` — **removed from `luckytntmod.mixins.json`** (class kept as no-op). Why:
+  yarn `InGameHud`→`Gui`; the `LayeredDraw`/`addLayer` API is gone (HUD moved to render-state). The
+  freeze/contaminated overlay is rewritten in `client/overlay/OverlayTick` but must be registered via
+  the Fabric HUD API (`HudElementRegistry`) rather than a mixin — registration hook not wired (client-only).
+- `mixin/AbstractMinecartEntityMixin` — **powered-rail acceleration inject commented out** (activator-rail
+  inject kept & working). Why: cart movement moved into `MinecartBehavior`; the `powerTrack`/`haltTrack`
+  logic is unreachable from an `AbstractMinecart` mixin. Effect: `OBSIDIAN_POWERED_RAIL` no longer
+  accelerates carts.
+
+### Client renderers (§9)
+- `registry/RendererRegistry.java` — **4 living-TNT renderer registrations commented out**
+  (`ATTACKING_TNT`, `WALKING_TNT`, `VICIOUS_TNT`, `EVIL_TNT`). Why: these are `EntityType<LivingPrimedLTNT>`
+  and the ported lib has no `LivingLTNTRenderer`; they render with the default renderer. Client-only,
+  never exercised by the server. All 21 projectile renderers were fixed (→ `LDynamiteRenderer`).
+
+### TNT effects (§9) — class compiles, portable parts kept, complex block commented in `/* */`
+- `tnteffects/StructureTNTEffect.java` — whole `serverExplosion` + inner structure generators (yarn-only
+  structure API: `createStructureStart`, `StructurePiecesCollector`, `ChunkRandom`, `*Generator`).
+- `tnteffects/WorldOfWoolsEffect.java` + `tnteffects/WoolTNTEffect.java` — the MapColor→wool-shade
+  classification (~60 yarn `MapColor` constant names with no verified 1:1 Mojang mapping). Rest of both
+  effects (terraforming, rings, sheep) kept.
+- `tnteffects/JungleTNTEffect.java` — `doJungleExplosion()` biome-overwrite + `ChunkDataS2CPacket` sync +
+  `ConfiguredFeature.generate`. Core sphere explosion + grass conversion kept.
+- `tnteffects/NetherTNTEffect.java` — feature-gen (`Feature.DISK`) + `NetherFossil` structure block.
+  Terrain-shaping explosion + nylium conversion kept.
+- `tnteffects/ItemFireworkEffect.java` — `serverExplosion` body (Boat/`Fireball`/`ThrownPotion`/
+  `PotionContents` entity-constructor overhaul). Float-up tick kept.
+- `tnteffects/ZombieApocalypseEffect.java`, `StoneColdEffect.java`, `NightTNTEffect.java` — single
+  `setTimeOfDay(...)` line each (26.2 reworked the day-time system into `ServerClockManager`/`WorldClock`).
+  All other behaviour (zombie spawn / freezing / night) kept.
+
+### Data (recipes)
+- `recipe/smelt_*`, `recipe/blast_*` (4 files) — custom `luckytntmod:smelting_mult`/`blasting_mult`
+  cooking serializers were never ported to Java → remapped to vanilla `minecraft:smelting`/`blasting`.
+  Effect: ore→ingot smelting/blasting yields **1** item instead of the original ×N multiplier.
+- All 355 recipe JSON migrated to 26.2 plain-string ingredients; Forge tags (`forge:ores`, `forge:dyes`)
+  → Fabric conventional tags (`c:ores`, `c:dyes`).
