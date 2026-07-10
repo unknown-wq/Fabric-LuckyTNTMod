@@ -6,24 +6,12 @@
     "#7#"
   ],
   "key": {
-    "#": {
-      "tag": "minecraft:planks"
-    },
-    "0": {
-      "item": "minecraft:glass"
-    },
-    "3": {
-      "item": "minecraft:torch"
-    },
-    "4": {
-      "item": "minecraft:tnt"
-    },
-    "5": {
-      "item": "minecraft:crafting_table"
-    },
-    "7": {
-      "item": "minecraft:furnace"
-    }
+    "#": "#minecraft:planks",
+    "0": "minecraft:glass",
+    "3": "minecraft:torch",
+    "4": "minecraft:tnt",
+    "5": "minecraft:crafting_table",
+    "7": "minecraft:furnace"
   },
   "result": {
     "id": "luckytntmod:woodhouse_tnt",

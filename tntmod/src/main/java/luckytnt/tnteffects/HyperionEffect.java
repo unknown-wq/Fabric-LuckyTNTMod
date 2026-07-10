@@ -8,18 +8,18 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.StructurePlacementData;
-import net.minecraft.structure.StructureTemplate;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.resources.Identifier;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 
 public class HyperionEffect extends PrimedTNTEffect {
 
@@ -30,11 +30,11 @@ public class HyperionEffect extends PrimedTNTEffect {
 			
 			@SuppressWarnings("resource")
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
-				if(state.isSideSolidFullSquare(level, pos, Direction.UP) && state.getBlock().getBlastResistance() < 100 && !state.isAir() && (level.getBlockState(pos.up()).isAir() || level.getBlockState(pos.up()).getBlock().getHardness() <= 0.2f)) {
-					level.setBlockState(pos, Blocks.GRASS_BLOCK.getDefaultState());
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				if(state.isFaceSturdy(level, pos, Direction.UP) && state.getBlock().getExplosionResistance() < 100 && !state.isAir() && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.above()).getBlock().defaultDestroyTime() <= 0.2f)) {
+					level.setBlockAndUpdate(pos, Blocks.GRASS_BLOCK.defaultBlockState());
 					if(Math.random() < 0.015f) {
-						int random = level.random.nextInt(6);
+						int random = level.getRandom().nextInt(6);
 						String string = "";
 						switch (random) {
 							case 0: string = "giant_acaciatree"; break;
@@ -44,9 +44,9 @@ public class HyperionEffect extends PrimedTNTEffect {
 							case 4: string = "giant_birchtree"; break;
 							case 5: string = "giant_jungletree"; break;
 						}
-						StructureTemplate template = ((ServerWorld)entity.getLevel()).getStructureTemplateManager().getTemplateOrBlank(Identifier.of(LuckyTNTMod.MODID, string));
+						StructureTemplate template = ((ServerLevel)entity.getLevel()).getStructureManager().getOrCreate(Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, string));
 						if(template != null) {
-							template.place((ServerWorld)entity.getLevel(), pos.add(-5, 0, -5), pos.add(-5, 0, -5), new StructurePlacementData(), entity.getLevel().random, 3);
+							template.placeInWorld((ServerLevel)entity.getLevel(), pos.offset(-5, 0, -5), pos.offset(-5, 0, -5), new StructurePlaceSettings(), entity.getLevel().getRandom(), 3);
 						}
 					}
 				}
@@ -57,10 +57,10 @@ public class HyperionEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		for(int count = 0; count < 10; count++) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.5f, 0.3f, 0f), 1f), ent.x() + (Math.random() * 0.5D - 0.25D), ent.y() + 1f + Math.random() * 2f, ent.z() + (Math.random() * 0.5D - 0.25D), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.5f*255)<<16)|((int)(0.3f*255)<<8)|(int)(0f*255), 1f), ent.x() + (Math.random() * 0.5D - 0.25D), ent.y() + 1f + Math.random() * 2f, ent.z() + (Math.random() * 0.5D - 0.25D), 0, 0, 0);
 		}
 		for(int count = 0; count < 40; count++) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0f, 0.5f, 0f), 1f), ent.x() + (Math.random() * 2D - 1D), ent.y() + 3f + (Math.random() * 2D - 1D), ent.z() + (Math.random() * 2D - 1D), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0f*255)<<16)|((int)(0.5f*255)<<8)|(int)(0f*255), 1f), ent.x() + (Math.random() * 2D - 1D), ent.y() + 3f + (Math.random() * 2D - 1D), ent.z() + (Math.random() * 2D - 1D), 0, 0, 0);
 		}
 	}
 	

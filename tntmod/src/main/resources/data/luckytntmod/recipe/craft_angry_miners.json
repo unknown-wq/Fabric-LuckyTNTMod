@@ -6,15 +6,9 @@
     "#0#"
   ],
   "key": {
-    "1": {
-      "item": "luckytntmod:dynamite"
-    },
-    "0": {
-      "item": "minecraft:torch"
-    },
-    "#": {
-      "item": "minecraft:tnt"
-    }
+    "1": "luckytntmod:dynamite",
+    "0": "minecraft:torch",
+    "#": "minecraft:tnt"
   },
   "result": {
     "id": "luckytntmod:angry_miners",

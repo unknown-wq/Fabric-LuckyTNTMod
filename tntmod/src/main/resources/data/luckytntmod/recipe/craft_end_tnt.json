@@ -6,15 +6,9 @@
     "###"
   ],
   "key": {
-    "2": {
-      "item": "minecraft:chorus_flower"
-    },
-    "0": {
-      "item": "luckytntmod:tnt_x20"
-    },
-    "#": {
-      "item": "minecraft:end_stone"
-    }
+    "2": "minecraft:chorus_flower",
+    "0": "luckytntmod:tnt_x20",
+    "#": "minecraft:end_stone"
   },
   "result": {
     "id": "luckytntmod:end_tnt",

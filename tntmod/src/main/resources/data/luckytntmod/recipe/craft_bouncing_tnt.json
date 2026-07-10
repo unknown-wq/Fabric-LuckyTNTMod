@@ -5,12 +5,8 @@
     "0"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:slime_block"
-    },
-    "1": {
-      "item": "minecraft:tnt"
-    }
+    "0": "minecraft:slime_block",
+    "1": "minecraft:tnt"
   },
   "result": {
     "id": "luckytntmod:bouncing_tnt",

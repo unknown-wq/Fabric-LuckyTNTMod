@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:miningflat_tnt"
-    }
+    "luckytntmod:miningflat_tnt"
   ],
   "result": {
     "id": "luckytntmod:miningflat_dynamite",

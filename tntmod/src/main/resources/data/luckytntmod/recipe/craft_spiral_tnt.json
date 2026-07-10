@@ -6,12 +6,8 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:tnt_x5"
-    },
-    "0": {
-      "item": "luckytntmod:sphere_tnt"
-    }
+    "#": "luckytntmod:tnt_x5",
+    "0": "luckytntmod:sphere_tnt"
   },
   "result": {
     "id": "luckytntmod:spiral_tnt",

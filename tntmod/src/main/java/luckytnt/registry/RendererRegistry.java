@@ -61,8 +61,9 @@ public class RendererRegistry {
 		EntityRendererRegistry.register(EntityRegistry.SHATTERPROOF_TNT.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.GRAVEL_FIREWORK.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.LAVA_OCEAN_TNT.get(), LTNTRenderer::new);
+		/* TODO(port-26.2): DISABLED — no 26.2 renderer for LivingPrimedLTNT (LTNTRenderer only accepts PrimedLTNT); renders as default
 		EntityRendererRegistry.register(EntityRegistry.ATTACKING_TNT.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.WALKING_TNT.get(), LTNTRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.WALKING_TNT.get(), LTNTRenderer::new); */
 		EntityRendererRegistry.register(EntityRegistry.WOOL_TNT.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.SAY_GOODBYE.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.ANGRY_MINERS.get(), LTNTRenderer::new);		
@@ -144,7 +145,8 @@ public class RendererRegistry {
 		EntityRendererRegistry.register(EntityRegistry.ENTITY_FIREWORK.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.CUSTOM_TNT.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.RESET_TNT.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.VICIOUS_TNT.get(), LTNTRenderer::new);
+		// TODO(port-26.2): DISABLED — no 26.2 renderer for LivingPrimedLTNT; renders as default
+		// EntityRendererRegistry.register(EntityRegistry.VICIOUS_TNT.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.HUNGRY_TNT.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.SINKHOLE_TNT.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.FIRESTORM_TNT.get(), LTNTRenderer::new);
@@ -190,7 +192,8 @@ public class RendererRegistry {
 		EntityRendererRegistry.register(EntityRegistry.STRUCTURE_TNT.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.GRANDE_FINALE.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.FLAT_EARTH.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.EVIL_TNT.get(), LTNTRenderer::new);
+		// TODO(port-26.2): DISABLED — no 26.2 renderer for LivingPrimedLTNT; renders as default
+		// EntityRendererRegistry.register(EntityRegistry.EVIL_TNT.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.KOLA_BOREHOLE_TNT.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.HYDROGEN_BOMB.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.FLUORINE_TNT.get(), LTNTRenderer::new);
@@ -355,34 +358,34 @@ public class RendererRegistry {
 		EntityRendererRegistry.register(EntityRegistry.LUCKY_TNT_MINECART.get(), LTNTMinecartRenderer::new);
 		
 		//Projectiles
-		EntityRendererRegistry.register(EntityRegistry.METEOR.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.LITTLE_METEOR.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.SPIRAL_PROJECTILE.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.ERUPTING_PROJECTILE.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.MINI_METEOR.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.CHEMICAL_PROJECTILE.get(), LTNTRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.METEOR.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.LITTLE_METEOR.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.SPIRAL_PROJECTILE.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.ERUPTING_PROJECTILE.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.MINI_METEOR.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.CHEMICAL_PROJECTILE.get(), LDynamiteRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.CLUSTER_BOMB.get(), BombRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.SHRAPNEL.get(), LTNTRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.SHRAPNEL.get(), LDynamiteRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.BOMB.get(), BombRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.ICE_METEOR.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.LITTLE_ICE_METEOR.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.POMPEII_PROJECTILE.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.CHICXULUB_METEOR.get(), LTNTRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.ICE_METEOR.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.LITTLE_ICE_METEOR.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.POMPEII_PROJECTILE.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.CHICXULUB_METEOR.get(), LDynamiteRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.TSAR_BOMBA_BOMB.get(), BombRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.PRESENT.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.ACIDIC_PROJECTILE.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.HAILSTONE.get(), LTNTRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.PRESENT.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.ACIDIC_PROJECTILE.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.HAILSTONE.get(), LDynamiteRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.CHRISTMAS_DYNAMITE_PROJECTILE.get(), LDynamiteRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.DEATH_RAY_RAY.get(), LDynamiteRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.VACUUM_SHOT.get(), LDynamiteRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.SOLAR_ERUPTION_PROJECTILE.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.VREDEFORT_PROJECTILE.get(), LTNTRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.SOLAR_ERUPTION_PROJECTILE.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.VREDEFORT_PROJECTILE.get(), LDynamiteRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.HYDROGEN_BOMB_BOMB.get(), BombRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.DISINTEGRATING_PROJECTILE.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.MINI_ICE_METEOR.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.DEIMOS_METEOR.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.PHOBOS_METEOR.get(), LTNTRenderer::new);
-		EntityRendererRegistry.register(EntityRegistry.PRESENT_METEOR.get(), LTNTRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.DISINTEGRATING_PROJECTILE.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.MINI_ICE_METEOR.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.DEIMOS_METEOR.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.PHOBOS_METEOR.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.PRESENT_METEOR.get(), LDynamiteRenderer::new);
 		
 		//Other
 		EntityRendererRegistry.register(EntityRegistry.ANGRY_MINER.get(), AngryMinerRenderer::new);

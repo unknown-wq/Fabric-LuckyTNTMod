@@ -6,12 +6,8 @@
     " 0 "
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:cluster_bomb"
-    },
-    "2": {
-      "item": "luckytntmod:tnt_x20"
-    }
+    "0": "luckytntmod:cluster_bomb",
+    "2": "luckytntmod:tnt_x20"
   },
   "result": {
     "id": "luckytntmod:air_strike",

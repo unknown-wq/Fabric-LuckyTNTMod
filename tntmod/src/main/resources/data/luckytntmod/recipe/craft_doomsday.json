@@ -6,15 +6,9 @@
     " 0 "
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:meteor_shower"
-    },
-    "1": {
-      "item": "luckytntmod:lightning_tnt"
-    },
-    "2": {
-      "item": "luckytntmod:meteor_storm"
-    }
+    "0": "luckytntmod:meteor_shower",
+    "1": "luckytntmod:lightning_tnt",
+    "2": "luckytntmod:meteor_storm"
   },
   "result": {
     "id": "luckytntmod:doomsday",

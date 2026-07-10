@@ -1,5 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.util.IExplosiveEntity;
@@ -15,18 +17,18 @@ public class PhobosMeteorEffect extends IceMeteorEffect {
 		super.serverExplosion(ent);
 		
 		for(int count = 0; count < 300; count++) {
-			LExplosiveProjectile projectile = EntityRegistry.MINI_ICE_METEOR.get().create(ent.getLevel());
-			projectile.setPosition(ent.getPos());
+			LExplosiveProjectile projectile = EntityRegistry.MINI_ICE_METEOR.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+			projectile.setPos(ent.getPos());
 			projectile.setOwner(ent.owner());
-			projectile.setVelocity(Math.random() * 4 - Math.random() * 4, 3 + Math.random() * 2, Math.random() * 4 - Math.random() * 4);
-			ent.getLevel().spawnEntity(projectile);
+			projectile.setDeltaMovement(Math.random() * 4 - Math.random() * 4, 3 + Math.random() * 2, Math.random() * 4 - Math.random() * 4);
+			ent.getLevel().addFreshEntity(projectile);
 		}
 		for(int count = 0; count < 6; count++) {
-			LExplosiveProjectile projectile = EntityRegistry.LITTLE_ICE_METEOR.get().create(ent.getLevel());
-			projectile.setPosition(ent.getPos());
+			LExplosiveProjectile projectile = EntityRegistry.LITTLE_ICE_METEOR.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+			projectile.setPos(ent.getPos());
 			projectile.setOwner(ent.owner());
-			projectile.setVelocity(Math.random() * 2 - Math.random() * 2, 3 + Math.random() * 2, Math.random() * 2 - Math.random() * 2);
-			ent.getLevel().spawnEntity(projectile);
+			projectile.setDeltaMovement(Math.random() * 2 - Math.random() * 2, 3 + Math.random() * 2, Math.random() * 2 - Math.random() * 2);
+			ent.getLevel().addFreshEntity(projectile);
 		}
 	}
 }

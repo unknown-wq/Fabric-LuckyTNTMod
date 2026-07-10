@@ -10,18 +10,18 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IBlockExplosionCondition;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FarmlandBlock;
-import net.minecraft.item.AutomaticItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FarmlandBlock;
+import net.minecraft.world.item.context.DirectionalPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 
 public class FarmingTNTEffect extends PrimedTNTEffect{
 
@@ -36,33 +36,33 @@ public class FarmingTNTEffect extends PrimedTNTEffect{
 		ExplosionHelper.doTopBlockExplosion(entity.getLevel(), entity.getPos(), radius, new IBlockExplosionCondition() {
 			
 			@Override
-			public boolean conditionMet(World level, BlockPos pos, BlockState state, double distance) {
-				return (state.isFullCube(level, pos) || state.isSideSolidFullSquare(level, pos, Direction.UP)) && (level.getBlockState(pos.up()).isAir() || level.getBlockState(pos.up()).canReplace(new AutomaticItemPlacementContext(level, pos.up(), Direction.DOWN, ItemStack.EMPTY, Direction.UP)) || !level.getBlockState(pos.up()).isFullCube(level, pos.up()) || level.getBlockState(pos.up()).isIn(BlockTags.FLOWERS)) && (!state.isIn(BlockTags.LEAVES) && !state.isIn(BlockTags.LOGS) && state.getBlock().getBlastResistance() < 100);
+			public boolean conditionMet(Level level, BlockPos pos, BlockState state, double distance) {
+				return (state.isCollisionShapeFullBlock(level, pos) || state.isFaceSturdy(level, pos, Direction.UP)) && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.above()).canBeReplaced(new DirectionalPlaceContext(level, pos.above(), Direction.DOWN, ItemStack.EMPTY, Direction.UP)) || !level.getBlockState(pos.above()).isCollisionShapeFullBlock(level, pos.above()) || level.getBlockState(pos.above()).is(BlockTags.FLOWERS)) && (!state.is(BlockTags.LEAVES) && !state.is(BlockTags.LOGS) && state.getBlock().getExplosionResistance() < 100);
 			}
 		}, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if (Math.random() < 0.7f) {
-					BlockState crop = Blocks.POTATOES.getDefaultState();
+					BlockState crop = Blocks.POTATOES.defaultBlockState();
 					int rand = new Random().nextInt(6);
 					switch (rand) {
-					case 0: crop = Blocks.CARROTS.getDefaultState().with(Properties.AGE_7, new Random().nextInt(8)); break;
-					case 1: crop = Blocks.POTATOES.getDefaultState().with(Properties.AGE_7, new Random().nextInt(8)); break;
-					case 2: crop = Blocks.WHEAT.getDefaultState().with(Properties.AGE_7, new Random().nextInt(8)); break;
-					case 3: crop = Blocks.BEETROOTS.getDefaultState().with(Properties.AGE_3, new Random().nextInt(4)); break;
-					case 4: crop = Blocks.PUMPKIN_STEM.getDefaultState().with(Properties.AGE_7, new Random().nextInt(8)); break;
-					case 5: crop = Blocks.MELON_STEM.getDefaultState().with(Properties.AGE_7, new Random().nextInt(8)); break;
+					case 0: crop = Blocks.CARROTS.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
+					case 1: crop = Blocks.POTATOES.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
+					case 2: crop = Blocks.WHEAT.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
+					case 3: crop = Blocks.BEETROOTS.defaultBlockState().setValue(BlockStateProperties.AGE_3, new Random().nextInt(4)); break;
+					case 4: crop = Blocks.PUMPKIN_STEM.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
+					case 5: crop = Blocks.MELON_STEM.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
 					}
 					if (Math.random() < 0.8f) {
-						level.setBlockState(pos.down(), Blocks.FARMLAND.getDefaultState().with(Properties.MOISTURE, 7), 3);
-						level.setBlockState(pos, crop, 3);
+						level.setBlock(pos.below(), Blocks.FARMLAND.defaultBlockState().setValue(BlockStateProperties.MOISTURE, 7), 3);
+						level.setBlock(pos, crop, 3);
 					} else {
-						if ((level.getBlockState(pos.down().north()).isFullCube(level, pos.north()) || level.getBlockState(pos.north()).getBlock() instanceof FarmlandBlock) 
-								&& (level.getBlockState(pos.down().south()).isFullCube(level, pos.south()) || level.getBlockState(pos.south()).getBlock() instanceof FarmlandBlock) 
-								&& (level.getBlockState(pos.down().east()).isFullCube(level, pos.east()) || level.getBlockState(pos.east()).getBlock() instanceof FarmlandBlock) 
-								&& (level.getBlockState(pos.down().west()).isFullCube(level, pos.west()) || level.getBlockState(pos.west()).getBlock() instanceof FarmlandBlock)) {
-							level.setBlockState(pos.down(), Blocks.WATER.getDefaultState(), 3);
+						if ((level.getBlockState(pos.below().north()).isCollisionShapeFullBlock(level, pos.north()) || level.getBlockState(pos.north()).getBlock() instanceof FarmlandBlock) 
+								&& (level.getBlockState(pos.below().south()).isCollisionShapeFullBlock(level, pos.south()) || level.getBlockState(pos.south()).getBlock() instanceof FarmlandBlock) 
+								&& (level.getBlockState(pos.below().east()).isCollisionShapeFullBlock(level, pos.east()) || level.getBlockState(pos.east()).getBlock() instanceof FarmlandBlock) 
+								&& (level.getBlockState(pos.below().west()).isCollisionShapeFullBlock(level, pos.west()) || level.getBlockState(pos.west()).getBlock() instanceof FarmlandBlock)) {
+							level.setBlock(pos.below(), Blocks.WATER.defaultBlockState(), 3);
 						}
 					}
 				}
@@ -72,7 +72,7 @@ public class FarmingTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 0.5f, 0.1f), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(0.5f*255)<<8)|(int)(0.1f*255), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
 	}
 	
 	@Override

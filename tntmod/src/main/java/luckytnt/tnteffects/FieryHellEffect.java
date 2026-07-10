@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
@@ -8,17 +9,18 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FluidBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.mob.GhastEntity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntityTypes;
 
 public class FieryHellEffect extends PrimedTNTEffect {
 
@@ -27,11 +29,11 @@ public class FieryHellEffect extends PrimedTNTEffect {
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 50, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if((Math.round(ent.y()) - pos.getY()) >= 0 && (Math.round(ent.y()) - pos.getY()) <= 20) {
-					if((state.getBlock().getBlastResistance() < 100 || state.getBlock() instanceof FluidBlock || state.isAir()) && !Materials.isStone(state)) {
-						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-						level.setBlockState(pos, Blocks.LAVA.getDefaultState(), 3);
+					if((state.getBlock().getExplosionResistance() < 100 || state.getBlock() instanceof LiquidBlock || state.isAir()) && !Materials.isStone(state)) {
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						level.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
 					} 
 				}
 			}
@@ -40,22 +42,22 @@ public class FieryHellEffect extends PrimedTNTEffect {
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 90, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posTop = pos.add(0, 1, 0);
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				BlockPos posTop = pos.offset(0, 1, 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				
-				if(state.getBlock().getBlastResistance() < 100 && !state.isAir()) {
+				if(state.getBlock().getExplosionResistance() < 100 && !state.isAir()) {
 					if(Math.random() < 0.9f) {
-						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-						level.setBlockState(pos, Blocks.NETHERRACK.getDefaultState(), 3);
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						level.setBlock(pos, Blocks.NETHERRACK.defaultBlockState(), 3);
 						if(Math.random() < 0.1f) {
-							if(!Block.isFaceFullSquare(stateTop.getCollisionShape(level, posTop), Direction.UP)) {
-								level.setBlockState(posTop, Blocks.FIRE.getDefaultState(), 3);
+							if(!Block.isFaceFull(stateTop.getCollisionShape(level, posTop), Direction.UP)) {
+								level.setBlock(posTop, Blocks.FIRE.defaultBlockState(), 3);
 							}
 						}
 					} else if(Math.random() < 0.3f) {
-						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-						level.setBlockState(pos, Blocks.LAVA.getDefaultState(), 3);
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						level.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
 					}								
 				}
 			}
@@ -64,9 +66,9 @@ public class FieryHellEffect extends PrimedTNTEffect {
 		EntityRegistry.TNT_X20_EFFECT.build().serverExplosion(ent);
 		
 		for(int count = 0; count < 15; count++) {
-			Entity ghast = new GhastEntity(EntityType.GHAST, ent.getLevel());
-			ghast.setPosition(ent.x() + 20 * Math.random() - 20 * Math.random(), ent.y() + 50 / 2 * Math.random() + 50 / 2, ent.z() + 20 * Math.random() - 20 * Math.random());
-			ent.getLevel().spawnEntity(ghast);
+			Entity ghast = new Ghast(EntityTypes.GHAST, ent.getLevel());
+			ghast.setPos(ent.x() + 20 * Math.random() - 20 * Math.random(), ent.y() + 50 / 2 * Math.random() + 50 / 2, ent.z() + 20 * Math.random() - 20 * Math.random());
+			ent.getLevel().addFreshEntity(ghast);
 		}
 	}
 	

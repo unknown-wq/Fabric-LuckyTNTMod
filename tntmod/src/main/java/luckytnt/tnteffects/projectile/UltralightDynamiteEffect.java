@@ -4,9 +4,9 @@ import luckytnt.registry.ItemRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.nbt.CompoundTag;
 
 public class UltralightDynamiteEffect extends PrimedTNTEffect{
 
@@ -19,15 +19,15 @@ public class UltralightDynamiteEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		if(!((Entity)entity).hasNoGravity()) {
+		if(!((Entity)entity).isNoGravity()) {
 			((Entity)entity).setNoGravity(true);
-			NbtCompound tag = entity.getPersistentData();
-			tag.putDouble("vecx", ((Entity)entity).getVelocity().x);
-			tag.putDouble("vecy", ((Entity)entity).getVelocity().y);
-			tag.putDouble("vecz", ((Entity)entity).getVelocity().z);
+			CompoundTag tag = entity.getPersistentData();
+			tag.putDouble("vecx", ((Entity)entity).getDeltaMovement().x);
+			tag.putDouble("vecy", ((Entity)entity).getDeltaMovement().y);
+			tag.putDouble("vecz", ((Entity)entity).getDeltaMovement().z);
 			entity.setPersistentData(tag);
 		}
-		((Entity)entity).setVelocity(entity.getPersistentData().getDouble("vecx"), entity.getPersistentData().getDouble("vecy"), entity.getPersistentData().getDouble("vecz"));
+		((Entity)entity).setDeltaMovement(entity.getPersistentData().getDoubleOr("vecx", 0), entity.getPersistentData().getDoubleOr("vecy", 0), entity.getPersistentData().getDoubleOr("vecz", 0));
 	}
 	
 	@Override

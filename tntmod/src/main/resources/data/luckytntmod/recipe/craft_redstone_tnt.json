@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:redstone_block"
-    },
-    "0": {
-      "item": "luckytntmod:tnt_x20"
-    }
+    "#": "minecraft:redstone_block",
+    "0": "luckytntmod:tnt_x20"
   },
   "result": {
     "id": "luckytntmod:redstone_tnt",

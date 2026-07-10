@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:glass"
-    },
-    "0": {
-      "item": "luckytntmod:tnt_x500"
-    }
+    "#": "minecraft:glass",
+    "0": "luckytntmod:tnt_x500"
   },
   "result": {
     "id": "luckytntmod:xray_tnt",

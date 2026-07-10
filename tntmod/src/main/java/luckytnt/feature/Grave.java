@@ -7,64 +7,64 @@ import com.mojang.serialization.Codec;
 
 import luckytnt.config.LuckyTNTConfigValues;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ChestBlock;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.block.enums.BlockHalf;
-import net.minecraft.block.enums.ChestType;
-import net.minecraft.block.enums.SlabType;
-import net.minecraft.block.enums.StairShape;
-import net.minecraft.loot.LootTable;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.StructureWorldAccess;
-import net.minecraft.world.gen.feature.DefaultFeatureConfig;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.util.FeatureContext;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.ChestType;
+import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.block.state.properties.StairsShape;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
-public class Grave extends Feature<DefaultFeatureConfig>{
+public class Grave extends Feature<NoneFeatureConfiguration>{
 
-	public BlockState ground = Blocks.GRASS_BLOCK.getDefaultState();
+	public BlockState ground = Blocks.GRASS_BLOCK.defaultBlockState();
 	
-	public BlockState slab = Blocks.STONE_BRICK_SLAB.getDefaultState().with(SlabBlock.TYPE, SlabType.BOTTOM);
-	public BlockState mossySlab = Blocks.MOSSY_STONE_BRICK_SLAB.getDefaultState().with(SlabBlock.TYPE, SlabType.BOTTOM);
+	public BlockState slab = Blocks.STONE_BRICK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
+	public BlockState mossySlab = Blocks.MOSSY_STONE_BRICK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
 	
-	public BlockState stairSouth = Blocks.STONE_BRICK_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH).with(StairsBlock.HALF, BlockHalf.BOTTOM).with(StairsBlock.SHAPE, StairShape.STRAIGHT);
-	public BlockState mossyStairSouth = Blocks.MOSSY_STONE_BRICK_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH).with(StairsBlock.HALF, BlockHalf.BOTTOM).with(StairsBlock.SHAPE, StairShape.STRAIGHT);
-	public BlockState stairNorth = Blocks.STONE_BRICK_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.NORTH).with(StairsBlock.HALF, BlockHalf.BOTTOM).with(StairsBlock.SHAPE, StairShape.STRAIGHT);
-	public BlockState mossyStairNorth = Blocks.MOSSY_STONE_BRICK_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.NORTH).with(StairsBlock.HALF, BlockHalf.BOTTOM).with(StairsBlock.SHAPE, StairShape.STRAIGHT);
+	public BlockState stairSouth = Blocks.STONE_BRICK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.SOUTH).setValue(StairBlock.HALF, Half.BOTTOM).setValue(StairBlock.SHAPE, StairsShape.STRAIGHT);
+	public BlockState mossyStairSouth = Blocks.MOSSY_STONE_BRICK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.SOUTH).setValue(StairBlock.HALF, Half.BOTTOM).setValue(StairBlock.SHAPE, StairsShape.STRAIGHT);
+	public BlockState stairNorth = Blocks.STONE_BRICK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH).setValue(StairBlock.HALF, Half.BOTTOM).setValue(StairBlock.SHAPE, StairsShape.STRAIGHT);
+	public BlockState mossyStairNorth = Blocks.MOSSY_STONE_BRICK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH).setValue(StairBlock.HALF, Half.BOTTOM).setValue(StairBlock.SHAPE, StairsShape.STRAIGHT);
 	
-	public BlockState stairSouthTop = Blocks.STONE_BRICK_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH).with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.SHAPE, StairShape.STRAIGHT);
-	public BlockState mossyStairSouthTop = Blocks.MOSSY_STONE_BRICK_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH).with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.SHAPE, StairShape.STRAIGHT);
-	public BlockState stairNorthTop = Blocks.STONE_BRICK_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.NORTH).with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.SHAPE, StairShape.STRAIGHT);
-	public BlockState mossyStairNorthTop = Blocks.MOSSY_STONE_BRICK_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.NORTH).with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.SHAPE, StairShape.STRAIGHT);
+	public BlockState stairSouthTop = Blocks.STONE_BRICK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.SOUTH).setValue(StairBlock.HALF, Half.TOP).setValue(StairBlock.SHAPE, StairsShape.STRAIGHT);
+	public BlockState mossyStairSouthTop = Blocks.MOSSY_STONE_BRICK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.SOUTH).setValue(StairBlock.HALF, Half.TOP).setValue(StairBlock.SHAPE, StairsShape.STRAIGHT);
+	public BlockState stairNorthTop = Blocks.STONE_BRICK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH).setValue(StairBlock.HALF, Half.TOP).setValue(StairBlock.SHAPE, StairsShape.STRAIGHT);
+	public BlockState mossyStairNorthTop = Blocks.MOSSY_STONE_BRICK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH).setValue(StairBlock.HALF, Half.TOP).setValue(StairBlock.SHAPE, StairsShape.STRAIGHT);
 
-	public BlockState chestNorthLeft = Blocks.CHEST.getDefaultState().with(ChestBlock.FACING, Direction.NORTH).with(ChestBlock.CHEST_TYPE, ChestType.LEFT);
-	public BlockState chestNorthRight = Blocks.CHEST.getDefaultState().with(ChestBlock.FACING, Direction.NORTH).with(ChestBlock.CHEST_TYPE, ChestType.RIGHT);
-	public BlockState chestSouthLeft = Blocks.CHEST.getDefaultState().with(ChestBlock.FACING, Direction.SOUTH).with(ChestBlock.CHEST_TYPE, ChestType.LEFT);
-	public BlockState chestSouthRight = Blocks.CHEST.getDefaultState().with(ChestBlock.FACING, Direction.SOUTH).with(ChestBlock.CHEST_TYPE, ChestType.RIGHT);
+	public BlockState chestNorthLeft = Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.NORTH).setValue(ChestBlock.TYPE, ChestType.LEFT);
+	public BlockState chestNorthRight = Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.NORTH).setValue(ChestBlock.TYPE, ChestType.RIGHT);
+	public BlockState chestSouthLeft = Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.SOUTH).setValue(ChestBlock.TYPE, ChestType.LEFT);
+	public BlockState chestSouthRight = Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.SOUTH).setValue(ChestBlock.TYPE, ChestType.RIGHT);
 	
-	public static final Identifier GRAVE_LOOT_1_LOCATION = Identifier.of("luckytntmod:chests/grave_loot_1");
-	public static final Identifier GRAVE_LOOT_2_LOCATION = Identifier.of("luckytntmod:chests/grave_loot_2");
-	public static final Identifier GRAVE_LOOT_RARE_LOCATION = Identifier.of("luckytntmod:chests/grave_loot_rare");
+	public static final Identifier GRAVE_LOOT_1_LOCATION = Identifier.parse("luckytntmod:chests/grave_loot_1");
+	public static final Identifier GRAVE_LOOT_2_LOCATION = Identifier.parse("luckytntmod:chests/grave_loot_2");
+	public static final Identifier GRAVE_LOOT_RARE_LOCATION = Identifier.parse("luckytntmod:chests/grave_loot_rare");
+
+	public static final ResourceKey<LootTable> GRAVE_LOOT_1 = ResourceKey.create(Registries.LOOT_TABLE, GRAVE_LOOT_1_LOCATION);
+	public static final ResourceKey<LootTable> GRAVE_LOOT_2 = ResourceKey.create(Registries.LOOT_TABLE, GRAVE_LOOT_2_LOCATION);
+	public static final ResourceKey<LootTable> GRAVE_LOOT_RARE = ResourceKey.create(Registries.LOOT_TABLE, GRAVE_LOOT_RARE_LOCATION);
 	
-	public static final RegistryKey<LootTable> GRAVE_LOOT_1 = RegistryKey.of(RegistryKeys.LOOT_TABLE, GRAVE_LOOT_1_LOCATION);
-	public static final RegistryKey<LootTable> GRAVE_LOOT_2 = RegistryKey.of(RegistryKeys.LOOT_TABLE, GRAVE_LOOT_2_LOCATION);
-	public static final RegistryKey<LootTable> GRAVE_LOOT_RARE = RegistryKey.of(RegistryKeys.LOOT_TABLE, GRAVE_LOOT_RARE_LOCATION);
-	
-	public Grave(Codec<DefaultFeatureConfig> codec) {
+	public Grave(Codec<NoneFeatureConfiguration> codec) {
 		super(codec);
 	}
 
 	@Override
-	public boolean generate(FeatureContext<DefaultFeatureConfig> ctx) {
+	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
 		if(!LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE.get().booleanValue()) {
 	        int m = LocalDate.now().get(ChronoField.MONTH_OF_YEAR);
 	        if(m != 10) {
@@ -72,43 +72,43 @@ public class Grave extends Feature<DefaultFeatureConfig>{
 	        }
 		}
 		
-		StructureWorldAccess level = ctx.getWorld();
-		BlockPos pos = ctx.getOrigin();
-		Random random = ctx.getWorld().getRandom();
+		WorldGenLevel level = ctx.level();
+		BlockPos pos = ctx.origin();
+		RandomSource random = ctx.level().getRandom();
 		int rand = random.nextInt(3);
 		
-		if(level.getBiome(pos).isIn(ConventionalBiomeTags.IS_MUSHROOM)) {
-			ground = Blocks.MYCELIUM.getDefaultState();
+		if(level.getBiome(pos).is(ConventionalBiomeTags.IS_MUSHROOM)) {
+			ground = Blocks.MYCELIUM.defaultBlockState();
 		}
 		
 		for(int offX = -2; offX <= 2; offX++) {
 			for(int offY = -2; offY <= -1; offY++) {
 				for(int offZ = -1; offZ <= 2; offZ++) {
-					if(level.getBlockState(pos.add(offX, offY, offZ)).isAir()) {
+					if(level.getBlockState(pos.offset(offX, offY, offZ)).isAir()) {
 						if(offY == -2) {
-							level.setBlockState(pos.add(offX, offY, offZ), Blocks.DIRT.getDefaultState(), 3);
+							level.setBlock(pos.offset(offX, offY, offZ), Blocks.DIRT.defaultBlockState(), 3);
 						} else {
-							level.setBlockState(pos.add(offX, offY, offZ), ground, 3);
+							level.setBlock(pos.offset(offX, offY, offZ), ground, 3);
 						}
 					}
 				}
 			}
 		}
 		
-		level.setBlockState(pos, Math.random() > 0.4D ? slab : mossySlab, 3);
-		level.setBlockState(pos.add(1, 0, 0), Math.random() > 0.4D ? slab : mossySlab, 3);
-		level.setBlockState(pos.add(0, 0, 1), Math.random() > 0.4D ? slab : mossySlab, 3);
-		level.setBlockState(pos.add(1, 0, 1), Math.random() > 0.4D ? slab : mossySlab, 3);
+		level.setBlock(pos, Math.random() > 0.4D ? slab : mossySlab, 3);
+		level.setBlock(pos.offset(1, 0, 0), Math.random() > 0.4D ? slab : mossySlab, 3);
+		level.setBlock(pos.offset(0, 0, 1), Math.random() > 0.4D ? slab : mossySlab, 3);
+		level.setBlock(pos.offset(1, 0, 1), Math.random() > 0.4D ? slab : mossySlab, 3);
 		
-		level.setBlockState(pos.add(0, -1, 0), chestNorthLeft, 3);
-		level.setBlockState(pos.add(1, -1, 0), chestNorthRight, 3);
-		level.setBlockState(pos.add(0, -1, 1), chestSouthRight, 3);
-		level.setBlockState(pos.add(1, -1, 1), chestSouthLeft, 3);
+		level.setBlock(pos.offset(0, -1, 0), chestNorthLeft, 3);
+		level.setBlock(pos.offset(1, -1, 0), chestNorthRight, 3);
+		level.setBlock(pos.offset(0, -1, 1), chestSouthRight, 3);
+		level.setBlock(pos.offset(1, -1, 1), chestSouthLeft, 3);
 		
-		if(level.getBlockEntity(pos.add(0, -1, 0)) instanceof ChestBlockEntity && level.getBlockEntity(pos.add(1, -1, 0)) instanceof ChestBlockEntity) {
+		if(level.getBlockEntity(pos.offset(0, -1, 0)) instanceof ChestBlockEntity && level.getBlockEntity(pos.offset(1, -1, 0)) instanceof ChestBlockEntity) {
 			double d = Math.random();
-			ChestBlockEntity tile1 = (ChestBlockEntity)level.getBlockEntity(pos.add(0, -1, 0));
-			ChestBlockEntity tile2 = (ChestBlockEntity)level.getBlockEntity(pos.add(1, -1, 0));
+			ChestBlockEntity tile1 = (ChestBlockEntity)level.getBlockEntity(pos.offset(0, -1, 0));
+			ChestBlockEntity tile2 = (ChestBlockEntity)level.getBlockEntity(pos.offset(1, -1, 0));
 			if(d < 0.45D) {
 				tile1.setLootTable(GRAVE_LOOT_1, random.nextLong());
 				tile2.setLootTable(GRAVE_LOOT_1, random.nextLong());
@@ -121,10 +121,10 @@ public class Grave extends Feature<DefaultFeatureConfig>{
 			}
 		}
 		
-		if(level.getBlockEntity(pos.add(0, -1, 1)) instanceof ChestBlockEntity && level.getBlockEntity(pos.add(1, -1, 1)) instanceof ChestBlockEntity) {
+		if(level.getBlockEntity(pos.offset(0, -1, 1)) instanceof ChestBlockEntity && level.getBlockEntity(pos.offset(1, -1, 1)) instanceof ChestBlockEntity) {
 			double d = Math.random();
-			ChestBlockEntity tile1 = (ChestBlockEntity)level.getBlockEntity(pos.add(0, -1, 1));
-			ChestBlockEntity tile2 = (ChestBlockEntity)level.getBlockEntity(pos.add(1, -1, 1));
+			ChestBlockEntity tile1 = (ChestBlockEntity)level.getBlockEntity(pos.offset(0, -1, 1));
+			ChestBlockEntity tile2 = (ChestBlockEntity)level.getBlockEntity(pos.offset(1, -1, 1));
 			if(d < 0.45D) {
 				tile1.setLootTable(GRAVE_LOOT_1, random.nextLong());
 				tile2.setLootTable(GRAVE_LOOT_1, random.nextLong());
@@ -138,30 +138,30 @@ public class Grave extends Feature<DefaultFeatureConfig>{
 		}
 		
 		switch(rand) {
-			case 0: level.setBlockState(pos.add(-1, 0, 0), Blocks.STONE_BRICKS.getDefaultState(), 3);
-					level.setBlockState(pos.add(-1, 0, 1), Blocks.STONE_BRICKS.getDefaultState(), 3);
-					level.setBlockState(pos.add(-1, 1, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
-					level.setBlockState(pos.add(-1, 1, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
+			case 0: level.setBlock(pos.offset(-1, 0, 0), Blocks.STONE_BRICKS.defaultBlockState(), 3);
+					level.setBlock(pos.offset(-1, 0, 1), Blocks.STONE_BRICKS.defaultBlockState(), 3);
+					level.setBlock(pos.offset(-1, 1, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
+					level.setBlock(pos.offset(-1, 1, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
 					break;
 					
-			case 1: level.setBlockState(pos.add(-1, 0, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
-					level.setBlockState(pos.add(-1, 0, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
-					level.setBlockState(pos.add(-1, 1, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
-					level.setBlockState(pos.add(-1, 1, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
+			case 1: level.setBlock(pos.offset(-1, 0, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
+					level.setBlock(pos.offset(-1, 0, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
+					level.setBlock(pos.offset(-1, 1, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
+					level.setBlock(pos.offset(-1, 1, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
 					break;
 					
-			case 2: level.setBlockState(pos.add(-1, 0, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
-					level.setBlockState(pos.add(-1, 0, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
-					level.setBlockState(pos.add(-1, 1, 0), Math.random() > 0.4D ? stairSouthTop : mossyStairSouthTop, 3);
-					level.setBlockState(pos.add(-1, 1, 1), Math.random() > 0.4D ? stairNorthTop : mossyStairNorthTop, 3);
-					level.setBlockState(pos.add(-1, 2, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
-					level.setBlockState(pos.add(-1, 2, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
+			case 2: level.setBlock(pos.offset(-1, 0, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
+					level.setBlock(pos.offset(-1, 0, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
+					level.setBlock(pos.offset(-1, 1, 0), Math.random() > 0.4D ? stairSouthTop : mossyStairSouthTop, 3);
+					level.setBlock(pos.offset(-1, 1, 1), Math.random() > 0.4D ? stairNorthTop : mossyStairNorthTop, 3);
+					level.setBlock(pos.offset(-1, 2, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
+					level.setBlock(pos.offset(-1, 2, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
 					break;
 				
-			default:level.setBlockState(pos.add(-1, 0, 0), Blocks.STONE_BRICKS.getDefaultState(), 3);
-					level.setBlockState(pos.add(-1, 0, 1), Blocks.STONE_BRICKS.getDefaultState(), 3);
-					level.setBlockState(pos.add(-1, 1, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
-					level.setBlockState(pos.add(-1, 1, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
+			default:level.setBlock(pos.offset(-1, 0, 0), Blocks.STONE_BRICKS.defaultBlockState(), 3);
+					level.setBlock(pos.offset(-1, 0, 1), Blocks.STONE_BRICKS.defaultBlockState(), 3);
+					level.setBlock(pos.offset(-1, 1, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
+					level.setBlock(pos.offset(-1, 1, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
 					break;
 		}
 		

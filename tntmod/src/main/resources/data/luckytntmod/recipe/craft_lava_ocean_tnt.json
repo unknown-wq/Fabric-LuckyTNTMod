@@ -7,12 +7,8 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:lava_bucket"
-    },
-    "0": {
-      "item": "luckytntmod:ocean_tnt"
-    }
+    "#": "minecraft:lava_bucket",
+    "0": "luckytntmod:ocean_tnt"
   },
   "result": {
     "id": "luckytntmod:lava_ocean_tnt",

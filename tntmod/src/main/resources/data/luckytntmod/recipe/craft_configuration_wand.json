@@ -6,12 +6,8 @@
     "#  "
   ],
   "key": {
-    "0": {
-      "item": "minecraft:diamond"
-    },
-    "#": {
-      "item": "minecraft:stick"
-    }
+    "0": "minecraft:diamond",
+    "#": "minecraft:stick"
   },
   "result": {
     "id": "luckytntmod:configuration_wand",

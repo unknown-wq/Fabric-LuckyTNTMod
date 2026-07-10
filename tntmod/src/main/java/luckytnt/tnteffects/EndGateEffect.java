@@ -8,21 +8,22 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FluidBlock;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntityTypes;
 
 public class EndGateEffect extends PrimedTNTEffect{
 
@@ -31,20 +32,20 @@ public class EndGateEffect extends PrimedTNTEffect{
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), 30, new IForEachBlockExplosionEffect() {
 		
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posTop = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				BlockPos posTop = pos.offset(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
 				BlockState stateTop = level.getBlockState(posTop);
 				
-				if(state.getBlock().getBlastResistance() < 200 && stateTop.isAir() && !state.isAir() && Math.abs(entity.y() - pos.getY()) <= 20) {
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+				if(state.getBlock().getExplosionResistance() < 200 && stateTop.isAir() && !state.isAir() && Math.abs(entity.y() - pos.getY()) <= 20) {
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					if(Materials.isWood(state)) {
-						level.setBlockState(posTop, Blocks.OBSIDIAN.getDefaultState(), 3);
-					} else if(state.isIn(BlockTags.LEAVES)) {
-						level.setBlockState(posTop, Blocks.END_STONE.getDefaultState(), 3);
-					} else if(state.getBlock() instanceof FluidBlock) {
-						level.setBlockState(posTop, Blocks.AIR.getDefaultState(), 3);
+						level.setBlock(posTop, Blocks.OBSIDIAN.defaultBlockState(), 3);
+					} else if(state.is(BlockTags.LEAVES)) {
+						level.setBlock(posTop, Blocks.END_STONE.defaultBlockState(), 3);
+					} else if(state.getBlock() instanceof LiquidBlock) {
+						level.setBlock(posTop, Blocks.AIR.defaultBlockState(), 3);
 					} else {
-						level.setBlockState(posTop, Blocks.END_STONE.getDefaultState(), 3);
+						level.setBlock(posTop, Blocks.END_STONE.defaultBlockState(), 3);
 					}
 				}
 			}
@@ -53,14 +54,14 @@ public class EndGateEffect extends PrimedTNTEffect{
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), 30, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posTop = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				BlockPos posTop = pos.offset(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get(), 0);
 				BlockState stateTop = level.getBlockState(posTop);
-				BlockPos posAbove = pos.add(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get() + 1, 0);
+				BlockPos posAbove = pos.offset(0, LuckyTNTConfigValues.ISLAND_HEIGHT.get() + 1, 0);
 				BlockState stateAbove = level.getBlockState(posAbove);
 				
 				if(stateAbove.isAir() && Math.random() <= 0.05D && stateTop.getBlock() == Blocks.END_STONE) {
-					level.setBlockState(posAbove, Blocks.CHORUS_FLOWER.getDefaultState(), 3);
+					level.setBlock(posAbove, Blocks.CHORUS_FLOWER.defaultBlockState(), 3);
 				}
 			}
 		});
@@ -68,24 +69,24 @@ public class EndGateEffect extends PrimedTNTEffect{
 		for(int i = 0; i < 80; i++) {
 			int offX = (int)Math.round(Math.random() * 30D - 15D);
 			int offZ = (int)Math.round(Math.random() * 30D - 15D);
-			EndermanEntity man = new EndermanEntity(EntityType.ENDERMAN, entity.getLevel());
+			EnderMan man = new EnderMan(EntityTypes.ENDERMAN, entity.getLevel());
 			for(int offY = 320; offY >= -64; offY--) {
-				BlockPos pos = toBlockPos(new Vec3d(entity.x() + offX, offY, entity.z() + offZ));
-				BlockPos posDown = toBlockPos(new Vec3d(entity.x() + offX, offY - 1, entity.z() + offZ));
+				BlockPos pos = toBlockPos(new Vec3(entity.x() + offX, offY, entity.z() + offZ));
+				BlockPos posDown = toBlockPos(new Vec3(entity.x() + offX, offY - 1, entity.z() + offZ));
 				BlockState state = entity.getLevel().getBlockState(pos);
 				BlockState stateDown = entity.getLevel().getBlockState(posDown);
 				
-				if(Block.isFaceFullSquare(stateDown.getCollisionShape(entity.getLevel(), posDown), Direction.UP) && !Block.isFaceFullSquare(state.getCollisionShape(entity.getLevel(), pos), Direction.UP)) {
-					man.setPosition(entity.x() + offX, offY, entity.z() + offZ);
+				if(Block.isFaceFull(stateDown.getCollisionShape(entity.getLevel(), posDown), Direction.UP) && !Block.isFaceFull(state.getCollisionShape(entity.getLevel(), pos), Direction.UP)) {
+					man.setPos(entity.x() + offX, offY, entity.z() + offZ);
 					break;
 				}
 			}
-			entity.getLevel().spawnEntity(man);
+			entity.getLevel().addFreshEntity(man);
 		}
 		
-		entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.BLOCK_END_PORTAL_SPAWN, SoundCategory.BLOCKS, 0.5f, 1);
-		if(entity.getLevel() instanceof ServerWorld sLevel) {
-			sLevel.setTimeOfDay(18000);
+		entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.END_PORTAL_SPAWN, SoundSource.BLOCKS, 0.5f, 1);
+		if(entity.getLevel() instanceof ServerLevel sLevel) {
+			sLevel.dimensionTypeRegistration().value().defaultClock().ifPresent(clock -> sLevel.getServer().clockManager().setTotalTicks(clock, 18000L));
 		}
 	}
 	

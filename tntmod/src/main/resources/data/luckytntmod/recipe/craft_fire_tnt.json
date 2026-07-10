@@ -6,15 +6,9 @@
     " 0 "
   ],
   "key": {
-    "0": {
-      "item": "minecraft:flint_and_steel"
-    },
-    "1": {
-      "item": "minecraft:lava_bucket"
-    },
-    "2": {
-      "item": "luckytntmod:tnt_x5"
-    }
+    "0": "minecraft:flint_and_steel",
+    "1": "minecraft:lava_bucket",
+    "2": "luckytntmod:tnt_x5"
   },
   "result": {
     "id": "luckytntmod:fire_tnt",

@@ -3,10 +3,10 @@ package luckytnt.registry;
 import java.util.function.Supplier;
 
 import luckytnt.LuckyTNTMod;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.resources.Identifier;
 
 public class SoundRegistry {
 	
@@ -16,7 +16,7 @@ public class SoundRegistry {
 	public static Supplier<SoundEvent> VACUUM_CLEANER = register("vacuum_cleaner");
 	
 	public static Supplier<SoundEvent> register(String name){
-		SoundEvent event = Registry.register(Registries.SOUND_EVENT, Identifier.of(LuckyTNTMod.MODID, name), SoundEvent.of(Identifier.of(LuckyTNTMod.MODID, name)));
+		SoundEvent event = Registry.register(BuiltInRegistries.SOUND_EVENT, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, name), SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, name)));
 		return () -> event;
 	}
 	

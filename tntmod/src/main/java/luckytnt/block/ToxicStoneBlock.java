@@ -2,53 +2,54 @@ package luckytnt.block;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSources;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import net.minecraft.world.tick.TickPriority;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.ticks.TickPriority;
 
 public class ToxicStoneBlock extends Block {
 	private int timer = 100;
 	
-	public ToxicStoneBlock(Settings properties) {
+	public ToxicStoneBlock(BlockBehaviour.Properties properties) {
 		super(properties);
 	}
 	
 	@Override
-	public void onBlockAdded(BlockState state, World level, BlockPos pos, BlockState oldstate, boolean moving) {
-		super.onBlockAdded(state, level, pos, oldstate, moving);
-		level.scheduleBlockTick(pos, this, 1, TickPriority.EXTREMELY_HIGH);
-		if(level instanceof ServerWorld slevel) {
-			scheduledTick(state, slevel, pos, slevel.getRandom());
+	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldstate, boolean moving) {
+		super.onPlace(state, level, pos, oldstate, moving);
+		level.scheduleTick(pos, this, 1, TickPriority.EXTREMELY_HIGH);
+		if(level instanceof ServerLevel slevel) {
+			tick(state, slevel, pos, slevel.getRandom());
 		}
 	}
 	
 	@Override
-	public void scheduledTick(BlockState state, ServerWorld level, BlockPos pos, Random rand) {
-		super.scheduledTick(state, level, pos, rand);
-		level.scheduleBlockTick(pos, this, 1, TickPriority.EXTREMELY_HIGH);
+	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rand) {
+		super.tick(state, level, pos, rand);
+		level.scheduleTick(pos, this, 1, TickPriority.EXTREMELY_HIGH);
 		if(timer >= 0) {
 			timer--;
 		}
 		if(timer == 0) {
-			BlockPos min = pos.add(-5, -5, -5);
-			BlockPos max = pos.add(5, 5, 5);
-			List<LivingEntity> list = level.getNonSpectatingEntities(LivingEntity.class, new Box(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
+			BlockPos min = pos.offset(-5, -5, -5);
+			BlockPos max = pos.offset(5, 5, 5);
+			List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
 			for(LivingEntity living : list) {
-				DamageSources sources = level.getDamageSources();
-				if(living instanceof PlayerEntity player) {
+				DamageSources sources = level.damageSources();
+				if(living instanceof Player player) {
 					if(!player.isCreative() && !player.isSpectator()) {
-						player.damage(sources.magic(), 8f);
+						player.hurtServer(level, sources.magic(), 8f);
 					}
 				} else {
-					living.damage(sources.magic(), 8f);
+					living.hurtServer(level, sources.magic(), 8f);
 				}
 			}
 			timer = 100;

@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:arrow"
-    },
-    "0": {
-      "item": "minecraft:tnt"
-    }
+    "#": "minecraft:arrow",
+    "0": "minecraft:tnt"
   },
   "result": {
     "id": "luckytntmod:arrow_tnt",

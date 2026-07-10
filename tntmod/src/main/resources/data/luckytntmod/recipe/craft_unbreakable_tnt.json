@@ -6,15 +6,9 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:bedrock"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "luckytntmod:shatterproof_tnt"
-    }
+    "#": "minecraft:bedrock",
+    "0": "luckytntmod:uranium_ingot",
+    "1": "luckytntmod:shatterproof_tnt"
   },
   "result": {
     "id": "luckytntmod:unbreakable_tnt",

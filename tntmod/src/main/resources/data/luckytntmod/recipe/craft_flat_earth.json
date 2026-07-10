@@ -6,15 +6,9 @@
     "222"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:flat_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:antimatter"
-    },
-    "2": {
-      "item": "luckytntmod:mountaintop_removal"
-    }
+    "0": "luckytntmod:flat_tnt",
+    "1": "luckytntmod:antimatter",
+    "2": "luckytntmod:mountaintop_removal"
   },
   "result": {
     "id": "luckytntmod:flat_earth",

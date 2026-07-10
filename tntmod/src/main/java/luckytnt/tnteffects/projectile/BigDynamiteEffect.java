@@ -4,8 +4,8 @@ import luckytnt.registry.ItemRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
 
 public class BigDynamiteEffect extends PrimedTNTEffect{
 

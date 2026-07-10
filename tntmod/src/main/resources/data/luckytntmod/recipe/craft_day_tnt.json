@@ -1,15 +1,9 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "minecraft:tnt"
-    },
-    {
-      "item": "minecraft:clock"
-    },
-    {
-      "item": "minecraft:white_wool"
-    }
+    "minecraft:tnt",
+    "minecraft:clock",
+    "minecraft:white_wool"
   ],
   "result": {
     "id": "luckytntmod:day_tnt",

@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:string"
-    },
-    "#": {
-      "item": "minecraft:tnt"
-    }
+    "0": "minecraft:string",
+    "#": "minecraft:tnt"
   },
   "result": {
     "id": "luckytntmod:ring_tnt",

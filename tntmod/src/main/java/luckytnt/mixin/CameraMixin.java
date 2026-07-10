@@ -5,23 +5,26 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import luckytnt.util.mixin.CameraExtension;
-import net.minecraft.client.render.Camera;
+import net.minecraft.client.Camera;
 
 @Mixin(Camera.class)
 public abstract class CameraMixin implements CameraExtension {
 
 	@Shadow
-	private float pitch;
+	private float xRot;
 	@Shadow
-    private float yaw;
-	
+	private float yRot;
+
+	@Shadow
+	protected abstract void setRotation(float yRot, float xRot);
+
 	@Unique
 	public void setYawRaw(float yaw) {
-		this.yaw = yaw;
+		this.setRotation(yaw, this.xRot);
 	}
-	
+
 	@Unique
 	public void setPitchRaw(float pitch) {
-		this.pitch = pitch;
+		this.setRotation(this.yRot, pitch);
 	}
 }

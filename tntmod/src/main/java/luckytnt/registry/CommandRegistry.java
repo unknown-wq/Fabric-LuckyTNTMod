@@ -7,62 +7,62 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import luckytnt.commands.LTMDisastersCommand;
 import luckytnt.commands.RandomTNTCommand;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.Commands;
+
+import net.minecraft.commands.CommandSourceStack;
 
 public class CommandRegistry {
 	
 	private static final CommandRegistrationCallback LTMDISASTER = new CommandRegistrationCallback() {
 		
 		@Override
-		public void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, RegistrationEnvironment environment) {
-			dispatcher.register(CommandManager.literal("ltmdisaster").requires(s -> s.hasPermissionLevel(2)).executes(LTMDisastersCommand::executeGetActiveDisasters)
-					.then(CommandManager.literal("clear").executes(LTMDisastersCommand::executeClear))
-					.then(CommandManager.literal("doomsday").executes(LTMDisastersCommand::executeDoomsday))
-					.then(CommandManager.literal("toxic_clouds").executes(LTMDisastersCommand::executeToxicClouds))
-					.then(CommandManager.literal("ice_age").executes(LTMDisastersCommand::executeIceAge))
-					.then(CommandManager.literal("heat_death").executes(LTMDisastersCommand::executeHeatDeath))
-					.then(CommandManager.literal("tnt_rain").executes(LTMDisastersCommand::executeTNTRain))
+		public void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
+			dispatcher.register(Commands.literal("ltmdisaster").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS)).executes(LTMDisastersCommand::executeGetActiveDisasters)
+					.then(Commands.literal("clear").executes(LTMDisastersCommand::executeClear))
+					.then(Commands.literal("doomsday").executes(LTMDisastersCommand::executeDoomsday))
+					.then(Commands.literal("toxic_clouds").executes(LTMDisastersCommand::executeToxicClouds))
+					.then(Commands.literal("ice_age").executes(LTMDisastersCommand::executeIceAge))
+					.then(Commands.literal("heat_death").executes(LTMDisastersCommand::executeHeatDeath))
+					.then(Commands.literal("tnt_rain").executes(LTMDisastersCommand::executeTNTRain))
 			);
 		}
 	};
 	private static final CommandRegistrationCallback RANDOMTNT = new CommandRegistrationCallback() {
 		
 		@Override
-		public void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, RegistrationEnvironment environment) {
-			dispatcher.register(CommandManager.literal("randomtnt").requires(s -> s.hasPermissionLevel(2))
+		public void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
+			dispatcher.register(Commands.literal("randomtnt").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
 					
-					.then(CommandManager.literal("normal_tnt")
-					.then(CommandManager.argument("amount", IntegerArgumentType.integer(1)).executes((p) -> {
+					.then(Commands.literal("normal_tnt")
+					.then(Commands.argument("amount", IntegerArgumentType.integer(1)).executes((p) -> {
 						return RandomTNTCommand.executeGiveItems(p.getSource(), IntegerArgumentType.getInteger(p, "amount"), true, "n");
 				    })
-					.then(CommandManager.argument("allowDuplicate", BoolArgumentType.bool()).executes((p) -> {
+					.then(Commands.argument("allowDuplicate", BoolArgumentType.bool()).executes((p) -> {
 						return RandomTNTCommand.executeGiveItems(p.getSource(), IntegerArgumentType.getInteger(p, "amount"), BoolArgumentType.getBool(p, "allowDuplicate"), "n");
 					}))))
 					
-					.then(CommandManager.literal("dynamite")
-					.then(CommandManager.argument("amount", IntegerArgumentType.integer(1)).executes((p) -> {
+					.then(Commands.literal("dynamite")
+					.then(Commands.argument("amount", IntegerArgumentType.integer(1)).executes((p) -> {
 						return RandomTNTCommand.executeGiveItems(p.getSource(), IntegerArgumentType.getInteger(p, "amount"), true, "dy");
 					})
-					.then(CommandManager.argument("allowDuplicate", BoolArgumentType.bool()).executes((p) -> {
+					.then(Commands.argument("allowDuplicate", BoolArgumentType.bool()).executes((p) -> {
 						return RandomTNTCommand.executeGiveItems(p.getSource(), IntegerArgumentType.getInteger(p, "amount"), BoolArgumentType.getBool(p, "allowDuplicate"), "dy");
 					}))))
 					
-					.then(CommandManager.literal("god_tnt")
-					.then(CommandManager.argument("amount", IntegerArgumentType.integer(1)).executes((p) -> {
+					.then(Commands.literal("god_tnt")
+					.then(Commands.argument("amount", IntegerArgumentType.integer(1)).executes((p) -> {
 						return RandomTNTCommand.executeGiveItems(p.getSource(), IntegerArgumentType.getInteger(p, "amount"), true, "g");
 					})
-					.then(CommandManager.argument("allowDuplicate", BoolArgumentType.bool()).executes((p) -> {
+					.then(Commands.argument("allowDuplicate", BoolArgumentType.bool()).executes((p) -> {
 						return RandomTNTCommand.executeGiveItems(p.getSource(), IntegerArgumentType.getInteger(p, "amount"), BoolArgumentType.getBool(p, "allowDuplicate"), "g");
 					}))))
 					
-					.then(CommandManager.literal("doomsday_tnt")
-					.then(CommandManager.argument("amount", IntegerArgumentType.integer(1)).executes((p) -> {
+					.then(Commands.literal("doomsday_tnt")
+					.then(Commands.argument("amount", IntegerArgumentType.integer(1)).executes((p) -> {
 						return RandomTNTCommand.executeGiveItems(p.getSource(), IntegerArgumentType.getInteger(p, "amount"), true, "d");
 					})
-					.then(CommandManager.argument("allowDuplicate", BoolArgumentType.bool()).executes((p) -> {
+					.then(Commands.argument("allowDuplicate", BoolArgumentType.bool()).executes((p) -> {
 						return RandomTNTCommand.executeGiveItems(p.getSource(), IntegerArgumentType.getInteger(p, "amount"), BoolArgumentType.getBool(p, "allowDuplicate"), "d");
 					}))))
 			);

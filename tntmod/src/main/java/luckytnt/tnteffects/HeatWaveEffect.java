@@ -6,18 +6,18 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 
 public class HeatWaveEffect extends PrimedTNTEffect {
 
@@ -26,12 +26,12 @@ public class HeatWaveEffect extends PrimedTNTEffect {
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 150, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getBlastResistance() <= 200) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				if(state.getBlock().getExplosionResistance() <= 200) {
 					if(state.isAir() && BlockSurviveChecks.canFirePlaceAt(state, level, pos)) {
-						ItemPlacementContext ctx = new ItemPlacementContext(level, null, Hand.MAIN_HAND, new ItemStack(Items.FLINT_AND_STEEL), new BlockHitResult(ent.getPos(), Direction.DOWN, pos, true));
-						BlockState stateForPlacement = Blocks.FIRE.getPlacementState(ctx);
-						level.setBlockState(pos, stateForPlacement, 3);
+						BlockPlaceContext ctx = new BlockPlaceContext(level, null, InteractionHand.MAIN_HAND, new ItemStack(Items.FLINT_AND_STEEL), new BlockHitResult(ent.getPos(), Direction.DOWN, pos, true));
+						BlockState stateForPlacement = Blocks.FIRE.getStateForPlacement(ctx);
+						level.setBlock(pos, stateForPlacement, 3);
 					}
 				}
 			}

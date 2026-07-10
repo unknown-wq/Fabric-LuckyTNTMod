@@ -1,8 +1,8 @@
 package luckytnt.util;
 
-import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.StringRepresentable;
 
-public enum StructureStates implements StringIdentifiable {
+public enum StructureStates implements StringRepresentable {
 
 	PILLAGER_OUTPOST("pillager_outpost"),
 	MANSION("mansion"),
@@ -26,7 +26,7 @@ public enum StructureStates implements StringIdentifiable {
 	}
 
 	@Override
-	public String asString() {
+	public String getSerializedName() {
 		return name;
 	}
 }

@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "#": {
-      "item": "luckytntmod:animal_tnt"
-    }
+    "0": "luckytntmod:uranium_ingot",
+    "#": "luckytntmod:animal_tnt"
   },
   "result": {
     "id": "luckytntmod:animal_kingdom",

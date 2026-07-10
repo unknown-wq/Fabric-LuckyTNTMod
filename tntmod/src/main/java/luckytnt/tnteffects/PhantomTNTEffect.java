@@ -3,12 +3,12 @@ package luckytnt.tnteffects;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 
 public class PhantomTNTEffect extends PrimedTNTEffect{
 	
@@ -25,10 +25,10 @@ public class PhantomTNTEffect extends PrimedTNTEffect{
 			double offZ = Math.random() * 90 - 45;
 			boolean foundBlock = false;
 			for(int offY = 320; offY > -64; offY--) {
-	      		BlockPos pos = new BlockPos(MathHelper.floor(entity.x() + offX), offY, MathHelper.floor(entity.z() + offZ));
+	      		BlockPos pos = new BlockPos(Mth.floor(entity.x() + offX), offY, Mth.floor(entity.z() + offZ));
 	      		BlockState state = entity.getLevel().getBlockState(pos);
-	      		if(state.isFullCube(entity.getLevel(), pos) && !state.isAir() && !foundBlock) {
-	      			((Entity)entity).setPosition(entity.x() + offX, offY + 1, entity.z() + offZ);
+	      		if(state.isCollisionShapeFullBlock(entity.getLevel(), pos) && !state.isAir() && !foundBlock) {
+	      			((Entity)entity).setPos(entity.x() + offX, offY + 1, entity.z() + offZ);
 	      			foundBlock = true;
 	      		}
 			}

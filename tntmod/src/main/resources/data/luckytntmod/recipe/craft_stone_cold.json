@@ -6,18 +6,10 @@
     "#2#"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:snow_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:global_disaster"
-    },
-    "1": {
-      "item": "luckytntmod:antimatter"
-    },
-    "2": {
-      "item": "luckytntmod:freeze_tnt"
-    }
+    "#": "luckytntmod:snow_tnt",
+    "0": "luckytntmod:global_disaster",
+    "1": "luckytntmod:antimatter",
+    "2": "luckytntmod:freeze_tnt"
   },
   "result": {
     "id": "luckytntmod:stone_cold",

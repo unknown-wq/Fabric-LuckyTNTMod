@@ -7,53 +7,55 @@ import luckytnt.block.entity.SmokeTNTBlockEntity;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.block.LTNTBlock;
 import luckytntlib.entity.PrimedLTNT;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
-public class SmokeTNTBlock extends LTNTBlock implements BlockEntityProvider {
+public class SmokeTNTBlock extends LTNTBlock implements EntityBlock {
 
-	public SmokeTNTBlock(AbstractBlock.Settings properties) {
+	public SmokeTNTBlock(BlockBehaviour.Properties properties) {
 		super(properties, EntityRegistry.SMOKE_TNT, false);
 	}
 
 	@Override
-	public PrimedLTNT explode(World level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
+	public PrimedLTNT explode(Level level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
 		if(TNT != null) {
-			BlockEntity blockEntity = level.getBlockEntity(new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z)));
-			PrimedLTNT tnt = TNT.get().create(level);
-			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(MathHelper.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
-			tnt.setPosition(x + 0.5f, y, z + 0.5f);
+			BlockEntity blockEntity = level.getBlockEntity(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)));
+			PrimedLTNT tnt = TNT.get().create(level, EntitySpawnReason.TRIGGERED);
+			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(Mth.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
+			tnt.setPos(x + 0.5f, y, z + 0.5f);
 			tnt.setOwner(igniter);
 			if(blockEntity != null && blockEntity instanceof SmokeTNTBlockEntity smoke) {
-				NbtCompound tag = tnt.getPersistentData();
-				tag.putFloat("r", smoke.getPersistentData().getFloat("r"));
-				tag.putFloat("g", smoke.getPersistentData().getFloat("g"));
-				tag.putFloat("b", smoke.getPersistentData().getFloat("b"));
+				CompoundTag tag = tnt.getPersistentData();
+				tag.putFloat("r", smoke.getPersistentData().getFloatOr("r", 0f));
+				tag.putFloat("g", smoke.getPersistentData().getFloatOr("g", 0f));
+				tag.putFloat("b", smoke.getPersistentData().getFloatOr("b", 0f));
 				tnt.setPersistentData(tag);
 			}
-			level.spawnEntity(tnt);
-			level.playSound(null, new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z)), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.MASTER, 1, 1);
-			if(level.getBlockState(new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z))).getBlock() == this) {
-				level.setBlockState(new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z)), Blocks.AIR.getDefaultState(), 3);
+			level.addFreshEntity(tnt);
+			level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.TNT_PRIMED, SoundSource.MASTER, 1, 1);
+			if(level.getBlockState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).getBlock() == this) {
+				level.setBlock(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), Blocks.AIR.defaultBlockState(), 3);
 			}
 			return tnt;
 		}
@@ -61,79 +63,86 @@ public class SmokeTNTBlock extends LTNTBlock implements BlockEntityProvider {
 	}
 	
 	@Override
-	public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World level, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult result) {
+	public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
         BlockEntity block = level.getBlockEntity(pos);	
-		if(player.getStackInHand(hand).getItem() instanceof DyeItem dye && block != null && block instanceof SmokeTNTBlockEntity blockEntity) {
-			if(dye == Items.BLACK_DYE) {
-				if(blockEntity.getPersistentData().getFloat("r") > 0 || blockEntity.getPersistentData().getFloat("g") > 0 || blockEntity.getPersistentData().getFloat("b") > 0) {
+		if(player.getItemInHand(hand).getItem() instanceof DyeItem dye && block != null && block instanceof SmokeTNTBlockEntity blockEntity) {
+			if(dye == Items.DYE.pick(DyeColor.BLACK)) {
+				if(blockEntity.getPersistentData().getFloatOr("r", 0f) > 0 || blockEntity.getPersistentData().getFloatOr("g", 0f) > 0 || blockEntity.getPersistentData().getFloatOr("b", 0f) > 0) {
 					if(!player.isCreative()) {
-						player.getStackInHand(hand).decrement(1);
+						player.getItemInHand(hand).shrink(1);
 					}
 				}
-				blockEntity.getPersistentData().putFloat("r", MathHelper.clamp(blockEntity.getPersistentData().getFloat("r") - 0.1f, 0f, 1f));
-				blockEntity.getPersistentData().putFloat("g", MathHelper.clamp(blockEntity.getPersistentData().getFloat("g") - 0.1f, 0f, 1f));
-				blockEntity.getPersistentData().putFloat("b", MathHelper.clamp(blockEntity.getPersistentData().getFloat("b") - 0.1f, 0f, 1f));
-				if(level instanceof ServerWorld sLevel) {
-					sLevel.spawnParticles(new DustParticleEffect(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
+				blockEntity.getPersistentData().putFloat("r", Mth.clamp(blockEntity.getPersistentData().getFloatOr("r", 0f) - 0.1f, 0f, 1f));
+				blockEntity.getPersistentData().putFloat("g", Mth.clamp(blockEntity.getPersistentData().getFloatOr("g", 0f) - 0.1f, 0f, 1f));
+				blockEntity.getPersistentData().putFloat("b", Mth.clamp(blockEntity.getPersistentData().getFloatOr("b", 0f) - 0.1f, 0f, 1f));
+				if(level instanceof ServerLevel sLevel) {
+					sLevel.sendParticles(new DustParticleOptions(color(blockEntity), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
 				}
-				return ItemActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
-			if(dye == Items.WHITE_DYE) {
-				if(blockEntity.getPersistentData().getFloat("r") < 1 || blockEntity.getPersistentData().getFloat("g") < 1 || blockEntity.getPersistentData().getFloat("b") < 1) {
+			if(dye == Items.DYE.pick(DyeColor.WHITE)) {
+				if(blockEntity.getPersistentData().getFloatOr("r", 0f) < 1 || blockEntity.getPersistentData().getFloatOr("g", 0f) < 1 || blockEntity.getPersistentData().getFloatOr("b", 0f) < 1) {
 					if(!player.isCreative()) {
-						player.getStackInHand(hand).decrement(1);
+						player.getItemInHand(hand).shrink(1);
 					}
 				}
-				blockEntity.getPersistentData().putFloat("r", MathHelper.clamp(blockEntity.getPersistentData().getFloat("r") + 0.1f, 0f, 1f));
-				blockEntity.getPersistentData().putFloat("g", MathHelper.clamp(blockEntity.getPersistentData().getFloat("g") + 0.1f, 0f, 1f));
-				blockEntity.getPersistentData().putFloat("b", MathHelper.clamp(blockEntity.getPersistentData().getFloat("b") + 0.1f, 0f, 1f));
-				if(level instanceof ServerWorld sLevel) {
-					sLevel.spawnParticles(new DustParticleEffect(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
+				blockEntity.getPersistentData().putFloat("r", Mth.clamp(blockEntity.getPersistentData().getFloatOr("r", 0f) + 0.1f, 0f, 1f));
+				blockEntity.getPersistentData().putFloat("g", Mth.clamp(blockEntity.getPersistentData().getFloatOr("g", 0f) + 0.1f, 0f, 1f));
+				blockEntity.getPersistentData().putFloat("b", Mth.clamp(blockEntity.getPersistentData().getFloatOr("b", 0f) + 0.1f, 0f, 1f));
+				if(level instanceof ServerLevel sLevel) {
+					sLevel.sendParticles(new DustParticleOptions(color(blockEntity), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
 				}
-				return ItemActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
-			if(dye == Items.RED_DYE) {
-				if(blockEntity.getPersistentData().getFloat("r") < 1) {
+			if(dye == Items.DYE.pick(DyeColor.RED)) {
+				if(blockEntity.getPersistentData().getFloatOr("r", 0f) < 1) {
 					if(!player.isCreative()) {
-						player.getStackInHand(hand).decrement(1);
+						player.getItemInHand(hand).shrink(1);
 					}
 				}
-				blockEntity.getPersistentData().putFloat("r", MathHelper.clamp(blockEntity.getPersistentData().getFloat("r") + 0.1f, 0f, 1f));
-				if(level instanceof ServerWorld sLevel) {
-					sLevel.spawnParticles(new DustParticleEffect(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
+				blockEntity.getPersistentData().putFloat("r", Mth.clamp(blockEntity.getPersistentData().getFloatOr("r", 0f) + 0.1f, 0f, 1f));
+				if(level instanceof ServerLevel sLevel) {
+					sLevel.sendParticles(new DustParticleOptions(color(blockEntity), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
 				}
-				return ItemActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
-			if(dye == Items.GREEN_DYE) {
-				if(blockEntity.getPersistentData().getFloat("g") < 1) {
+			if(dye == Items.DYE.pick(DyeColor.GREEN)) {
+				if(blockEntity.getPersistentData().getFloatOr("g", 0f) < 1) {
 					if(!player.isCreative()) {
-						player.getStackInHand(hand).decrement(1);
+						player.getItemInHand(hand).shrink(1);
 					}
 				}
-				blockEntity.getPersistentData().putFloat("g", MathHelper.clamp(blockEntity.getPersistentData().getFloat("g") + 0.1f, 0f, 1f));
-				if(level instanceof ServerWorld sLevel) {
-					sLevel.spawnParticles(new DustParticleEffect(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
+				blockEntity.getPersistentData().putFloat("g", Mth.clamp(blockEntity.getPersistentData().getFloatOr("g", 0f) + 0.1f, 0f, 1f));
+				if(level instanceof ServerLevel sLevel) {
+					sLevel.sendParticles(new DustParticleOptions(color(blockEntity), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
 				}
-				return ItemActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
-			if(dye == Items.BLUE_DYE) {
-				if(blockEntity.getPersistentData().getFloat("b") < 1) {
+			if(dye == Items.DYE.pick(DyeColor.BLUE)) {
+				if(blockEntity.getPersistentData().getFloatOr("b", 0f) < 1) {
 					if(!player.isCreative()) {
-						player.getStackInHand(hand).decrement(1);
+						player.getItemInHand(hand).shrink(1);
 					}
 				}
-				blockEntity.getPersistentData().putFloat("b", MathHelper.clamp(blockEntity.getPersistentData().getFloat("b") + 0.1f, 0f, 1f));
-				if(level instanceof ServerWorld sLevel) {
-					sLevel.spawnParticles(new DustParticleEffect(new Vector3f(blockEntity.getPersistentData().getFloat("r"), blockEntity.getPersistentData().getFloat("g"), blockEntity.getPersistentData().getFloat("b")), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
+				blockEntity.getPersistentData().putFloat("b", Mth.clamp(blockEntity.getPersistentData().getFloatOr("b", 0f) + 0.1f, 0f, 1f));
+				if(level instanceof ServerLevel sLevel) {
+					sLevel.sendParticles(new DustParticleOptions(color(blockEntity), 1f), pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f, 1, 0, 0, 0, 0);
 				}
-				return ItemActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 		}
-		return super.onUseWithItem(stack, state, level, pos, player, hand, result);
+		return super.useItemOn(stack, state, level, pos, player, hand, result);
 	}
 	
 	@Override
-	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-		return EntityRegistry.SMOKE_TNT_BLOCK_ENTITY.get().instantiate(pos, state);
-	}	
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return EntityRegistry.SMOKE_TNT_BLOCK_ENTITY.get().create(pos, state);
+	}
+
+	private static int color(SmokeTNTBlockEntity be) {
+		int r = (int)(Mth.clamp(be.getPersistentData().getFloatOr("r", 0f), 0f, 1f) * 255);
+		int g = (int)(Mth.clamp(be.getPersistentData().getFloatOr("g", 0f), 0f, 1f) * 255);
+		int b = (int)(Mth.clamp(be.getPersistentData().getFloatOr("b", 0f), 0f, 1f) * 255);
+		return (r << 16) | (g << 8) | b;
+	}
 }

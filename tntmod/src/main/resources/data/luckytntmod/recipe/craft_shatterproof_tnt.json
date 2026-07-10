@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:obsidian"
-    },
-    "0": {
-      "item": "luckytntmod:tnt_x20"
-    }
+    "#": "minecraft:obsidian",
+    "0": "luckytntmod:tnt_x20"
   },
   "result": {
     "id": "luckytntmod:shatterproof_tnt",

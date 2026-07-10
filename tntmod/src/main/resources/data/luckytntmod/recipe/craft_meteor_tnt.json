@@ -6,15 +6,9 @@
     "111"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:tnt_x20"
-    },
-    "1": {
-      "item": "minecraft:magma_block"
-    },
-    "2": {
-      "item": "luckytntmod:tnt_x500"
-    }
+    "0": "luckytntmod:tnt_x20",
+    "1": "minecraft:magma_block",
+    "2": "luckytntmod:tnt_x500"
   },
   "result": {
     "id": "luckytntmod:meteor_tnt",

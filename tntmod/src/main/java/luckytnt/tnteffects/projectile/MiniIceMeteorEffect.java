@@ -3,11 +3,11 @@ package luckytnt.tnteffects.projectile;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
 
 public class MiniIceMeteorEffect extends PrimedTNTEffect {
 
@@ -18,8 +18,8 @@ public class MiniIceMeteorEffect extends PrimedTNTEffect {
 		explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
 		
 		for (BlockPos pos : explosion.getAffectedBlocks()) {
-			if (Math.random() > 0.75f && ent.getLevel().getBlockState(pos).isAir() && ent.getLevel().getBlockState(pos.down()).isOpaqueFullCube(ent.getLevel(), pos)) {
-				ent.getLevel().setBlockState(pos, Math.random() < 0.5f ? Blocks.BLUE_ICE.getDefaultState() : Blocks.PACKED_ICE.getDefaultState());
+			if (Math.random() > 0.75f && ent.getLevel().getBlockState(pos).isAir() && ent.getLevel().getBlockState(pos.below()).isCollisionShapeFullBlock(ent.getLevel(), pos)) {
+				ent.getLevel().setBlockAndUpdate(pos, Math.random() < 0.5f ? Blocks.BLUE_ICE.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState());
 			}
 		}
 	}

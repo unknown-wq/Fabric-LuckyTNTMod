@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:shatterproof_tnt"
-    }
+    "luckytntmod:shatterproof_tnt"
   ],
   "result": {
     "id": "luckytntmod:shatterproof_dynamite",

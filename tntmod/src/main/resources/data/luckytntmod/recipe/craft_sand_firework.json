@@ -6,18 +6,10 @@
     "333"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:obsidian"
-    },
-    "1": {
-      "tag": "minecraft:sand"
-    },
-    "2": {
-      "item": "minecraft:firework_star"
-    },
-    "3": {
-      "item": "minecraft:firework_rocket"
-    }
+    "0": "minecraft:obsidian",
+    "1": "#minecraft:sand",
+    "2": "minecraft:firework_star",
+    "3": "minecraft:firework_rocket"
   },
   "result": {
     "id": "luckytntmod:sand_firework",

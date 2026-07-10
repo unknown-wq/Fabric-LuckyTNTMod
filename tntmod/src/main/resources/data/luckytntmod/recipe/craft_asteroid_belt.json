@@ -6,12 +6,8 @@
     "000"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:eye_of_the_sahara"
-    },
-    "2": {
-      "item": "luckytntmod:antimatter"
-    }
+    "0": "luckytntmod:eye_of_the_sahara",
+    "2": "luckytntmod:antimatter"
   },
   "result": {
     "id": "luckytntmod:asteroid_belt",

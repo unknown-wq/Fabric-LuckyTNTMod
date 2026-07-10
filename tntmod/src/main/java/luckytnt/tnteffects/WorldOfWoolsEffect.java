@@ -15,25 +15,32 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CoralParentBlock;
-import net.minecraft.block.MapColor;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BaseCoralPlantTypeBlock;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.animal.sheep.Sheep;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntityTypes;
 
 public class WorldOfWoolsEffect extends PrimedTNTEffect {
+	// TODO(port-26.2): DISABLED — the map-color→wool-shade classification uses ~60 yarn MapColor
+	// constant names (WHITE, OFF_WHITE, IRON_GRAY, STONE_GRAY, PALE_YELLOW, EMERALD_GREEN,
+	// BRIGHT_TEAL, DIAMOND_BLUE, WATER_BLUE, LAPIS_BLUE, ...) that have no verified 1:1 Mojang
+	// mapping (Mojang uses SNOW / COLOR_* / TERRACOTTA_* / DEEPSLATE). The rest of the effect
+	// (water/coral/seagrass/waterlogged/lava → glass & wool, rings, legs, sheep) is preserved.
+	/*
 	public static List<MapColor> WHITE = List.of(MapColor.WHITE, MapColor.OFF_WHITE, MapColor.TERRACOTTA_WHITE, MapColor.WHITE_GRAY);
 	public static List<MapColor> LIGHT_GRAY = List.of(MapColor.IRON_GRAY, MapColor.LIGHT_BLUE_GRAY, MapColor.LIGHT_GRAY);
 	public static List<MapColor> GRAY = List.of(MapColor.STONE_GRAY, MapColor.GRAY, MapColor.TERRACOTTA_CYAN, MapColor.DEEPSLATE_GRAY);
@@ -50,7 +57,8 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 	public static List<MapColor> PURPLE = List.of(MapColor.PURPLE, MapColor.TERRACOTTA_BLUE, MapColor.DARK_DULL_PINK);
 	public static List<MapColor> MAGENTA = List.of(MapColor.MAGENTA, MapColor.TERRACOTTA_MAGENTA, MapColor.TERRACOTTA_PURPLE, MapColor.DULL_PINK);
 	public static List<MapColor> PINK = List.of(MapColor.PINK);
-	
+	*/
+
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
 		List<Pair<BlockPos, Block>> blocks = new ArrayList<>();
@@ -58,9 +66,11 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 100, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				// TODO(port-26.2): DISABLED — map-color→wool-shade classification (see field block above).
+				/*
 				MapColor color = state.getMapColor(level, pos);
-				if(color != MapColor.CLEAR & !state.getCollisionShape(level, pos, ShapeContext.absent()).isEmpty() && state.getBlock().getBlastResistance() <= 200) {
+				if(color != MapColor.CLEAR & !state.getCollisionShape(level, pos, CollisionContext.empty()).isEmpty() && state.getBlock().getExplosionResistance() <= 200) {
 					if(WHITE.contains(color)) {
 						blocks.add(Pair.of(pos, Blocks.WHITE_WOOL));
 					} else if(LIGHT_GRAY.contains(color)) {
@@ -80,7 +90,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 					} else if(LIME.contains(color)) {
 						blocks.add(Pair.of(pos, Blocks.LIME_WOOL));
 					} else if(GREEN.contains(color)) {
-						blocks.add(Pair.of(pos, Blocks.GREEN_WOOL));
+						blocks.add(Pair.of(pos, Blocks.WOOL.green()));
 					} else if(CYAN.contains(color)) {
 						blocks.add(Pair.of(pos, Blocks.CYAN_WOOL));
 					} else if(LIGHT_BLUE.contains(color)) {
@@ -95,71 +105,72 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 						blocks.add(Pair.of(pos, Blocks.PINK_WOOL));
 					}
 				}
-				
-				if((state.isOf(Blocks.WATER) || state.isOf(Blocks.BUBBLE_COLUMN) || state.getBlock() instanceof CoralParentBlock) && state.getBlock().getBlastResistance() <= 200) {
-					blocks.add(Pair.of(pos, Blocks.BLUE_STAINED_GLASS));
+				*/
+
+				if((state.is(Blocks.WATER) || state.is(Blocks.BUBBLE_COLUMN) || state.getBlock() instanceof BaseCoralPlantTypeBlock) && state.getBlock().getExplosionResistance() <= 200) {
+					blocks.add(Pair.of(pos, Blocks.STAINED_GLASS.blue()));
 				}
 				
 				if(state.getBlock() == Blocks.SEAGRASS || state.getBlock() == Blocks.TALL_SEAGRASS || state.getBlock() == Blocks.KELP || state.getBlock() == Blocks.SEA_PICKLE || state.getBlock() == Blocks.KELP_PLANT) {
-					blocks.add(Pair.of(pos, Blocks.GREEN_WOOL));
+					blocks.add(Pair.of(pos, Blocks.WOOL.green()));
 				}
 				
-				if(state.contains(Properties.WATERLOGGED) && state.get(Properties.WATERLOGGED) && state.getBlock().getBlastResistance() <= 200) {
-					blocks.add(Pair.of(pos, Blocks.BLUE_STAINED_GLASS));
+				if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) && state.getBlock().getExplosionResistance() <= 200) {
+					blocks.add(Pair.of(pos, Blocks.STAINED_GLASS.blue()));
 				}
 				
-				if(state.isOf(Blocks.LAVA) && state.getBlock().getBlastResistance() <= 200) {
-					blocks.add(Pair.of(pos, Blocks.ORANGE_STAINED_GLASS));
+				if(state.is(Blocks.LAVA) && state.getBlock().getExplosionResistance() <= 200) {
+					blocks.add(Pair.of(pos, Blocks.STAINED_GLASS.orange()));
 				}
 			}
 		});
 		
 		for(Pair<BlockPos, Block> pair : blocks) {
-			ent.getLevel().setBlockState(pair.getFirst(), pair.getSecond().getDefaultState(), 3);
+			ent.getLevel().setBlock(pair.getFirst(), pair.getSecond().defaultBlockState(), 3);
 		}
 		
 		for(int i = 0; i < 3 + new Random().nextInt(6); i++) {
 			int x = new Random().nextInt(151) - 75;
 			int z = new Random().nextInt(151) - 75;
 			
-			BlockPos origin = new BlockPos(MathHelper.floor(ent.x() + x), MathHelper.floor(LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1), MathHelper.floor(ent.z() + z));
+			BlockPos origin = new BlockPos(Mth.floor(ent.x() + x), Mth.floor(LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1), Mth.floor(ent.z() + z));
 			boolean xOrZ = new Random().nextBoolean();
 			int rr = 16 + new Random().nextInt(11);
-			Block block = Blocks.RED_CONCRETE;
+			Block block = Blocks.CONCRETE.red();
 			
 			for(int j = 0; j < 6; j++) {
 				placeRing(ent, origin, block, rr, xOrZ);
 				placeLegs(ent, origin, block, rr--, xOrZ);
 				
 				if(j == 0) {
-					block = Blocks.ORANGE_CONCRETE;
+					block = Blocks.CONCRETE.orange();
 				} else if(j == 1) {
-					block = Blocks.YELLOW_CONCRETE;
+					block = Blocks.CONCRETE.yellow();
 				} else if(j == 2) {
-					block = Blocks.LIME_CONCRETE;
+					block = Blocks.CONCRETE.lime();
 				} else if(j == 3) {
-					block = Blocks.BLUE_CONCRETE;
+					block = Blocks.CONCRETE.blue();
 				} else if(j == 4) {
-					block = Blocks.PURPLE_CONCRETE;
+					block = Blocks.CONCRETE.purple();
 				}
 			}
 		}
 		
 		for(int i = 0; i <= 60 + new Random().nextInt(21); i++) {
-			SheepEntity sheep = new SheepEntity(EntityType.SHEEP, ent.getLevel());
+			Sheep sheep = new Sheep(EntityTypes.SHEEP, ent.getLevel());
 			
 			int x = new Random().nextInt(151) - 75;
 			int z = new Random().nextInt(151) - 75;
 			
-			sheep.setPosition(ent.x() + x, LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1, ent.z() + z);
-			sheep.initialize((ServerWorld)ent.getLevel(), ent.getLevel().getLocalDifficulty(toBlockPos(ent.getPos())), SpawnReason.MOB_SUMMONED, null);
-			ent.getLevel().spawnEntity(sheep);
+			sheep.setPos(ent.x() + x, LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1, ent.z() + z);
+			sheep.finalizeSpawn((ServerLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getCurrentDifficultyAt(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
+			ent.getLevel().addFreshEntity(sheep);
 		}
 		
-		BlockPos min = toBlockPos(ent.getPos()).add(100, 100, 100);
-		BlockPos max = toBlockPos(ent.getPos()).add(-100, -100, -100);
-		List<SheepEntity> list = ent.getLevel().getNonSpectatingEntities(SheepEntity.class, new Box(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
-		for(SheepEntity sheep : list) {
+		BlockPos min = toBlockPos(ent.getPos()).offset(100, 100, 100);
+		BlockPos max = toBlockPos(ent.getPos()).offset(-100, -100, -100);
+		List<Sheep> list = ent.getLevel().getEntitiesOfClass(Sheep.class, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
+		for(Sheep sheep : list) {
 			sheep.setColor(randomColor());
 		}
 	}
@@ -167,7 +178,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		for(int i = 0; i < 50; i++) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(20f, 20f, 20f), 1f), ent.x() + Math.random() * 2 - Math.random() * 2, ent.y() + 1D + Math.random() * 2 - Math.random() * 2, ent.z() + Math.random() * 2 - Math.random() * 2, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(20f*255)<<16)|((int)(20f*255)<<8)|(int)(20f*255), 1f), ent.x() + Math.random() * 2 - Math.random() * 2, ent.y() + 1D + Math.random() * 2 - Math.random() * 2, ent.z() + Math.random() * 2 - Math.random() * 2, 0, 0, 0);
 		}
 	}
 	
@@ -190,20 +201,20 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 		if(xOrZ) {
 			for(int offX = -radius - 1; offX <= radius + 1; offX++) {
 				for(int offY = 0; offY <= radius + 1; offY++) {
-					BlockPos pos = origin.add(offX, offY, 0);
+					BlockPos pos = origin.offset(offX, offY, 0);
 					double distance = Math.sqrt(offX * offX + offY * offY);
-					if(distance > radius && distance <= (radius + 1) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 100) {
-						ent.getLevel().setBlockState(pos, block.getDefaultState(), 3);
+					if(distance > radius && distance <= (radius + 1) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
+						ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 					}
 				}
 			}
 		} else {
 			for(int offZ = -radius - 1; offZ <= radius + 1; offZ++) {
 				for(int offY = 0; offY <= radius + 1; offY++) {
-					BlockPos pos = origin.add(0, offY, offZ);
+					BlockPos pos = origin.offset(0, offY, offZ);
 					double distance = Math.sqrt(offZ * offZ + offY * offY);
-					if(distance > radius && distance <= (radius + 1) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 100) {
-						ent.getLevel().setBlockState(pos, block.getDefaultState(), 3);
+					if(distance > radius && distance <= (radius + 1) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
+						ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 					}
 				}
 			}
@@ -213,36 +224,36 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 	public void placeLegs(IExplosiveEntity ent, BlockPos origin, Block block, int radius, boolean xOrZ) {
 		if(xOrZ) {
 			for(int offY = -1; offY > -200; offY--) {
-				BlockPos pos = origin.add(radius + 1, offY, 0);
-				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, ShapeContext.absent()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 100) {
-					ent.getLevel().setBlockState(pos, block.getDefaultState(), 3);
+				BlockPos pos = origin.offset(radius + 1, offY, 0);
+				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.empty()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
+					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 				} else {
 					break;
 				}
 			}
 			
 			for(int offY = -1; offY > -200; offY--) {
-				BlockPos pos = origin.add(-radius - 1, offY, 0);
-				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, ShapeContext.absent()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 100) {
-					ent.getLevel().setBlockState(pos, block.getDefaultState(), 3);
+				BlockPos pos = origin.offset(-radius - 1, offY, 0);
+				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.empty()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
+					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 				} else {
 					break;
 				}
 			}
 		} else {
 			for(int offY = -1; offY > -200; offY--) {
-				BlockPos pos = origin.add(0, offY, radius + 1);
-				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, ShapeContext.absent()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 100) {
-					ent.getLevel().setBlockState(pos, block.getDefaultState(), 3);
+				BlockPos pos = origin.offset(0, offY, radius + 1);
+				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.empty()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
+					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 				} else {
 					break;
 				}
 			}
 			
 			for(int offY = -1; offY > -200; offY--) {
-				BlockPos pos = origin.add(0, offY, -radius - 1);
-				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, ShapeContext.absent()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 100) {
-					ent.getLevel().setBlockState(pos, block.getDefaultState(), 3);
+				BlockPos pos = origin.offset(0, offY, -radius - 1);
+				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.empty()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
+					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
 				} else {
 					break;
 				}

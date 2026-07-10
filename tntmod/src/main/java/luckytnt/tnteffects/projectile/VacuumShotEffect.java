@@ -5,8 +5,8 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.IForEachEntityExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.ParticleTypes;
 
 public class VacuumShotEffect extends PrimedTNTEffect{
 
@@ -26,7 +26,7 @@ public class VacuumShotEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(ParticleTypes.CLOUD, true, entity.x(), entity.y(), entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(ParticleTypes.CLOUD, entity.x(), entity.y(), entity.z(), 0, 0, 0);
 	}
 	
 	@Override

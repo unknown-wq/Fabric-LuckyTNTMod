@@ -6,12 +6,8 @@
     "101"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "luckytntmod:physics_tnt"
-    }
+    "0": "luckytntmod:uranium_ingot",
+    "1": "luckytntmod:physics_tnt"
   },
   "result": {
     "id": "luckytntmod:particle_physics_tnt",

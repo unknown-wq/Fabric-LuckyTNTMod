@@ -1,12 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "minecraft:iron_sword"
-    },
-    {
-      "item": "minecraft:tnt"
-    }
+    "minecraft:iron_sword",
+    "minecraft:tnt"
   ],
   "result": {
     "id": "luckytntmod:attacking_tnt",

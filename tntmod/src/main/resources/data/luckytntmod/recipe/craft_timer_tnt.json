@@ -1,12 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "minecraft:clock"
-    },
-    {
-      "item": "minecraft:tnt"
-    }
+    "minecraft:clock",
+    "minecraft:tnt"
   ],
   "result": {
     "id": "luckytntmod:timer_tnt",

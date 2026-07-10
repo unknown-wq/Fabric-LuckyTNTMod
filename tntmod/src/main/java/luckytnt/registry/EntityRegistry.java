@@ -74,25 +74,26 @@ import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.tnteffects.GeneralDynamiteEffect;
 import luckytntlib.util.tnteffects.StackedPrimedTNTEffect;
 import luckytntlib.util.tnteffects.TNTXStrengthEffect;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.LongDoorInteractGoal;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundGoal;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.util.ARGB;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.Level;
 
 public class EntityRegistry {
 
@@ -156,27 +157,27 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<PrimedLTNT>> SHATTERPROOF_TNT = LuckyTNTMod.RH.registerTNTEntity("shatterproof_tnt", new ShatterproofTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> GRAVEL_FIREWORK = LuckyTNTMod.RH.registerTNTEntity("gravel_firework", new GravelFireworkEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> LAVA_OCEAN_TNT = LuckyTNTMod.RH.registerTNTEntity("lava_ocean_tnt", new LavaOceanTNTEffect(15, 10));
-	public static final Supplier<EntityType<LivingPrimedLTNT>> ATTACKING_TNT = LuckyTNTMod.RH.registerLivingTNTEntity("attacking_tnt", () -> EntityType.Builder.<LivingPrimedLTNT>create((EntityType<LivingPrimedLTNT> type, World level) -> new LivingPrimedLTNT(type, level, TNT_EFFECT.fuse(400).buildTNT(() -> BlockRegistry.ATTACKING_TNT)) {		
+	public static final Supplier<EntityType<LivingPrimedLTNT>> ATTACKING_TNT = LuckyTNTMod.RH.registerLivingTNTEntity("attacking_tnt", () -> EntityType.Builder.<LivingPrimedLTNT>of((EntityType<LivingPrimedLTNT> type, Level level) -> new LivingPrimedLTNT(type, level, TNT_EFFECT.fuse(400).buildTNT(() -> BlockRegistry.ATTACKING_TNT)) {		
 		@Override
-		public void initGoals() {
-			super.initGoals();
-			targetSelector.add(0, new ActiveTargetGoal<PlayerEntity>(this, PlayerEntity.class, 10, false, false, PREDICATE));
-			goalSelector.add(1, new MeleeAttackGoal(this, 1, false));
-			goalSelector.add(2, new LongDoorInteractGoal(this, true));
-			goalSelector.add(3, new WanderAroundGoal(this, 1));
-			goalSelector.add(4, new LookAroundGoal(this));
-			goalSelector.add(5, new SwimGoal(this));
+		public void registerGoals() {
+			super.registerGoals();
+			targetSelector.addGoal(0, new NearestAttackableTargetGoal<Player>(this, Player.class, 10, false, false, PREDICATE));
+			goalSelector.addGoal(1, new MeleeAttackGoal(this, 1, false));
+			goalSelector.addGoal(2, new OpenDoorGoal(this, true));
+			goalSelector.addGoal(3, new RandomStrollGoal(this, 1));
+			goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+			goalSelector.addGoal(5, new FloatGoal(this));
 		}	
-	}, SpawnGroup.MISC).makeFireImmune().dimensions(1f, 1f).build("attacking_tnt"));
-	public static final Supplier<EntityType<LivingPrimedLTNT>> WALKING_TNT = LuckyTNTMod.RH.registerLivingTNTEntity("walking_tnt", () -> EntityType.Builder.<LivingPrimedLTNT>create((EntityType<LivingPrimedLTNT> type, World level) -> new LivingPrimedLTNT(type, level, TNT_EFFECT.fuse(400).buildTNT(() -> BlockRegistry.WALKING_TNT)) {		
+	}, MobCategory.MISC).fireImmune().sized(1f, 1f).build(ek("attacking_tnt")));
+	public static final Supplier<EntityType<LivingPrimedLTNT>> WALKING_TNT = LuckyTNTMod.RH.registerLivingTNTEntity("walking_tnt", () -> EntityType.Builder.<LivingPrimedLTNT>of((EntityType<LivingPrimedLTNT> type, Level level) -> new LivingPrimedLTNT(type, level, TNT_EFFECT.fuse(400).buildTNT(() -> BlockRegistry.WALKING_TNT)) {		
 		@Override
-		public void initGoals() {
-			super.initGoals();
-			goalSelector.add(0, new WanderAroundGoal(this, 1));
-			goalSelector.add(1, new LookAroundGoal(this));
-			goalSelector.add(2, new SwimGoal(this));
+		public void registerGoals() {
+			super.registerGoals();
+			goalSelector.addGoal(0, new RandomStrollGoal(this, 1));
+			goalSelector.addGoal(1, new RandomLookAroundGoal(this));
+			goalSelector.addGoal(2, new FloatGoal(this));
 		}	
-	}, SpawnGroup.MISC).makeFireImmune().dimensions(1f, 1f).build("walking_tnt"));
+	}, MobCategory.MISC).fireImmune().sized(1f, 1f).build(ek("walking_tnt")));
 	public static final Supplier<EntityType<PrimedLTNT>> WOOL_TNT = LuckyTNTMod.RH.registerTNTEntity("wool_tnt", new WoolTNTEffect(40));
 	public static final Supplier<EntityType<PrimedLTNT>> SAY_GOODBYE = LuckyTNTMod.RH.registerTNTEntity("say_goodbye", new SayGoodbyeEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> ANGRY_MINERS = LuckyTNTMod.RH.registerTNTEntity("angry_miners", new AngryMinersEffect());
@@ -204,7 +205,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<PrimedLTNT>> BUTTER_TNT = LuckyTNTMod.RH.registerTNTEntity("butter_tnt", new ButterTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> TUNNELING_TNT = LuckyTNTMod.RH.registerTNTEntity("tunneling_tnt", new TunnelingTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> PHYSICS_TNT = LuckyTNTMod.RH.registerTNTEntity("physics_tnt", new PhysicsTNTEffect(15));
-	public static final Supplier<EntityType<PrimedLTNT>> ORE_TNT = LuckyTNTMod.RH.registerTNTEntity(LuckyTNTMod.MODID, "ore_tnt", () -> EntityType.Builder.<PrimedLTNT>create(PrimedOreTNT::new, SpawnGroup.MISC).maxTrackingRange(64).makeFireImmune().dimensions(1f, 1f).build("ore_tnt"));
+	public static final Supplier<EntityType<PrimedLTNT>> ORE_TNT = LuckyTNTMod.RH.registerTNTEntity(LuckyTNTMod.MODID, "ore_tnt", () -> EntityType.Builder.<PrimedLTNT>of(PrimedOreTNT::new, MobCategory.MISC).clientTrackingRange(64).fireImmune().sized(1f, 1f).build(ek("ore_tnt")));
 	public static final Supplier<EntityType<PrimedLTNT>> REDSTONE_TNT = LuckyTNTMod.RH.registerTNTEntity("redstone_tnt", new RedstoneTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> RANDOM_TNT = LuckyTNTMod.RH.registerTNTEntity("random_tnt", new RandomTNTEffect(20));
 	public static final Supplier<EntityType<PrimedLTNT>> TURRET_TNT = LuckyTNTMod.RH.registerTNTEntity("turret_tnt", new TurretTNTEffect());
@@ -220,7 +221,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<PrimedLTNT>> NETHER_GROVE_TNT = LuckyTNTMod.RH.registerTNTEntity("nether_grove_tnt", new NetherGroveTNTEffect(30));
 	public static final Supplier<EntityType<PrimedLTNT>> DRIPSTONE_TNT = LuckyTNTMod.RH.registerTNTEntity("dripstone_tnt", new DripstoneTNTEffect(20));
 	public static final Supplier<EntityType<PrimedLTNT>> GRAVEYARD_TNT = LuckyTNTMod.RH.registerTNTEntity("graveyard_tnt", new StackedPrimedTNTEffect(new GraveyardTNTEffect(), Collections.singletonList(new HouseTNTEffect(() -> BlockRegistry.GRAVEYARD_TNT, "graveyard", -10, -10))));
-	public static final Supplier<EntityType<PrimedLTNT>> REPLAY_TNT = LuckyTNTMod.RH.registerTNTEntity(LuckyTNTMod.MODID, "replay_tnt", () -> EntityType.Builder.<PrimedLTNT>create(PrimedReplayTNT::new, SpawnGroup.MISC).maxTrackingRange(64).makeFireImmune().dimensions(1f, 1f).build("replay_tnt"));
+	public static final Supplier<EntityType<PrimedLTNT>> REPLAY_TNT = LuckyTNTMod.RH.registerTNTEntity(LuckyTNTMod.MODID, "replay_tnt", () -> EntityType.Builder.<PrimedLTNT>of(PrimedReplayTNT::new, MobCategory.MISC).clientTrackingRange(64).fireImmune().sized(1f, 1f).build(ek("replay_tnt")));
 	public static final Supplier<EntityType<PrimedLTNT>> END_TNT = LuckyTNTMod.RH.registerTNTEntity("end_tnt", new EndTNTEffect(20));
 	public static final Supplier<EntityType<PrimedLTNT>> CHRISTMAS_TNT = LuckyTNTMod.RH.registerTNTEntity("christmas_tnt", new StackedPrimedTNTEffect(new ChristmasTNTEffect(), Collections.singletonList(new SnowTNTEffect(50))));
 	public static final Supplier<EntityType<PrimedLTNT>> EARTHQUAKE_TNT = LuckyTNTMod.RH.registerTNTEntity("earthquake_tnt", new EarthquakeTNTEffect());
@@ -257,7 +258,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<PrimedLTNT>> PULSAR_TNT = LuckyTNTMod.RH.registerTNTEntity("pulsar_tnt", new PulsarTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> LIGHTNING_STORM = LuckyTNTMod.RH.registerTNTEntity("lightning_storm", new LightningStormEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> SILK_TOUCH_TNT = LuckyTNTMod.RH.registerTNTEntity("silk_touch_tnt", new SilkTouchTNTEffect());
-	public static final Supplier<EntityType<PrimedLTNT>> ITEM_FIREWORK = LuckyTNTMod.RH.registerTNTEntity(LuckyTNTMod.MODID, "item_firework", () -> EntityType.Builder.<PrimedLTNT>create(PrimedItemFirework::new, SpawnGroup.MISC).maxTrackingRange(64).makeFireImmune().dimensions(1f, 1f).build("item_firework"));
+	public static final Supplier<EntityType<PrimedLTNT>> ITEM_FIREWORK = LuckyTNTMod.RH.registerTNTEntity(LuckyTNTMod.MODID, "item_firework", () -> EntityType.Builder.<PrimedLTNT>of(PrimedItemFirework::new, MobCategory.MISC).clientTrackingRange(64).fireImmune().sized(1f, 1f).build(ek("item_firework")));
 	public static final Supplier<EntityType<PrimedLTNT>> ANIMAL_KINGDOM = LuckyTNTMod.RH.registerTNTEntity("animal_kingdom", new AnimalKingdomEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> ICE_AGE = LuckyTNTMod.RH.registerTNTEntity("ice_age", new DisasterTNTEffect("ice_age", true));
 	public static final Supplier<EntityType<PrimedLTNT>> GIANT_TNT = LuckyTNTMod.RH.registerTNTEntity("giant_tnt", new GiantTNTEffect(), 10f, true);
@@ -265,19 +266,19 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<PrimedLTNT>> REVERSED_TNT = LuckyTNTMod.RH.registerTNTEntity("reversed_tnt", new ReversedTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> ENTITY_FIREWORK = LuckyTNTMod.RH.registerTNTEntity("entity_firework", new EntityFireworkEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> CUSTOM_TNT = LuckyTNTMod.RH.registerTNTEntity("custom_tnt", new CustomTNTEffect());
-	public static final Supplier<EntityType<PrimedLTNT>> RESET_TNT = LuckyTNTMod.RH.registerTNTEntity(LuckyTNTMod.MODID, "reset_tnt", () -> EntityType.Builder.<PrimedLTNT>create(PrimedResetTNT::new, SpawnGroup.MISC).maxTrackingRange(64).makeFireImmune().dimensions(1f, 1f).build("reset_tnt"));
-	public static final Supplier<EntityType<LivingPrimedLTNT>> VICIOUS_TNT = LuckyTNTMod.RH.registerLivingTNTEntity("vicious_tnt", () -> EntityType.Builder.<LivingPrimedLTNT>create((EntityType<LivingPrimedLTNT> type, World level) -> new LivingPrimedLTNT(type, level, TNT_X5_EFFECT.fuse(400).buildTNT(() -> BlockRegistry.VICIOUS_TNT)) {		
+	public static final Supplier<EntityType<PrimedLTNT>> RESET_TNT = LuckyTNTMod.RH.registerTNTEntity(LuckyTNTMod.MODID, "reset_tnt", () -> EntityType.Builder.<PrimedLTNT>of(PrimedResetTNT::new, MobCategory.MISC).clientTrackingRange(64).fireImmune().sized(1f, 1f).build(ek("reset_tnt")));
+	public static final Supplier<EntityType<LivingPrimedLTNT>> VICIOUS_TNT = LuckyTNTMod.RH.registerLivingTNTEntity("vicious_tnt", () -> EntityType.Builder.<LivingPrimedLTNT>of((EntityType<LivingPrimedLTNT> type, Level level) -> new LivingPrimedLTNT(type, level, TNT_X5_EFFECT.fuse(400).buildTNT(() -> BlockRegistry.VICIOUS_TNT)) {		
 		@Override
-		public void initGoals() {
-			super.initGoals();
-			targetSelector.add(0, new ActiveTargetGoal<PlayerEntity>(this, PlayerEntity.class, 10, false, false, PREDICATE));
-			goalSelector.add(1, new MeleeAttackGoal(this, 1.2D, false));
-			goalSelector.add(2, new LongDoorInteractGoal(this, true));
-			goalSelector.add(3, new WanderAroundGoal(this, 1));
-			goalSelector.add(4, new LookAroundGoal(this));
-			goalSelector.add(5, new SwimGoal(this));
+		public void registerGoals() {
+			super.registerGoals();
+			targetSelector.addGoal(0, new NearestAttackableTargetGoal<Player>(this, Player.class, 10, false, false, PREDICATE));
+			goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
+			goalSelector.addGoal(2, new OpenDoorGoal(this, true));
+			goalSelector.addGoal(3, new RandomStrollGoal(this, 1));
+			goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+			goalSelector.addGoal(5, new FloatGoal(this));
 		}	
-	}, SpawnGroup.MISC).makeFireImmune().dimensions(1f, 1f).build("vicious_tnt"));
+	}, MobCategory.MISC).fireImmune().sized(1f, 1f).build(ek("vicious_tnt")));
 	public static final Supplier<EntityType<PrimedLTNT>> HUNGRY_TNT = LuckyTNTMod.RH.registerTNTEntity("hungry_tnt", new HungryTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> SINKHOLE_TNT = LuckyTNTMod.RH.registerTNTEntity("sinkhole_tnt", new SinkholeTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> FIRESTORM_TNT = LuckyTNTMod.RH.registerTNTEntity("firestorm_tnt", new FirestormTNTEffect());
@@ -319,7 +320,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<PrimedLTNT>> JUMPING_TNT = LuckyTNTMod.RH.registerTNTEntity("jumping_tnt", new JumpingTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> WASTELAND_TNT = LuckyTNTMod.RH.registerTNTEntity("wasteland_tnt", new WastelandTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> TNT_X10000 = LuckyTNTMod.RH.registerTNTEntity("tnt_x10000",  TNT_X10000_EFFECT.fuse(480).buildTNT(() -> BlockRegistry.TNT_X10000));
-	public static final Supplier<EntityType<PrimedLTNT>> CUSTOM_FIREWORK = LuckyTNTMod.RH.registerTNTEntity(LuckyTNTMod.MODID, "custom_firework", () -> EntityType.Builder.<PrimedLTNT>create(PrimedCustomFirework::new, SpawnGroup.MISC).maxTrackingRange(64).makeFireImmune().dimensions(1f, 1f).build("custom_firework"));
+	public static final Supplier<EntityType<PrimedLTNT>> CUSTOM_FIREWORK = LuckyTNTMod.RH.registerTNTEntity(LuckyTNTMod.MODID, "custom_firework", () -> EntityType.Builder.<PrimedLTNT>of(PrimedCustomFirework::new, MobCategory.MISC).clientTrackingRange(64).fireImmune().sized(1f, 1f).build(ek("custom_firework")));
 	public static final Supplier<EntityType<PrimedLTNT>> ATLANTIS = LuckyTNTMod.RH.registerTNTEntity("atlantis", new AtlantisEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> SOLAR_ERUPTION = LuckyTNTMod.RH.registerTNTEntity("solar_eruption", new SolarEruptionEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> VREDEFORT = LuckyTNTMod.RH.registerTNTEntity("vredefort", new DropProjectileTNTEffect(() -> EntityRegistry.VREDEFORT_PROJECTILE));
@@ -327,18 +328,18 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<PrimedLTNT>> STRUCTURE_TNT = LuckyTNTMod.RH.registerTNTEntity("structure_tnt", new StructureTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> GRANDE_FINALE = LuckyTNTMod.RH.registerTNTEntity("grande_finale", new GrandeFinaleEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> FLAT_EARTH = LuckyTNTMod.RH.registerTNTEntity("flat_earth", new FlatTNTEffect(() -> BlockRegistry.FLAT_EARTH, 200, 50, 200));
-	public static final Supplier<EntityType<LivingPrimedLTNT>> EVIL_TNT = LuckyTNTMod.RH.registerLivingTNTEntity("evil_tnt", () -> EntityType.Builder.<LivingPrimedLTNT>create((EntityType<LivingPrimedLTNT> type, World level) -> new LivingPrimedLTNT(type, level, TNT_X20_EFFECT.fuse(400).buildTNT(() -> BlockRegistry.EVIL_TNT)) {		
+	public static final Supplier<EntityType<LivingPrimedLTNT>> EVIL_TNT = LuckyTNTMod.RH.registerLivingTNTEntity("evil_tnt", () -> EntityType.Builder.<LivingPrimedLTNT>of((EntityType<LivingPrimedLTNT> type, Level level) -> new LivingPrimedLTNT(type, level, TNT_X20_EFFECT.fuse(400).buildTNT(() -> BlockRegistry.EVIL_TNT)) {		
 		@Override
-		public void initGoals() {
-			super.initGoals();
-			targetSelector.add(0, new ActiveTargetGoal<PlayerEntity>(this, PlayerEntity.class, 10, false, false, PREDICATE));
-			goalSelector.add(1, new MeleeAttackGoal(this, 1.2D, false));
-			goalSelector.add(2, new LongDoorInteractGoal(this, true));
-			goalSelector.add(3, new WanderAroundGoal(this, 1));
-			goalSelector.add(4, new LookAroundGoal(this));
-			goalSelector.add(5, new SwimGoal(this));
+		public void registerGoals() {
+			super.registerGoals();
+			targetSelector.addGoal(0, new NearestAttackableTargetGoal<Player>(this, Player.class, 10, false, false, PREDICATE));
+			goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
+			goalSelector.addGoal(2, new OpenDoorGoal(this, true));
+			goalSelector.addGoal(3, new RandomStrollGoal(this, 1));
+			goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+			goalSelector.addGoal(5, new FloatGoal(this));
 		}	
-	}, SpawnGroup.MISC).makeFireImmune().dimensions(1f, 1f).build("evil_tnt"));
+	}, MobCategory.MISC).fireImmune().sized(1f, 1f).build(ek("evil_tnt")));
 	public static final Supplier<EntityType<PrimedLTNT>> KOLA_BOREHOLE_TNT = LuckyTNTMod.RH.registerTNTEntity("kola_borehole_tnt", new KolaBoreholeTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> HYDROGEN_BOMB = LuckyTNTMod.RH.registerTNTEntity("hydrogen_bomb", new DropProjectileTNTEffect(() -> EntityRegistry.HYDROGEN_BOMB_BOMB));
 	public static final Supplier<EntityType<PrimedLTNT>> FLUORINE_TNT = LuckyTNTMod.RH.registerTNTEntity("fluorine_tnt", new FluorineTNTEffect());
@@ -364,7 +365,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<LExplosiveProjectile>> FIRE_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("fire_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.FIRE_DYNAMITE, ParticleTypes.FLAME, new FireTNTEffect(5)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> SNOW_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("snow_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.SNOW_DYNAMITE, new SnowTNTEffect(5)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> DYNAMITE_FIREWORK = LuckyTNTMod.RH.registerExplosiveProjectile("dynamite_firework", new DynamiteFireworkEffect(), 0.25f, false);
-	public static final Supplier<EntityType<LExplosiveProjectile>> NUCLEAR_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("nuclear_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.NUCLEAR_DYNAMITE, new DustParticleEffect(new Vector3f(0.9f, 1f, 0f), 1f), new NuclearTNTEffect(25)), 0.25f, false);
+	public static final Supplier<EntityType<LExplosiveProjectile>> NUCLEAR_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("nuclear_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.NUCLEAR_DYNAMITE, dustParticle(0.9f, 1f, 0f, 1f), new NuclearTNTEffect(25)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> FREEZE_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("freeze_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.FREEZE_DYNAMITE, new FreezeTNTEffect(5)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> FLOATING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("floating_dynamite", new FloatingDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> SPHERE_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("sphere_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.SPHERE_DYNAMITE, new SphereTNTEffect(() -> BlockRegistry.SPHERE_TNT, 5)), 0.25f, false);
@@ -374,7 +375,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<LExplosiveProjectile>> METEOR_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("meteor_dynamite", new MeteorDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> CUBIC_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("cubic_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.CUBIC_DYNAMITE, new CubicTNTEffect(2)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> GROVE_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("grove_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.GROVE_DYNAMITE, new GroveTNTEffect(10)), 0.25f, false);
-	public static final Supplier<EntityType<LExplosiveProjectile>> ENDER_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("ender_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.ENDER_DYNAMITE, new DustParticleEffect(new Vector3f(0.6f, 0f, 0.9f), 1f), new EnderTNTEffect(10)), 0.25f, false);
+	public static final Supplier<EntityType<LExplosiveProjectile>> ENDER_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("ender_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.ENDER_DYNAMITE, dustParticle(0.6f, 0f, 0.9f, 1f), new EnderTNTEffect(10)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> ARROW_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("arrow_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.ARROW_DYNAMITE, new ArrowTNTEffect(150)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> LIGHTNING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("lightning_dynamite", new LightningDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> DIGGING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("digging_dynamite", new DiggingDynamiteEffect(), 0.25f, false);
@@ -388,16 +389,16 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<LExplosiveProjectile>> FLOATING_ISLAND_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("floating_island_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.FLOATING_ISLAND_DYNAMITE, new FloatingIslandEffect(10)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> ERUPTING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("erupting_dynamite", new EruptingDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> SHATTERPROOF_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("shatterproof_dynamite", new ShatterproofDynamiteEffect(), 0.25f, false);
-	public static final Supplier<EntityType<LExplosiveProjectile>> LAVA_OCEAN_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("lava_ocean_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.LAVA_OCEAN_DYNAMITE, new DustParticleEffect(new Vector3f(1f, 0.5f, 0.1f), 1f), new LavaOceanTNTEffect(8, 5)), 0.25f, false);
-	public static final Supplier<EntityType<LExplosiveProjectile>> WOOL_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("wool_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.WOOL_DYNAMITE, new DustParticleEffect(new Vector3f(10f, 10f, 10f), 1f), new WoolTNTEffect(20)), 0.25f, false);
-	public static final Supplier<EntityType<LExplosiveProjectile>> NUCLEAR_WASTE_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("nuclear_waste_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.NUCLEAR_WASTE_DYNAMITE, new DustParticleEffect(new Vector3f(0.9f, 1f, 0f), 1f), new NuclearWasteTNTEffect(8)), 0.25f, false);
+	public static final Supplier<EntityType<LExplosiveProjectile>> LAVA_OCEAN_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("lava_ocean_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.LAVA_OCEAN_DYNAMITE, dustParticle(1f, 0.5f, 0.1f, 1f), new LavaOceanTNTEffect(8, 5)), 0.25f, false);
+	public static final Supplier<EntityType<LExplosiveProjectile>> WOOL_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("wool_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.WOOL_DYNAMITE, dustParticle(10f, 10f, 10f, 1f), new WoolTNTEffect(20)), 0.25f, false);
+	public static final Supplier<EntityType<LExplosiveProjectile>> NUCLEAR_WASTE_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("nuclear_waste_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.NUCLEAR_WASTE_DYNAMITE, dustParticle(0.9f, 1f, 0f, 1f), new NuclearWasteTNTEffect(8)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> TIMER_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("timer_dynamite", new TimerDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> GRAVITY_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("gravity_dynamite", new GravityDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> WITHERING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("withering_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.WITHERING_DYNAMITE, new WitheringTNTEffect(10)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> SENSOR_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("sensor_dynamite", new SensorDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> RAINBOW_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("rainbow_dynamite", new RainbowDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> ROULETTE_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("roulette_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.ROULETTE_DYNAMITE, new RouletteTNTEffect(5)), 0.25f, false);
-	public static final Supplier<EntityType<LExplosiveProjectile>> BOUNCING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile(LuckyTNTMod.MODID, "bouncing_dynamite", () -> EntityType.Builder.<LExplosiveProjectile>create(BouncingDynamite::new, SpawnGroup.MISC).dimensions(0.25f, 0.25f).build("bouncing_dynamite"));
+	public static final Supplier<EntityType<LExplosiveProjectile>> BOUNCING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile(LuckyTNTMod.MODID, "bouncing_dynamite", () -> EntityType.Builder.<LExplosiveProjectile>of(BouncingDynamite::new, MobCategory.MISC).sized(0.25f, 0.25f).build(ek("bouncing_dynamite")));
 	public static final Supplier<EntityType<LExplosiveProjectile>> IGNITER_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("igniter_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.IGNITER_DYNAMITE, new IgniterTNTEffect(6)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> MULTIPLYING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("multiplying_dynamite", new MultiplyingDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> RANDOM_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("random_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.RANDOM_DYNAMITE, new RandomTNTEffect(10)), 0.25f, false);
@@ -408,14 +409,14 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<LExplosiveProjectile>> CLUSTER_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("cluster_dynamite", new ClusterDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> TUNNELING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("tunneling_dynamite", new TunnelingDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> XRAY_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("xray_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.XRAY_DYNAMITE, new XRayTNTEffect(20)), 0.25f, false);
-	public static final Supplier<EntityType<LExplosiveProjectile>> FARMING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("farming_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.FARMING_DYNAMITE, new DustParticleEffect(new Vector3f(1f, 0.5f, 0.1f), 1f), new FarmingTNTEffect(5)), 0.25f, false);
+	public static final Supplier<EntityType<LExplosiveProjectile>> FARMING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("farming_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.FARMING_DYNAMITE, dustParticle(1f, 0.5f, 0.1f, 1f), new FarmingTNTEffect(5)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> BIG_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("big_dynamite", new BigDynamiteEffect(), 1f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> ICE_METEOR_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("ice_meteor_dynamite", new IceMeteorDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> HONEY_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("honey_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.HONEY_DYNAMITE, ParticleTypes.DRIPPING_HONEY, new HoneyTNTEffect(10)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> ULTRALIGHT_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("ultralight_dynamite", new UltralightDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> ACCELERATING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("acclerating_dynamite", new AcceleratingDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> NETHER_GROVE_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("nether_grove_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.NETHER_GROVE_DYNAMITE, new NetherGroveTNTEffect(15)), 0.25f, false);
-	public static final Supplier<EntityType<LExplosiveProjectile>> LUSH_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("lush_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.LUSH_DYNAMITE, new DustParticleEffect(new Vector3f(0.44f, 0.57f, 0.18f), 1f), new LushTNTEffect(10)), 0.25f, false);
+	public static final Supplier<EntityType<LExplosiveProjectile>> LUSH_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("lush_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.LUSH_DYNAMITE, dustParticle(0.44f, 0.57f, 0.18f, 1f), new LushTNTEffect(10)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> DRIPSTONE_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("dripstone_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.DRIPSTONE_DYNAMITE, new DripstoneTNTEffect(10)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> END_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("end_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.END_DYNAMITE, ParticleTypes.END_ROD, new EndTNTEffect(10)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> CHRISTMAS_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("christmas_dynamite", new ChristmasDynamiteEffect(), 0.25f, false);
@@ -474,7 +475,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<LTNTMinecart>> IGNITER_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecart("igniter_tnt_minecart", IGNITER_TNT, () -> ItemRegistry.IGNITER_TNT_MINECART);
 	public static final Supplier<EntityType<LTNTMinecart>> BUTTER_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecart("butter_tnt_minecart", BUTTER_TNT, () -> ItemRegistry.BUTTER_TNT_MINECART);
 	public static final Supplier<EntityType<LTNTMinecart>> PHYSICS_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecart("physics_tnt_minecart", PHYSICS_TNT, () -> ItemRegistry.PHYSICS_TNT_MINECART);
-	public static final Supplier<EntityType<LTNTMinecart>> ORE_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecart(LuckyTNTMod.MODID, "ore_tnt_minecart", () -> EntityType.Builder.<LTNTMinecart>create(OreTNTMinecart::new, SpawnGroup.MISC).dimensions(0.98f, 0.7f).build("ore_tnt_minecart"));
+	public static final Supplier<EntityType<LTNTMinecart>> ORE_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecart(LuckyTNTMod.MODID, "ore_tnt_minecart", () -> EntityType.Builder.<LTNTMinecart>of(OreTNTMinecart::new, MobCategory.MISC).sized(0.98f, 0.7f).build(ek("ore_tnt_minecart")));
 	public static final Supplier<EntityType<LTNTMinecart>> REDSTONE_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecart("redstone_tnt_minecart", REDSTONE_TNT, () -> ItemRegistry.REDSTONE_TNT_MINECART);
 	public static final Supplier<EntityType<LTNTMinecart>> RANDOM_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecart("random_tnt_minecart", RANDOM_TNT, () -> ItemRegistry.RANDOM_TNT_MINECART);
 	public static final Supplier<EntityType<LTNTMinecart>> TURRET_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecart("turret_tnt_minecart", TURRET_TNT, () -> ItemRegistry.TURRET_TNT_MINECART, false);
@@ -492,7 +493,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<LTNTMinecart>> RING_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecart("ring_tnt_minecart", RING_TNT, () -> ItemRegistry.RING_TNT_MINECART);
 	public static final Supplier<EntityType<LTNTMinecart>> SCULK_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecart("sculk_tnt_minecart", SCULK_TNT, () -> ItemRegistry.SCULK_TNT_MINECART);
 	
-	public static final Supplier<EntityType<LTNTMinecart>> LUCKY_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecart(LuckyTNTMod.MODID, "lucky_tnt_minecart", () -> EntityType.Builder.<LTNTMinecart>create((type, level) -> new LuckyTNTMinecart(type, level, BlockRegistry.LUCKY_TNT, () -> ItemRegistry.LUCKY_TNT_MINECART, LuckyTNTMod.RH.minecartLists.get("m")), SpawnGroup.MISC).dimensions(0.98f, 0.7f).build("lucky_tnt_minecart"));
+	public static final Supplier<EntityType<LTNTMinecart>> LUCKY_TNT_MINECART = LuckyTNTMod.RH.registerTNTMinecart(LuckyTNTMod.MODID, "lucky_tnt_minecart", () -> EntityType.Builder.<LTNTMinecart>of((type, level) -> new LuckyTNTMinecart(type, level, BlockRegistry.LUCKY_TNT, () -> ItemRegistry.LUCKY_TNT_MINECART, LuckyTNTMod.RH.minecartLists.get("m")), MobCategory.MISC).sized(0.98f, 0.7f).build(ek("lucky_tnt_minecart")));
 	
 	//Projectile
 	public static final Supplier<EntityType<LExplosiveProjectile>> METEOR = LuckyTNTMod.RH.registerExplosiveProjectile("meteor", new MeteorEffect(40, 2f), 2f, false);
@@ -511,7 +512,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<LExplosiveProjectile>> TSAR_BOMBA_BOMB = LuckyTNTMod.RH.registerExplosiveProjectile("tsar_bomba_bomb", new TsarBombaBombEffect(), 1.2f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> PRESENT = LuckyTNTMod.RH.registerExplosiveProjectile("present", new StackedPrimedTNTEffect(new ChristmasTNTEffect(), Collections.singletonList(TNT_X5_EFFECT.build())));
 	public static final Supplier<EntityType<LExplosiveProjectile>> ACIDIC_PROJECTILE = LuckyTNTMod.RH.registerExplosiveProjectile("acidic_projectile", new AcidicTNTEffect(), 1f, false);
-	public static final Supplier<EntityType<LExplosiveProjectile>> HAILSTONE = registerEntity("hailstone", () -> EntityType.Builder.<LExplosiveProjectile>create((EntityType<LExplosiveProjectile> type, World level) -> new HailstoneProjectile(type, level, new HailstoneEffect()), SpawnGroup.MISC).maxTrackingRange(64).dimensions(0.1f, 0.1f).build("hailstone"));
+	public static final Supplier<EntityType<LExplosiveProjectile>> HAILSTONE = registerEntity("hailstone", () -> EntityType.Builder.<LExplosiveProjectile>of((EntityType<LExplosiveProjectile> type, Level level) -> new HailstoneProjectile(type, level, new HailstoneEffect()), MobCategory.MISC).clientTrackingRange(64).sized(0.1f, 0.1f).build(ek("hailstone")));
 	public static final Supplier<EntityType<LExplosiveProjectile>> CHRISTMAS_DYNAMITE_PROJECTILE = LuckyTNTMod.RH.registerExplosiveProjectile("christmas_dynamite_projectile", new ChristmasDynamiteProjectileEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> DEATH_RAY_RAY = LuckyTNTMod.RH.registerExplosiveProjectile("death_ray_ray", new DeathRayRayEffect(), 0.25f, true);
 	public static final Supplier<EntityType<LExplosiveProjectile>> VACUUM_SHOT = LuckyTNTMod.RH.registerExplosiveProjectile("vacuum_shot", new VacuumShotEffect(), 0.25f, true);
@@ -525,26 +526,37 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<LExplosiveProjectile>> PRESENT_METEOR = LuckyTNTMod.RH.registerExplosiveProjectile("present_meteor", new PresentMeteorEffect(), 4f, false);
 	
 	//Other
-	public static Supplier<EntityType<AngryMiner>> ANGRY_MINER = registerEntity("angry_miner", () -> EntityType.Builder.<AngryMiner>create(AngryMiner::new, SpawnGroup.MISC).dimensions(0.6f, 1.8f).build("angry_miner"));
+	public static Supplier<EntityType<AngryMiner>> ANGRY_MINER = registerEntity("angry_miner", () -> EntityType.Builder.<AngryMiner>of(AngryMiner::new, MobCategory.MISC).sized(0.6f, 1.8f).build(ek("angry_miner")));
 	public static final Supplier<EntityType<PrimedLTNT>> TOXIC_CLOUD = LuckyTNTMod.RH.registerTNTEntity("toxic_cloud", new ToxicCloudEffect());
 	
 	//BlockEntities
-	public static final Supplier<BlockEntityType<SmokeTNTBlockEntity>> SMOKE_TNT_BLOCK_ENTITY = registerBlockEntity("smoke_tnt_block_entity", () -> BlockEntityType.Builder.create(SmokeTNTBlockEntity::new, BlockRegistry.SMOKE_TNT.get()).build(null));
-	public static final Supplier<BlockEntityType<ItemFireworkBlockEntity>> ITEM_FIREWORK_BLOCK_ENTITY = registerBlockEntity("item_firework_block_entity", () -> BlockEntityType.Builder.create(ItemFireworkBlockEntity::new, BlockRegistry.ITEM_FIREWORK.get()).build(null));
+	public static final Supplier<BlockEntityType<SmokeTNTBlockEntity>> SMOKE_TNT_BLOCK_ENTITY = registerBlockEntity("smoke_tnt_block_entity", () -> new BlockEntityType<>(SmokeTNTBlockEntity::new, java.util.Set.of(BlockRegistry.SMOKE_TNT.get())));
+	public static final Supplier<BlockEntityType<ItemFireworkBlockEntity>> ITEM_FIREWORK_BLOCK_ENTITY = registerBlockEntity("item_firework_block_entity", () -> new BlockEntityType<>(ItemFireworkBlockEntity::new, java.util.Set.of(BlockRegistry.ITEM_FIREWORK.get())));
 
-	public static Predicate<LivingEntity> PREDICATE = living -> { 
-		return living instanceof PlayerEntity player ? !player.isCreative() && !player.isSpectator() : false;
+	public static net.minecraft.world.entity.ai.targeting.TargetingConditions.Selector PREDICATE = (living, level) -> {
+		return living instanceof Player player ? !player.isCreative() && !player.isSpectator() : false;
 	};
-	
+
+	public static net.minecraft.resources.ResourceKey<EntityType<?>> ek(String name) {
+		return net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, name));
+	}
+
 	public static <T extends Entity> Supplier<EntityType<T>> registerEntity(String name, Supplier<EntityType<T>> entitySupplier) {
-		EntityType<T> rtype = Registry.register(Registries.ENTITY_TYPE, Identifier.of(LuckyTNTMod.MODID, name), entitySupplier.get());
+		EntityType<T> rtype = Registry.register(BuiltInRegistries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, name), entitySupplier.get());
 		return () -> rtype;
 	}
 	
 	public static <F extends BlockEntity> Supplier<BlockEntityType<F>> registerBlockEntity(String name, Supplier<BlockEntityType<F>> entitySupplier) {
-		BlockEntityType<F> rtype = Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(LuckyTNTMod.MODID, name), entitySupplier.get());
+		BlockEntityType<F> rtype = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, name), entitySupplier.get());
 		return () -> rtype;
 	}
 	
 	public static void init() {}
+
+	private static DustParticleOptions dustParticle(float r, float g, float b, float scale) {
+		int ri = Math.max(0, Math.min(255, (int)(r * 255f)));
+		int gi = Math.max(0, Math.min(255, (int)(g * 255f)));
+		int bi = Math.max(0, Math.min(255, (int)(b * 255f)));
+		return new DustParticleOptions(ARGB.color(ri, gi, bi), scale);
+	}
 }

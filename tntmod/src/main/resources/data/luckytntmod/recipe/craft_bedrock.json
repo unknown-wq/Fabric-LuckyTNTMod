@@ -6,12 +6,8 @@
     " 0 "
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:antimatter"
-    },
-    "#": {
-      "item": "minecraft:obsidian"
-    }
+    "0": "luckytntmod:antimatter",
+    "#": "minecraft:obsidian"
   },
   "result": {
     "id": "minecraft:bedrock",

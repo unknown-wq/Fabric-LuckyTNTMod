@@ -6,12 +6,8 @@
     "000"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:cobblestone"
-    },
-    "#": {
-      "item": "luckytntmod:digging_tnt"
-    }
+    "0": "minecraft:cobblestone",
+    "#": "luckytntmod:digging_tnt"
   },
   "result": {
     "id": "luckytntmod:tunneling_tnt",

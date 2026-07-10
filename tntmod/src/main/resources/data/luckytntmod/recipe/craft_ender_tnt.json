@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:ender_pearl"
-    },
-    "0": {
-      "item": "minecraft:tnt"
-    }
+    "#": "minecraft:ender_pearl",
+    "0": "minecraft:tnt"
   },
   "result": {
     "id": "luckytntmod:ender_tnt",

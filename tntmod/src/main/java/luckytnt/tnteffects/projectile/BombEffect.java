@@ -3,8 +3,8 @@ package luckytnt.tnteffects.projectile;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.ParticleTypes;
 
 public class BombEffect extends PrimedTNTEffect{
 
@@ -17,6 +17,6 @@ public class BombEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(ParticleTypes.CLOUD, true, entity.x(), entity.y(), entity.z(), 0f, 0f, 0f);
+		entity.getLevel().addParticle(ParticleTypes.CLOUD, entity.x(), entity.y(), entity.z(), 0f, 0f, 0f);
 	}
 }

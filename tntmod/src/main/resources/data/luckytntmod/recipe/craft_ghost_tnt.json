@@ -6,15 +6,9 @@
     "101"
   ],
   "key": {
-    "2": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "minecraft:phantom_membrane"
-    },
-    "0": {
-      "item": "luckytntmod:phantom_tnt"
-    }
+    "2": "luckytntmod:uranium_ingot",
+    "1": "minecraft:phantom_membrane",
+    "0": "luckytntmod:phantom_tnt"
   },
   "result": {
     "id": "luckytntmod:ghost_tnt",

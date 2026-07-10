@@ -6,15 +6,9 @@
     "#0#"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:obsidian"
-    },
-    "0": {
-      "item": "minecraft:iron_ingot"
-    },
-    "1": {
-      "item": "minecraft:redstone_torch"
-    }
+    "#": "minecraft:obsidian",
+    "0": "minecraft:iron_ingot",
+    "1": "minecraft:redstone_torch"
   },
   "result": {
     "id": "luckytntmod:obsidian_activator_rail",

@@ -6,15 +6,9 @@
     " 1 "
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:tnt_x500"
-    },
-    "0": {
-      "item": "luckytntmod:antimatter"
-    },
-    "1": {
-      "item": "luckytntmod:giant_tnt"
-    }
+    "#": "luckytntmod:tnt_x500",
+    "0": "luckytntmod:antimatter",
+    "1": "luckytntmod:giant_tnt"
   },
   "result": {
     "id": "luckytntmod:colossal_tnt",

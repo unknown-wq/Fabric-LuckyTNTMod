@@ -25,7 +25,7 @@ import luckytntlib.registry.RegistryHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class LuckyTNTMod implements ModInitializer {
 
@@ -54,7 +54,7 @@ public class LuckyTNTMod implements ModInitializer {
 			RendererRegistry.init();
 			RenderLayerRegistry.init();
 			
-			RH.registerConfigScreenFactory(Text.literal("Lucky TNT Mod"), ClientAccess.getFactory());
+			RH.registerConfigScreenFactory(Component.literal("Lucky TNT Mod"), ClientAccess.getFactory());
 		}
 		
 		LuckyTNTConfigValues.registerConfig();

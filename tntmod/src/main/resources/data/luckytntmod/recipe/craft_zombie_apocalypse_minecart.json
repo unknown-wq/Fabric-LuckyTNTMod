@@ -5,12 +5,8 @@
     "B"
   ],
   "key": {
-    "A": {
-      "item": "luckytntmod:zombie_apocalypse"
-    },
-    "B": {
-      "item": "minecraft:minecart"
-    }
+    "A": "luckytntmod:zombie_apocalypse",
+    "B": "minecraft:minecart"
   },
   "result": {
     "id": "luckytntmod:zombie_apocalypse_minecart"

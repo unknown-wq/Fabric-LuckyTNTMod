@@ -6,33 +6,15 @@
     "678"
   ],
   "key": {
-    "1": {
-      "item": "minecraft:grass_block"
-    },
-    "2": {
-      "item": "minecraft:note_block"
-    },
-    "3": {
-      "item": "minecraft:red_mushroom_block"
-    },
-    "4": {
-      "item": "minecraft:sponge"
-    },
-    "5": {
-      "item": "minecraft:obsidian"
-    },
-    "6": {
-      "item": "minecraft:warped_nylium"
-    },
-    "7": {
-      "item": "luckytntmod:tnt_firework"
-    },
-	"8": {
-      "item": "minecraft:end_stone"
-    },
-    "0": {
-      "item": "luckytntmod:antimatter"
-    }
+    "1": "minecraft:grass_block",
+    "2": "minecraft:note_block",
+    "3": "minecraft:red_mushroom_block",
+    "4": "minecraft:sponge",
+    "5": "minecraft:obsidian",
+    "6": "minecraft:warped_nylium",
+    "7": "luckytntmod:tnt_firework",
+    "8": "minecraft:end_stone",
+    "0": "luckytntmod:antimatter"
   },
   "result": {
     "id": "luckytntmod:custom_firework",

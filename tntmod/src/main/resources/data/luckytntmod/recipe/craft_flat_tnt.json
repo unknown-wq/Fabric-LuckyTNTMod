@@ -6,15 +6,9 @@
     "222"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:cobblestone"
-    },
-    "1": {
-      "item": "luckytntmod:tnt_x20"
-    },
-    "2": {
-      "item": "minecraft:obsidian"
-    }
+    "0": "minecraft:cobblestone",
+    "1": "luckytntmod:tnt_x20",
+    "2": "minecraft:obsidian"
   },
   "result": {
     "id": "luckytntmod:flat_tnt",

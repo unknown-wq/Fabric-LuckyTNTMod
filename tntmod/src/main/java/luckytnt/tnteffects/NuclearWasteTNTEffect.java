@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import org.joml.Vector3f;
 
@@ -8,11 +9,11 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class NuclearWasteTNTEffect extends PrimedTNTEffect{
 
@@ -26,10 +27,10 @@ public class NuclearWasteTNTEffect extends PrimedTNTEffect{
 	public void serverExplosion(IExplosiveEntity entity) {
 		ExplosionHelper.doTopBlockExplosion(entity.getLevel(), entity.getPos(), radius, new IForEachBlockExplosionEffect() {
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
-				if(!level.getBlockState(pos.up()).isFullCube(level, pos.up()) && level.getBlockState(pos.up()).getBlock().getBlastResistance() < 100) {
-					level.getBlockState(pos.up()).getBlock().onDestroyedByExplosion(level, pos.up(), ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlockState(pos, BlockRegistry.NUCLEAR_WASTE.get().getDefaultState());
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				if(!level.getBlockState(pos.above()).isCollisionShapeFullBlock(level, pos.above()) && level.getBlockState(pos.above()).getBlock().getExplosionResistance() < 100) {
+					level.getBlockState(pos.above()).getBlock().wasExploded((ServerLevel)level, pos.above(), ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					level.setBlockAndUpdate(pos, BlockRegistry.NUCLEAR_WASTE.get().defaultBlockState());
 				}
 			}
 		});
@@ -37,7 +38,7 @@ public class NuclearWasteTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.9f, 1f, 0f), 1), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(0.9f*255)<<16)|((int)(1f*255)<<8)|(int)(0f*255), 1), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
 	}
 	
 	@Override

@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:lightning_tnt"
-    }
+    "luckytntmod:lightning_tnt"
   ],
   "result": {
     "id": "luckytntmod:lightning_dynamite",

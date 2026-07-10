@@ -5,53 +5,53 @@ import java.util.List;
 import java.util.Random;
 
 import luckytnt.registry.BlockRegistry;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.entity.ExperienceOrbEntity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.loot.context.LootContextParameterSet;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class PresentBlock extends Block {
 	
-	public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
-	public static final IntProperty TYPE = IntProperty.of("type", 0, 4);
-	
-	public PresentBlock(AbstractBlock.Settings properties) {
+	public static final EnumProperty<net.minecraft.core.Direction> FACING = HorizontalDirectionalBlock.FACING;
+	public static final IntegerProperty TYPE = IntegerProperty.create("type", 0, 4);
+
+	public PresentBlock(BlockBehaviour.Properties properties) {
 		super(properties);
-	}	
+	}
 
 	@Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> definition) {
-    	super.appendProperties(definition);
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> definition) {
+    	super.createBlockStateDefinition(definition);
     	definition.add(FACING);
     	definition.add(TYPE);
     }
-	
+
 	@Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-    	return getDefaultState();
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+    	return defaultBlockState();
     }
-	
+
 	@Override
-	public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+	public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
 		return Collections.singletonList(ItemStack.EMPTY);
 	}
-	
+
 	@Override
-	public BlockState onBreak(World level, BlockPos pos, BlockState state, PlayerEntity player) {
+	public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
 		if(!player.isCreative()) {
 			Random random = new Random();
 			Item item = Items.COAL;
@@ -89,16 +89,16 @@ public class PresentBlock extends Block {
 				xpCount = random.nextInt(64, 96);
 			}
 			ItemEntity itemEntity = new ItemEntity(level, pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, new ItemStack(item, itemCount));
-			level.spawnEntity(itemEntity);
+			level.addFreshEntity(itemEntity);
 			rand = random.nextInt(1, 6);
 			for(int i = 0; i < rand; i++) {
-				ExperienceOrbEntity xp = new ExperienceOrbEntity(level, pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, xpCount / rand);
-				level.spawnEntity(xp);
+				ExperienceOrb xp = new ExperienceOrb(level, pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, xpCount / rand);
+				level.addFreshEntity(xp);
 			}
 			for(int i = 0; i < 15; i++) {
 				level.addParticle(ParticleTypes.CLOUD, pos.getX() + 0.5f + Math.random() * 2 - 1f, pos.getY() + 0.5f + Math.random() * 2 - 1f, pos.getZ() + 0.5f + Math.random() * 2 - 1f, 0, 0, 0);
 			}
 		}
-		return super.onBreak(level, pos, state, player);
+		return super.playerWillDestroy(level, pos, state, player);
 	}
 }

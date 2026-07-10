@@ -6,15 +6,9 @@
     "101"
   ],
   "key": {
-    "1": {
-      "item": "luckytntmod:dynamite_x5"
-    },
-    "0": {
-      "item": "luckytntmod:turret_tnt"
-    },
-    "#": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "1": "luckytntmod:dynamite_x5",
+    "0": "luckytntmod:turret_tnt",
+    "#": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:cannon_tnt",

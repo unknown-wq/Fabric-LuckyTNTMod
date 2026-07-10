@@ -6,15 +6,9 @@
     "1#1"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:floating_tnt"
-    },
-    "1": {
-      "item": "minecraft:feather"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "#": "luckytntmod:floating_tnt",
+    "1": "minecraft:feather",
+    "0": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:levitating_tnt",

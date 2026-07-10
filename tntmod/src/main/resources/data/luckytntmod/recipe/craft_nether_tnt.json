@@ -6,15 +6,9 @@
     "010"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:nether_grove_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:hells_gate"
-    },
-    "2": {
-      "item": "luckytntmod:antimatter"
-    }
+    "0": "luckytntmod:nether_grove_tnt",
+    "1": "luckytntmod:hells_gate",
+    "2": "luckytntmod:antimatter"
   },
   "result": {
     "id": "luckytntmod:nether_tnt",

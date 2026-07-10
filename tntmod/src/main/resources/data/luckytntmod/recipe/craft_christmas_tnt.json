@@ -6,12 +6,8 @@
     "101"
   ],
   "key": {
-    "1": {
-      "item": "minecraft:tnt"
-    },
-    "0": {
-      "item": "luckytntmod:snow_tnt"
-    }
+    "1": "minecraft:tnt",
+    "0": "luckytntmod:snow_tnt"
   },
   "result": {
     "id": "luckytntmod:christmas_tnt",

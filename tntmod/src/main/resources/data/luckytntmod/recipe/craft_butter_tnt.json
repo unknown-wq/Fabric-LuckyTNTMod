@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:gold_block"
-    },
-    "0": {
-      "item": "luckytntmod:tnt_x5"
-    }
+    "#": "minecraft:gold_block",
+    "0": "luckytntmod:tnt_x5"
   },
   "result": {
     "id": "luckytntmod:butter_tnt",

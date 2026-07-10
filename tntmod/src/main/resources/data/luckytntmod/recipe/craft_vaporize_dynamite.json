@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:vaporize_tnt"
-    }
+    "luckytntmod:vaporize_tnt"
   ],
   "result": {
     "id": "luckytntmod:vaporize_dynamite",

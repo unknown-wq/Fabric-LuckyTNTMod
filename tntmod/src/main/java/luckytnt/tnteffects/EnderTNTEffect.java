@@ -6,10 +6,10 @@ import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.util.Mth;
 
 public class EnderTNTEffect extends PrimedTNTEffect {
 
@@ -21,13 +21,13 @@ public class EnderTNTEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity) entity, entity.getPos(), MathHelper.floor(strength * 1.5f));
+		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity) entity, entity.getPos(), Mth.floor(strength * 1.5f));
 		explosion.doEntityExplosion(strength, false);
 	}
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.6f, 0f, 0.9f), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(0.6f*255)<<16)|((int)(0f*255)<<8)|(int)(0.9f*255), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
 	}
 	
 	@Override

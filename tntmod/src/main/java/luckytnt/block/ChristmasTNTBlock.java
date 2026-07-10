@@ -2,26 +2,26 @@ package luckytnt.block;
 
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.block.LTNTBlock;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.MapColor;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 public class ChristmasTNTBlock extends LTNTBlock{
 
-	public static final BooleanProperty ONLY_PRESENT = BooleanProperty.of("only_present");
-	
+	public static final BooleanProperty ONLY_PRESENT = BooleanProperty.create("only_present");
+
 	public ChristmasTNTBlock() {
-		super(AbstractBlock.Settings.create().mapColor(MapColor.RED).sounds(BlockSoundGroup.GRASS), EntityRegistry.CHRISTMAS_TNT, false);
-        setDefaultState(getDefaultState().with(ONLY_PRESENT, false));
+		super(BlockBehaviour.Properties.of().mapColor(MapColor.FIRE).sound(SoundType.GRASS).setId(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.Identifier.fromNamespaceAndPath(luckytnt.LuckyTNTMod.MODID, "christmas_tnt"))), EntityRegistry.CHRISTMAS_TNT, false);
+        registerDefaultState(defaultBlockState().setValue(ONLY_PRESENT, false));
 	}
-    
+
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> definition) {
-    	super.appendProperties(definition);
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> definition) {
+    	super.createBlockStateDefinition(definition);
     	definition.add(ONLY_PRESENT);
     }
 }

@@ -5,39 +5,43 @@ import org.joml.Vector3f;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.mob.ZombieEntity;
-import net.minecraft.entity.mob.ZombieHorseEntity;
-import net.minecraft.entity.mob.ZombieVillagerEntity;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.animal.equine.ZombieHorse;
+import net.minecraft.world.entity.monster.zombie.ZombieVillager;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityTypes;
 
 public class ZombieApocalypseEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		for(int count = 0; count <= 30 + Math.random() * 15; count++) {
-			ZombieEntity zombie = new ZombieEntity(EntityType.ZOMBIE, entity.getLevel());
-			zombie.setPosition(entity.getPos());
-			entity.getLevel().spawnEntity(zombie);
+			Zombie zombie = new Zombie(EntityTypes.ZOMBIE, entity.getLevel());
+			zombie.setPos(entity.getPos());
+			entity.getLevel().addFreshEntity(zombie);
 		}
 		for(int count = 0; count <= 10 + Math.random() * 5; count++) {
-			ZombieHorseEntity zombie = new ZombieHorseEntity(EntityType.ZOMBIE_HORSE, entity.getLevel());
-			zombie.setPosition(entity.getPos());
-			entity.getLevel().spawnEntity(zombie);
+			ZombieHorse zombie = new ZombieHorse(EntityTypes.ZOMBIE_HORSE, entity.getLevel());
+			zombie.setPos(entity.getPos());
+			entity.getLevel().addFreshEntity(zombie);
 		}
 		for(int count = 0; count <= 15 + Math.random() * 10; count++) {
-			ZombieVillagerEntity zombie = new ZombieVillagerEntity(EntityType.ZOMBIE_VILLAGER, entity.getLevel());
-			zombie.setPosition(entity.getPos());
-			entity.getLevel().spawnEntity(zombie);
+			ZombieVillager zombie = new ZombieVillager(EntityTypes.ZOMBIE_VILLAGER, entity.getLevel());
+			zombie.setPos(entity.getPos());
+			entity.getLevel().addFreshEntity(zombie);
 		}
-		((ServerWorld)entity.getLevel()).setTimeOfDay(18000);
+		// TODO(port-26.2): DISABLED — set-time-to-night. 26.2 rewrote the time system
+		// (ServerClockManager/WorldClock/ClockTimeMarker); ServerLevel.setTimeOfDay is gone and the
+		// replacement needs a Holder<WorldClock> with no clean drop-in. Zombie spawning is preserved.
+		/* ((ServerLevel)entity.getLevel()).setTimeOfDay(18000); */
 	}
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(0, 0.7f, 0), 1), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(0*255)<<16)|((int)(0.7f*255)<<8)|(int)(0*255), 1), entity.x(), entity.y() + 1f, entity.z(), 0, 0, 0);
 	}
 	
 	@Override

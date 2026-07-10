@@ -6,15 +6,9 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:picky_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "minecraft:diamond_pickaxe"
-    }
+    "#": "luckytntmod:picky_tnt",
+    "0": "luckytntmod:uranium_ingot",
+    "1": "minecraft:diamond_pickaxe"
   },
   "result": {
     "id": "luckytntmod:silk_touch_tnt",

@@ -1,13 +1,14 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 
 public class KolaBoreholeTNTEffect extends PrimedTNTEffect {
 
@@ -32,35 +33,35 @@ public class KolaBoreholeTNTEffect extends PrimedTNTEffect {
 			for(int offX = -10; offX <= 10; offX++) {
 				for(int offZ = -10; offZ <= 10; offZ++) {
 					double distance = Math.sqrt(offX * offX + offZ * offZ);
-					BlockPos pos = new BlockPos(MathHelper.floor(ent.x() + offX), offY - 64, MathHelper.floor(ent.z() + offZ));
-					if(distance <= rad && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
-						ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-						ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+					BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), offY - 64, Mth.floor(ent.z() + offZ));
+					if(distance <= rad && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
+						ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
-					if(distance > rad && distance <= (rad + 1) && ent.getLevel().getBlockState(pos).getBlock().getBlastResistance() <= 200) {
+					if(distance > rad && distance <= (rad + 1) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200) {
 						if(rad != prevRad) {
-							if((Block.isShapeFullCube(ent.getLevel().getBlockState(pos.up().north()).getOutlineShape(ent.getLevel(), pos.up().north())) && ent.getLevel().getBlockState(pos.up().north()).isOpaque())
-							|| (Block.isShapeFullCube(ent.getLevel().getBlockState(pos.up().east()).getOutlineShape(ent.getLevel(), pos.up().east())) && ent.getLevel().getBlockState(pos.up().east()).isOpaque())
-							|| (Block.isShapeFullCube(ent.getLevel().getBlockState(pos.up().south()).getOutlineShape(ent.getLevel(), pos.up().south())) && ent.getLevel().getBlockState(pos.up().south()).isOpaque())
-							|| (Block.isShapeFullCube(ent.getLevel().getBlockState(pos.up().west()).getOutlineShape(ent.getLevel(), pos.up().west())) && ent.getLevel().getBlockState(pos.up().west()).isOpaque()))
+							if((Block.isShapeFullBlock(ent.getLevel().getBlockState(pos.above().north()).getShape(ent.getLevel(), pos.above().north())) && ent.getLevel().getBlockState(pos.above().north()).canOcclude())
+							|| (Block.isShapeFullBlock(ent.getLevel().getBlockState(pos.above().east()).getShape(ent.getLevel(), pos.above().east())) && ent.getLevel().getBlockState(pos.above().east()).canOcclude())
+							|| (Block.isShapeFullBlock(ent.getLevel().getBlockState(pos.above().south()).getShape(ent.getLevel(), pos.above().south())) && ent.getLevel().getBlockState(pos.above().south()).canOcclude())
+							|| (Block.isShapeFullBlock(ent.getLevel().getBlockState(pos.above().west()).getShape(ent.getLevel(), pos.above().west())) && ent.getLevel().getBlockState(pos.above().west()).canOcclude()))
 							{
-								ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-								ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+								ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 								if(pos.getY() > (Math.random() * 2 - Math.random() * 2)) {
-									ent.getLevel().setBlockState(pos, Blocks.STONE.getDefaultState(), 3);
+									ent.getLevel().setBlock(pos, Blocks.STONE.defaultBlockState(), 3);
 								} else {
-									ent.getLevel().setBlockState(pos, Blocks.DEEPSLATE.getDefaultState(), 3);
+									ent.getLevel().setBlock(pos, Blocks.DEEPSLATE.defaultBlockState(), 3);
 								}
 							}
 						} else if(prevRad == rad) {
-							if(Block.isShapeFullCube(ent.getLevel().getBlockState(pos.up()).getOutlineShape(ent.getLevel(), pos)) && ent.getLevel().getBlockState(pos.up()).isOpaque()) {
+							if(Block.isShapeFullBlock(ent.getLevel().getBlockState(pos.above()).getShape(ent.getLevel(), pos)) && ent.getLevel().getBlockState(pos.above()).canOcclude()) {
 								Block block = ent.getLevel().getBlockState(pos).getBlock();
-								block.onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-								ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+								block.wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+								ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 								if(pos.getY() > (Math.random() * 2 - Math.random() * 2)) {
-									ent.getLevel().setBlockState(pos, Blocks.STONE.getDefaultState(), 3);
+									ent.getLevel().setBlock(pos, Blocks.STONE.defaultBlockState(), 3);
 								} else {
-									ent.getLevel().setBlockState(pos, Blocks.DEEPSLATE.getDefaultState(), 3);
+									ent.getLevel().setBlock(pos, Blocks.DEEPSLATE.defaultBlockState(), 3);
 								}
 							}
 						}
@@ -73,9 +74,9 @@ public class KolaBoreholeTNTEffect extends PrimedTNTEffect {
 			}
 		}
 		for(int i = -59; i >= -65; i--) {
-			BlockPos pos = new BlockPos(MathHelper.floor(ent.x()), i, MathHelper.floor(ent.z()));
-			ent.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-			ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+			BlockPos pos = new BlockPos(Mth.floor(ent.x()), i, Mth.floor(ent.z()));
+			ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+			ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 		}
 	}
 	

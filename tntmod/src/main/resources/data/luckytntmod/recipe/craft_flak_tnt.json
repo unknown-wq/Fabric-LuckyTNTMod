@@ -6,15 +6,9 @@
     "101"
   ],
   "key": {
-    "1": {
-      "item": "luckytntmod:dynamite_x20"
-    },
-    "0": {
-      "item": "luckytntmod:cannon_tnt"
-    },
-    "#": {
-      "item": "luckytntmod:antimatter"
-    }
+    "1": "luckytntmod:dynamite_x20",
+    "0": "luckytntmod:cannon_tnt",
+    "#": "luckytntmod:antimatter"
   },
   "result": {
     "id": "luckytntmod:flak_tnt",

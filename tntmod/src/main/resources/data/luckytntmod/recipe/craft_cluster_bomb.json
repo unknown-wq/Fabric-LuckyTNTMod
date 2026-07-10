@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:dynamite"
-    },
-    "0": {
-      "item": "luckytntmod:tnt_x5"
-    }
+    "#": "luckytntmod:dynamite",
+    "0": "luckytntmod:tnt_x5"
   },
   "result": {
     "id": "luckytntmod:cluster_bomb",

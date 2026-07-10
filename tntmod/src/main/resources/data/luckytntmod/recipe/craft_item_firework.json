@@ -6,21 +6,11 @@
     "232"
   ],
   "key": {
-    "5": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "luckytntmod:tnt_firework"
-    },
-    "2": {
-      "item": "minecraft:diamond"
-    },
-    "3": {
-      "item": "minecraft:poppy"
-    },
-    "4": {
-      "item": "minecraft:iron_ingot"
-    }
+    "5": "luckytntmod:uranium_ingot",
+    "1": "luckytntmod:tnt_firework",
+    "2": "minecraft:diamond",
+    "3": "minecraft:poppy",
+    "4": "minecraft:iron_ingot"
   },
   "result": {
     "id": "luckytntmod:item_firework",

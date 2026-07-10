@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:freeze_tnt"
-    }
+    "luckytntmod:freeze_tnt"
   ],
   "result": {
     "id": "luckytntmod:freeze_dynamite",

@@ -6,12 +6,8 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:vacuum_cleaner"
-    },
-    "0": {
-      "item": "minecraft:tnt"
-    }
+    "#": "luckytntmod:vacuum_cleaner",
+    "0": "minecraft:tnt"
   },
   "result": {
     "id": "luckytntmod:disaster_clearer",

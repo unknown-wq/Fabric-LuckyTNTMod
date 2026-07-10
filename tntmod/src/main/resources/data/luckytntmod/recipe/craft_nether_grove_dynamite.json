@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:nether_grove_tnt"
-    }
+    "luckytntmod:nether_grove_tnt"
   ],
   "result": {
     "id": "luckytntmod:nether_grove_dynamite",

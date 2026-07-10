@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "tag": "forge:ores"
-    },
-    "0": {
-      "item": "luckytntmod:tnt_x20"
-    }
+    "#": "#c:ores",
+    "0": "luckytntmod:tnt_x20"
   },
   "result": {
     "id": "luckytntmod:ore_tnt",

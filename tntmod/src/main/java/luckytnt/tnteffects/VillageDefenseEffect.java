@@ -3,19 +3,20 @@ package luckytnt.tnteffects;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.IronGolemEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.EntityTypes;
 
 public class VillageDefenseEffect extends PrimedTNTEffect{
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		for(int count = 0; count <= 15; count++) {
-			IronGolemEntity golem = new IronGolemEntity(EntityType.IRON_GOLEM, entity.getLevel());
-			golem.setPosition(entity.getPos());
+			IronGolem golem = new IronGolem(EntityTypes.IRON_GOLEM, entity.getLevel());
+			golem.setPos(entity.getPos());
 			golem.setPlayerCreated(true);
-			entity.getLevel().spawnEntity(golem);
+			entity.getLevel().addFreshEntity(golem);
 		}
 	}
 	

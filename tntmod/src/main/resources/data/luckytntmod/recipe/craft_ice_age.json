@@ -6,15 +6,9 @@
     "1#1"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "#": {
-      "item": "luckytntmod:freeze_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:snow_tnt"
-    }
+    "0": "luckytntmod:uranium_ingot",
+    "#": "luckytntmod:freeze_tnt",
+    "1": "luckytntmod:snow_tnt"
   },
   "result": {
     "id": "luckytntmod:ice_age",

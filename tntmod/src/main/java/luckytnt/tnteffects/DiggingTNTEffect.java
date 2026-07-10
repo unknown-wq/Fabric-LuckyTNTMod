@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -8,20 +9,20 @@ import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.explosion.ExplosionBehavior;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 
 public class DiggingTNTEffect extends PrimedTNTEffect{
 
 	private static final float VEC_LENGTH = 60f;
 	private static final float MAX_RESISTANCE = 100f;
-	private final ExplosionBehavior damageCalculator = new ExplosionBehavior();
+	private final ExplosionDamageCalculator damageCalculator = new ExplosionDamageCalculator();
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
@@ -31,7 +32,7 @@ public class DiggingTNTEffect extends PrimedTNTEffect{
 			BlockPos pos = toBlockPos(entity.getPos().add(0, -y, 0));
 			BlockState blockState = entity.getLevel().getBlockState(pos);
 			FluidState fluidState = entity.getLevel().getFluidState(pos);
-			Optional<Float> explosionResistance = damageCalculator.getBlastResistance(dummyExplosion, entity.getLevel(), pos, blockState, fluidState);
+			Optional<Float> explosionResistance = damageCalculator.getBlockExplosionResistance(dummyExplosion, entity.getLevel(), pos, blockState, fluidState);
 			if(explosionResistance.isPresent() && explosionResistance.get() > MAX_RESISTANCE) {
 				y += 100f;
 			}
@@ -40,8 +41,8 @@ public class DiggingTNTEffect extends PrimedTNTEffect{
 			}
 		}
 		for(BlockPos pos : blocks) {
-			entity.getLevel().getBlockState(pos).getBlock().onDestroyedByExplosion(entity.getLevel(), pos, dummyExplosion);
-			entity.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+			entity.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel) entity.getLevel(), pos, dummyExplosion);
+			entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 		}
 	}
 	

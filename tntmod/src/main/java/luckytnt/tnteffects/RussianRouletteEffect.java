@@ -4,8 +4,8 @@ import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
 
 public class RussianRouletteEffect extends PrimedTNTEffect {
 

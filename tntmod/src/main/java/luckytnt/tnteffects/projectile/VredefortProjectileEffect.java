@@ -1,5 +1,9 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.world.entity.EntitySpawnReason;
+
 
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.LExplosiveProjectile;
@@ -8,14 +12,14 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 
 public class VredefortProjectileEffect extends PrimedTNTEffect {
 
@@ -27,25 +31,25 @@ public class VredefortProjectileEffect extends PrimedTNTEffect {
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 120, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posDown = pos.add(0, -1, 0);
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				BlockPos posDown = pos.offset(0, -1, 0);
 				BlockState stateDown = level.getBlockState(posDown);
 				
-				if(state.getBlock().getBlastResistance() < 800 && distance < 120) {
+				if(state.getBlock().getExplosionResistance() < 800 && distance < 120) {
 					if(distance >= 115) {
 						if(Math.random() < 0.6f) {
-							state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-							level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+							state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 					else if(distance < 115) {
-						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-						level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}	
-					if(Block.isFaceFullSquare(stateDown.getCollisionShape(level, posDown), Direction.UP)) {
-						if(Math.random() < 0.05f && state.getBlock().getBlastResistance() < 800) {
-							state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-							level.setBlockState(pos, Blocks.FIRE.getDefaultState(), 3);
+					if(Block.isFaceFull(stateDown.getCollisionShape(level, posDown), Direction.UP)) {
+						if(Math.random() < 0.05f && state.getBlock().getExplosionResistance() < 800) {
+							state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+							level.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);
 						}
 					}
 				}
@@ -54,18 +58,18 @@ public class VredefortProjectileEffect extends PrimedTNTEffect {
 		});
 		
 		for(int count = 0; count < 300; count++) {
-			LExplosiveProjectile projectile = EntityRegistry.SOLAR_ERUPTION_PROJECTILE.get().create(ent.getLevel());
-			projectile.setPosition(ent.getPos());
+			LExplosiveProjectile projectile = EntityRegistry.SOLAR_ERUPTION_PROJECTILE.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+			projectile.setPos(ent.getPos());
 			projectile.setOwner(ent.owner());
-			projectile.setVelocity(Math.random() * 4 - Math.random() * 4, 3 + Math.random() * 2, Math.random() * 4 - Math.random() * 4);
-			ent.getLevel().spawnEntity(projectile);
+			projectile.setDeltaMovement(Math.random() * 4 - Math.random() * 4, 3 + Math.random() * 2, Math.random() * 4 - Math.random() * 4);
+			ent.getLevel().addFreshEntity(projectile);
 		}
 		for(int count = 0; count < 6; count++) {
-			LExplosiveProjectile projectile = EntityRegistry.LITTLE_METEOR.get().create(ent.getLevel());
-			projectile.setPosition(ent.getPos());
+			LExplosiveProjectile projectile = EntityRegistry.LITTLE_METEOR.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+			projectile.setPos(ent.getPos());
 			projectile.setOwner(ent.owner());
-			projectile.setVelocity(Math.random() * 2 - Math.random() * 2, 3 + Math.random() * 2, Math.random() * 2 - Math.random() * 2);
-			ent.getLevel().spawnEntity(projectile);
+			projectile.setDeltaMovement(Math.random() * 2 - Math.random() * 2, 3 + Math.random() * 2, Math.random() * 2 - Math.random() * 2);
+			ent.getLevel().addFreshEntity(projectile);
 		}
 	}
 	

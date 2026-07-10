@@ -6,15 +6,9 @@
     " 3 "
   ],
   "key": {
-    "1": {
-      "item": "minecraft:iron_boots"
-    },
-    "2": {
-      "item": "luckytntmod:dynamite"
-    },
-    "3": {
-      "item": "minecraft:sugar"
-    }
+    "1": "minecraft:iron_boots",
+    "2": "luckytntmod:dynamite",
+    "3": "minecraft:sugar"
   },
   "result": {
     "id": "luckytntmod:accelerating_dynamite",

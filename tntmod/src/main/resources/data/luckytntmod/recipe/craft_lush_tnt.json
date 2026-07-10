@@ -6,21 +6,11 @@
     "111"
   ],
   "key": {
-    "2": {
-      "item": "minecraft:moss_carpet"
-    },
-    "1": {
-      "item": "minecraft:moss_block"
-    },
-    "#": {
-      "item": "luckytntmod:tnt_x5"
-    },
-    "3": {
-      "item": "minecraft:azalea"
-    },
-    "4": {
-      "item": "minecraft:flowering_azalea"
-    }
+    "2": "minecraft:moss_carpet",
+    "1": "minecraft:moss_block",
+    "#": "luckytntmod:tnt_x5",
+    "3": "minecraft:azalea",
+    "4": "minecraft:flowering_azalea"
   },
   "result": {
     "id": "luckytntmod:lush_tnt",

@@ -6,15 +6,9 @@
     "000"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:tunneling_tnt"
-    },
-    "#": {
-      "item": "minecraft:sea_lantern"
-    },
-    "1": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "0": "luckytntmod:tunneling_tnt",
+    "#": "minecraft:sea_lantern",
+    "1": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:gotthard_tunnel",

@@ -6,15 +6,9 @@
     "101"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:bone"
-    },
-    "1": {
-      "item": "minecraft:chiseled_stone_bricks"
-    },
-    "2": {
-      "item": "luckytntmod:tnt_x20"
-    }
+    "0": "minecraft:bone",
+    "1": "minecraft:chiseled_stone_bricks",
+    "2": "luckytntmod:tnt_x20"
   },
   "result": {
     "id": "luckytntmod:graveyard_tnt",

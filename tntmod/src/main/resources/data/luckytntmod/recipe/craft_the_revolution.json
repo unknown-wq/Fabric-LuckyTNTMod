@@ -6,15 +6,9 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:spiral_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "luckytntmod:floating_tnt"
-    }
+    "#": "luckytntmod:spiral_tnt",
+    "0": "luckytntmod:uranium_ingot",
+    "1": "luckytntmod:floating_tnt"
   },
   "result": {
     "id": "luckytntmod:the_revolution",

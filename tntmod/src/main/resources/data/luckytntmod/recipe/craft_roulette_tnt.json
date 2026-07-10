@@ -6,15 +6,9 @@
     "101"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:red_dye"
-    },
-    "1": {
-      "item": "minecraft:black_dye"
-    },
-    "2": {
-      "item": "luckytntmod:tnt_x5"
-    }
+    "0": "minecraft:red_dye",
+    "1": "minecraft:black_dye",
+    "2": "luckytntmod:tnt_x5"
   },
   "result": {
     "id": "luckytntmod:roulette_tnt",

@@ -3,7 +3,7 @@ package luckytnt.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 
 public class Noise3D {
 	
@@ -23,7 +23,7 @@ public class Noise3D {
 		for(int x = 0; x < sizeX; x++) {
 			for(int y = 0; y < sizeY; y++) {
 				for(int z = 0; z < sizeZ; z++) {
-					noisePoints[x][y][z] = new NoisePoint(new Vec3d(x, y, z));
+					noisePoints[x][y][z] = new NoisePoint(new Vec3(x, y, z));
 				}
 			}
 		}
@@ -99,11 +99,11 @@ public class Noise3D {
 	
 	public static class NoisePoint{
 		
-		private Vec3d position;
+		private Vec3 position;
 		private double value;
 		private boolean set;
 		
-		public NoisePoint(Vec3d position) {
+		public NoisePoint(Vec3 position) {
 			this.position = position;
 		}
 		
@@ -112,7 +112,7 @@ public class Noise3D {
 			set = true;
 		}
 		
-		public Vec3d getPosition() {
+		public Vec3 getPosition() {
 			return position;
 		}
 		

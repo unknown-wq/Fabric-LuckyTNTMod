@@ -12,15 +12,15 @@ import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class ResetTNTEffect extends PrimedTNTEffect {
 
@@ -37,16 +37,16 @@ public class ResetTNTEffect extends PrimedTNTEffect {
 		if(entity instanceof PrimedResetTNT ent) {
 			for(Pair<BlockPos, BlockState> pair : ent.blocks) {
 				if(!ent.getLevel().getBlockState(pair.getFirst()).equals(pair.getSecond())) {
-					ent.getLevel().setBlockState(pair.getFirst(), pair.getSecond(), 3);
+					ent.getLevel().setBlock(pair.getFirst(), pair.getSecond(), 3);
 				}
 			}
 			
-			for(Pair<Vec3d, Entity> pair : ent.entities) {
-	    		if(pair.getSecond().isAlive() && !(pair.getSecond() instanceof PlayerEntity)) {
-	    			pair.getSecond().setPosition(pair.getFirst());
-	    		} else if(pair.getSecond() instanceof PlayerEntity pla) {
-	    			if(pla instanceof ServerPlayerEntity player) {
-	    				player.requestTeleport(pair.getFirst().x, pair.getFirst().y, pair.getFirst().z);
+			for(Pair<Vec3, Entity> pair : ent.entities) {
+	    		if(pair.getSecond().isAlive() && !(pair.getSecond() instanceof Player)) {
+	    			pair.getSecond().setPos(pair.getFirst());
+	    		} else if(pair.getSecond() instanceof Player pla) {
+	    			if(pla instanceof ServerPlayer player) {
+	    				player.teleportTo(pair.getFirst().x, pair.getFirst().y, pair.getFirst().z);
 	    			}
 	    		}
 	    	}
@@ -58,7 +58,7 @@ public class ResetTNTEffect extends PrimedTNTEffect {
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 100, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(!(state.getBlock() instanceof LTNTBlock)) {
 					ent.blocks.add(Pair.of(pos, state));
 				}
@@ -68,11 +68,11 @@ public class ResetTNTEffect extends PrimedTNTEffect {
 	
 	public void saveEntities(PrimedResetTNT ent) {
 		ent.entities = Lists.newArrayList();
-		List<Entity> list = ent.getLevel().getOtherEntities(ent, new Box(ent.x() - 100, ent.y() - 100, ent.z() - 100, ent.x() + 100, ent.y() + 100, ent.z() + 100));
+		List<Entity> list = ent.getLevel().getEntities(ent, new AABB(ent.x() - 100, ent.y() - 100, ent.z() - 100, ent.x() + 100, ent.y() + 100, ent.z() + 100));
 
     	for(int i = 0; i < list.size(); i++) {
     		Entity entity = list.get(i);
-    		ent.entities.add(Pair.of(new Vec3d(entity.getX(), entity.getY(), entity.getZ()), entity));
+    		ent.entities.add(Pair.of(new Vec3(entity.getX(), entity.getY(), entity.getZ()), entity));
     	}
 	}
 	

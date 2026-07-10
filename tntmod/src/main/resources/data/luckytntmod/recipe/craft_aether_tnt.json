@@ -6,18 +6,10 @@
     "010"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:heavens_gate"
-    },
-    "1": {
-      "item": "luckytntmod:grove_tnt"
-    },
-    "2": {
-      "item": "luckytntmod:antimatter"
-    },
-    "3": {
-      "item": "luckytntmod:flower_forest_tnt"
-    }
+    "0": "luckytntmod:heavens_gate",
+    "1": "luckytntmod:grove_tnt",
+    "2": "luckytntmod:antimatter",
+    "3": "luckytntmod:flower_forest_tnt"
   },
   "result": {
     "id": "luckytntmod:aether_tnt",

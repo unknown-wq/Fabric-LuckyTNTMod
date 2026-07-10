@@ -1,46 +1,47 @@
 package luckytnt.effects;
 
 import luckytnt.util.mixin.HungerManagerExtension;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSources;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.text.Text;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 
-public class ContaminatedEffect extends StatusEffect {
-	
-	public ContaminatedEffect(StatusEffectCategory category, int id) {
+public class ContaminatedEffect extends MobEffect {
+
+	public ContaminatedEffect(MobEffectCategory category, int id) {
 		super(category, id);
 	}
 
 	@Override
-	public Text getName() {
-		return Text.translatable("effect.contaminated_effect");
+	public Component getDisplayName() {
+		return Component.translatable("effect.contaminated_effect");
 	}
-	
+
 	@Override
-	public boolean canApplyUpdateEffect(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
 
 	@Override
-	public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
-		StatusEffectInstance instance = entity.getActiveStatusEffects().get(RegistryEntry.of(this));
+	public boolean applyEffectTick(ServerLevel level, LivingEntity entity, int amplifier) {
+		MobEffectInstance instance = entity.getEffect(Holder.direct(this));
 		int duration = instance == null ? 0 : instance.getDuration();
-		DamageSources sources = entity.getWorld().getDamageSources();
-		
-		if(entity instanceof PlayerEntity player && player.getHungerManager() instanceof HungerManagerExtension hunger) {
+		DamageSources sources = entity.level().damageSources();
+
+		if(entity instanceof Player player && player.getFoodData() instanceof HungerManagerExtension hunger) {
 			hunger.setFoodTickTimerRaw(0);
 		}
-		
+
 		int i = 40 >> duration;
 		if (i > 0) {
 			if(amplifier % i == 0) {
 				if (entity.getHealth() > 4.0F) {
-					entity.damage(sources.magic(), 1.0F);
+					entity.hurtServer(level, sources.magic(), 1.0F);
 				}
 			}
 		}

@@ -1,35 +1,37 @@
 package luckytnt.entity;
 
 import luckytnt.util.BlockSurviveChecks;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.thrown.SnowballEntity;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
-public class SnowySnowball extends SnowballEntity {
+public class SnowySnowball extends Snowball {
 
-	public SnowySnowball(EntityType<? extends SnowballEntity> type, World level) {
+	public SnowySnowball(EntityType<? extends Snowball> type, Level level) {
 		super(type, level);
 	}
-	
-	public SnowySnowball(World level, LivingEntity type) {
-		super(level, type);
+
+	public SnowySnowball(Level level, LivingEntity type) {
+		super(level, type, new ItemStack(Items.SNOWBALL));
 	}
-	
-	public SnowySnowball(World level, double x, double y, double z) {
-		super(level, x, y, z);
+
+	public SnowySnowball(Level level, double x, double y, double z) {
+		super(level, x, y, z, new ItemStack(Items.SNOWBALL));
 	}
-	
+
 	@Override
-	public void onBlockHit(BlockHitResult result) {
-		super.onBlockHit(result);
+	public void onHitBlock(BlockHitResult result) {
+		super.onHitBlock(result);
 		BlockPos pos = result.getBlockPos();
-		if(BlockSurviveChecks.canSnowPlaceAt(getWorld().getBlockState(pos.up()), getWorld(), pos.up()) && getWorld().getBlockState(pos.up()).getBlock().getBlastResistance() < 100 && getWorld().getFluidState(pos.up()).isOf(Fluids.EMPTY)) {
-			getWorld().setBlockState(pos.up(), Blocks.SNOW.getDefaultState(), 3);
+		if(BlockSurviveChecks.canSnowPlaceAt(level().getBlockState(pos.above()), level(), pos.above()) && level().getBlockState(pos.above()).getBlock().getExplosionResistance() < 100 && level().getFluidState(pos.above()).is(Fluids.EMPTY)) {
+			level().setBlock(pos.above(), Blocks.SNOW.defaultBlockState(), 3);
 		}
 	}
 }

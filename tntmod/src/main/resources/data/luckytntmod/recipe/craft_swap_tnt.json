@@ -6,12 +6,8 @@
     " # "
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:ender_tnt"
-    },
-    "#": {
-      "item": "luckytntmod:gravity_tnt"
-    }
+    "0": "luckytntmod:ender_tnt",
+    "#": "luckytntmod:gravity_tnt"
   },
   "result": {
     "id": "luckytntmod:swap_tnt",

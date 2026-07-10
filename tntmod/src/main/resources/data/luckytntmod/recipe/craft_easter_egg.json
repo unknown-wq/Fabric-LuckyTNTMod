@@ -6,27 +6,13 @@
     "565"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:melon"
-    },
-    "1": {
-      "item": "luckytntmod:tnt_x20"
-    },
-    "2": {
-      "item": "minecraft:potato"
-    },
-    "3": {
-      "item": "minecraft:carrot"
-    },
-    "4": {
-      "item": "minecraft:wheat"
-    },
-    "5": {
-      "item": "minecraft:carved_pumpkin"
-    },
-    "6": {
-      "item": "luckytntmod:tnt_x100"
-    }
+    "0": "minecraft:melon",
+    "1": "luckytntmod:tnt_x20",
+    "2": "minecraft:potato",
+    "3": "minecraft:carrot",
+    "4": "minecraft:wheat",
+    "5": "minecraft:carved_pumpkin",
+    "6": "luckytntmod:tnt_x100"
   },
   "result": {
     "id": "luckytntmod:easter_egg",

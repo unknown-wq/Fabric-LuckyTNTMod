@@ -6,44 +6,44 @@ import luckytnt.registry.BlockRegistry;
 import luckytntlib.entity.LTNTMinecart;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.TntEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.util.Mth;
 
 public class GravityTNTEffect extends PrimedTNTEffect{
 
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		int x = MathHelper.floor(entity.getPos().x);
-		int y = MathHelper.floor(entity.getPos().y);
-		int z = MathHelper.floor(entity.getPos().z);
+		int x = Mth.floor(entity.getPos().x);
+		int y = Mth.floor(entity.getPos().y);
+		int z = Mth.floor(entity.getPos().z);
 		if(entity.getTNTFuse() < 200) {
 			BlockPos min = new BlockPos(x - 25, y - 25, z - 25);
 			BlockPos max = new BlockPos(x + 25, y + 25, z + 25);
-			List<Entity> ents = entity.getLevel().getOtherEntities((Entity)entity, new Box(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
+			List<Entity> ents = entity.getLevel().getEntities((Entity)entity, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
 			for(Entity ent : ents) {
-				if(!(ent instanceof TntEntity) && !(ent instanceof LTNTMinecart)) {
+				if(!(ent instanceof PrimedTnt) && !(ent instanceof LTNTMinecart)) {
 					double lx = ent.getX() - x;
 					double ly = ent.getY() - y;
 					double lz = ent.getZ() - z;
 					double distance = Math.sqrt(lx * lx + ly * ly + lz * lz) + 0.1f;
-					if(ent instanceof PlayerEntity) {
-						if(!((PlayerEntity)ent).isCreative())
-							if(distance > 2 && distance < 25 && ent.getVelocity().y < 5)
-								ent.setVelocity(-lx / distance, -ly / distance + 0.1f, -lz / distance);
+					if(ent instanceof Player) {
+						if(!((Player)ent).isCreative())
+							if(distance > 2 && distance < 25 && ent.getDeltaMovement().y < 5)
+								ent.setDeltaMovement(-lx / distance, -ly / distance + 0.1f, -lz / distance);
 							else if(distance < 2)
-								ent.setVelocity(ent.getVelocity().x, 6, ent.getVelocity().z);
+								ent.setDeltaMovement(ent.getDeltaMovement().x, 6, ent.getDeltaMovement().z);
 					}
 					else {
-						if(distance > 2 && distance < 25 && ent.getVelocity().y < 5)
-							ent.setVelocity(-lx / distance, -ly / distance + 0.1f, -lz / distance);
+						if(distance > 2 && distance < 25 && ent.getDeltaMovement().y < 5)
+							ent.setDeltaMovement(-lx / distance, -ly / distance + 0.1f, -lz / distance);
 						else if(distance < 2)
-							ent.setVelocity(ent.getVelocity().x, 6, ent.getVelocity().z);
+							ent.setDeltaMovement(ent.getDeltaMovement().x, 6, ent.getDeltaMovement().z);
 					}
 				}
 			}

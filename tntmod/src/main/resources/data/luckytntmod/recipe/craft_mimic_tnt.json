@@ -6,18 +6,10 @@
     "121"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:tnt_x5"
-    },
-    "1": {
-      "item": "luckytntmod:sensor_tnt"
-    },
-    "2": {
-      "item": "luckytntmod:picky_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "#": "luckytntmod:tnt_x5",
+    "1": "luckytntmod:sensor_tnt",
+    "2": "luckytntmod:picky_tnt",
+    "0": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:mimic_tnt",

@@ -6,12 +6,8 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:water_bucket"
-    },
-    "0": {
-      "item": "luckytntmod:tnt_x100"
-    }
+    "#": "minecraft:water_bucket",
+    "0": "luckytntmod:tnt_x100"
   },
   "result": {
     "id": "luckytntmod:ocean_tnt",

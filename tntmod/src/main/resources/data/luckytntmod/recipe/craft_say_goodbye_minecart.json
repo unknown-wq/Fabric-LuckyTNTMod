@@ -5,12 +5,8 @@
     "B"
   ],
   "key": {
-    "A": {
-      "item": "luckytntmod:say_goodbye"
-    },
-    "B": {
-      "item": "minecraft:minecart"
-    }
+    "A": "luckytntmod:say_goodbye",
+    "B": "minecraft:minecart"
   },
   "result": {
     "id": "luckytntmod:say_goodbye_minecart"

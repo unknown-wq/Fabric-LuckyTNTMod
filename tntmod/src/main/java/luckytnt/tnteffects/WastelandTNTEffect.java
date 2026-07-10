@@ -6,16 +6,16 @@ import luckytnt.registry.BlockRegistry;
 import luckytnt.util.Materials;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FluidBlock;
-import net.minecraft.block.WetSpongeBlock;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.WetSpongeBlock;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 
 public class WastelandTNTEffect extends PrimedTNTEffect {
 	
@@ -30,7 +30,7 @@ public class WastelandTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		for (int count = 0; count < 100; count++) {
-			ent.getLevel().addParticle(ParticleTypes.CLOUD, true, ent.x() + Math.random() * 30 - Math.random() * 30, ent.y() + 0.5f, ent.z() + Math.random() * 30 - Math.random() * 30, 0, 0, 0);
+			ent.getLevel().addParticle(ParticleTypes.CLOUD, ent.x() + Math.random() * 30 - Math.random() * 30, ent.y() + 0.5f, ent.z() + Math.random() * 30 - Math.random() * 30, 0, 0, 0);
 		}
 	}
 	
@@ -45,37 +45,37 @@ public class WastelandTNTEffect extends PrimedTNTEffect {
 	}
 	
 	public static void doVaporizeExplosion(IExplosiveEntity ent, double radius, boolean dryArea) {
-		if(!ent.getLevel().isClient()) {
+		if(!ent.getLevel().isClientSide()) {
 			for(double offX = -radius; offX <= radius; offX++) {
 				for(double offY = -radius; offY <= radius; offY++) {
 					for(double offZ = -radius; offZ <= radius; offZ++) {
 						double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-						BlockPos pos = new BlockPos(MathHelper.floor(ent.x() + offX), MathHelper.floor(ent.y() + offY), MathHelper.floor(ent.z() + offZ));
+						BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY), Mth.floor(ent.z() + offZ));
 						BlockState state = ent.getLevel().getBlockState(pos);
 						
 						if(distance <= radius) {
-							if(state.getBlock() instanceof FluidBlock || Materials.isWaterPlant(state) || state.isOf(Blocks.BUBBLE_COLUMN)) {
-								ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+							if(state.getBlock() instanceof LiquidBlock || Materials.isWaterPlant(state) || state.is(Blocks.BUBBLE_COLUMN)) {
+								ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 							}
-							if(state.contains(Properties.WATERLOGGED) && state.get(Properties.WATERLOGGED)) {
-								ent.getLevel().setBlockState(pos, state.with(Properties.WATERLOGGED, false), 3);
+							if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
+								ent.getLevel().setBlock(pos, state.setValue(BlockStateProperties.WATERLOGGED, false), 3);
 							}
 							if(dryArea) {
 								if(Materials.isPlant(state)) {
-									if(Blocks.DEAD_BUSH.getDefaultState().canPlaceAt(ent.getLevel(), pos)) {
-										ent.getLevel().setBlockState(pos, Blocks.DEAD_BUSH.getDefaultState(), 3);
+									if(Blocks.DEAD_BUSH.defaultBlockState().canSurvive(ent.getLevel(), pos)) {
+										ent.getLevel().setBlock(pos, Blocks.DEAD_BUSH.defaultBlockState(), 3);
 									}
 								}
 								if(GRASS.contains(state.getBlock())) {
-									ent.getLevel().setBlockState(pos, Blocks.DIRT.getDefaultState(), 3);
+									ent.getLevel().setBlock(pos, Blocks.DIRT.defaultBlockState(), 3);
 								} else if(DIRT.contains(state.getBlock())) {
-									ent.getLevel().setBlockState(pos, Blocks.SAND.getDefaultState(), 3);
-								} else if(state.isIn(BlockTags.WOOL)) {
-									ent.getLevel().setBlockState(pos, Blocks.WHITE_WOOL.getDefaultState(), 3);
+									ent.getLevel().setBlock(pos, Blocks.SAND.defaultBlockState(), 3);
+								} else if(state.is(BlockTags.WOOL)) {
+									ent.getLevel().setBlock(pos, Blocks.WOOL.white().defaultBlockState(), 3);
 								} else if(state.getBlock() instanceof WetSpongeBlock) {
-									ent.getLevel().setBlockState(pos, Blocks.SPONGE.getDefaultState(), 3);
-								} else if(state.isIn(BlockTags.ICE) || state.isIn(BlockTags.SNOW) || state.isIn(BlockTags.LEAVES)) {
-									ent.getLevel().setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+									ent.getLevel().setBlock(pos, Blocks.SPONGE.defaultBlockState(), 3);
+								} else if(state.is(BlockTags.ICE) || state.is(BlockTags.SNOW) || state.is(BlockTags.LEAVES)) {
+									ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 								}
 							}
 						}

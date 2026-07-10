@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "luckytntmod:floating_island"
-    }
+    "luckytntmod:floating_island"
   ],
   "result": {
     "id": "luckytntmod:floating_island_dynamite",

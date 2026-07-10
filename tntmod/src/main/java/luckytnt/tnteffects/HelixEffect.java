@@ -1,40 +1,42 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.phys.Vec3;
 
 public class HelixEffect extends PrimedTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
-		((Entity)ent).setVelocity(((Entity)ent).getVelocity().x, 0.2f, ((Entity)ent).getVelocity().z);
+		((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 0.2f, ((Entity)ent).getDeltaMovement().z);
 		if(ent.getTNTFuse() == 140) {
-			NbtCompound tag = ent.getPersistentData();
+			CompoundTag tag = ent.getPersistentData();
 			tag.putFloat("power", 0.35f);
 			ent.setPersistentData(tag);
 		}
 		if(ent.getTNTFuse() < 60) {
 			if(ent.getTNTFuse() % 6 == 0) {
-				PrimedLTNT spiral = EntityRegistry.THE_REVOLUTION.get().create(ent.getLevel());
-				spiral.setPosition(ent.getPos());
+				PrimedLTNT spiral = EntityRegistry.THE_REVOLUTION.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+				spiral.setPos(ent.getPos());
 				spiral.setOwner(ent.owner());
 				spiral.setTNTFuse(140);
-				spiral.setVelocity(new Vec3d(((Entity)ent).getRotationVector().x, ((Entity)ent).getRotationVector().y, ((Entity)ent).getRotationVector().z).normalize().multiply(ent.getPersistentData().getFloat("power")));
-				ent.getLevel().spawnEntity(spiral);
-				ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.BLOCK_DISPENSER_LAUNCH, SoundCategory.MASTER, 3, 1);
-				NbtCompound tag = ent.getPersistentData();
-				tag.putFloat("power", ent.getPersistentData().getFloat("power") + 0.35f);
+				spiral.setDeltaMovement(new Vec3(((Entity)ent).getLookAngle().x, ((Entity)ent).getLookAngle().y, ((Entity)ent).getLookAngle().z).normalize().scale(ent.getPersistentData().getFloatOr("power", 0f)));
+				ent.getLevel().addFreshEntity(spiral);
+				ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.DISPENSER_LAUNCH, SoundSource.MASTER, 3, 1);
+				CompoundTag tag = ent.getPersistentData();
+				tag.putFloat("power", ent.getPersistentData().getFloatOr("power", 0f) + 0.35f);
 				ent.setPersistentData(tag);
-				((Entity)ent).setYaw(((Entity)ent).getYaw() + 60);
+				((Entity)ent).setYRot(((Entity)ent).getYRot() + 60);
 			}
 		}
 	}

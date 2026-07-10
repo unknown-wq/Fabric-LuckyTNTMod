@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:tnt_x5"
-    },
-    "0": {
-      "item": "minecraft:string"
-    }
+    "#": "luckytntmod:tnt_x5",
+    "0": "minecraft:string"
   },
   "result": {
     "id": "luckytntmod:multiplying_tnt",

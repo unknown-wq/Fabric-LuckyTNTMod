@@ -6,18 +6,10 @@
     "010"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:smooth_basalt"
-    },
-    "1": {
-      "item": "minecraft:calcite"
-    },
-    "2": {
-      "item": "minecraft:amethyst_block"
-    },
-    "#": {
-      "item": "luckytntmod:tnt_x20"
-    }
+    "0": "minecraft:smooth_basalt",
+    "1": "minecraft:calcite",
+    "2": "minecraft:amethyst_block",
+    "#": "luckytntmod:tnt_x20"
   },
   "result": {
     "id": "luckytntmod:geode_tnt",

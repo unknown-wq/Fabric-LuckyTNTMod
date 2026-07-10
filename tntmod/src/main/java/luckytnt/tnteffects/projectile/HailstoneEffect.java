@@ -2,8 +2,8 @@ package luckytnt.tnteffects.projectile;
 
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 public class HailstoneEffect extends PrimedTNTEffect {
 	

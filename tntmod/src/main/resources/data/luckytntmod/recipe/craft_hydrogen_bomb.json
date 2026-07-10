@@ -6,15 +6,9 @@
     "1#1"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:tsar_bomba"
-    },
-    "0": {
-      "item": "luckytntmod:antimatter"
-    },
-    "1": {
-      "item": "luckytntmod:nuclear_waste_tnt"
-    }
+    "#": "luckytntmod:tsar_bomba",
+    "0": "luckytntmod:antimatter",
+    "1": "luckytntmod:nuclear_waste_tnt"
   },
   "result": {
     "id": "luckytntmod:hydrogen_bomb",

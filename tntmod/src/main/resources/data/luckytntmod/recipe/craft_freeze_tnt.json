@@ -6,12 +6,8 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:ice"
-    },
-    "0": {
-      "item": "luckytntmod:tnt_x5"
-    }
+    "#": "minecraft:ice",
+    "0": "luckytntmod:tnt_x5"
   },
   "result": {
     "id": "luckytntmod:freeze_tnt",

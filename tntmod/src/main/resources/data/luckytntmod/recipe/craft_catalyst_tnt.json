@@ -6,15 +6,9 @@
     "#1#"
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:tnt_x20"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "luckytntmod:reaction_tnt"
-    }
+    "#": "luckytntmod:tnt_x20",
+    "0": "luckytntmod:uranium_ingot",
+    "1": "luckytntmod:reaction_tnt"
   },
   "result": {
     "id": "luckytntmod:catalyst_tnt",

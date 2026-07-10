@@ -6,40 +6,41 @@ import luckytnt.registry.SoundRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry.Reference;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Holder.Reference;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.resources.Identifier;
+import net.minecraft.core.Holder;
 
 public class SayGoodbyeEffect extends PrimedTNTEffect{
 
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		if(entity.getTNTFuse() == 30) {
-			entity.getLevel().playSound(null, entity.x(), entity.y(), entity.z(), SoundRegistry.SAY_GOODBYE.get(), SoundCategory.HOSTILE, 20, 1);
+			entity.getLevel().playSound(null, entity.x(), entity.y(), entity.z(), SoundRegistry.SAY_GOODBYE.get(), SoundSource.HOSTILE, 20, 1);
 		}
 	}
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {		
-		PlayerEntity ent = entity.getLevel().getClosestPlayer((Entity)entity, 60);
+		Player ent = entity.getLevel().getNearestPlayer((Entity)entity, 60);
 		if(ent != null) {
-			Reference<DamageType> type = entity.getLevel().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(LuckyTNTMod.MODID, "say_goodbye")));
+			Reference<DamageType> type = entity.getLevel().registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(ResourceKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "say_goodbye")));
 			DamageSource source = new DamageSource(type, (Entity)entity, entity.owner());
 			
-			ImprovedExplosion explosion = new ImprovedExplosion(ent.getWorld(), (Entity) entity, source, ent.getX(), ent.getY(), ent.getZ(), 20);
+			ImprovedExplosion explosion = new ImprovedExplosion(ent.level(), (Entity) entity, source, ent.getX(), ent.getY(), ent.getZ(), 20);
 			explosion.doEntityExplosion(2f, true);
 			explosion.doBlockExplosion(1f, 1f, 1f, 1.5f, false, false);
-			if(entity.getLevel() instanceof ServerWorld sLevel) {
-				sLevel.spawnParticles(ParticleTypes.EXPLOSION, ent.getX(), ent.getY(), ent.getZ(), 60, 2, 2, 2, 0);
+			if(entity.getLevel() instanceof ServerLevel sLevel) {
+				sLevel.sendParticles(ParticleTypes.EXPLOSION, ent.getX(), ent.getY(), ent.getZ(), 60, 2, 2, 2, 0);
 			}
 		}
 	}

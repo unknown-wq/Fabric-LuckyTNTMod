@@ -6,18 +6,10 @@
     " 7 "
   ],
   "key": {
-    "1": {
-      "item": "luckytntmod:hellfire_tnt"
-    },
-    "3": {
-      "item": "minecraft:netherrack"
-    },
-    "4": {
-      "item": "luckytntmod:heavens_gate"
-    },
-    "7": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "1": "luckytntmod:hellfire_tnt",
+    "3": "minecraft:netherrack",
+    "4": "luckytntmod:heavens_gate",
+    "7": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:hells_gate",

@@ -5,22 +5,22 @@ import org.joml.Vector3f;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 
 public class DayTNTEffect extends PrimedTNTEffect{
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		if(entity.getLevel() instanceof ServerWorld sLevel) {
-			sLevel.setTimeOfDay(6000);
+		if(entity.getLevel() instanceof ServerLevel sLevel) {
+			sLevel.dimensionTypeRegistration().value().defaultClock().ifPresent(clock -> sLevel.getServer().clockManager().setTotalTicks(clock, 6000L));
 		}
 	}
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		entity.getLevel().addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 1f), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, -0.1f, 0);
+		entity.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(1f*255)<<8)|(int)(1f*255), 1f), entity.x(), entity.y() + 1f, entity.z(), 0, -0.1f, 0);
 	}
 	
 	@Override

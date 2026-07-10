@@ -3,12 +3,12 @@ package luckytnt.util;
 import java.util.List;
 
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CoralParentBlock;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CoralPlantBlock;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 
 public class Materials {
 
@@ -30,14 +30,14 @@ public class Materials {
 									   Blocks.MUD_BRICK_SLAB, Blocks.MUD_BRICK_STAIRS, Blocks.MUD_BRICKS, Blocks.BRICKS, Blocks.BRICK_SLAB, Blocks.BRICK_STAIRS, Blocks.CRACKED_DEEPSLATE_BRICKS, Blocks.DEEPSLATE_BRICKS, Blocks.DEEPSLATE_BRICK_SLAB, Blocks.DEEPSLATE_BRICK_STAIRS, Blocks.DEEPSLATE_TILE_SLAB, Blocks.DEEPSLATE_TILES, Blocks.DEEPSLATE_TILE_STAIRS, Blocks.POLISHED_DEEPSLATE_SLAB, Blocks.CRACKED_DEEPSLATE_TILES, Blocks.CRACKED_DEEPSLATE_BRICKS, Blocks.SCULK, Blocks.SCULK_CATALYST, Blocks.SCULK_SENSOR, Blocks.SCULK_SHRIEKER, Blocks.SCULK_VEIN, Blocks.CALIBRATED_SCULK_SENSOR, 
 									   Blocks.CRACKED_NETHER_BRICKS, Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS, Blocks.BLACKSTONE, Blocks.BLACKSTONE_SLAB, Blocks.BLACKSTONE_STAIRS, Blocks.CHISELED_POLISHED_BLACKSTONE, Blocks.POLISHED_BLACKSTONE, Blocks.POLISHED_BLACKSTONE_BRICK_SLAB, Blocks.POLISHED_BLACKSTONE_BRICK_STAIRS, Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.POLISHED_BLACKSTONE_SLAB, Blocks.POLISHED_BLACKSTONE_STAIRS, Blocks.GILDED_BLACKSTONE, Blocks.NETHER_BRICK_FENCE, Blocks.NETHER_BRICK_SLAB, Blocks.NETHER_BRICK_STAIRS, Blocks.NETHER_BRICKS, Blocks.NETHERRACK, Blocks.CHISELED_NETHER_BRICKS, Blocks.RED_NETHER_BRICK_SLAB, Blocks.RED_NETHER_BRICK_STAIRS, Blocks.BASALT, Blocks.POLISHED_BASALT, Blocks.SMOOTH_BASALT, Blocks.SOUL_SOIL,
 									   Blocks.END_STONE, Blocks.END_STONE_BRICK_SLAB, Blocks.END_STONE_BRICK_STAIRS, Blocks.END_STONE_BRICKS, Blocks.PURPUR_BLOCK, Blocks.PURPUR_PILLAR, Blocks.PURPUR_SLAB, Blocks.PURPUR_STAIRS,
-									   Blocks.BLACK_CONCRETE, Blocks.BLUE_CONCRETE, Blocks.BROWN_CONCRETE, Blocks.CYAN_CONCRETE, Blocks.GRAY_CONCRETE, Blocks.GREEN_CONCRETE, Blocks.LIGHT_BLUE_CONCRETE, Blocks.LIGHT_GRAY_CONCRETE, Blocks.LIME_CONCRETE, Blocks.MAGENTA_CONCRETE, Blocks.ORANGE_CONCRETE, Blocks.PINK_CONCRETE, Blocks.PURPLE_CONCRETE, Blocks.RED_CONCRETE, Blocks.WHITE_CONCRETE, Blocks.YELLOW_CONCRETE,
-									   Blocks.BLACK_GLAZED_TERRACOTTA, Blocks.BLUE_GLAZED_TERRACOTTA, Blocks.BROWN_GLAZED_TERRACOTTA, Blocks.CYAN_GLAZED_TERRACOTTA, Blocks.GRAY_GLAZED_TERRACOTTA, Blocks.GREEN_GLAZED_TERRACOTTA, Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA, Blocks.LIGHT_GRAY_GLAZED_TERRACOTTA, Blocks.LIME_GLAZED_TERRACOTTA, Blocks.MAGENTA_GLAZED_TERRACOTTA, Blocks.ORANGE_GLAZED_TERRACOTTA, Blocks.PINK_GLAZED_TERRACOTTA, Blocks.PURPLE_GLAZED_TERRACOTTA, Blocks.RED_GLAZED_TERRACOTTA, Blocks.WHITE_GLAZED_TERRACOTTA, Blocks.YELLOW_GLAZED_TERRACOTTA,
+									   Blocks.CONCRETE.black(), Blocks.CONCRETE.blue(), Blocks.CONCRETE.brown(), Blocks.CONCRETE.cyan(), Blocks.CONCRETE.gray(), Blocks.CONCRETE.green(), Blocks.CONCRETE.lightBlue(), Blocks.CONCRETE.lightGray(), Blocks.CONCRETE.lime(), Blocks.CONCRETE.magenta(), Blocks.CONCRETE.orange(), Blocks.CONCRETE.pink(), Blocks.CONCRETE.purple(), Blocks.CONCRETE.red(), Blocks.CONCRETE.white(), Blocks.CONCRETE.yellow(),
+									   Blocks.GLAZED_TERRACOTTA.black(), Blocks.GLAZED_TERRACOTTA.blue(), Blocks.GLAZED_TERRACOTTA.brown(), Blocks.GLAZED_TERRACOTTA.cyan(), Blocks.GLAZED_TERRACOTTA.gray(), Blocks.GLAZED_TERRACOTTA.green(), Blocks.GLAZED_TERRACOTTA.lightBlue(), Blocks.GLAZED_TERRACOTTA.lightGray(), Blocks.GLAZED_TERRACOTTA.lime(), Blocks.GLAZED_TERRACOTTA.magenta(), Blocks.GLAZED_TERRACOTTA.orange(), Blocks.GLAZED_TERRACOTTA.pink(), Blocks.GLAZED_TERRACOTTA.purple(), Blocks.GLAZED_TERRACOTTA.red(), Blocks.GLAZED_TERRACOTTA.white(), Blocks.GLAZED_TERRACOTTA.yellow(),
 									   Blocks.INFESTED_CHISELED_STONE_BRICKS, Blocks.INFESTED_CRACKED_STONE_BRICKS, Blocks.INFESTED_STONE_BRICKS, Blocks.INFESTED_MOSSY_STONE_BRICKS,
 									   Blocks.PISTON, Blocks.STICKY_PISTON, Blocks.OBSERVER, Blocks.DISPENSER, Blocks.DROPPER, Blocks.FURNACE, Blocks.BLAST_FURNACE, Blocks.SMOKER, Blocks.BREWING_STAND, Blocks.LODESTONE, Blocks.STONECUTTER, Blocks.GRINDSTONE, Blocks.RESPAWN_ANCHOR);
 	
 	public static boolean isWood(BlockState state) {
 		for(TagKey<Block> tag : WOOD_TAGS) {
-			if(state.isIn(tag)) {
+			if(state.is(tag)) {
 				return true;
 			}
 		}
@@ -45,19 +45,19 @@ public class Materials {
 	}
 	
 	public static boolean isPlant(BlockState state) {
-		if(state.isIn(BlockTags.SWORD_EFFICIENT) && !EXCLUDED_PLANTS.contains(state.getBlock())) {
+		if(state.is(BlockTags.SWORD_EFFICIENT) && !EXCLUDED_PLANTS.contains(state.getBlock())) {
 			return true;
 		}
 		return INCLUDED_PLANTS.contains(state.getBlock());
 	}
 	
 	public static boolean isWaterPlant(BlockState state) {
-		return WATER_PLANTS.contains(state.getBlock()) || state.getBlock() instanceof CoralParentBlock;
+		return WATER_PLANTS.contains(state.getBlock()) || state.getBlock() instanceof CoralPlantBlock;
 	}
 	
 	public static boolean isStone(BlockState state) {
 		for(TagKey<Block> tag : STONE_TAGS) {
-			if(state.isIn(tag)) {
+			if(state.is(tag)) {
 				return true;
 			}
 		}

@@ -6,15 +6,9 @@
     "202"
   ],
   "key": {
-    "2": {
-      "item": "luckytntmod:tnt_x100"
-    },
-    "0": {
-      "item": "luckytntmod:pulse_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "2": "luckytntmod:tnt_x100",
+    "0": "luckytntmod:pulse_tnt",
+    "1": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:pulsar_tnt",

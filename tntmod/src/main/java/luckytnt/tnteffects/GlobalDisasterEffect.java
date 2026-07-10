@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import org.joml.Vector3f;
 
@@ -8,12 +9,12 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class GlobalDisasterEffect extends PrimedTNTEffect{
 
@@ -22,10 +23,10 @@ public class GlobalDisasterEffect extends PrimedTNTEffect{
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), 50, new IForEachBlockExplosionEffect() {
 		
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getBlastResistance() < 200 && !state.isAir()) {
-					state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				if(state.getBlock().getExplosionResistance() < 200 && !state.isAir()) {
+					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
 			}
 		});
@@ -34,9 +35,9 @@ public class GlobalDisasterEffect extends PrimedTNTEffect{
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		for(double angle = 0; angle < 360; angle += 6D) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() + 2 * Math.cos(angle * Math.PI / 180), ent.y() + 0.5f, ent.z() + 2 * Math.sin(angle * Math.PI / 180), 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() + 2 * Math.cos(angle * Math.PI / 180), ent.y() + 0.5f + 2 * Math.sin(angle * Math.PI / 180), ent.z(), 0, 0, 0);
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x(), ent.y() + 0.5f + 2 * Math.cos(angle * Math.PI / 180), ent.z() + 2 * Math.sin(angle * Math.PI / 180), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() + 2 * Math.cos(angle * Math.PI / 180), ent.y() + 0.5f, ent.z() + 2 * Math.sin(angle * Math.PI / 180), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() + 2 * Math.cos(angle * Math.PI / 180), ent.y() + 0.5f + 2 * Math.sin(angle * Math.PI / 180), ent.z(), 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x(), ent.y() + 0.5f + 2 * Math.cos(angle * Math.PI / 180), ent.z() + 2 * Math.sin(angle * Math.PI / 180), 0, 0, 0);
 		}
 	}
 

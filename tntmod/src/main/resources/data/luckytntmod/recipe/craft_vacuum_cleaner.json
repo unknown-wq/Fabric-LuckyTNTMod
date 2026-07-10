@@ -6,15 +6,9 @@
     " 0 "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:iron_ingot"
-    },
-    "0": {
-      "item": "luckytntmod:vaporize_dynamite"
-    },
-    "1": {
-      "item": "luckytntmod:vaporize_tnt"
-    }
+    "#": "minecraft:iron_ingot",
+    "0": "luckytntmod:vaporize_dynamite",
+    "1": "luckytntmod:vaporize_tnt"
   },
   "result": {
     "id": "luckytntmod:vacuum_cleaner",

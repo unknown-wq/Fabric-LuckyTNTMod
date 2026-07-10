@@ -4,8 +4,8 @@ import org.joml.Vector3f;
 
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
-import net.minecraft.block.Block;
-import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.core.particles.DustParticleOptions;
 
 public class HexahedronEffect extends CubicTNTEffect {
 
@@ -16,42 +16,42 @@ public class HexahedronEffect extends CubicTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		for(float i = 0; i < 3.25f; i += 0.25f) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() + 1.5f, ent.y() - 1 + i, ent.z() + 1.5f, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() + 1.5f, ent.y() - 1 + i, ent.z() + 1.5f, 0, 0, 0);
 		}		
 		for(float i = 0; i < 3.25f; i += 0.25f) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() - 1.5f, ent.y() - 1 + i, ent.z() - 1.5f, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() - 1.5f, ent.y() - 1 + i, ent.z() - 1.5f, 0, 0, 0);
 		}		
 		for(float i = 0; i < 3.25f; i += 0.25f) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() + 1.5f, ent.y() - 1 + i, ent.z() - 1.5f, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() + 1.5f, ent.y() - 1 + i, ent.z() - 1.5f, 0, 0, 0);
 		}
 		for(float i = 0; i < 3.25f; i += 0.25f) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() - 1.5f, ent.y() - 1 + i, ent.z() + 1.5f, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() - 1.5f, ent.y() - 1 + i, ent.z() + 1.5f, 0, 0, 0);
 		}
 		
 		for(float i = 0; i < 3.25f; i += 0.25f) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() - 1.5f + i, ent.y() - 1, ent.z() + 1.5f, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() - 1.5f + i, ent.y() - 1, ent.z() + 1.5f, 0, 0, 0);
 		}
 		for(float i = 0; i < 3.25f; i += 0.25f) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() - 1.5f, ent.y() - 1, ent.z() - 1.5f + i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() - 1.5f, ent.y() - 1, ent.z() - 1.5f + i, 0, 0, 0);
 		}
 		for(float i = 0; i < 3.25f; i += 0.25f) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() - 1.5f + i, ent.y() + 2, ent.z() + 1.5f, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() - 1.5f + i, ent.y() + 2, ent.z() + 1.5f, 0, 0, 0);
 		}
 		for(float i = 0; i < 3.25f; i += 0.25f) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() - 1.5f, ent.y() + 2, ent.z() - 1.5f + i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() - 1.5f, ent.y() + 2, ent.z() - 1.5f + i, 0, 0, 0);
 		}
 		
 		for(float i = 0; i < 3.25f; i += 0.25f) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() + 1.5f - i, ent.y() - 1, ent.z() - 1.5f, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() + 1.5f - i, ent.y() - 1, ent.z() - 1.5f, 0, 0, 0);
 		}
 		for(float i = 0; i < 3.25f; i += 0.25f) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() + 1.5f, ent.y() - 1, ent.z() + 1.5f - i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() + 1.5f, ent.y() - 1, ent.z() + 1.5f - i, 0, 0, 0);
 		}
 		for(float i = 0; i < 3.25f; i += 0.25f) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() + 1.5f - i, ent.y() + 2, ent.z() - 1.5f, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() + 1.5f - i, ent.y() + 2, ent.z() - 1.5f, 0, 0, 0);
 		}
 		for(float i = 0; i < 3.25f; i += 0.25f) {
-			ent.getLevel().addParticle(new DustParticleEffect(new Vector3f(0.2f, 0.2f, 0.2f), 0.75f), ent.x() + 1.5f, ent.y() + 2, ent.z() + 1.5f - i, 0, 0, 0);
+			ent.getLevel().addParticle(new DustParticleOptions(((int)(0.2f*255)<<16)|((int)(0.2f*255)<<8)|(int)(0.2f*255), 0.75f), ent.x() + 1.5f, ent.y() + 2, ent.z() + 1.5f - i, 0, 0, 0);
 		}
 	}
 	

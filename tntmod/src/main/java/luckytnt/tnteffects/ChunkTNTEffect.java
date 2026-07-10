@@ -2,11 +2,12 @@ package luckytnt.tnteffects;
 
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LightningEntity;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.EntityTypes;
 
 public class ChunkTNTEffect extends CubicTNTEffect {
 
@@ -17,9 +18,9 @@ public class ChunkTNTEffect extends CubicTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() == 160) {
-			Entity lighting = new LightningEntity(EntityType.LIGHTNING_BOLT, ent.getLevel());
-			lighting.setPosition(ent.getPos());
-			ent.getLevel().spawnEntity(lighting);
+			Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, ent.getLevel());
+			lighting.setPos(ent.getPos());
+			ent.getLevel().addFreshEntity(lighting);
 		}
 	}
 

@@ -6,12 +6,8 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:nuclear_tnt"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "#": "luckytntmod:nuclear_tnt",
+    "0": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:tsar_bomba",

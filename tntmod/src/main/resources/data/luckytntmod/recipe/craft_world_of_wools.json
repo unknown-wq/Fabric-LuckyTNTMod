@@ -6,15 +6,9 @@
     "000"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:wool_tnt"
-    },
-    "1": {
-      "item": "luckytntmod:rainbow_firework"
-    },
-    "2": {
-      "item": "luckytntmod:uranium_ingot"
-    }
+    "0": "luckytntmod:wool_tnt",
+    "1": "luckytntmod:rainbow_firework",
+    "2": "luckytntmod:uranium_ingot"
   },
   "result": {
     "id": "luckytntmod:world_of_wools",

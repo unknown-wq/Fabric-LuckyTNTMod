@@ -8,17 +8,17 @@ import luckytnt.registry.ItemRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class HomingDynamiteEffect extends PrimedTNTEffect{
 
@@ -32,16 +32,16 @@ public class HomingDynamiteEffect extends PrimedTNTEffect{
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		if(entity.getTNTFuse() < 390) {
-			Entity target = entity.getLevel().getEntityById(entity.getPersistentData().getInt("targetID"));
+			Entity target = entity.getLevel().getEntity(entity.getPersistentData().getIntOr("targetID", 0));
 			if(target == null) {
 				target = setTarget(entity);
 			}
 			else {
-				Vec3d movement = target.getLerpedPos(1f).subtract(entity.getPos()).normalize();
-				((Entity)entity).setVelocity(movement);
-				if(entity.getLevel() instanceof ServerWorld server) {
-					for(ServerPlayerEntity splayer : server.getPlayers()) {
-						splayer.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(((Entity)entity).getId(), ((Entity)entity).getVelocity()));
+				Vec3 movement = target.position().subtract(entity.getPos()).normalize();
+				((Entity)entity).setDeltaMovement(movement);
+				if(entity.getLevel() instanceof ServerLevel server) {
+					for(ServerPlayer splayer : server.players()) {
+						splayer.connection.send(new ClientboundSetEntityMotionPacket((Entity)entity));
 					}
 				}
 			}
@@ -50,14 +50,14 @@ public class HomingDynamiteEffect extends PrimedTNTEffect{
 	
 	@Nullable
 	public Entity setTarget(IExplosiveEntity entity) {
-		World level = entity.getLevel();
+		Level level = entity.getLevel();
 		Entity target = null;
-		List<PlayerEntity> players = level.getNonSpectatingEntities(PlayerEntity.class, new Box(entity.getPos().add(-100, -100, -100), entity.getPos().add(100, 100, 100)));
+		List<Player> players = level.getEntitiesOfClass(Player.class, new AABB(entity.getPos().add(-100, -100, -100), entity.getPos().add(100, 100, 100)));
 		double distance = Math.sqrt(20000);
-		for(PlayerEntity player : players) {
-			double entityDistance = entity.getPos().distanceTo(player.getLerpedPos(1f));
+		for(Player player : players) {
+			double entityDistance = entity.getPos().distanceTo(player.position());
 			if(!player.equals(entity.owner()) && entityDistance <= distance) {
-				NbtCompound tag = entity.getPersistentData();
+				CompoundTag tag = entity.getPersistentData();
 				tag.putInt("targetID", player.getId());
 				entity.setPersistentData(tag);
 				distance = entityDistance;
@@ -66,11 +66,11 @@ public class HomingDynamiteEffect extends PrimedTNTEffect{
 		}
 		if(target == null) {
 			distance = Math.sqrt(20000);
-			List<LivingEntity> livingEntities = level.getNonSpectatingEntities(LivingEntity.class, new Box(entity.getPos().add(-100, -100, -100), entity.getPos().add(100, 100, 100)));
+			List<LivingEntity> livingEntities = level.getEntitiesOfClass(LivingEntity.class, new AABB(entity.getPos().add(-100, -100, -100), entity.getPos().add(100, 100, 100)));
 			for(LivingEntity ent : livingEntities) {
-				double entityDistance = entity.getPos().distanceTo(ent.getLerpedPos(1f));
+				double entityDistance = entity.getPos().distanceTo(ent.position());
 				if(!ent.equals(entity.owner()) && entityDistance <= distance) {
-					NbtCompound tag = entity.getPersistentData();
+					CompoundTag tag = entity.getPersistentData();
 					tag.putInt("targetID", ent.getId());
 					entity.setPersistentData(tag);
 					distance = entityDistance;

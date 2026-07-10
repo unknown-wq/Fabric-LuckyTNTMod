@@ -1,20 +1,22 @@
 package luckytnt.tnteffects.projectile;
 
+import net.minecraft.server.level.ServerLevel;
+
 
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.AbstractFireBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 
 public class MeteorEffect extends PrimedTNTEffect{
 	
@@ -33,16 +35,16 @@ public class MeteorEffect extends PrimedTNTEffect{
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), strength, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
-				if(distance <= (strength - strength / 8) && state.getBlock().getBlastResistance() <= 100) {
-					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				if(distance <= (strength - strength / 8) && state.getBlock().getExplosionResistance() <= 100) {
+					state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
-				else if(Math.random() < 0.6f && state.getBlock().getBlastResistance() <= 100) {
-					state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-					level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-					if(Math.random() < 0.25f && level.getBlockState(pos.down()).isSideSolidFullSquare(level, pos, Direction.UP)) {
-						level.setBlockState(pos, AbstractFireBlock.getState(level, pos));
+				else if(Math.random() < 0.6f && state.getBlock().getExplosionResistance() <= 100) {
+					state.getBlock().wasExploded((ServerLevel) level, pos, explosion);
+					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+					if(Math.random() < 0.25f && level.getBlockState(pos.below()).isFaceSturdy(level, pos, Direction.UP)) {
+						level.setBlockAndUpdate(pos, BaseFireBlock.getState(level, pos));
 					}
 				}
 			}

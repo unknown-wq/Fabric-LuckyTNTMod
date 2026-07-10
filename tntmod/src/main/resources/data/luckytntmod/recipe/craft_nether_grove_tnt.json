@@ -6,15 +6,9 @@
     "222"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:bone_meal"
-    },
-    "1": {
-      "item": "luckytntmod:tnt_x20"
-    },
-    "2": {
-      "tag": "luckytntmod:wart_blocks"
-    }
+    "0": "minecraft:bone_meal",
+    "1": "luckytntmod:tnt_x20",
+    "2": "#luckytntmod:wart_blocks"
   },
   "result": {
     "id": "luckytntmod:nether_grove_tnt",

@@ -6,15 +6,9 @@
     " 1 "
   ],
   "key": {
-    "#": {
-      "item": "luckytntmod:tnt_x5"
-    },
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "minecraft:tnt"
-    }
+    "#": "luckytntmod:tnt_x5",
+    "0": "luckytntmod:uranium_ingot",
+    "1": "minecraft:tnt"
   },
   "result": {
     "id": "luckytntmod:chemical_tnt",

@@ -6,9 +6,10 @@ import luckytnt.config.LuckyTNTConfigValues;
 import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class DropProjectileTNTEffect extends PrimedTNTEffect {
 	
@@ -20,10 +21,10 @@ public class DropProjectileTNTEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		LExplosiveProjectile meteor = projectile.get().get().create(entity.getLevel());
-		meteor.setPosition(entity.x(), entity.y() + LuckyTNTConfigValues.DROP_HEIGHT.get(), entity.z());
+		LExplosiveProjectile meteor = projectile.get().get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+		meteor.setPos(entity.x(), entity.y() + LuckyTNTConfigValues.DROP_HEIGHT.get(), entity.z());
 		meteor.setOwner(entity.owner());
-		entity.getLevel().spawnEntity(meteor);
+		entity.getLevel().addFreshEntity(meteor);
 	}
 	
 	@Override

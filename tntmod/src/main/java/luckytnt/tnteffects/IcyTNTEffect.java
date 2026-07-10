@@ -1,4 +1,5 @@
 package luckytnt.tnteffects;
+import net.minecraft.server.level.ServerLevel;
 
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
@@ -6,23 +7,25 @@ import luckytntlib.util.explosions.ExplosionHelper;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FluidBlock;
-import net.minecraft.entity.projectile.thrown.SnowballEntity;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class IcyTNTEffect extends PrimedTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		for(int i = 0; i <= 20; i++) {
-			SnowballEntity ball = new SnowballEntity(ent.getLevel(), ent.x() + Math.random() * 40 - Math.random() * 40, ent.y() + 30 + Math.random() * 10 - Math.random() * 10, ent.z() + Math.random() * 40 - Math.random() * 40);
-			ball.setVelocity(Math.random() * 0.4 - Math.random() * 0.4, -0.1D - Math.random() * 0.4D, Math.random() * 0.4 - Math.random() * 0.4);
-			ent.getLevel().spawnEntity(ball);
+			Snowball ball = new Snowball(ent.getLevel(), ent.x() + Math.random() * 40 - Math.random() * 40, ent.y() + 30 + Math.random() * 10 - Math.random() * 10, ent.z() + Math.random() * 40 - Math.random() * 40, new ItemStack(Items.SNOWBALL));
+			ball.setDeltaMovement(Math.random() * 0.4 - Math.random() * 0.4, -0.1D - Math.random() * 0.4D, Math.random() * 0.4 - Math.random() * 0.4);
+			ent.getLevel().addFreshEntity(ball);
 		}
 	}
 	
@@ -31,13 +34,13 @@ public class IcyTNTEffect extends PrimedTNTEffect {
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 40, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
-				if (distance <= 40 && state.getBlock().getBlastResistance() <= 100) {
-					if(WastelandTNTEffect.GRASS.contains(state.getBlock()) || state.isIn(BlockTags.LEAVES) || state.isIn(BlockTags.SAND)) {
-						state.getBlock().onDestroyedByExplosion(level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel())); 
-						level.setBlockState(pos, Blocks.BLUE_ICE.getDefaultState(), 3);
-					} if(state.getBlock() instanceof FluidBlock) {
-						level.setBlockState(pos, Blocks.ICE.getDefaultState(), 3);
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				if (distance <= 40 && state.getBlock().getExplosionResistance() <= 100) {
+					if(WastelandTNTEffect.GRASS.contains(state.getBlock()) || state.is(BlockTags.LEAVES) || state.is(BlockTags.SAND)) {
+						state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel())); 
+						level.setBlock(pos, Blocks.BLUE_ICE.defaultBlockState(), 3);
+					} if(state.getBlock() instanceof LiquidBlock) {
+						level.setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
 					}
 				}
 			}
@@ -46,9 +49,9 @@ public class IcyTNTEffect extends PrimedTNTEffect {
 		ExplosionHelper.doTopBlockExplosionForAll(ent.getLevel(), ent.getPos(), 40, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getBlastResistance() < 100) {
-					level.setBlockState(pos, Blocks.SNOW.getDefaultState(), 3);
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				if(state.getBlock().getExplosionResistance() < 100) {
+					level.setBlock(pos, Blocks.SNOW.defaultBlockState(), 3);
 				}
 			}
 		});

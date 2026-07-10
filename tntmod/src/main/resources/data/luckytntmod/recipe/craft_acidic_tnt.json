@@ -6,15 +6,9 @@
     "1#1"
   ],
   "key": {
-    "0": {
-      "item": "luckytntmod:uranium_ingot"
-    },
-    "1": {
-      "item": "luckytntmod:tnt_x20"
-    },
-    "#": {
-      "item": "luckytntmod:chemical_tnt"
-    }
+    "0": "luckytntmod:uranium_ingot",
+    "1": "luckytntmod:tnt_x20",
+    "#": "luckytntmod:chemical_tnt"
   },
   "result": {
     "id": "luckytntmod:acidic_tnt",

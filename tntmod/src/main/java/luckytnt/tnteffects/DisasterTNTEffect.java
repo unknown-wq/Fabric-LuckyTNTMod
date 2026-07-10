@@ -4,9 +4,9 @@ import luckytnt.LevelVariables;
 import luckytnt.config.LuckyTNTConfigValues;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.server.level.ServerLevel;
 
 public class DisasterTNTEffect extends PrimedTNTEffect {
 	
@@ -33,8 +33,8 @@ public class DisasterTNTEffect extends PrimedTNTEffect {
 			var.iceAgeTime = 0;
 			var.tntRainTime = 0;
 			var.toxicCloudsTime = 0;
-			if(ent.getLevel() instanceof ServerWorld sl) {
-				sl.setWeather(1000000, 0, false, false);
+			if(ent.getLevel() instanceof ServerLevel sl) {
+				sl.getServer().setWeatherParameters(1000000, 0, false, false);
 			}
 		} else if(disaster.equals("ice_age")) {
 			var.iceAgeTime = time;
@@ -44,10 +44,10 @@ public class DisasterTNTEffect extends PrimedTNTEffect {
 			var.tntRainTime = time;
 		}
 		
-		if(ent.getLevel() instanceof ServerWorld sl) {
+		if(ent.getLevel() instanceof ServerLevel sl) {
 			var.sync(sl);
 			if(rain) {
-				sl.setWeather(0, time, true, true);
+				sl.getServer().setWeatherParameters(0, time, true, true);
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package luckytnt.tnteffects;
 
+import net.minecraft.server.level.ServerLevel;
 import luckytnt.block.TrollTNTMk3Block;
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
@@ -7,12 +8,12 @@ import luckytntlib.util.explosions.IBlockExplosionCondition;
 import luckytntlib.util.explosions.IForEachBlockExplosionEffect;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class TrollTNTMk3Effect extends PrimedTNTEffect{
 
@@ -22,15 +23,15 @@ public class TrollTNTMk3Effect extends PrimedTNTEffect{
 		explosion.doBlockExplosion(new IBlockExplosionCondition() {
 			
 			@Override
-			public boolean conditionMet(World level, BlockPos pos, BlockState state, double distance) {
+			public boolean conditionMet(Level level, BlockPos pos, BlockState state, double distance) {
 				return state.getBlock() instanceof TrollTNTMk3Block;
 			}
 		}, new IForEachBlockExplosionEffect() {
 			
 			@Override
-			public void doBlockExplosion(World level, BlockPos pos, BlockState state, double distance) {
-				state.getBlock().onDestroyedByExplosion(level, pos, explosion);
-				level.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				state.getBlock().wasExploded((ServerLevel)level, pos, explosion);
+				level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 			}
 		});
 	}
