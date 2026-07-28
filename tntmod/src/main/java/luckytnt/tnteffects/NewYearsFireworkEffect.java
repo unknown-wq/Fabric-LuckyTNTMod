@@ -99,7 +99,6 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 		FallingBlockEntity block = FallingBlockEntity.fall(ent.getLevel(), new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), state);
 		block.dropItem = false;
 		block.setDeltaMovement(mX, mY, mZ);
-		ent.getLevel().addFreshEntity(block);
 		if(ent.getLevel() instanceof ServerLevel sl) {
 			for(ServerPlayer player : sl.players()) {
 				if(player.distanceTo((Entity)ent) <= 100f) {
