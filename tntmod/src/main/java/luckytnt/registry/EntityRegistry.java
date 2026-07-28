@@ -190,6 +190,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<PrimedLTNT>> TROLL_TNT_MK2 = LuckyTNTMod.RH.registerTNTEntity("troll_tnt_mk2", new TrollTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> TROLL_TNT_MK3 = LuckyTNTMod.RH.registerTNTEntity("troll_tnt_mk3", new TrollTNTMk3Effect());
 	public static final Supplier<EntityType<PrimedLTNT>> CLUSTER_BOMB_TNT = LuckyTNTMod.RH.registerTNTEntity("cluster_bomb_tnt", new DropProjectileTNTEffect(() -> EntityRegistry.CLUSTER_BOMB));
+	public static final Supplier<EntityType<PrimedLTNT>> BOMB_RAIN_TNT = LuckyTNTMod.RH.registerTNTEntity("bomb_rain_tnt", new BombRainTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> AIR_STRIKE = LuckyTNTMod.RH.registerTNTEntity("air_strike", new AirStrikeEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> SPAMMING_TNT = LuckyTNTMod.RH.registerTNTEntity("spamming_tnt", new SpammingTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> BOUNCING_TNT = LuckyTNTMod.RH.registerTNTEntity("bouncing_tnt", new BouncingTNTEffect());
