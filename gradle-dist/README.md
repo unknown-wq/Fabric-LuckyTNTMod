@@ -29,31 +29,25 @@ JAVA_HOME=/usr/lib/jvm/java-25-openjdk-amd64 gradle build --no-daemon
 
 Requires `unrar` (`sudo apt-get install -y unrar`).
 
-## If `install.sh` does not work
+## On the Claude Code container image
 
-On the Claude Code container image `unrar` is not installable (it lives in a
-`multiverse` component that is not enabled) and Java 25 is not preinstalled —
-only Java 21, and the `/opt/gradle` on `PATH` is 8.14.3, which cannot run on
-Java 25. This sequence works instead and was verified end to end:
+Two prerequisites are missing from the image, so run this before `install.sh`:
 
 ```sh
-apt-get update
-apt-get install -y 7zip                    # 7-Zip 23.01 reads multi-volume RAR natively
-apt-get install -y openjdk-25-jdk-headless # 25.0.3, from the default noble repos
-
-mkdir /tmp/gr && cp gradle-dist/gradle-9.6.1-bin.part*.rar /tmp/gr/
-(cd /tmp/gr && 7z x -y gradle-9.6.1-bin.part1.rar)
-unzip -q /tmp/gr/gradle-9.6.1-bin.zip -d /opt/
-
-cd tntmod && JAVA_HOME=/usr/lib/jvm/java-25-openjdk-amd64 \
-  /opt/gradle-9.6.1/bin/gradle build --no-daemon --console=plain
+apt-get update                             # the shipped index is stale; installs 404 without it
+apt-get install -y unrar                   # multiverse is already enabled
+apt-get install -y openjdk-25-jdk-headless # Java 25 is NOT preinstalled, only 21
 ```
+
+`install.sh` then works exactly as documented above. Note that the `gradle` on
+`PATH` is `/opt/gradle` 8.14.3, which cannot run on Java 25 — always invoke
+`/opt/gradle-9.6.1/bin/gradle` explicitly, or put it first on `PATH`.
 
 Dependency resolution needs no extra proxy work: `maven.fabricmc.net`,
 `plugins.gradle.org` and `piston-meta.mojang.com` are all reachable, so Loom
 downloads Minecraft 26.2 and the Fabric toolchain normally. The first
 `compileJava` takes roughly 70 s; afterwards the build is incremental.
 
-Note that `PORT-CHEATSHEET.md` says not to run Gradle because the porting
-orchestrator compiled centrally. That applies to the bulk port only — for
-ordinary work a local build is the fastest way to check a change.
+`PORT-CHEATSHEET.md` says not to run Gradle because the porting orchestrator
+compiled centrally. That applies to the bulk port only — for ordinary work a
+local build is the fastest way to check a change.
