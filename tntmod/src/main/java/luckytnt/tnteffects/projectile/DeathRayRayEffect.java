@@ -48,6 +48,9 @@ public class DeathRayRayEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
+		if(!(entity.getLevel() instanceof ServerLevel)) {
+			return;
+		}
 		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), 4);
 		explosion.doEntityExplosion(new IForEachEntityExplosionEffect() {
 			

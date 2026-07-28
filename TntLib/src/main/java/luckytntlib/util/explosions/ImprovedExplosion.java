@@ -587,7 +587,10 @@ public class ImprovedExplosion implements Explosion {
 	 * @return ImprovedExplosion with no strength and position at (0, 0, 0)
 	 */
 	public static ImprovedExplosion dummyExplosion(Level level) {
-		return dummyExplosion == null ? dummyExplosion = new ImprovedExplosion(level, new Vec3(0, 0, 0), 0) : dummyExplosion;
+		if(dummyExplosion == null || dummyExplosion.level != level) {
+			dummyExplosion = new ImprovedExplosion(level, new Vec3(0, 0, 0), 0);
+		}
+		return dummyExplosion;
 	}
 
 	@Nullable
