@@ -273,12 +273,14 @@ public class LevelEvents {
 						if(state.isCollisionShapeFullBlock(level, pos) && !stateUp.isCollisionShapeFullBlock(level, posUp) && !state.is(BlockTags.LEAVES)) {
 							blockFound = true;
 							y = offY;
-						}	
+							break;
+						}
 					} else {
 						if(state.isCollisionShapeFullBlock(level, pos) && !stateUp.isCollisionShapeFullBlock(level, posUp)) {
 							blockFound = true;
 							y = offY;
-						}	
+							break;
+						}
 					}
 				}
 			}

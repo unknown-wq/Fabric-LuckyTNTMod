@@ -105,6 +105,7 @@ public class BlockRegistry {
 	public static final Supplier<LTNTBlock> TROLL_TNT_MK2 = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new TrollTNTMk2Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.GRASS).setId(bk("troll_tnt_mk2"))), new TNTBlockRegistryData.Builder("troll_tnt_mk2").tab("n").build());
 	public static final Supplier<LTNTBlock> TROLL_TNT_MK3 = LuckyTNTMod.RH.registerTNTBlock(LuckyTNTMod.MODID, LuckyTNTMod.MODID, () -> new TrollTNTMk3Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).sound(SoundType.GRASS).setId(bk("troll_tnt_mk3"))), new TNTBlockRegistryData.Builder("troll_tnt_mk3").tab("n").build());
 	public static final Supplier<LTNTBlock> CLUSTER_BOMB = LuckyTNTMod.RH.registerTNTBlock("cluster_bomb", EntityRegistry.CLUSTER_BOMB_TNT, "n");
+	public static final Supplier<LTNTBlock> BOMB_RAIN_TNT = LuckyTNTMod.RH.registerTNTBlock("bomb_rain_tnt", EntityRegistry.BOMB_RAIN_TNT, "n", MapColor.COLOR_GRAY, true);
 	public static final Supplier<LTNTBlock> AIR_STRIKE = LuckyTNTMod.RH.registerTNTBlock("air_strike", EntityRegistry.AIR_STRIKE, "n");
 	public static final Supplier<LTNTBlock> SPAMMING_TNT = LuckyTNTMod.RH.registerTNTBlock("spamming_tnt", EntityRegistry.SPAMMING_TNT, "n", MapColor.COLOR_BROWN, false);
 	public static final Supplier<LTNTBlock> BOUNCING_TNT = LuckyTNTMod.RH.registerTNTBlock("bouncing_tnt", EntityRegistry.BOUNCING_TNT, "n", MapColor.COLOR_RED, false);

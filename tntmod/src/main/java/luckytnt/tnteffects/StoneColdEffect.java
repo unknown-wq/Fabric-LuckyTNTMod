@@ -38,15 +38,17 @@ public class StoneColdEffect extends PrimedTNTEffect {
 			s_Level.setTimeOfDay(s_Level.getTimeOfDay() + 200);
 		}
 		*/
-		for(int count = 0; count < 7; count++) {
-			double offX = Math.random() * 15 - Math.random() * 15;
-			double offY = Math.random() * 15 - Math.random() * 15;
-			double offZ = Math.random() * 15 - Math.random() * 15;
-			BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY), Mth.floor(ent.z() + offZ));
-			BlockState state = ent.getLevel().getBlockState(pos);
-			if(state.getBlock().getExplosionResistance() < 100 && state.isCollisionShapeFullBlock(ent.getLevel(), pos) && !state.isAir()) {
-				state.getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-				ent.getLevel().setBlock(pos, Blocks.BLUE_ICE.defaultBlockState(), 3);
+		if(ent.getLevel() instanceof ServerLevel sLevel) {
+			for(int count = 0; count < 7; count++) {
+				double offX = Math.random() * 15 - Math.random() * 15;
+				double offY = Math.random() * 15 - Math.random() * 15;
+				double offZ = Math.random() * 15 - Math.random() * 15;
+				BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY), Mth.floor(ent.z() + offZ));
+				BlockState state = sLevel.getBlockState(pos);
+				if(state.getBlock().getExplosionResistance() < 100 && state.isCollisionShapeFullBlock(sLevel, pos) && !state.isAir()) {
+					state.getBlock().wasExploded(sLevel, pos, ImprovedExplosion.dummyExplosion(sLevel));
+					sLevel.setBlock(pos, Blocks.BLUE_ICE.defaultBlockState(), 3);
+				}
 			}
 		}
 		ent.getLevel().playSound(null, ent.x(), ent.y(), ent.z(), SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 0.5f, 1);
