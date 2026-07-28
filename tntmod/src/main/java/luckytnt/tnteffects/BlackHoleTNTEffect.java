@@ -43,6 +43,9 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 				for(int i = 0; i < amount; i++) {
 					int posX = Mth.floor(ent.x()) + random.nextInt(151) - 75;
 					int posZ = Mth.floor(ent.z()) + random.nextInt(151) - 75;
+					if(!level.isLoaded(new BlockPos(posX, Mth.floor(ent.y()), posZ))) {
+						continue;
+					}
 					int posY = LevelEvents.getTopBlock(level, posX, posZ, false);
 					BlockPos pos = new BlockPos(posX, posY, posZ);
 					BlockState state = level.getBlockState(pos);
