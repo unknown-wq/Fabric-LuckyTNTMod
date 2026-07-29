@@ -284,6 +284,7 @@
 	"item.luckytntmod.prism_dynamite" : "Динамитная Шашка-Призма",
 	"item.luckytntmod.ring_dynamite" : "Кольцевая Динамитная Шашка",
 	"item.luckytntmod.sculk_dynamite" : "Скалковая Динамитная Шашка",
+	"item.luckytntmod.bomb_rain_dynamite" : "Динамитная Шашка-Бомбовый Дождь",
 
 
 	"item.luckytntmod.tnt_x5_minecart" : "Вагонетка с Динамитом x5",
@@ -651,6 +652,7 @@
 	"entity.luckytntmod.prism_dynamite" : "Динамитная Шашка-Призма",
 	"entity.luckytntmod.ring_dynamite" : "Кольцевая Динамитная Шашка",
 	"entity.luckytntmod.sculk_dynamite" : "Скалковая Динамитная Шашка",
+	"entity.luckytntmod.bomb_rain_dynamite" : "Динамитная Шашка-Бомбовый Дождь",
 
 	"entity.luckytntmod.tnt_x5_minecart" : "Вагонетка с Динамитом x5",
 	"entity.luckytntmod.tnt_x20_minecart" : "Вагонетка с Динамитом x20",

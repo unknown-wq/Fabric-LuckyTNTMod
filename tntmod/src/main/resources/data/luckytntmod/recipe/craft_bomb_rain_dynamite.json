@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "luckytntmod:bomb_rain_tnt"
+  ],
+  "result": {
+    "id": "luckytntmod:bomb_rain_dynamite",
+    "count": 4
+  }
+}
