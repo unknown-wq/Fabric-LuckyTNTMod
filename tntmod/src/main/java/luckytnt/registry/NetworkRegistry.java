@@ -1,5 +1,6 @@
 package luckytnt.registry;
 
+import luckytnt.LevelVariables;
 import luckytnt.LuckyTNTMod;
 import luckytnt.config.LuckyTNTConfigValues;
 import luckytnt.network.HydrogenBombS2CPacket;
@@ -35,11 +36,14 @@ public class NetworkRegistry {
 		
 		@Override
 		public void receive(LuckyTNTClientReadyC2SPacket payload, Context context) {
-			for(ServerLevel world : context.server().getAllLevels()) {
-				for(ServerPlayer entity : world.players()) {
-					LuckyTNTMod.RH.sendS2CPacket(entity, new LuckyTNTUpdateConfigValuesPacket(LuckyTNTConfigValues.CONFIG.getConfigValues()));
-				}
+			ServerPlayer player = context.player();
+			if(player == null) {
+				return;
 			}
+			//only the client that just announced itself needs the config, not every player on the server
+			LuckyTNTMod.RH.sendS2CPacket(player, new LuckyTNTUpdateConfigValuesPacket(LuckyTNTConfigValues.CONFIG.getConfigValues()));
+			//initial state for the joining client: the level variables used to arrive through the (now conditional) every tick broadcast
+			LevelVariables.get(context.server().overworld()).syncTo(player);
 		}
 	};
 
