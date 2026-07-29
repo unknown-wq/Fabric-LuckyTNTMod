@@ -29,13 +29,14 @@ public class SensorTNTEffect extends PrimedTNTEffect{
 				if(player.isSpectator() || player.isRemoved() || !range.intersects(player.getBoundingBox())) {
 					continue;
 				}
-				if(!player.equals(entity.owner())) {
-					ImprovedExplosion explosion = new ImprovedExplosion(level, entity.getPos(), 10);
-					explosion.doEntityExplosion(1f, true);
-					explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
-					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
-					entity.destroy();
-				}
+				// Triggers on any player in range, the placer included.
+				ImprovedExplosion explosion = new ImprovedExplosion(level, entity.getPos(), 10);
+				explosion.doEntityExplosion(1f, true);
+				explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
+				level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
+				entity.destroy();
+				// Stop after one detonation instead of exploding once per player in range.
+				break;
 			}
 		}
 	}

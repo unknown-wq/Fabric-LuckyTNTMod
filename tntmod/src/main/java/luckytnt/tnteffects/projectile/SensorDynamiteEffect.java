@@ -29,16 +29,18 @@ public class SensorDynamiteEffect extends PrimedTNTEffect{
 		if(level instanceof ServerLevel && entity.getTNTFuse() % SENSOR_INTERVAL == 0) {
 			List<Player> players = level.getEntitiesOfClass(Player.class, new AABB(entity.getPos().add(-5f, -5f, -5f), entity.getPos().add(5f, 5f, 5f)));
 			for(Player player : players) {
-				if(!player.equals(entity.owner())) {
-					ImprovedExplosion explosion = new ImprovedExplosion(level, entity.getPos(), 5);
-					explosion.doEntityExplosion(1f, true);
-					explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
-					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
-					entity.destroy();
-					// Without this the loop kept running on an already destroyed entity and detonated once
-					// per nearby player.
-					break;
+				// Triggers on any player in range, the thrower included.
+				if(player.isSpectator() || player.isRemoved()) {
+					continue;
 				}
+				ImprovedExplosion explosion = new ImprovedExplosion(level, entity.getPos(), 5);
+				explosion.doEntityExplosion(1f, true);
+				explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
+				level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
+				entity.destroy();
+				// Without this the loop kept running on an already destroyed entity and detonated once
+				// per nearby player.
+				break;
 			}
 		}
 	}

@@ -128,10 +128,12 @@ public class OreTNTEffect extends PrimedTNTEffect{
 		}
 	}
 
+	@SuppressWarnings("resource")
 	public void fillAvailablePos(PrimedOreTNT tnt) {
 		fillAvailablePos(tnt.level(), tnt.getPos(), tnt.availablePos);
 	}
 
+	@SuppressWarnings("resource")
 	public void fillAvailablePos(OreTNTMinecart tnt) {
 		fillAvailablePos(tnt.level(), tnt.getPos(), tnt.availablePos);
 	}

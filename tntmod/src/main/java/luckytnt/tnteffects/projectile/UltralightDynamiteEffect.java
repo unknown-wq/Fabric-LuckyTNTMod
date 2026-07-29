@@ -42,6 +42,8 @@ public class UltralightDynamiteEffect extends PrimedTNTEffect{
 	
 	@Override
 	public int getDefaultFuse(IExplosiveEntity entity) {
-		return 200;
+		// BALANCE CHANGE: was 200. With setNoGravity(true) the projectile flies dead straight at its
+		// launch speed for the whole fuse, so this is the maximum flight time before it self-destructs.
+		return 100;
 	}
 }

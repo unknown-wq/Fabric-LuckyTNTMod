@@ -13,12 +13,10 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.entity.EntityTypes;
 
@@ -60,20 +58,22 @@ public class EntityFireworkEffect extends PrimedTNTEffect {
 		if(type == null) {
 			type = EntityTypes.PIG;
 		}
-		Level level = ent.getLevel();
+		// serverExplosion is only ever reached from the ServerLevel branch of baseTick, and
+		// addFreshEntity would be a no-op on a client level anyway
+		if(!(ent.getLevel() instanceof ServerLevel sLevel)) {
+			return;
+		}
 		// getCurrentDifficultyAt builds a DifficultyInstance and reads the chunk inhabited time,
-		// and the position does not change, so it is resolved once instead of 300 times
-		BlockPos pos = toBlockPos(ent.getPos());
-		ServerLevel sLevel = level instanceof ServerLevel server ? server : null;
-		var difficulty = sLevel != null ? sLevel.getCurrentDifficultyAt(pos) : null;
+		// and the position does not change, so it is resolved once instead of once per mob
+		var difficulty = sLevel.getCurrentDifficultyAt(toBlockPos(ent.getPos()));
 		for(int count = 0; count < SPAWN_COUNT; count++) {
-			Entity lent = type.create(level, EntitySpawnReason.MOB_SUMMONED);
+			Entity lent = type.create(sLevel, EntitySpawnReason.MOB_SUMMONED);
 			lent.setPos(ent.x(), ent.y(), ent.z());
 			lent.setDeltaMovement(Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f);
-			if(lent instanceof Mob mob && sLevel != null) {
+			if(lent instanceof Mob mob) {
 				mob.finalizeSpawn(sLevel, difficulty, EntitySpawnReason.MOB_SUMMONED, null);
 			}
-			level.addFreshEntity(lent);
+			sLevel.addFreshEntity(lent);
 		}
 	}
 	
