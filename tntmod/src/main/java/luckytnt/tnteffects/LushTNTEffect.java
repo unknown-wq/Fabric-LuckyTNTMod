@@ -31,48 +31,75 @@ public class LushTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), radius, new IForEachBlockExplosionEffect() {
-			
-			@Override
-			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getExplosionResistance() < 100 && (!state.isCollisionShapeFullBlock(level, pos) || state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS))) {
-					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-				}
-			}
-		});
-		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), Math.round(radius * 0.75f), new IForEachBlockExplosionEffect() {
+		//loop invariants: the level, the shared dummy explosion and the constant block states were
+		//re-resolved for every single block of every sweep before
+		final Level entLevel = entity.getLevel();
+		final ImprovedExplosion dummy = ImprovedExplosion.dummyExplosion(entLevel);
+		final BlockState air = Blocks.AIR.defaultBlockState();
+		final BlockState stone = Blocks.STONE.defaultBlockState();
+		ExplosionHelper.doSphericalExplosion(entLevel, entity.getPos(), radius, new IForEachBlockExplosionEffect() {
 
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(level.getBlockState(pos.below()).isAir() && !state.isAir() && state.getBlock().getExplosionResistance() < 100 && !state.is(BlockTags.LUSH_GROUND_REPLACEABLE)) {
-					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlockAndUpdate(pos, Blocks.STONE.defaultBlockState());
+				//identity check against the exact state that would be written: Level#setBlock bails out
+				//on an identical state and Block#wasExploded is a no-op for air, so the body is skippable.
+				//deliberately not isAir(), which would also swallow the cave_air -> air rewrite the original does.
+				if(state == air) {
+					return;
 				}
-				else if(level.getBlockState(pos.below()).getBlock().getExplosionResistance() < 100 && !level.getBlockState(pos.below()).isAir() && state.isAir() && !level.getBlockState(pos.below()).is(BlockTags.LUSH_GROUND_REPLACEABLE)) {
-					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-					level.setBlockAndUpdate(pos.below(), Blocks.STONE.defaultBlockState());
+				if(state.getBlock().getExplosionResistance() < 100 && (!state.isCollisionShapeFullBlock(level, pos) || state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS))) {
+					state.getBlock().wasExploded((ServerLevel)level, pos, dummy);
+					level.setBlock(pos, air, 3);
 				}
 			}
 		});
-		if(entity.getLevel() instanceof ServerLevel sLevel) {
+		ExplosionHelper.doSphericalExplosion(entLevel, entity.getPos(), Math.round(radius * 0.75f), new IForEachBlockExplosionEffect() {
+
+			@Override
+			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				//the block below used to be built and read up to four times per position
+				BlockPos below = pos.below();
+				BlockState belowState = level.getBlockState(below);
+				boolean stateAir = state.isAir();
+				boolean belowAir = belowState.isAir();
+				if(!stateAir && belowAir) {
+					if(state.getBlock().getExplosionResistance() < 100 && !state.is(BlockTags.LUSH_GROUND_REPLACEABLE)) {
+						state.getBlock().wasExploded((ServerLevel)level, pos, dummy);
+						level.setBlockAndUpdate(pos, stone);
+					}
+				}
+				else if(stateAir && !belowAir) {
+					if(belowState.getBlock().getExplosionResistance() < 100 && !belowState.is(BlockTags.LUSH_GROUND_REPLACEABLE)) {
+						state.getBlock().wasExploded((ServerLevel)level, pos, dummy);
+						level.setBlockAndUpdate(below, stone);
+					}
+				}
+			}
+		});
+		if(entLevel instanceof ServerLevel sLevel) {
+			//these three registry lookups used to run once per placed feature
+			final Holder<ConfiguredFeature<?, ?>> mossCeiling = entLevel.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.MOSS_PATCH_CEILING);
+			final Holder<ConfiguredFeature<?, ?>> clay = entLevel.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.LUSH_CAVES_CLAY);
+			final Holder<ConfiguredFeature<?, ?>> moss = entLevel.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.MOSS_PATCH);
+			final var generator = sLevel.getChunkSource().getGenerator();
+			final var random = sLevel.getRandom();
 			ExplosionHelper.doSphericalExplosion(sLevel, entity.getPos(), Math.round(radius * 0.75f), new IForEachBlockExplosionEffect() {
 
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-					if((level.getBlockState(pos.below()).isAir() && !state.isAir()) && Math.random() < 0.025f) {
-						Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.MOSS_PATCH_CEILING);
-						feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
+					//the two branches are mutually exclusive on state.isAir(), so that free test decides
+					//which one to evaluate and the block below is read once instead of twice
+					if(!state.isAir()) {
+						if(level.getBlockState(pos.below()).isAir() && Math.random() < 0.025f) {
+							mossCeiling.value().place(sLevel, generator, random, pos);
+						}
 					}
-					if((!level.getBlockState(pos.below()).isAir() && state.isAir()) && Math.random() < 0.1f) {
-						Holder<ConfiguredFeature<?, ?>> feature = null;
+					else if(!level.getBlockState(pos.below()).isAir() && Math.random() < 0.1f) {
 						if(Math.random() < 0.5f) {
-							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.LUSH_CAVES_CLAY);
-							feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
+							clay.value().place(sLevel, generator, random, pos);
 						}
 						else {
-							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.MOSS_PATCH);
-							feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
+							moss.value().place(sLevel, generator, random, pos);
 						}
 					}
 				}

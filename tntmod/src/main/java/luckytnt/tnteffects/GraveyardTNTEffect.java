@@ -9,22 +9,45 @@ import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 public class GraveyardTNTEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
+		//loop invariants: the level, the shared dummy explosion, the placed state and the floored centre.
+		//toBlockPos(new Vec3(x + offX, ...)) is just floor(x) + offX for integer offsets, so the Vec3 and
+		//the repeated Mth.floor calls are gone as well.
+		final Level level = entity.getLevel();
+		final ServerLevel sLevel = (ServerLevel)level;
+		final ImprovedExplosion dummy = ImprovedExplosion.dummyExplosion(level);
+		final BlockState grass = Blocks.GRASS_BLOCK.defaultBlockState();
+		final int cx = Mth.floor(entity.x());
+		final int cy = Mth.floor(entity.y()) - 10;
+		final int cz = Mth.floor(entity.z());
 		for(int offX = -20; offX <= 20; offX++) {
+			final int xSqr = offX * offX;
 			for(int offY = 0; offY <= 10; offY++) {
+				final int xySqr = xSqr + offY * offY;
+				//squared comparison instead of Math.sqrt, and the whole row is culled before any
+				//BlockPos is built or any block state is read
+				if(xySqr > 400) {
+					continue;
+				}
 				for(int offZ = -20; offZ <= 20; offZ++) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					BlockPos pos = toBlockPos(new Vec3(entity.x() + offX, entity.y() + offY - 10, entity.z() + offZ));
-					if(distance <= 20 && entity.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100 && !entity.getLevel().getBlockState(pos).isCollisionShapeFullBlock(entity.getLevel(), pos)) {
-						entity.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-						entity.getLevel().setBlockAndUpdate(pos, Blocks.GRASS_BLOCK.defaultBlockState());
+					if(xySqr + offZ * offZ > 400) {
+						continue;
+					}
+					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
+					//one world read per position instead of three
+					BlockState state = level.getBlockState(pos);
+					if(state.getBlock().getExplosionResistance() <= 100 && !state.isCollisionShapeFullBlock(level, pos)) {
+						state.getBlock().wasExploded(sLevel, pos, dummy);
+						level.setBlockAndUpdate(pos, grass);
 					}
 				}
 			}
