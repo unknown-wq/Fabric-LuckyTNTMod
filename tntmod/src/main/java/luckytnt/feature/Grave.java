@@ -31,8 +31,22 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
 public class Grave extends Feature<NoneFeatureConfiguration>{
 
-	public BlockState ground = Blocks.GRASS_BLOCK.defaultBlockState();
-	
+	public static final BlockState DEFAULT_GROUND = Blocks.GRASS_BLOCK.defaultBlockState();
+
+	//LocalDate.now() resolves the system clock and the time zone rules on every call; place() runs on the
+	//parallel worldgen threads, so the seasonal check is cached and refreshed at most once a minute.
+	private static volatile long seasonCheckedAt = 0L;
+	private static volatile boolean seasonActive = false;
+
+	private static boolean isSeasonActive() {
+		long now = System.currentTimeMillis();
+		if(now - seasonCheckedAt >= 60000L) {
+			seasonActive = LocalDate.now().get(ChronoField.MONTH_OF_YEAR) == 10;
+			seasonCheckedAt = now;
+		}
+		return seasonActive;
+	}
+
 	public BlockState slab = Blocks.STONE_BRICK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
 	public BlockState mossySlab = Blocks.MOSSY_STONE_BRICK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
 	
@@ -65,18 +79,17 @@ public class Grave extends Feature<NoneFeatureConfiguration>{
 
 	@Override
 	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
-		if(!LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE.get().booleanValue()) {
-	        int m = LocalDate.now().get(ChronoField.MONTH_OF_YEAR);
-	        if(m != 10) {
-	        	return false;
-	        }
+		if(!LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE.get().booleanValue() && !isSeasonActive()) {
+			return false;
 		}
-		
+
 		WorldGenLevel level = ctx.level();
 		BlockPos pos = ctx.origin();
-		RandomSource random = ctx.level().getRandom();
+		RandomSource random = level.getRandom();
 		int rand = random.nextInt(3);
-		
+
+		//local, not a field: Feature instances are registry singletons shared by all parallel worldgen threads
+		BlockState ground = DEFAULT_GROUND;
 		if(level.getBiome(pos).is(ConventionalBiomeTags.IS_MUSHROOM)) {
 			ground = Blocks.MYCELIUM.defaultBlockState();
 		}
@@ -95,10 +108,10 @@ public class Grave extends Feature<NoneFeatureConfiguration>{
 			}
 		}
 		
-		level.setBlock(pos, Math.random() > 0.4D ? slab : mossySlab, 3);
-		level.setBlock(pos.offset(1, 0, 0), Math.random() > 0.4D ? slab : mossySlab, 3);
-		level.setBlock(pos.offset(0, 0, 1), Math.random() > 0.4D ? slab : mossySlab, 3);
-		level.setBlock(pos.offset(1, 0, 1), Math.random() > 0.4D ? slab : mossySlab, 3);
+		level.setBlock(pos, random.nextDouble() > 0.4D ? slab : mossySlab, 3);
+		level.setBlock(pos.offset(1, 0, 0), random.nextDouble() > 0.4D ? slab : mossySlab, 3);
+		level.setBlock(pos.offset(0, 0, 1), random.nextDouble() > 0.4D ? slab : mossySlab, 3);
+		level.setBlock(pos.offset(1, 0, 1), random.nextDouble() > 0.4D ? slab : mossySlab, 3);
 		
 		level.setBlock(pos.offset(0, -1, 0), chestNorthLeft, 3);
 		level.setBlock(pos.offset(1, -1, 0), chestNorthRight, 3);
@@ -106,7 +119,7 @@ public class Grave extends Feature<NoneFeatureConfiguration>{
 		level.setBlock(pos.offset(1, -1, 1), chestSouthLeft, 3);
 		
 		if(level.getBlockEntity(pos.offset(0, -1, 0)) instanceof ChestBlockEntity && level.getBlockEntity(pos.offset(1, -1, 0)) instanceof ChestBlockEntity) {
-			double d = Math.random();
+			double d = random.nextDouble();
 			ChestBlockEntity tile1 = (ChestBlockEntity)level.getBlockEntity(pos.offset(0, -1, 0));
 			ChestBlockEntity tile2 = (ChestBlockEntity)level.getBlockEntity(pos.offset(1, -1, 0));
 			if(d < 0.45D) {
@@ -122,7 +135,7 @@ public class Grave extends Feature<NoneFeatureConfiguration>{
 		}
 		
 		if(level.getBlockEntity(pos.offset(0, -1, 1)) instanceof ChestBlockEntity && level.getBlockEntity(pos.offset(1, -1, 1)) instanceof ChestBlockEntity) {
-			double d = Math.random();
+			double d = random.nextDouble();
 			ChestBlockEntity tile1 = (ChestBlockEntity)level.getBlockEntity(pos.offset(0, -1, 1));
 			ChestBlockEntity tile2 = (ChestBlockEntity)level.getBlockEntity(pos.offset(1, -1, 1));
 			if(d < 0.45D) {
@@ -140,28 +153,28 @@ public class Grave extends Feature<NoneFeatureConfiguration>{
 		switch(rand) {
 			case 0: level.setBlock(pos.offset(-1, 0, 0), Blocks.STONE_BRICKS.defaultBlockState(), 3);
 					level.setBlock(pos.offset(-1, 0, 1), Blocks.STONE_BRICKS.defaultBlockState(), 3);
-					level.setBlock(pos.offset(-1, 1, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
-					level.setBlock(pos.offset(-1, 1, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
+					level.setBlock(pos.offset(-1, 1, 0), random.nextDouble() > 0.4D ? stairSouth : mossyStairSouth, 3);
+					level.setBlock(pos.offset(-1, 1, 1), random.nextDouble() > 0.4D ? stairNorth : mossyStairNorth, 3);
 					break;
 					
-			case 1: level.setBlock(pos.offset(-1, 0, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
-					level.setBlock(pos.offset(-1, 0, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
-					level.setBlock(pos.offset(-1, 1, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
-					level.setBlock(pos.offset(-1, 1, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
+			case 1: level.setBlock(pos.offset(-1, 0, 0), random.nextDouble() > 0.4D ? stairSouth : mossyStairSouth, 3);
+					level.setBlock(pos.offset(-1, 0, 1), random.nextDouble() > 0.4D ? stairNorth : mossyStairNorth, 3);
+					level.setBlock(pos.offset(-1, 1, 0), random.nextDouble() > 0.4D ? stairSouth : mossyStairSouth, 3);
+					level.setBlock(pos.offset(-1, 1, 1), random.nextDouble() > 0.4D ? stairNorth : mossyStairNorth, 3);
 					break;
 					
-			case 2: level.setBlock(pos.offset(-1, 0, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
-					level.setBlock(pos.offset(-1, 0, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
-					level.setBlock(pos.offset(-1, 1, 0), Math.random() > 0.4D ? stairSouthTop : mossyStairSouthTop, 3);
-					level.setBlock(pos.offset(-1, 1, 1), Math.random() > 0.4D ? stairNorthTop : mossyStairNorthTop, 3);
-					level.setBlock(pos.offset(-1, 2, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
-					level.setBlock(pos.offset(-1, 2, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
+			case 2: level.setBlock(pos.offset(-1, 0, 0), random.nextDouble() > 0.4D ? stairSouth : mossyStairSouth, 3);
+					level.setBlock(pos.offset(-1, 0, 1), random.nextDouble() > 0.4D ? stairNorth : mossyStairNorth, 3);
+					level.setBlock(pos.offset(-1, 1, 0), random.nextDouble() > 0.4D ? stairSouthTop : mossyStairSouthTop, 3);
+					level.setBlock(pos.offset(-1, 1, 1), random.nextDouble() > 0.4D ? stairNorthTop : mossyStairNorthTop, 3);
+					level.setBlock(pos.offset(-1, 2, 0), random.nextDouble() > 0.4D ? stairSouth : mossyStairSouth, 3);
+					level.setBlock(pos.offset(-1, 2, 1), random.nextDouble() > 0.4D ? stairNorth : mossyStairNorth, 3);
 					break;
 				
 			default:level.setBlock(pos.offset(-1, 0, 0), Blocks.STONE_BRICKS.defaultBlockState(), 3);
 					level.setBlock(pos.offset(-1, 0, 1), Blocks.STONE_BRICKS.defaultBlockState(), 3);
-					level.setBlock(pos.offset(-1, 1, 0), Math.random() > 0.4D ? stairSouth : mossyStairSouth, 3);
-					level.setBlock(pos.offset(-1, 1, 1), Math.random() > 0.4D ? stairNorth : mossyStairNorth, 3);
+					level.setBlock(pos.offset(-1, 1, 0), random.nextDouble() > 0.4D ? stairSouth : mossyStairSouth, 3);
+					level.setBlock(pos.offset(-1, 1, 1), random.nextDouble() > 0.4D ? stairNorth : mossyStairNorth, 3);
 					break;
 		}
 		

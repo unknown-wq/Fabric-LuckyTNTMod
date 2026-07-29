@@ -25,10 +25,10 @@ public class WinterTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getExplosionResistance() < 200) {
-					if(state.is(Blocks.BUBBLE_COLUMN) || state.is(Blocks.WATER) || Materials.isWaterPlant(state) || state.getBlock() == Blocks.WATER) {
-						level.setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
-					}
+				// Identity compares first (both tests are pure, so the order cannot change the result);
+				// "state.getBlock() == Blocks.WATER" was a duplicate of "state.is(Blocks.WATER)".
+				if((state.is(Blocks.BUBBLE_COLUMN) || state.is(Blocks.WATER) || Materials.isWaterPlant(state)) && state.getBlock().getExplosionResistance() < 200) {
+					level.setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
 				}
 			}
 		});

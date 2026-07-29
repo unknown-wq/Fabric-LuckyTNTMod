@@ -69,11 +69,17 @@ public class NetherTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if((state.getBlock() instanceof LiquidBlock || state.getBlock() instanceof BubbleColumnBlock || Materials.isWaterPlant(state)) && pos.getY() <= 50) {
+				// The y test is a plain int compare and gates both branches: hoisting it skips the
+				// instanceof chain / property lookup for the whole upper cap of the sphere.
+				if(pos.getY() > 50) {
+					return;
+				}
+				Block block = state.getBlock();
+				if(block instanceof LiquidBlock || block instanceof BubbleColumnBlock || Materials.isWaterPlant(state)) {
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
-				
-				if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) && pos.getY() <= 50) {
+
+				if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
 					level.setBlock(pos, state.setValue(BlockStateProperties.WATERLOGGED, false), 3);
 				}
 			}
@@ -107,21 +113,20 @@ public class NetherTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posAbove = pos.above();
-				BlockState stateAbove = level.getBlockState(posAbove);
-				
-				if(stateAbove.isAir() && state.getBlock() == Blocks.NETHERRACK && pos.getY() <= -10) {
-					if(biome == 0) {
-						level.setBlock(pos, Blocks.CRIMSON_NYLIUM.defaultBlockState(), 3);
-					}
-					
-					if(biome == 1) {
-						level.setBlock(pos, Blocks.WARPED_NYLIUM.defaultBlockState(), 3);
-					}
-					
-					if(biome == 2) {
-						level.setBlock(pos, Blocks.SOUL_SAND.defaultBlockState(), 3);
-					}
+				// The two pure tests are cheaper than a chunk lookup, so the block above is only read
+				// for netherrack below y=-10 instead of for every block in the r=80 explosion.
+				if(pos.getY() > -10 || state.getBlock() != Blocks.NETHERRACK) {
+					return;
+				}
+				if(!level.getBlockState(pos.above()).isAir()) {
+					return;
+				}
+				if(biome == 0) {
+					level.setBlock(pos, Blocks.CRIMSON_NYLIUM.defaultBlockState(), 3);
+				} else if(biome == 1) {
+					level.setBlock(pos, Blocks.WARPED_NYLIUM.defaultBlockState(), 3);
+				} else if(biome == 2) {
+					level.setBlock(pos, Blocks.SOUL_SAND.defaultBlockState(), 3);
 				}
 			}
 		});

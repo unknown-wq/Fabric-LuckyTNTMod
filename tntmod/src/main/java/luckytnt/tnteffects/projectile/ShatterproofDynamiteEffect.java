@@ -16,14 +16,22 @@ import net.minecraft.world.level.Level;
 
 public class ShatterproofDynamiteEffect extends PrimedTNTEffect{
 
+	private static final BlockState OBSIDIAN = Blocks.OBSIDIAN.defaultBlockState();
+
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), 5, new IForEachBlockExplosionEffect() {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+				if(state.isAir() || state.is(Blocks.OBSIDIAN)) {
+					return;
+				}
 				if(state.isCollisionShapeFullBlock(level, pos) && state.getBlock().getExplosionResistance() < 1200) {
-					level.setBlockAndUpdate(pos, Blocks.OBSIDIAN.defaultBlockState());
+					// Flag 2 = notify clients only. setBlockAndUpdate (flag 3) additionally propagates a
+					// neighbour update out of every one of the ~524 blocks; obsidian has no
+					// neighbour-dependent behaviour, so that work is pure overhead here.
+					level.setBlock(pos, OBSIDIAN, 2);
 				}
 			}
 		});

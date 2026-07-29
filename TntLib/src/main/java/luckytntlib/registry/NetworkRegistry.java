@@ -12,8 +12,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.Context;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.PlayPayloadHandler;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 
 public class NetworkRegistry {
@@ -33,11 +31,8 @@ public class NetworkRegistry {
 
 		@Override
 		public void receive(ClientReadyC2SPacket payload, Context context) {
-			for(ServerLevel world : context.server().getAllLevels()) {
-				for(ServerPlayer entity : world.players()) {
-					LuckyTNTLib.RH.sendS2CPacket(entity, new UpdateConfigValuesPacket(LuckyTNTLibConfigValues.CONFIG.getConfigValues()));
-				}
-			}
+			//only the client that just became ready needs the config, not every player on the server
+			LuckyTNTLib.RH.sendS2CPacket(context.player(), new UpdateConfigValuesPacket(LuckyTNTLibConfigValues.CONFIG.getConfigValues()));
 		}
 	};
 

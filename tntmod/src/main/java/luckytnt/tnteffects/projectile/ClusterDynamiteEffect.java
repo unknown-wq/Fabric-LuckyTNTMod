@@ -14,11 +14,18 @@ import net.minecraft.world.phys.Vec3;
 
 public class ClusterDynamiteEffect extends PrimedTNTEffect{
 
+	/**
+	 * Shrapnel per burst. Each piece is a projectile that runs its own movement raycast every tick and
+	 * ends in its own size-3 ImprovedExplosion.
+	 */
+	private static final int AIR_BURST_SHRAPNEL = 30;
+	private static final int GROUND_BURST_SHRAPNEL = 20;
+
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		if(entity instanceof LExplosiveProjectile dynamite) {
 			if(!dynamite.inGround()) {
-				for(int count = 0; count < 75; count++) {
+				for(int count = 0; count < AIR_BURST_SHRAPNEL; count++) {
 					LExplosiveProjectile shrapnel = EntityRegistry.SHRAPNEL.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					shrapnel.setPos(entity.getPos());
 					shrapnel.setOwner(entity.owner());
@@ -30,7 +37,7 @@ public class ClusterDynamiteEffect extends PrimedTNTEffect{
 				ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), 8);
 				explosion.doEntityExplosion(1f, true);
 				explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
-				for(int count = 0; count < 50; count++) {
+				for(int count = 0; count < GROUND_BURST_SHRAPNEL; count++) {
 					LExplosiveProjectile shrapnel = EntityRegistry.SHRAPNEL.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					shrapnel.setPos(entity.getPos());
 					shrapnel.setOwner(entity.owner());

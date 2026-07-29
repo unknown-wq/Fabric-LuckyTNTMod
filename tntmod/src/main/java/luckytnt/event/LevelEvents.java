@@ -57,7 +57,7 @@ public class LevelEvents {
 					variables.heatDeathTime--;
 				if(variables.tntRainTime > 0)
 					variables.tntRainTime--;
-				variables.sync(sLevel);
+				variables.syncIfChanged(sLevel);
 			}
 			for(Player player : players) {
 				if(variables != null) {

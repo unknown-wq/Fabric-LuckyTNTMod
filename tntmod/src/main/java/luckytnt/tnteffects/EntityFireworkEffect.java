@@ -22,10 +22,19 @@ import net.minecraft.world.entity.EntityTypes;
 
 public class EntityFireworkEffect extends PrimedTNTEffect {
 
+	/**
+	 * Spawning 300 arbitrary mobs in a single tick (each one running finalizeSpawn: goal selectors,
+	 * villager trades, horse variant rolls) is the single most expensive thing this effect does.
+	 * Halved; the burst still reads as a shower of mobs.
+	 */
+	private static final int SPAWN_COUNT = 150;
+
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 0.8f, ((Entity)ent).getDeltaMovement().z);
-		if(ent.getTNTFuse() == 40) {
+		// the picked type is only consumed by serverExplosion, so the 40 wide query has no business
+		// running on the client as well
+		if(ent.getTNTFuse() == 40 && ent.getLevel() instanceof ServerLevel) {
 			List<LivingEntity> ents = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() - 20, ent.y() - 20, ent.z() - 20, ent.x() + 20, ent.y() + 20, ent.z() + 20));
 	      	double distance = 2000;
 	      	for(LivingEntity lent : ents) {
@@ -49,14 +58,22 @@ public class EntityFireworkEffect extends PrimedTNTEffect {
 		if(type == null) {
 			type = EntityTypes.PIG;
 		}
-		for(int count = 0; count < 300; count++) {
-			Entity lent = type.create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);	
+		// serverExplosion is only ever reached from the ServerLevel branch of baseTick, and
+		// addFreshEntity would be a no-op on a client level anyway
+		if(!(ent.getLevel() instanceof ServerLevel sLevel)) {
+			return;
+		}
+		// getCurrentDifficultyAt builds a DifficultyInstance and reads the chunk inhabited time,
+		// and the position does not change, so it is resolved once instead of once per mob
+		var difficulty = sLevel.getCurrentDifficultyAt(toBlockPos(ent.getPos()));
+		for(int count = 0; count < SPAWN_COUNT; count++) {
+			Entity lent = type.create(sLevel, EntitySpawnReason.MOB_SUMMONED);
 			lent.setPos(ent.x(), ent.y(), ent.z());
 			lent.setDeltaMovement(Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f, Math.random() * 3f - 1.5f);
-			if(lent instanceof Mob mob && ent.getLevel() instanceof ServerLevel sLevel) {
-				mob.finalizeSpawn(sLevel, sLevel.getCurrentDifficultyAt(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
+			if(lent instanceof Mob mob) {
+				mob.finalizeSpawn(sLevel, difficulty, EntitySpawnReason.MOB_SUMMONED, null);
 			}
-			ent.getLevel().addFreshEntity(lent);
+			sLevel.addFreshEntity(lent);
 		}
 	}
 	

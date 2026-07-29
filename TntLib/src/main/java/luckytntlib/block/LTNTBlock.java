@@ -120,13 +120,14 @@ public class LTNTBlock extends TntBlock {
 	public PrimedLTNT explode(Level level, boolean exploded, double x, double y, double z, @Nullable LivingEntity igniter) throws NullPointerException {
 		if(TNT != null) {
 			PrimedLTNT tnt = TNT.get().create(level, EntitySpawnReason.TRIGGERED);
-			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + random.nextInt(Mth.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
+			tnt.setFuse(exploded && randomizedFuseUponExploded() ? tnt.getEffect().getDefaultFuse(tnt) / 8 + level.getRandom().nextInt(Mth.clamp(tnt.getEffect().getDefaultFuse(tnt) / 4, 1, Integer.MAX_VALUE)) : tnt.getEffect().getDefaultFuse(tnt));
 			tnt.setPos(x + 0.5f, y, z + 0.5f);
 			tnt.setOwner(igniter);
 			level.addFreshEntity(tnt);
-			level.playSound(null, new BlockPos((int)x, (int)y, (int)z), SoundEvents.TNT_PRIMED, SoundSource.MASTER, 1, 1);
-			if(level.getBlockState(new BlockPos((int)x, (int)y, (int)z)).getBlock() == this) {
-				level.setBlock(new BlockPos((int)x, (int)y, (int)z), Blocks.AIR.defaultBlockState(), 3);
+			BlockPos pos = new BlockPos((int)x, (int)y, (int)z);
+			level.playSound(null, pos, SoundEvents.TNT_PRIMED, SoundSource.MASTER, 1, 1);
+			if(level.getBlockState(pos).getBlock() == this) {
+				level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 			}
 			return tnt;
 		}

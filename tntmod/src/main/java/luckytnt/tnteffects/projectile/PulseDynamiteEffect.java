@@ -19,6 +19,25 @@ import net.minecraft.world.level.Level;
 
 public class PulseDynamiteEffect extends PrimedTNTEffect{
 
+	/** Particles in the shell, per client tick. */
+	private static final int PARTICLE_COUNT = 64;
+	/** The shell never changes shape, so the Fibonacci sphere is built once instead of every tick. */
+	private static final double[] SPHERE_OFFSETS = new double[PARTICLE_COUNT * 3];
+	/** DustParticleOptions is immutable, so one shared instance replaces 200 allocations per tick. */
+	private static final DustParticleOptions PULSE_DUST = new DustParticleOptions(((int)(0.4f*255)<<16)|((int)(0.4f*255)<<8)|(int)(1f*255), 0.75f);
+
+	static {
+		double phi = Math.PI * (3d - Math.sqrt(5d));
+		for(int i = 0; i < PARTICLE_COUNT; i++) {
+			double y = 1d - ((double)i / (PARTICLE_COUNT - 1d)) * 2d;
+			double radius = Math.sqrt(1d - y * y);
+			double theta = phi * i;
+			SPHERE_OFFSETS[i * 3] = Math.cos(theta) * radius;
+			SPHERE_OFFSETS[i * 3 + 1] = y;
+			SPHERE_OFFSETS[i * 3 + 2] = Math.sin(theta) * radius;
+		}
+	}
+
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
@@ -63,17 +82,14 @@ public class PulseDynamiteEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void spawnParticles(IExplosiveEntity entity) {
-		double phi = Math.PI * (3f - Math.sqrt(5f));
-		for(int i = 0; i < 200; i++) {
-			double y = 1f - ((double)i / (200f - 1f)) * 2f;
-			double radius = Math.sqrt(1f - y * y);
-			
-			double theta = phi * i;
-			
-			double x = Math.cos(theta) * radius;
-			double z = Math.sin(theta) * radius;
-			
-			entity.getLevel().addParticle(new DustParticleOptions(((int)(0.4f*255)<<16)|((int)(0.4f*255)<<8)|(int)(1f*255), 0.75f), entity.x() + x, entity.y() + y + 0.5f, entity.z() + z, 0, 0, 0);
+		// baseTick calls this unconditionally on the client, including while the dynamite is still in
+		// flight with its fuse frozen - which made the cost effectively unbounded. The shell only means
+		// anything once the dynamite has landed and started pulsing.
+		if(entity instanceof LExplosiveProjectile ent && !ent.inGround() && !ent.getPersistentData().getBooleanOr("hitBefore", false)) {
+			return;
+		}
+		for(int i = 0; i < PARTICLE_COUNT; i++) {
+			entity.getLevel().addParticle(PULSE_DUST, entity.x() + SPHERE_OFFSETS[i * 3], entity.y() + SPHERE_OFFSETS[i * 3 + 1] + 0.5f, entity.z() + SPHERE_OFFSETS[i * 3 + 2], 0, 0, 0);
 		}
 	}
 	

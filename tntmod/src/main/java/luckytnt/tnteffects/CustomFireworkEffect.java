@@ -24,6 +24,23 @@ import net.minecraft.world.level.Level;
 
 public class CustomFireworkEffect extends PrimedTNTEffect {
 
+	/**
+	 * getDeclaredConstructor is not cached by the JDK (defensive copy of the declared constructor
+	 * array plus a Class[] allocation per call), and this ran 200 times per explosion.
+	 */
+	private static final Constructor<FallingBlockEntity> FALLING_BLOCK_CONSTRUCTOR = resolveFallingBlockConstructor();
+
+	private static Constructor<FallingBlockEntity> resolveFallingBlockConstructor() {
+		try {
+			Constructor<FallingBlockEntity> constructor = FallingBlockEntity.class.getDeclaredConstructor(Level.class, double.class, double.class, double.class, BlockState.class);
+			constructor.setAccessible(true);
+			return constructor;
+		} catch (NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() == 40 && ent instanceof PrimedCustomFirework tnt) {
@@ -53,16 +70,12 @@ public class CustomFireworkEffect extends PrimedTNTEffect {
 					} else {
 						TntBlock.prime(ent.getLevel(), toBlockPos(ent.getPos()));
 					}
-				} else {
+				} else if(FALLING_BLOCK_CONSTRUCTOR != null) {
 					try {
-						@SuppressWarnings("rawtypes")
-						Class[] parameters = new Class[]{Level.class, double.class, double.class, double.class, BlockState.class};
-						Constructor<FallingBlockEntity> sandConstructor = FallingBlockEntity.class.getDeclaredConstructor(parameters);
-						sandConstructor.setAccessible(true);
-						FallingBlockEntity sand = sandConstructor.newInstance(ent.getLevel(), ent.getPos().x, ent.getPos().y, ent.getPos().z, state);
+						FallingBlockEntity sand = FALLING_BLOCK_CONSTRUCTOR.newInstance(ent.getLevel(), ent.getPos().x, ent.getPos().y, ent.getPos().z, state);
 						sand.setDeltaMovement(Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f, Math.random() * 1.5f - Math.random() * 1.5f);
 						ent.getLevel().addFreshEntity(sand);
-					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 						e.printStackTrace();
 					}
 				}

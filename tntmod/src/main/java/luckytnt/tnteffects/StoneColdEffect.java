@@ -56,34 +56,35 @@ public class StoneColdEffect extends PrimedTNTEffect {
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 90, new IForEachBlockExplosionEffect() {
-			
-			@Override
-			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getExplosionResistance() < 200 && Block.isFaceFull(state.getCollisionShape(level, pos), Direction.UP) && state != Blocks.BLUE_ICE.defaultBlockState()) {
-					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-					level.setBlock(pos, Blocks.BLUE_ICE.defaultBlockState(), 3);
-				}
-			}
-		});
-		
+		// The old r=90 "turn solid blocks into blue ice" sweep is fully contained in the r=130
+		// "turn water into ice" sweep, so both run in a single traversal (one world read per position
+		// instead of two). The two branches are mutually exclusive - water has an empty collision
+		// shape so it can never be blue-iced, and blue ice is never water - so interleaving them
+		// produces exactly the same blocks as running the two passes back to back.
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 130, new IForEachBlockExplosionEffect() {
-			
+
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock() == Blocks.WATER && state != Blocks.ICE.defaultBlockState()) {
-					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+				Block block = state.getBlock();
+				if(distance <= 90 && block.getExplosionResistance() < 200 && state != Blocks.BLUE_ICE.defaultBlockState() && Block.isFaceFull(state.getCollisionShape(level, pos), Direction.UP)) {
+					block.wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(level));
+					level.setBlock(pos, Blocks.BLUE_ICE.defaultBlockState(), 3);
+					return;
+				}
+				if(block == Blocks.WATER && state != Blocks.ICE.defaultBlockState()) {
+					block.wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(level));
 					level.setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
 				}
 			}
 		});
-		
+
 		ExplosionHelper.doTopBlockExplosionForAll(ent.getLevel(), ent.getPos(), 130, new IForEachBlockExplosionEffect() {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getExplosionResistance() < 100) {
-					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+				Block block = state.getBlock();
+				if(block.getExplosionResistance() < 100) {
+					block.wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(level));
 					level.setBlock(pos, Blocks.SNOW.defaultBlockState(), 3);
 				}
 			}

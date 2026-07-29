@@ -12,74 +12,52 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 public class TunnelingTNTEffect extends PrimedTNTEffect{
 
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		Direction direction = Direction.byName(entity.getPersistentData().getStringOr("direction", "")) != null ? Direction.byName(entity.getPersistentData().getStringOr("direction", "")) : Direction.EAST;
-		switch(direction) {
-			case NORTH: for(double offX = -4; offX <= 4; offX++) {
-							for(double offY = -4; offY <= 4; offY++) {
-								for(double offZ = -90; offZ <= 0; offZ++) {
-									double distance = Math.sqrt(offX * offX + offY * offY);
-									BlockPos pos = new BlockPos(Mth.floor(entity.x() + offX), Mth.floor(entity.y() + offY), Mth.floor(entity.z() + offZ));
-									BlockState state = entity.getLevel().getBlockState(pos);
-									if(distance < 4 && state.getBlock().getExplosionResistance() < 100) {
-										Block block = state.getBlock();
-										block.wasExploded((ServerLevel)entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-										entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-									}
-								}
-							}
-						}
-						break;
-			case EAST: for(double offX = 0; offX <= 90; offX++) {
-							for(double offY = -4; offY <= 4; offY++) {
-								for(double offZ = -4; offZ <= 4; offZ++) {
-									double distance = Math.sqrt(offZ * offZ + offY * offY);
-									BlockPos pos = new BlockPos(Mth.floor(entity.x() + offX), Mth.floor(entity.y() + offY), Mth.floor(entity.z() + offZ));
-									BlockState state = entity.getLevel().getBlockState(pos);
-									if(distance < 4 && state.getBlock().getExplosionResistance() < 100) {
-										Block block = state.getBlock();
-										block.wasExploded((ServerLevel)entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-										entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-									}
-								}
-							}
-						}
-						break;
-			case SOUTH: for(double offX = -4; offX <= 4; offX++) {
-							for(double offY = -4; offY <= 4; offY++) {
-								for(double offZ = 0; offZ <= 90; offZ++) {
-									double distance = Math.sqrt(offX * offX + offY * offY);
-									BlockPos pos = new BlockPos(Mth.floor(entity.x() + offX), Mth.floor(entity.y() + offY), Mth.floor(entity.z() + offZ));
-									BlockState state = entity.getLevel().getBlockState(pos);
-									if(distance < 4 && state.getBlock().getExplosionResistance() < 100) {
-										Block block = state.getBlock();
-										block.wasExploded((ServerLevel)entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-										entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-									}
-								}
-							}
-						}
-						break;
-			case WEST: for(double offX = -90; offX <= 0; offX++) {
-							for(double offY = -4; offY <= 4; offY++) {
-								for(double offZ = -4; offZ <= 4; offZ++) {
-									double distance = Math.sqrt(offZ * offZ + offY * offY);
-									BlockPos pos = new BlockPos(Mth.floor(entity.x() + offX), Mth.floor(entity.y() + offY), Mth.floor(entity.z() + offZ));
-									BlockState state = entity.getLevel().getBlockState(pos);
-									if(distance < 4 && state.getBlock().getExplosionResistance() < 100) {
-										Block block = state.getBlock();
-										block.wasExploded((ServerLevel)entity.getLevel(), pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
-										entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-									}
-								}
-							}
-						}
-						break;
-			default: break;
+		if(direction.getAxis().isVertical()) {
+			return;
+		}
+
+		// One loop for all four directions (the bodies were identical up to which axis is the tunnel and
+		// which is the perpendicular one), with the r<4 disc test moved ahead of the BlockPos allocation
+		// and the world read - only ~40 of the 81 cells per slice are inside the disc.
+		Level level = entity.getLevel();
+		ServerLevel sLevel = (ServerLevel)level;
+		ImprovedExplosion dummy = ImprovedExplosion.dummyExplosion(level);
+		BlockState air = Blocks.AIR.defaultBlockState();
+
+		int stepX = direction.getStepX();
+		int stepZ = direction.getStepZ();
+		int perpX = Math.abs(stepZ);
+		int perpZ = Math.abs(stepX);
+		int baseX = Mth.floor(entity.x());
+		int baseY = Mth.floor(entity.y());
+		int baseZ = Mth.floor(entity.z());
+
+		for(int perp = -4; perp <= 4; perp++) {
+			int perpSq = perp * perp;
+			for(int offY = -4; offY <= 4; offY++) {
+				if(perpSq + offY * offY >= 16) {
+					continue;
+				}
+				int x = baseX + perp * perpX;
+				int y = baseY + offY;
+				int z = baseZ + perp * perpZ;
+				for(int a = 0; a <= 90; a++) {
+					BlockPos pos = new BlockPos(x + a * stepX, y, z + a * stepZ);
+					BlockState state = level.getBlockState(pos);
+					Block block = state.getBlock();
+					if(block.getExplosionResistance() < 100) {
+						block.wasExploded(sLevel, pos, dummy);
+						level.setBlock(pos, air, 3);
+					}
+				}
+			}
 		}
 	}
 	

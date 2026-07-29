@@ -122,16 +122,24 @@ public class AtlantisEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posTop = pos.offset(0, 1, 0);
-				BlockState stateTop = level.getBlockState(posTop);
-				
-				if(((ent.y() + 8) - pos.getY()) >= 0 && ((ent.y() + 8) - pos.getY()) <= 50) {
-					if((state.getBlock().getExplosionResistance() < 0 || state.getBlock() instanceof LiquidBlock || state.isAir()) && !Materials.isStone(state)) {
-						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-						level.setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
-					}
-					if((stateTop.getFluidState().is(Fluids.WATER) || stateTop.getFluidState().is(Fluids.FLOWING_WATER)) && !state.isAir() && (state.getBlock() == Blocks.GRASS_BLOCK || state.getBlock() == Blocks.STONE || state.getBlock() == Blocks.DEEPSLATE || state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.GRAVEL) && level.getBlockState(pos.above()).getBlock() != Blocks.SAND) {
-						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+				double dy = (ent.y() + 8) - pos.getY();
+				if(dy < 0 || dy > 50) {
+					return;
+				}
+				Block block = state.getBlock();
+				if((block.getExplosionResistance() < 0 || block instanceof LiquidBlock || state.isAir()) && !Materials.isStone(state)) {
+					block.wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(level));
+					level.setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
+				}
+				// The block-identity test is pure and cheap; running it first means the block above is
+				// only read for the handful of positions that can actually become sand. Note the branch
+				// above can never have fired when this test passes (grass/stone/deepslate/dirt/gravel are
+				// neither air, nor liquid, nor negative-resistance), so the state above is unchanged.
+				if(!state.isAir() && (block == Blocks.GRASS_BLOCK || block == Blocks.STONE || block == Blocks.DEEPSLATE || block == Blocks.DIRT || block == Blocks.GRAVEL)) {
+					BlockPos posTop = pos.above();
+					BlockState stateTop = level.getBlockState(posTop);
+					if((stateTop.getFluidState().is(Fluids.WATER) || stateTop.getFluidState().is(Fluids.FLOWING_WATER)) && stateTop.getBlock() != Blocks.SAND) {
+						block.wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(level));
 						level.setBlock(pos, Blocks.SAND.defaultBlockState(), 3);
 					}
 				}

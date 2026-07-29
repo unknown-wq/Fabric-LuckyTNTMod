@@ -15,7 +15,9 @@ public class BigTNTEffect extends PrimedTNTEffect{
 	public void serverExplosion(IExplosiveEntity entity) {
 		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), 15);
 		explosion.doEntityExplosion(2f, true);
-		explosion.doBlockExplosion();
+		//same parameters as the no-arg doBlockExplosion, but the affected positions are not copied into
+		//ImprovedExplosion#affectedBlocks: this explosion is discarded right away and never reads them back
+		explosion.doBlockExplosion(1f, 1f, 1f, 1f, false, false, false);
 	}
 	
 	@Override

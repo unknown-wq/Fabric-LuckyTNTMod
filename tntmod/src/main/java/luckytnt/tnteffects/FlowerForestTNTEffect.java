@@ -20,6 +20,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 // import net.minecraft.world.level.biome.BiomeKeys;
@@ -35,25 +36,37 @@ public class FlowerForestTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(distance <= 50 && state.getBlock().getExplosionResistance() <= 200) {
-					if((!state.isCollisionShapeFullBlock(level, pos) || state.is(Blocks.FIRE) || state.is(Blocks.SOUL_FIRE) 
+				Block block = state.getBlock();
+				if(distance <= 50 && block.getExplosionResistance() <= 200) {
+					if((!state.isCollisionShapeFullBlock(level, pos) || state.is(Blocks.FIRE) || state.is(Blocks.SOUL_FIRE)
 					|| state.is(BlockTags.LEAVES) || Materials.isPlant(state) || state.is(BlockTags.SNOW)
-					|| Materials.isWood(state)) && !(state.getBlock() instanceof GrassBlock) && !(state.getBlock() instanceof MyceliumBlock)) 
+					|| Materials.isWood(state)) && !(block instanceof GrassBlock) && !(block instanceof MyceliumBlock))
 					{
-						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						block.wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(level));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}
 			}
 		});
-		
+
+		// The radius test now runs before the (very expensive) top-block column scan, so the ~29% of
+		// the 151x151 square that lies outside the circle no longer scans a full world column each.
+		Level level = ent.getLevel();
+		int baseX = Mth.floor(ent.x());
+		int baseZ = Mth.floor(ent.z());
 		for(int offX = -75; offX <= 75; offX++) {
+			int dx2 = offX * offX;
+			if(dx2 > 5625) {
+				continue;
+			}
 			for(int offZ = -75; offZ <= 75; offZ++) {
-				double distance = Math.sqrt(offX * offX + offZ * offZ);
-				int y = LevelEvents.getTopBlock(ent.getLevel(), ent.x() + offX, ent.z() + offZ, true);
-				BlockPos pos = toBlockPos(new Vec3(ent.x() + offX, y, ent.z() + offZ));
-				if(distance <= 75 && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 200 && ent.getLevel().getBlockState(pos.above()).isAir()) {
-					ent.getLevel().setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
+				if(dx2 + offZ * offZ > 5625) {
+					continue;
+				}
+				int y = LevelEvents.getTopBlock(level, ent.x() + offX, ent.z() + offZ, true);
+				BlockPos pos = new BlockPos(baseX + offX, y, baseZ + offZ);
+				if(level.getBlockState(pos).getBlock().getExplosionResistance() <= 200 && level.getBlockState(pos.above()).isAir()) {
+					level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
 				}
 			}
 		}

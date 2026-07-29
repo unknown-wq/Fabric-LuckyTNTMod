@@ -10,6 +10,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -19,7 +20,11 @@ public class SpiralDynamiteEffect extends PrimedTNTEffect{
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		Entity ent = (Entity)entity;
+		// Kept unguarded so the client keeps floating smoothly between tracker updates.
 		ent.setDeltaMovement(ent.getDeltaMovement().add(0f, 0.08f, 0f));
+		if(!(entity.getLevel() instanceof ServerLevel)) {
+			return;
+		}
 		if(entity.getTNTFuse() < 30) {
 			if(entity.getTNTFuse() % 3 == 0) {
 				ent.setXRot(180f);
@@ -32,7 +37,7 @@ public class SpiralDynamiteEffect extends PrimedTNTEffect{
 				spiral_tnt.setPos(entity.x(), entity.y(), entity.z());
 				spiral_tnt.setOwner(entity.owner());
 				spiral_tnt.shoot(ent.getLookAngle().x, ent.getLookAngle().y, ent.getLookAngle().z, entity.getPersistentData().getFloatOr("spiral_power", 0f), 0);
-				entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.DISPENSER_LAUNCH, SoundSource.MASTER, 3, 1);
+				entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.DISPENSER_LAUNCH, SoundSource.BLOCKS, 1, 1);
 				entity.getLevel().addFreshEntity(spiral_tnt);
 			}
 		}

@@ -1,7 +1,5 @@
 package luckytnt.tnteffects;
 
-import java.util.List;
-
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.ItemRegistry;
 import luckytntlib.util.IExplosiveEntity;
@@ -18,8 +16,13 @@ public class FlakTNTEffect extends PrimedTNTEffect {
 	public void explosionTick(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
 		if(!level.isClientSide() && entity.getTNTFuse() <= 600) {
-			List<Player> players = level.getEntitiesOfClass(Player.class, new AABB(entity.getPos().add(-150, -150, -150), entity.getPos().add(150, 150, 150)));
-			for(Player player : players) {
+			// getEntitiesOfClass walks every EntitySection the box intersects (~2197 for a 300 edge
+			// box) just to find players. level.players() is already the exact candidate set.
+			AABB range = new AABB(entity.getPos().add(-150, -150, -150), entity.getPos().add(150, 150, 150));
+			for(Player player : level.players()) {
+				if(player.isSpectator() || player.isRemoved() || !range.intersects(player.getBoundingBox())) {
+					continue;
+				}
 				if(!player.equals(entity.owner())) {
 					double xVel = player.getX() - entity.x();
 					double yVel = player.getY() - 0.6f;

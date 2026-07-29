@@ -28,6 +28,8 @@ import net.minecraft.world.phys.Vec3;
  */
 public class DispenserBehaviorHelper {
 
+	private static final DefaultDispenseItemBehavior DEFAULT_BEHAVIOR = new DefaultDispenseItemBehavior();
+
 	public static void registerTNTBlockDispenserBehavior(Supplier<LTNTBlock> tnt) {
 		LTNTBlock block = tnt.get();
 
@@ -88,7 +90,7 @@ public class DispenserBehaviorHelper {
 					}
 				} else {
 					if (!state.isAir() || !level.getBlockState(pos.below()).is(BlockTags.RAILS)) {
-						return new DefaultDispenseItemBehavior().dispense(source, stack);
+						return DEFAULT_BEHAVIOR.dispense(source, stack);
 					}
 
 					BlockState stateDown = level.getBlockState(pos.below());

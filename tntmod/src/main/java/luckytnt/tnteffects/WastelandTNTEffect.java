@@ -16,6 +16,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 public class WastelandTNTEffect extends PrimedTNTEffect {
 	
@@ -45,39 +46,70 @@ public class WastelandTNTEffect extends PrimedTNTEffect {
 	}
 	
 	public static void doVaporizeExplosion(IExplosiveEntity ent, double radius, boolean dryArea) {
-		if(!ent.getLevel().isClientSide()) {
-			for(double offX = -radius; offX <= radius; offX++) {
-				for(double offY = -radius; offY <= radius; offY++) {
-					for(double offZ = -radius; offZ <= radius; offZ++) {
-						double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-						BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY), Mth.floor(ent.z() + offZ));
-						BlockState state = ent.getLevel().getBlockState(pos);
-						
-						if(distance <= radius) {
-							if(state.getBlock() instanceof LiquidBlock || Materials.isWaterPlant(state) || state.is(Blocks.BUBBLE_COLUMN)) {
-								ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-							}
-							if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
-								ent.getLevel().setBlock(pos, state.setValue(BlockStateProperties.WATERLOGGED, false), 3);
-							}
-							if(dryArea) {
-								if(Materials.isPlant(state)) {
-									if(Blocks.DEAD_BUSH.defaultBlockState().canSurvive(ent.getLevel(), pos)) {
-										ent.getLevel().setBlock(pos, Blocks.DEAD_BUSH.defaultBlockState(), 3);
-									}
-								}
-								if(GRASS.contains(state.getBlock())) {
-									ent.getLevel().setBlock(pos, Blocks.DIRT.defaultBlockState(), 3);
-								} else if(DIRT.contains(state.getBlock())) {
-									ent.getLevel().setBlock(pos, Blocks.SAND.defaultBlockState(), 3);
-								} else if(state.is(BlockTags.WOOL)) {
-									ent.getLevel().setBlock(pos, Blocks.WOOL.white().defaultBlockState(), 3);
-								} else if(state.getBlock() instanceof WetSpongeBlock) {
-									ent.getLevel().setBlock(pos, Blocks.SPONGE.defaultBlockState(), 3);
-								} else if(state.is(BlockTags.ICE) || state.is(BlockTags.SNOW) || state.is(BlockTags.LEAVES)) {
-									ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-								}
-							}
+		//loop invariants: the level (it was resolved up to nine times per block) and every constant block state
+		final Level level = ent.getLevel();
+		if(level.isClientSide()) {
+			return;
+		}
+		final double centerX = ent.x();
+		final double centerY = ent.y();
+		final double centerZ = ent.z();
+		final BlockState air = Blocks.AIR.defaultBlockState();
+		final BlockState deadBush = Blocks.DEAD_BUSH.defaultBlockState();
+		final BlockState dirt = Blocks.DIRT.defaultBlockState();
+		final BlockState sand = Blocks.SAND.defaultBlockState();
+		final BlockState whiteWool = Blocks.WOOL.white().defaultBlockState();
+		final BlockState sponge = Blocks.SPONGE.defaultBlockState();
+		//conservative column cull: a small tolerance guarantees no column that could still contain an
+		//accepted block is skipped, every surviving block is still tested with the exact original check
+		final double cullSqr = radius * radius * 1.000001d + 1d;
+		for(double offX = -radius; offX <= radius; offX++) {
+			final double xSqr = offX * offX;
+			if(xSqr > cullSqr) {
+				continue;
+			}
+			for(double offY = -radius; offY <= radius; offY++) {
+				final double xySqr = xSqr + offY * offY;
+				if(xySqr > cullSqr) {
+					continue;
+				}
+				//the x/y components of the position no longer depend on the inner loop
+				final int x = Mth.floor(centerX + offX);
+				final int y = Mth.floor(centerY + offY);
+				for(double offZ = -radius; offZ <= radius; offZ++) {
+					//reject on the distance before allocating a BlockPos and reading the world
+					if(Math.sqrt(xySqr + offZ * offZ) > radius) {
+						continue;
+					}
+					BlockPos pos = new BlockPos(x, y, Mth.floor(centerZ + offZ));
+					BlockState state = level.getBlockState(pos);
+					//no branch below can ever match air (no liquid, no water plant, no waterlogged
+					//property, not a plant, not in GRASS/DIRT/WOOL/ICE/SNOW/LEAVES), so bail out early
+					if(state.isAir()) {
+						continue;
+					}
+
+					if(state.getBlock() instanceof LiquidBlock || Materials.isWaterPlant(state) || state.is(Blocks.BUBBLE_COLUMN)) {
+						level.setBlock(pos, air, 3);
+					}
+					if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
+						level.setBlock(pos, state.setValue(BlockStateProperties.WATERLOGGED, false), 3);
+					}
+					if(dryArea) {
+						//canSurvive is the expensive test here, so it stays behind the cheap isPlant check
+						if(Materials.isPlant(state) && deadBush.canSurvive(level, pos)) {
+							level.setBlock(pos, deadBush, 3);
+						}
+						if(GRASS.contains(state.getBlock())) {
+							level.setBlock(pos, dirt, 3);
+						} else if(DIRT.contains(state.getBlock())) {
+							level.setBlock(pos, sand, 3);
+						} else if(state.is(BlockTags.WOOL)) {
+							level.setBlock(pos, whiteWool, 3);
+						} else if(state.getBlock() instanceof WetSpongeBlock) {
+							level.setBlock(pos, sponge, 3);
+						} else if(state.is(BlockTags.ICE) || state.is(BlockTags.SNOW) || state.is(BlockTags.LEAVES)) {
+							level.setBlock(pos, air, 3);
 						}
 					}
 				}

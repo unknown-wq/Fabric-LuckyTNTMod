@@ -11,6 +11,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
@@ -42,6 +43,9 @@ public class EruptingDynamiteEffect extends PrimedTNTEffect{
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
+		if(!(level instanceof ServerLevel)) {
+			return;
+		}
 		if(entity.getTNTFuse() < 15 && entity.getTNTFuse() % 3 == 0) {
 			LExplosiveProjectile erupting_tnt = EntityRegistry.ERUPTING_PROJECTILE.get().create(level, EntitySpawnReason.MOB_SUMMONED);
 			erupting_tnt.setPos(entity.getPos());
@@ -49,7 +53,7 @@ public class EruptingDynamiteEffect extends PrimedTNTEffect{
 			erupting_tnt.shoot((Math.random() * 2D - 1D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 2D - 1D) * 0.1f, 2f + level.getRandom().nextFloat(), 0f);	
 			erupting_tnt.igniteForSeconds(1000);
 			level.addFreshEntity(erupting_tnt);
-			level.playSound(null, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.MASTER, 3, 1);
+			level.playSound(null, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1, 1);
 		}
 	}
 	

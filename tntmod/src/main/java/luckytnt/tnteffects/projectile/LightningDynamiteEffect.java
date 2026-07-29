@@ -11,27 +11,36 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.item.Item;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 public class LightningDynamiteEffect extends PrimedTNTEffect{
+
+	/**
+	 * Ticks between two bolts. A LightningBolt is an expensive vanilla entity (its own damage AABB,
+	 * fire placement and mob conversions), and one per tick meant 40 of them per dynamite.
+	 */
+	private static final int STRIKE_INTERVAL = 5;
 
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		double x = entity.getPos().x;
 		double z = entity.getPos().z;
-		if (entity.getLevel() instanceof ServerLevel) {
-			double offX = Math.random() * 20 - 10;
-			double offZ = Math.random() * 20 - 10;
-			for (double offY = 320; offY > -64; offY--) {
-				if (!entity.getLevel().getBlockState(new BlockPos(Mth.floor(x + offX), Mth.floor(offY), Mth.floor(z + offZ))).isAir()) {
-					Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, entity.getLevel());
-					lighting.setPos(x + offX, offY, z + offZ);
-					entity.getLevel().addFreshEntity(lighting);
-					break;
-				}
-			}
+		if (entity.getLevel() instanceof ServerLevel serverLevel && entity.getTNTFuse() % STRIKE_INTERVAL == 0) {
+			RandomSource random = serverLevel.getRandom();
+			double offX = random.nextDouble() * 20 - 10;
+			double offZ = random.nextDouble() * 20 - 10;
+			int blockX = Mth.floor(x + offX);
+			int blockZ = Mth.floor(z + offZ);
+			// The old code walked ~380 block positions downwards from y=320 to find the ground. The
+			// heightmap already stores exactly that answer, which is also how vanilla picks a
+			// lightning target.
+			int groundY = serverLevel.getHeight(Heightmap.Types.MOTION_BLOCKING, blockX, blockZ);
+			Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, serverLevel);
+			lighting.setPos(x + offX, groundY, z + offZ);
+			serverLevel.addFreshEntity(lighting);
 		}
 	}
 	

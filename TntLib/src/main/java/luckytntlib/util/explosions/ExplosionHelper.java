@@ -27,15 +27,22 @@ public class ExplosionHelper {
 	 */
 	public static HashMap<BlockPos, BlockState> getBlocksInSphere(Level level, Vec3 position, int radius) {
 		HashMap<BlockPos, BlockState> blocks = new HashMap<>();
+		final int cx = Mth.floor(position.x);
+		final int cy = Mth.floor(position.y);
+		final int cz = Mth.floor(position.z);
+		final long radiusSqr = (long)radius * radius;
 		for(int offX = -radius; offX <= radius; offX++) {
+			final long xSqr = (long)offX * offX;
 			for(int offY = radius; offY >= -radius; offY--) {
-				for(int offZ = -radius; offZ <= radius; offZ++) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					if(distance <= radius) {
-						BlockPos pos = new BlockPos(Mth.floor(position.x), Mth.floor(position.y), Mth.floor(position.z)).offset(offX, offY, offZ);
-						BlockState state = level.getBlockState(pos);
-						blocks.put(pos, state);
-					}
+				final long xySqr = xSqr + (long)offY * offY;
+				if(xySqr > radiusSqr) {
+					continue;
+				}
+				final int zMax = floorSqrt(radiusSqr - xySqr);
+				for(int offZ = -zMax; offZ <= zMax; offZ++) {
+					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
+					BlockState state = level.getBlockState(pos);
+					blocks.put(pos, state);
 				}
 			}
 		}
@@ -51,10 +58,13 @@ public class ExplosionHelper {
 	 */
 	public static HashMap<BlockPos, BlockState> getBlocksInCuboid(Level level, Vec3 position, Vec3 radii) {
 		HashMap<BlockPos, BlockState> blocks = new HashMap<>();
+		final int cx = Mth.floor(position.x);
+		final int cy = Mth.floor(position.y);
+		final int cz = Mth.floor(position.z);
 		for(int offX = (int)-radii.x; offX <= (int)radii.x; offX++) {
 			for(int offY = (int)radii.y; offY >= (int)-radii.y; offY--) {
 				for(int offZ = (int)-radii.z; offZ <= (int)radii.z; offZ++) {
-					BlockPos pos = new BlockPos(Mth.floor(position.x), Mth.floor(position.y), Mth.floor(position.z)).offset(offX, offY, offZ);
+					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
 					BlockState state = level.getBlockState(pos);
 					blocks.put(pos, state);
 				}
@@ -72,15 +82,18 @@ public class ExplosionHelper {
 	 */
 	public static HashMap<BlockPos, BlockState> getBlocksInCylinder(Level level, Vec3 position, int radius, int radiusY) {
 		HashMap<BlockPos, BlockState> blocks = new HashMap<>();
+		final int cx = Mth.floor(position.x);
+		final int cy = Mth.floor(position.y);
+		final int cz = Mth.floor(position.z);
+		final long radiusSqr = (long)radius * radius;
 		for(int offX = -radius; offX <= radius; offX++) {
+			final long xSqr = (long)offX * offX;
+			final int zMax = floorSqrt(radiusSqr - xSqr);
 			for(int offY = radiusY; offY >= -radiusY; offY--) {
-				for(int offZ = -radius; offZ <= radius; offZ++) {
-					double distance = Math.sqrt(offX * offX + offZ * offZ);
-					if(distance <= radius) {
-						BlockPos pos = new BlockPos(Mth.floor(position.x), Mth.floor(position.y), Mth.floor(position.z)).offset(offX, offY, offZ);
-						BlockState state = level.getBlockState(pos);
-						blocks.put(pos, state);
-					}
+				for(int offZ = -zMax; offZ <= zMax; offZ++) {
+					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
+					BlockState state = level.getBlockState(pos);
+					blocks.put(pos, state);
 				}
 			}
 		}
@@ -95,15 +108,23 @@ public class ExplosionHelper {
 	 * @param blockEffect  determines what should happen to the blocks gotten by this function
 	 */
 	public static void doSphericalExplosion(Level level, Vec3 position, int radius, IForEachBlockExplosionEffect blockEffect) {
+		final int cx = Mth.floor(position.x);
+		final int cy = Mth.floor(position.y);
+		final int cz = Mth.floor(position.z);
+		final long radiusSqr = (long)radius * radius;
 		for(int offX = -radius; offX <= radius; offX++) {
+			final long xSqr = (long)offX * offX;
 			for(int offY = radius; offY >= -radius; offY--) {
-				for(int offZ = -radius; offZ <= radius; offZ++) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					if(distance <= radius) {
-						BlockPos pos = new BlockPos(Mth.floor(position.x), Mth.floor(position.y), Mth.floor(position.z)).offset(offX, offY, offZ);
-						BlockState state = level.getBlockState(pos);
-						blockEffect.doBlockExplosion(level, pos, state, distance);
-					}
+				final long xySqr = xSqr + (long)offY * offY;
+				if(xySqr > radiusSqr) {
+					continue;
+				}
+				final int zMax = floorSqrt(radiusSqr - xySqr);
+				for(int offZ = -zMax; offZ <= zMax; offZ++) {
+					double distance = Math.sqrt(xySqr + (double)offZ * offZ);
+					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
+					BlockState state = level.getBlockState(pos);
+					blockEffect.doBlockExplosion(level, pos, state, distance);
 				}
 			}
 		}
@@ -119,12 +140,27 @@ public class ExplosionHelper {
 	 * @param blockEffect  determines what should happen to the blocks gotten by this function
 	 */
 	public static void doModifiedSphericalExplosion(Level level, Vec3 position, int radius, Vec3 scaling, IForEachBlockExplosionEffect blockEffect) {
+		final int cx = Mth.floor(position.x);
+		final int cy = Mth.floor(position.y);
+		final int cz = Mth.floor(position.z);
+		//a small tolerance is added so that no column that could still contain an accepted block is ever culled,
+		//every block that is not culled is still tested individually
+		final double radiusSqr = (double)radius * radius * 1.000001d + 1d;
+		//culling is only valid if every summand of the distance is positive
+		final boolean cull = scaling.x > 0 && scaling.y > 0 && scaling.z > 0;
 		for(double offX = -radius * scaling.x; offX <= radius * scaling.x; offX++) {
+			final double xTerm = offX * offX / scaling.x;
+			if(cull && xTerm > radiusSqr) {
+				continue;
+			}
 			for(double offY = radius * scaling.y; offY >= -radius * scaling.y; offY--) {
+				if(cull && xTerm + offY * offY / scaling.y > radiusSqr) {
+					continue;
+				}
 				for(double offZ = -radius * scaling.z; offZ <= radius * scaling.z; offZ++) {
 					double distance = Math.sqrt(offX * offX / scaling.x + offY * offY / scaling.y + offZ * offZ / scaling.z);
 					if(distance <= radius) {
-						BlockPos pos = new BlockPos(Mth.floor(position.x), Mth.floor(position.y), Mth.floor(position.z)).offset((int)offX, (int)offY, (int)offZ);
+						BlockPos pos = new BlockPos(cx + (int)offX, cy + (int)offY, cz + (int)offZ);
 						BlockState state = level.getBlockState(pos);
 						blockEffect.doBlockExplosion(level, pos, state, distance);
 					}
@@ -141,11 +177,16 @@ public class ExplosionHelper {
 	 * @param blockEffect  determines what should happen to the blocks gotten by this function
 	 */
 	public static void doCubicalExplosion(Level level, Vec3 position, int radius, IForEachBlockExplosionEffect blockEffect) {
+		final int cx = Mth.floor(position.x);
+		final int cy = Mth.floor(position.y);
+		final int cz = Mth.floor(position.z);
 		for(int offX = -radius; offX <= radius; offX++) {
+			final long xSqr = (long)offX * offX;
 			for(int offY = -radius; offY <= radius; offY++) {
+				final long xySqr = xSqr + (long)offY * offY;
 				for(int offZ = -radius; offZ <= radius; offZ++) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					BlockPos pos = new BlockPos(Mth.floor(position.x), Mth.floor(position.y), Mth.floor(position.z)).offset(offX, offY, offZ);
+					double distance = Math.sqrt(xySqr + (double)offZ * offZ);
+					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
 					BlockState state = level.getBlockState(pos);
 					blockEffect.doBlockExplosion(level, pos, state, distance);
 				}
@@ -161,11 +202,16 @@ public class ExplosionHelper {
 	 * @param blockEffect  determines what should happen to the blocks gotten by this function
 	 */
 	public static void doCuboidExplosion(Level level, Vec3 position, Vec3 radii, IForEachBlockExplosionEffect blockEffect) {
+		final int cx = Mth.floor(position.x);
+		final int cy = Mth.floor(position.y);
+		final int cz = Mth.floor(position.z);
 		for(int offX = (int)-radii.x; offX <= (int)radii.x; offX++) {
+			final long xSqr = (long)offX * offX;
 			for(int offY = (int)-radii.y; offY <= (int)radii.y; offY++) {
+				final long xySqr = xSqr + (long)offY * offY;
 				for(int offZ = (int)-radii.z; offZ <= (int)radii.z; offZ++) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					BlockPos pos = new BlockPos(Mth.floor(position.x), Mth.floor(position.y), Mth.floor(position.z)).offset(offX, offY, offZ);
+					double distance = Math.sqrt(xySqr + (double)offZ * offZ);
+					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
 					BlockState state = level.getBlockState(pos);
 					blockEffect.doBlockExplosion(level, pos, state, distance);
 				}
@@ -182,15 +228,24 @@ public class ExplosionHelper {
 	 * @param blockEffect  determines what should happen to the blocks gotten by this function
 	 */
 	public static void doCylindricalExplosion(Level level, Vec3 position, int radius, int radiusY, IForEachBlockExplosionEffect blockEffect) {
+		final int cx = Mth.floor(position.x);
+		final int cy = Mth.floor(position.y);
+		final int cz = Mth.floor(position.z);
+		final long radiusSqr = (long)radius * radius;
+		//the distance of a cylindrical explosion only depends on the x and z offset, so it is calculated once per column
+		final double[] distances = new double[Math.max(radius, 0) + 1];
 		for(int offX = -radius; offX <= radius; offX++) {
+			final long xSqr = (long)offX * offX;
+			final int zMax = floorSqrt(radiusSqr - xSqr);
+			for(int offZ = 0; offZ <= zMax; offZ++) {
+				distances[offZ] = Math.sqrt(xSqr + (double)offZ * offZ);
+			}
 			for(int offY = -radiusY; offY <= radiusY; offY++) {
-				for(int offZ = -radius; offZ <= radius; offZ++) {
-					double distance = Math.sqrt(offX * offX + offZ * offZ);
-					if(distance <= radius) {
-						BlockPos pos = new BlockPos(Mth.floor(position.x), Mth.floor(position.y), Mth.floor(position.z)).offset(offX, offY, offZ);
-						BlockState state = level.getBlockState(pos);
-						blockEffect.doBlockExplosion(level, pos, state, distance);
-					}
+				for(int offZ = -zMax; offZ <= zMax; offZ++) {
+					double distance = distances[Math.abs(offZ)];
+					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
+					BlockState state = level.getBlockState(pos);
+					blockEffect.doBlockExplosion(level, pos, state, distance);
 				}
 			}
 		}
@@ -205,17 +260,27 @@ public class ExplosionHelper {
 	 * @param blockEffect  determines what should happen to the blocks gotten by this function
 	 */
 	public static void doTopBlockExplosion(Level level, Vec3 position, int radius, IForEachBlockExplosionEffect blockEffect) {
+		final int cx = Mth.floor(position.x);
+		final int cy = Mth.floor(position.y);
+		final int cz = Mth.floor(position.z);
+		final long radiusSqr = (long)radius * radius;
 		for(int offX = -radius; offX <= radius; offX++) {
+			final long xSqr = (long)offX * offX;
 			for(int offZ = -radius; offZ <= radius; offZ++) {
-				topToBottom: for(int offY = radius; offY >= -radius; offY--) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					if(distance <= radius) {
-						BlockPos pos = new BlockPos(Mth.floor(position.x), Mth.floor(position.y), Mth.floor(position.z)).offset(offX, offY, offZ);
-						BlockState state = level.getBlockState(pos);
-						if((level.getBlockState(pos.below()).isCollisionShapeFullBlock(level, pos.below()) || level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)) && (state.isAir() || state.canBeReplaced(new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP))  || (!state.isCollisionShapeFullBlock(level, pos) && state.getBlock().getExplosionResistance() == 0) || state.is(BlockTags.FLOWERS))) {
-							blockEffect.doBlockExplosion(level, pos, state, distance);
-							break topToBottom;
-						}
+				final long xzSqr = xSqr + (long)offZ * offZ;
+				if(xzSqr > radiusSqr) {
+					continue;
+				}
+				final int yMax = floorSqrt(radiusSqr - xzSqr);
+				topToBottom: for(int offY = yMax; offY >= -yMax; offY--) {
+					double distance = Math.sqrt(xzSqr + (double)offY * offY);
+					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
+					BlockState state = level.getBlockState(pos);
+					BlockPos below = pos.below();
+					BlockState belowState = level.getBlockState(below);
+					if((belowState.isCollisionShapeFullBlock(level, below) || belowState.isFaceSturdy(level, below, Direction.UP)) && (state.isAir() || (!state.isCollisionShapeFullBlock(level, pos) && state.getBlock().getExplosionResistance() == 0) || state.is(BlockTags.FLOWERS) || state.canBeReplaced(new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP)))) {
+						blockEffect.doBlockExplosion(level, pos, state, distance);
+						break topToBottom;
 					}
 				}
 			}
@@ -233,18 +298,28 @@ public class ExplosionHelper {
 	 * @param blockEffect  determines what should happen to the blocks gotten by this function
 	 */
 	public static void doTopBlockExplosion(Level level, Vec3 position, int radius, IBlockExplosionCondition condition, IForEachBlockExplosionEffect blockEffect) {
+		final int cx = Mth.floor(position.x);
+		final int cy = Mth.floor(position.y);
+		final int cz = Mth.floor(position.z);
+		final long radiusSqr = (long)radius * radius;
 		for(int offX = -radius; offX <= radius; offX++) {
+			final long xSqr = (long)offX * offX;
 			for(int offZ = -radius; offZ <= radius; offZ++) {
-				topToBottom: for(int offY = radius; offY >= -radius; offY--) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					if(distance <= radius) {
-						BlockPos pos = new BlockPos(Mth.floor(position.x), Mth.floor(position.y), Mth.floor(position.z)).offset(offX, offY, offZ);
-						BlockState state = level.getBlockState(pos);
-						if(!level.getBlockState(pos.below()).isAir()) {
-							if(condition.conditionMet(level, pos.below(), level.getBlockState(pos.below()), Math.sqrt(offX * offX + (offY-1) * (offY-1) + offZ * offZ))) {
-								blockEffect.doBlockExplosion(level, pos, state, distance);
-								break topToBottom;
-							}
+				final long xzSqr = xSqr + (long)offZ * offZ;
+				if(xzSqr > radiusSqr) {
+					continue;
+				}
+				final int yMax = floorSqrt(radiusSqr - xzSqr);
+				topToBottom: for(int offY = yMax; offY >= -yMax; offY--) {
+					double distance = Math.sqrt(xzSqr + (double)offY * offY);
+					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
+					BlockState state = level.getBlockState(pos);
+					BlockPos below = pos.below();
+					BlockState belowState = level.getBlockState(below);
+					if(!belowState.isAir()) {
+						if(condition.conditionMet(level, below, belowState, Math.sqrt(xzSqr + (double)(offY - 1) * (offY - 1)))) {
+							blockEffect.doBlockExplosion(level, pos, state, distance);
+							break topToBottom;
 						}
 					}
 				}
@@ -261,19 +336,44 @@ public class ExplosionHelper {
 	 * @param blockEffect  determines what should happen to the blocks gotten by this function
 	 */
 	public static void doTopBlockExplosionForAll(Level level, Vec3 position, int radius, IForEachBlockExplosionEffect blockEffect) {
+		final int cx = Mth.floor(position.x);
+		final int cy = Mth.floor(position.y);
+		final int cz = Mth.floor(position.z);
+		final long radiusSqr = (long)radius * radius;
 		for(int offX = -radius; offX <= radius; offX++) {
+			final long xSqr = (long)offX * offX;
 			for(int offZ = -radius; offZ <= radius; offZ++) {
-				for(int offY = radius; offY >= -radius; offY--) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					if(distance <= radius) {
-						BlockPos pos = new BlockPos(Mth.floor(position.x), Mth.floor(position.y), Mth.floor(position.z)).offset(offX, offY, offZ);
-						BlockState state = level.getBlockState(pos);
-						if((level.getBlockState(pos.below()).isCollisionShapeFullBlock(level, pos.below()) || level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)) && (state.isAir() || state.canBeReplaced(new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP)) || (!state.isCollisionShapeFullBlock(level, pos) && state.getBlock().getExplosionResistance() == 0) || state.is(BlockTags.FLOWERS))) {
-							blockEffect.doBlockExplosion(level, pos, state, distance);
-						}
+				final long xzSqr = xSqr + (long)offZ * offZ;
+				if(xzSqr > radiusSqr) {
+					continue;
+				}
+				final int yMax = floorSqrt(radiusSqr - xzSqr);
+				for(int offY = yMax; offY >= -yMax; offY--) {
+					double distance = Math.sqrt(xzSqr + (double)offY * offY);
+					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
+					BlockState state = level.getBlockState(pos);
+					BlockPos below = pos.below();
+					BlockState belowState = level.getBlockState(below);
+					if((belowState.isCollisionShapeFullBlock(level, below) || belowState.isFaceSturdy(level, below, Direction.UP)) && (state.isAir() || (!state.isCollisionShapeFullBlock(level, pos) && state.getBlock().getExplosionResistance() == 0) || state.is(BlockTags.FLOWERS) || state.canBeReplaced(new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP)))) {
+						blockEffect.doBlockExplosion(level, pos, state, distance);
 					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param value  a value greater than or equal to 0
+	 * @return the greatest int whose square is less than or equal to the given value
+	 */
+	private static int floorSqrt(long value) {
+		int root = (int)Math.sqrt((double)value);
+		while(root > 0 && (long)root * root > value) {
+			root--;
+		}
+		while((long)(root + 1) * (root + 1) <= value) {
+			root++;
+		}
+		return root;
 	}
 }

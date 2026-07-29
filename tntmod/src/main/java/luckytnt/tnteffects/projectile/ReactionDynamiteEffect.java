@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -45,20 +46,26 @@ public class ReactionDynamiteEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity){
 		Level level = entity.getLevel();
 		if(!level.isClientSide()) {
-			if(entity.getPersistentData().getIntOr("nextExplosion", 0) == 0) {
-				Vec3 randomPos = new Vec3(Math.random() * 20 - 10, Math.random() * 10 - 5, Math.random() * 20 - 10);
-				float explosionSize = 5 + level.getRandom().nextFloat() * 5;
+			int nextExplosion = entity.getPersistentData().getIntOr("nextExplosion", 0);
+			if(nextExplosion == 0) {
+				RandomSource random = level.getRandom();
+				Vec3 randomPos = new Vec3(random.nextDouble() * 20 - 10, random.nextDouble() * 10 - 5, random.nextDouble() * 20 - 10);
+				float explosionSize = 5 + random.nextFloat() * 5;
 				ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos().add(randomPos), Math.round(explosionSize));
 				explosion.doEntityExplosion(1f + 0.05f * explosionSize, true);
 				explosion.doBlockExplosion(1f, 1f, 0.75f, 1.25f, false, false);
-				level.playSound((Entity)entity, toBlockPos(entity.getPos().add(randomPos)), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
+				level.playSound((Entity)entity, toBlockPos(entity.getPos().add(randomPos)), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (random.nextFloat() - random.nextFloat()) * 0.2f) * 0.7f);
 				CompoundTag tag = entity.getPersistentData();
-				tag.putInt("nextExplosion", 2 + level.getRandom().nextInt(3));
+				tag.putInt("nextExplosion", (2 + random.nextInt(3)) - 1);
 				entity.setPersistentData(tag);
 			}
-			CompoundTag tag = entity.getPersistentData();
-			tag.putInt("nextExplosion", entity.getPersistentData().getIntOr("nextExplosion", 0) - 1);
-			entity.setPersistentData(tag);
+			else {
+				// getPersistentData() hands back the live CompoundTag held by the entity's synched data, so
+				// mutating it in place already updates (and persists) the countdown. setPersistentData
+				// additionally forces a full CompoundTag packet to every tracking client, and nothing on the
+				// client ever reads "nextExplosion" - so the plain countdown does not need to sync at all.
+				entity.getPersistentData().putInt("nextExplosion", nextExplosion - 1);
+			}
 		}
 	}
 	
