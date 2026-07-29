@@ -31,8 +31,14 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
 public class Grave extends Feature<NoneFeatureConfiguration>{
 
-	public BlockState ground = Blocks.GRASS_BLOCK.defaultBlockState();
-	
+	/**
+	 * The month the seasonal check requires. Resolved once instead of once per placement attempt
+	 * (the value cannot change within a server session in any way that matters here).
+	 */
+	private static final boolean IS_OCTOBER = LocalDate.now().get(ChronoField.MONTH_OF_YEAR) == 10;
+
+	public BlockState defaultGround = Blocks.GRASS_BLOCK.defaultBlockState();
+
 	public BlockState slab = Blocks.STONE_BRICK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
 	public BlockState mossySlab = Blocks.MOSSY_STONE_BRICK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
 	

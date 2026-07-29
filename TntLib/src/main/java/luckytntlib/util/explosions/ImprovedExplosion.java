@@ -3,9 +3,11 @@ package luckytntlib.util.explosions;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -523,8 +525,7 @@ public class ImprovedExplosion implements Explosion {
 	 * @param saveBlockPos  whether or not affected blocks should be saved to be used externally
 	 */
 	public void doOldBlockExplosion(float xzStrength, float yStrength, float resistanceImpact, float randomVecLength, boolean fire, boolean isStrongExplosion, boolean saveBlockPos) {
-		final List<BlockPos> blocks = new ArrayList<>();
-		final java.util.Set<BlockPos> blockSet = new java.util.HashSet<>();
+		final Set<BlockPos> blocks = new HashSet<>();
 		final RandomSource random = level.getRandom();
 		final double factor = LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get();
 		final double vecStepSize = factor * 1.5f - 0.225f;
@@ -572,12 +573,12 @@ public class ImprovedExplosion implements Explosion {
 						vecLength -= (explosionResistance.get() + 0.3f) * 0.3f * resistanceImpact;
 					}
 					if(vecLength > 0 && damageCalculator.shouldBlockExplode(this, level, pos, blockState, vecLength) && !blockState.isAir()) {
-						if(blockSet.add(pos)) {
+						if(!blocks.contains(pos)) {
 							blocks.add(pos.immutable());
 						}
 					}
 				} else {
-					if(blockSet.add(pos)) {
+					if(!blocks.contains(pos)) {
 						blocks.add(pos.immutable());
 					}
 				}

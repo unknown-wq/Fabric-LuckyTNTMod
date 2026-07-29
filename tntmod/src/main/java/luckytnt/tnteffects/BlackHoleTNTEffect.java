@@ -34,56 +34,63 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 		if(ent.getTNTFuse() < 300) {
 			((Entity)ent).setDeltaMovement(0, 0, 0);
 		}
-		if(ent.getTNTFuse() < 350 && ent.getTNTFuse() > 0) {
-			Level level = ent.getLevel();
+		// The 200 wide AABB query and the falling block spawning are both server only work
+		// (the client discards spawned entities and its delta movements get overwritten by the
+		// server sync anyway), so the whole block is guarded once.
+		if(ent.getTNTFuse() < 350 && ent.getTNTFuse() > 0 && ent.getLevel() instanceof ServerLevel sLevel) {
+			AABB range = new AABB(ent.x() - 100, ent.y() - 100, ent.z() - 100, ent.x() + 100, ent.y() + 100, ent.z() + 100);
 
-			if(ent.getTNTFuse() % 20 == 0 && level instanceof ServerLevel) {
-				RandomSource random = level.getRandom();
+			// One pass over the ~2197 entity sections instead of two identical ones.
+			int liveBlocks = 0;
+			for(Entity target : sLevel.getEntities((Entity)ent, range)) {
+				if(target instanceof FallingBlockEntity block) {
+					Vec3 vec = new Vec3(ent.x() - block.getX(), ent.y() - block.getY(), ent.z() - block.getZ());
+					if(vec.length() <= 2) {
+						block.discard();
+						continue;
+					}
+					liveBlocks++;
+					block.setDeltaMovement(vec.normalize().scale(0.4D).add(0, 0.1D, 0));
+				} else if(target instanceof LivingEntity living) {
+					Vec3 vec = new Vec3(ent.x() - living.getX(), ent.y() - living.getEyeY(), ent.z() - living.getZ());
+					double distance = vec.length();
+					if(distance <= 2) {
+						if(living instanceof Player) {
+							if(ent.getTNTFuse() % 80 == 0) {
+								living.hurtServer(sLevel, sLevel.damageSources().inWall(), 6f);
+							}
+						} else {
+							living.discard();
+							continue;
+						}
+					}
+					living.setDeltaMovement(vec.normalize().scale(Math.min((1D / (0.25D * distance + 0.0001D)) + 0.5D, 2.5D)));
+				}
+			}
+
+			if(ent.getTNTFuse() % 20 == 0) {
+				RandomSource random = sLevel.getRandom();
 				int amount = Math.min(400 + (int)Math.round(1600D / ((double)ent.getTNTFuse() * 0.5D)), 800);
+				// keep the amount of concurrently orbiting falling blocks bounded
+				amount = Math.min(amount, MAX_LIVE_FALLING_BLOCKS - liveBlocks);
+				int entY = Mth.floor(ent.y());
+				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
 				for(int i = 0; i < amount; i++) {
 					int posX = Mth.floor(ent.x()) + random.nextInt(151) - 75;
 					int posZ = Mth.floor(ent.z()) + random.nextInt(151) - 75;
-					if(!level.isLoaded(new BlockPos(posX, Mth.floor(ent.y()), posZ))) {
+					mutable.set(posX, entY, posZ);
+					if(!sLevel.isLoaded(mutable)) {
 						continue;
 					}
-					int posY = LevelEvents.getTopBlock(level, posX, posZ, false);
-					BlockPos pos = new BlockPos(posX, posY, posZ);
-					BlockState state = level.getBlockState(pos);
+					// heightmap lookup instead of LevelEvents.getTopBlock, which scanned the
+					// whole Y column (2 getBlockState + 2 collision shape checks per step)
+					int posY = sLevel.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, posX, posZ) - 1;
+					mutable.set(posX, posY, posZ);
+					BlockState state = sLevel.getBlockState(mutable);
 					if(!state.isAir() && !state.hasBlockEntity() && state.getBlock().getExplosionResistance() < 100) {
-						FallingBlockEntity.fall(level, pos, state);
+						FallingBlockEntity.fall(sLevel, mutable.immutable(), state);
 					}
 				}
-			}
-
-			AABB range = new AABB(ent.x() - 100, ent.y() - 100, ent.z() - 100, ent.x() + 100, ent.y() + 100, ent.z() + 100);
-			List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, range);
-			List<FallingBlockEntity> blocks = level.getEntitiesOfClass(FallingBlockEntity.class, range);
-
-			for(FallingBlockEntity block : blocks) {
-				Vec3 vec = new Vec3(ent.x() - block.getX(), ent.y() - block.getY(), ent.z() - block.getZ());
-				if(vec.length() <= 2) {
-					if(level instanceof ServerLevel) {
-						block.discard();
-					}
-					continue;
-				}
-				block.setDeltaMovement(vec.normalize().scale(0.4D).add(0, 0.1D, 0));
-			}
-
-			for(LivingEntity living : list) {
-				Vec3 vec = new Vec3(ent.x() - living.getX(), ent.y() - living.getEyeY(), ent.z() - living.getZ());
-				double distance = vec.length();
-				if(distance <= 2 && level instanceof ServerLevel sLevel) {
-					if(living instanceof Player) {
-						if(ent.getTNTFuse() % 80 == 0) {
-							living.hurtServer(sLevel, sLevel.damageSources().inWall(), 6f);
-						}
-					} else {
-						living.discard();
-						continue;
-					}
-				}
-				living.setDeltaMovement(vec.normalize().scale(Math.min((1D / (0.25D * distance + 0.0001D)) + 0.5D, 2.5D)));
 			}
 		}
 	}

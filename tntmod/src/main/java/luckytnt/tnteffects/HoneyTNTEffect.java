@@ -34,7 +34,11 @@ public class HoneyTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		Noise3D noise = new Noise3D(radius * 4, radius * 4, radius * 4, 5);
+		//only a sub range of the old radius*4 cube was ever indexed below: x/z reach radius*2, y reaches radius*3.
+		//+2 so the highest index used is still an interpolated cell and not the (always zero) border plane.
+		final int noiseMaxXZ = radius * 2;
+		final int noiseMaxY = radius * 3;
+		Noise3D noise = new Noise3D(noiseMaxXZ + 2, noiseMaxY + 2, noiseMaxXZ + 2, 5);
 		ExplosionHelper.doModifiedSphericalExplosion(entity.getLevel(), entity.getPos(), radius, new Vec3(1f, 1.5f, 1f), new IForEachBlockExplosionEffect() {		
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
@@ -58,7 +62,7 @@ public class HoneyTNTEffect extends PrimedTNTEffect{
 						int offZ = Math.round(pos.getZ() - (float)entity.z());
 						state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-						if(noise.getValue(Mth.clamp(offX + radius, 0, radius * 4), Mth.clamp((int)(offY + radius * 1.5f), 0, radius * 4), Mth.clamp(offZ + radius, 0, radius * 4)) > 0.7f) {
+						if(noise.getValue(Mth.clamp(offX + radius, 0, noiseMaxXZ), Mth.clamp((int)(offY + radius * 1.5f), 0, noiseMaxY), Mth.clamp(offZ + radius, 0, noiseMaxXZ)) > 0.7f) {
 							level.setBlockAndUpdate(pos, Blocks.HONEY_BLOCK.defaultBlockState());
 						}
 						else {

@@ -45,11 +45,15 @@ public class JungleTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posTop = pos.offset(0, 1, 0);
-				BlockState stateTop = level.getBlockState(posTop);
-				
-				if(state.getBlock().getExplosionResistance() < 100 && stateTop.getBlock().getExplosionResistance() < 100 && Block.isFaceFull(state.getCollisionShape(level, pos), Direction.UP) && (stateTop.isAir() || Materials.isPlant(stateTop) || stateTop.is(BlockTags.SNOW))) {
-					state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+				// Cheap, pure rejects first; only then read the block above (all clauses are side-effect free,
+				// so reordering them cannot change the outcome).
+				Block block = state.getBlock();
+				if(block.getExplosionResistance() >= 100 || !Block.isFaceFull(state.getCollisionShape(level, pos), Direction.UP)) {
+					return;
+				}
+				BlockState stateTop = level.getBlockState(pos.above());
+				if(stateTop.getBlock().getExplosionResistance() < 100 && (stateTop.isAir() || Materials.isPlant(stateTop) || stateTop.is(BlockTags.SNOW))) {
+					block.wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(level));
 					level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
 				}
 			}
@@ -70,24 +74,47 @@ public class JungleTNTEffect extends PrimedTNTEffect {
 	}
 	
 	public static void replaceNonSolidBlockOrVegetationWithAir(IExplosiveEntity ent, double radius, float maxResistance, boolean vegetation) {
-		if(!ent.getLevel().isClientSide()) {
-			for(double offX = -radius; offX <= radius; offX++) {
-				for(double offY = radius; offY >= -radius; offY--) {
-					for(double offZ = -radius; offZ <= radius; offZ++) {
-						double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-						BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY), Mth.floor(ent.z() + offZ));
-						BlockState state = ent.getLevel().getBlockState(pos);
-						if(distance <= radius) {					
-							if(state.getBlock().getExplosionResistance() <= maxResistance && !state.isAir() && ((!state.isCollisionShapeFullBlock(ent.getLevel(), pos) && !state.is(Blocks.MUD) && !state.is(ConventionalBlockTags.CHESTS)) || (vegetation && (state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS) || state.getBlock() == Blocks.MANGROVE_ROOTS)))) {
-								if(Materials.isWaterPlant(state)) {
-									Block block1 = state.getBlock();
-									block1.wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
-								} else {
-									state.getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-									ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-								}
-							}
+		Level level = ent.getLevel();
+		if(level.isClientSide()) {
+			return;
+		}
+		ServerLevel sLevel = (ServerLevel)level;
+		// Same iteration lattice as before (offsets stepping by 1 from -radius), but the squared
+		// distance test now runs *before* the BlockPos allocation and the world read, and whole
+		// x/y slices outside the sphere are skipped entirely.
+		double radiusSq = radius * radius;
+		double entX = ent.x();
+		double entY = ent.y();
+		double entZ = ent.z();
+		for(double offX = -radius; offX <= radius; offX++) {
+			double dx2 = offX * offX;
+			if(dx2 > radiusSq) {
+				continue;
+			}
+			int posX = Mth.floor(entX + offX);
+			for(double offY = radius; offY >= -radius; offY--) {
+				double dxy2 = dx2 + offY * offY;
+				if(dxy2 > radiusSq) {
+					continue;
+				}
+				int posY = Mth.floor(entY + offY);
+				double remaining = radiusSq - dxy2;
+				for(double offZ = -radius; offZ <= radius; offZ++) {
+					if(offZ * offZ > remaining) {
+						if(offZ >= 0) {
+							break;
+						}
+						continue;
+					}
+					BlockPos pos = new BlockPos(posX, posY, Mth.floor(entZ + offZ));
+					BlockState state = level.getBlockState(pos);
+					Block block = state.getBlock();
+					if(block.getExplosionResistance() <= maxResistance && !state.isAir() && ((!state.isCollisionShapeFullBlock(level, pos) && !state.is(Blocks.MUD) && !state.is(ConventionalBlockTags.CHESTS)) || (vegetation && (state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS) || block == Blocks.MANGROVE_ROOTS)))) {
+						block.wasExploded(sLevel, pos, ImprovedExplosion.dummyExplosion(level));
+						if(Materials.isWaterPlant(state)) {
+							level.setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
+						} else {
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 						}
 					}
 				}
