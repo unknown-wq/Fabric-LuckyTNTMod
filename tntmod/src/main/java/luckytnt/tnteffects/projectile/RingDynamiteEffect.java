@@ -28,22 +28,22 @@ public class RingDynamiteEffect extends PrimedTNTEffect {
 		Vec3 leftup = left.add(up).normalize();
 		Vec3 leftdown = left.add(down).normalize();
 		
-		Vec3[] array = new Vec3[10];
-		
-		array[1] = vec.add(right).normalize();
-		array[2] = vec.add(left).normalize();
-		array[3] = vec.add(up).normalize();
-		array[4] = vec.add(down).normalize();
-		array[5] = vec.add(rightdown).normalize();
-		array[6] = vec.add(rightup).normalize();
-		array[7] = vec.add(leftdown).normalize();
-		array[8] = vec.add(leftup).normalize();
-		
-		for(int i = 1; i <= 8; i++) {
+		Vec3[] array = new Vec3[] {
+			vec.add(right).normalize(),
+			vec.add(left).normalize(),
+			vec.add(up).normalize(),
+			vec.add(down).normalize(),
+			vec.add(rightdown).normalize(),
+			vec.add(rightup).normalize(),
+			vec.add(leftdown).normalize(),
+			vec.add(leftup).normalize()
+		};
+
+		for(Vec3 direction : array) {
 			LExplosiveProjectile dynamite = EntityRegistry.DYNAMITE.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 			dynamite.setOwner(ent.owner());
 			dynamite.setPos(ent.getPos());
-			dynamite.setDeltaMovement(array[i].scale(2D));
+			dynamite.setDeltaMovement(direction.scale(2D));
 			ent.getLevel().addFreshEntity(dynamite);
 		}
 	}

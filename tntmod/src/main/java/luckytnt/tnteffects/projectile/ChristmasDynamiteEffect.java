@@ -2,8 +2,6 @@ package luckytnt.tnteffects.projectile;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 
-import java.util.Random;
-
 import org.joml.Math;
 
 import luckytnt.registry.EntityRegistry;
@@ -19,10 +17,17 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
 public class ChristmasDynamiteEffect extends PrimedTNTEffect{
+
+	/**
+	 * Ticks between two child projectiles. The dynamite drops children over the window 220..60,
+	 * so this directly controls how many entities a single throw creates.
+	 */
+	private static final int CHILD_SPAWN_INTERVAL = 40;
 
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
@@ -54,28 +59,32 @@ public class ChristmasDynamiteEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		if(entity.getTNTFuse() == 220) {
+		Entity ent = (Entity)entity;
+		int fuse = entity.getTNTFuse();
+		// The synched NBT write and the child spawn are server-only; the motion writes stay on both
+		// sides so the client keeps moving smoothly between tracker updates.
+		boolean server = entity.getLevel() instanceof ServerLevel;
+		if(fuse == 220 && server) {
 			CompoundTag tag = entity.getPersistentData();
-			tag.putDouble("vecx", ((Entity)entity).getDeltaMovement().x);
-			tag.putDouble("vecz", ((Entity)entity).getDeltaMovement().z);
+			tag.putDouble("vecx", ent.getDeltaMovement().x);
+			tag.putDouble("vecz", ent.getDeltaMovement().z);
 			entity.setPersistentData(tag);
 		}
-		if(entity.getTNTFuse() <= 220 && entity.getTNTFuse() > 60) {
-			((Entity)entity).setDeltaMovement(new Vec3(entity.getPersistentData().getDoubleOr("vecx", 0), 0, entity.getPersistentData().getDoubleOr("vecz", 0)).normalize().scale(0.25f));
-			if(entity.getTNTFuse() % 20 == 0) {
+		if(fuse <= 220 && fuse > 60) {
+			ent.setDeltaMovement(new Vec3(entity.getPersistentData().getDoubleOr("vecx", 0), 0, entity.getPersistentData().getDoubleOr("vecz", 0)).normalize().scale(0.25f));
+			if(server && fuse % CHILD_SPAWN_INTERVAL == 0) {
+				RandomSource random = entity.getLevel().getRandom();
 				LExplosiveProjectile dynamite = EntityRegistry.CHRISTMAS_DYNAMITE_PROJECTILE.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 				dynamite.setPos(entity.getPos());
 				dynamite.setOwner(entity.owner());
-				double randomX = Math.random();
-				randomX *= new Random().nextBoolean() ? 1 : -1;
-				double randomZ = Math.random();
-				randomZ *= new Random().nextBoolean() ? 1 : -1;
-				dynamite.setDeltaMovement(randomX, -Math.random() * 0.5f, randomZ);
+				double randomX = random.nextDouble() * (random.nextBoolean() ? 1 : -1);
+				double randomZ = random.nextDouble() * (random.nextBoolean() ? 1 : -1);
+				dynamite.setDeltaMovement(randomX, -random.nextDouble() * 0.5f, randomZ);
 				entity.getLevel().addFreshEntity(dynamite);
 			}
 		}
-		else if(entity.getTNTFuse() > 60){
-			((Entity)entity).setDeltaMovement(((Entity)entity).getDeltaMovement().add(0f, 0.08f, 0f));
+		else if(fuse > 60){
+			ent.setDeltaMovement(ent.getDeltaMovement().add(0f, 0.08f, 0f));
 		}
 	}
 	

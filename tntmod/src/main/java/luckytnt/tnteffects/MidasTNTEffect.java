@@ -23,12 +23,11 @@ import net.minecraft.world.level.Level;
 
 public class MidasTNTEffect extends PrimedTNTEffect {
 
-	private static final BlockState GOLD = Blocks.GOLD_BLOCK.defaultBlockState();
-
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() < 80 && ent.getTNTFuse() % 2 == 0 && !ent.getLevel().isClientSide()) {
 			Level level = ent.getLevel();
+			BlockState gold = Blocks.GOLD_BLOCK.defaultBlockState();
 			int radius = ent.getPersistentData().getIntOr("size", 0);
 
 			// The radius grows 1 block per firing and every previous firing already converted
@@ -55,7 +54,7 @@ public class MidasTNTEffect extends PrimedTNTEffect {
 						mutable.set(centerX + offX, centerY + offY, centerZ + offZ);
 						BlockState state = level.getBlockState(mutable);
 						if(state.getBlock().getExplosionResistance() < 100 && !state.isAir() && state.getBlock() != Blocks.GOLD_BLOCK) {
-							level.setBlock(mutable.immutable(), GOLD, 3);
+							level.setBlock(mutable.immutable(), gold, 3);
 						}
 					}
 				}

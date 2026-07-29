@@ -121,7 +121,8 @@ public class PlantationTNTEffect extends PrimedTNTEffect {
 								placeWater(pos, ent);
 							} else if(distance <= 7) {
 								placeCropsAndFarmland(pos, false, ent);
-							} 
+							}
+							break;
 						}
 					}
 				}
@@ -145,65 +146,89 @@ public class PlantationTNTEffect extends PrimedTNTEffect {
 	}
 	
 	public void placeCropsAndFarmland(BlockPos pos, boolean melonOrPumpkin, IExplosiveEntity ent) {
-		if(!melonOrPumpkin) { 
-			ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-			ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+		Level level = ent.getLevel();
+		ServerLevel sLevel = (ServerLevel)level;
+		BlockState crop;
+		if(!melonOrPumpkin) {
+			level.getBlockState(pos).getBlock().wasExploded(sLevel, pos, ImprovedExplosion.dummyExplosion(level));
+			level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 			int rand = new Random().nextInt(4);
-			BlockState crop = Blocks.POTATOES.defaultBlockState();
+			crop = Blocks.POTATOES.defaultBlockState();
 			switch(rand) {
 				case 0: crop = Blocks.CARROTS.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
 				case 1: crop = Blocks.POTATOES.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
 				case 2: crop = Blocks.WHEAT.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
 				case 3: crop = Blocks.BEETROOTS.defaultBlockState().setValue(BlockStateProperties.AGE_3, new Random().nextInt(4)); break;
 			}
-			ent.getLevel().setBlock(pos, Blocks.FARMLAND.defaultBlockState().setValue(FarmlandBlock.MOISTURE, 7), 3);
-			if(!ent.getLevel().getBlockState(pos.above()).isCollisionShapeFullBlock(ent.getLevel(), pos.above()) && !(ent.getLevel().getBlockState(pos.above()).getBlock() instanceof FarmlandBlock)) 
-				ent.getLevel().setBlock(pos.above(), crop, 3);
-		} else if(melonOrPumpkin) {
-			ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-			ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+		} else {
+			level.getBlockState(pos).getBlock().wasExploded(sLevel, pos, ImprovedExplosion.dummyExplosion(level));
+			level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 			int rand = Math.random() > 0.5 ? 0 : 1;
-			BlockState crop = Blocks.POTATOES.defaultBlockState();
+			crop = Blocks.POTATOES.defaultBlockState();
 			switch(rand) {
 				case 0: crop = Blocks.PUMPKIN_STEM.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
 				case 1: crop = Blocks.MELON_STEM.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
 			}
-			ent.getLevel().setBlock(pos, Blocks.FARMLAND.defaultBlockState().setValue(FarmlandBlock.MOISTURE, 7), 3);
-			if(!ent.getLevel().getBlockState(pos.above()).isCollisionShapeFullBlock(ent.getLevel(), pos.above()) && !(ent.getLevel().getBlockState(pos.above()).getBlock() instanceof FarmlandBlock)) 
-				ent.getLevel().setBlock(pos.above(), crop, 3);
+		}
+		level.setBlock(pos, Blocks.FARMLAND.defaultBlockState().setValue(FarmlandBlock.MOISTURE, 7), 3);
+		// pos.above() used to be rebuilt three times and read twice, with nothing mutating the world in between.
+		BlockPos above = pos.above();
+		BlockState aboveState = level.getBlockState(above);
+		if(!aboveState.isCollisionShapeFullBlock(level, above) && !(aboveState.getBlock() instanceof FarmlandBlock)) {
+			level.setBlock(above, crop, 3);
 		}
 	}
-	
+
+	/**
+	 * Note: the four neighbour tests must be re-read after the placeCropsAndFarmland calls above them,
+	 * because those calls turn the neighbour into farmland and that feeds the second condition. Only the
+	 * three duplicate reads *inside* each individual condition are collapsed here (24 reads -> 8).
+	 */
 	public void placeWater(BlockPos pos, IExplosiveEntity ent) {
-		boolean placed = false; 
-		if(!ent.getLevel().getBlockState(pos.north()).isCollisionShapeFullBlock(ent.getLevel(), pos.north()) && !(ent.getLevel().getBlockState(pos.north()).getBlock() instanceof FarmlandBlock) && !(ent.getLevel().getBlockState(pos.north()).getBlock() instanceof LiquidBlock)) {
-			placeCropsAndFarmland(pos.north(), false, ent);
-		} 
-		if(!ent.getLevel().getBlockState(pos.south()).isCollisionShapeFullBlock(ent.getLevel(), pos.south()) && !(ent.getLevel().getBlockState(pos.south()).getBlock() instanceof FarmlandBlock) && !(ent.getLevel().getBlockState(pos.south()).getBlock() instanceof LiquidBlock)) {
-			placeCropsAndFarmland(pos.south(), false, ent);
-		} 
-		if(!ent.getLevel().getBlockState(pos.east()).isCollisionShapeFullBlock(ent.getLevel(), pos.east()) && !(ent.getLevel().getBlockState(pos.east()).getBlock() instanceof FarmlandBlock) && !(ent.getLevel().getBlockState(pos.east()).getBlock() instanceof LiquidBlock)) {
-			placeCropsAndFarmland(pos.east(), false, ent);
-		} 
-		if(!ent.getLevel().getBlockState(pos.west()).isCollisionShapeFullBlock(ent.getLevel(), pos.west()) && !(ent.getLevel().getBlockState(pos.west()).getBlock() instanceof FarmlandBlock) && !(ent.getLevel().getBlockState(pos.west()).getBlock() instanceof LiquidBlock)) {
-			placeCropsAndFarmland(pos.west(), false, ent);
+		Level level = ent.getLevel();
+		ServerLevel sLevel = (ServerLevel)level;
+		BlockPos north = pos.north();
+		BlockPos south = pos.south();
+		BlockPos east = pos.east();
+		BlockPos west = pos.west();
+
+		BlockState state = level.getBlockState(north);
+		if(!state.isCollisionShapeFullBlock(level, north) && !(state.getBlock() instanceof FarmlandBlock) && !(state.getBlock() instanceof LiquidBlock)) {
+			placeCropsAndFarmland(north, false, ent);
 		}
-		if((ent.getLevel().getBlockState(pos.north()).isCollisionShapeFullBlock(ent.getLevel(), pos.north()) || ent.getLevel().getBlockState(pos.north()).getBlock() instanceof FarmlandBlock || ent.getLevel().getBlockState(pos.north()).getBlock() instanceof LiquidBlock) 
-			&& (ent.getLevel().getBlockState(pos.south()).isCollisionShapeFullBlock(ent.getLevel(), pos.south()) || ent.getLevel().getBlockState(pos.south()).getBlock() instanceof FarmlandBlock || ent.getLevel().getBlockState(pos.south()).getBlock() instanceof LiquidBlock) 
-			&& (ent.getLevel().getBlockState(pos.east()).isCollisionShapeFullBlock(ent.getLevel(), pos.east()) || ent.getLevel().getBlockState(pos.east()).getBlock() instanceof FarmlandBlock || ent.getLevel().getBlockState(pos.east()).getBlock() instanceof LiquidBlock) 
-			&& (ent.getLevel().getBlockState(pos.west()).isCollisionShapeFullBlock(ent.getLevel(), pos.west()) || ent.getLevel().getBlockState(pos.west()).getBlock() instanceof FarmlandBlock || ent.getLevel().getBlockState(pos.west()).getBlock() instanceof LiquidBlock)) 
+		state = level.getBlockState(south);
+		if(!state.isCollisionShapeFullBlock(level, south) && !(state.getBlock() instanceof FarmlandBlock) && !(state.getBlock() instanceof LiquidBlock)) {
+			placeCropsAndFarmland(south, false, ent);
+		}
+		state = level.getBlockState(east);
+		if(!state.isCollisionShapeFullBlock(level, east) && !(state.getBlock() instanceof FarmlandBlock) && !(state.getBlock() instanceof LiquidBlock)) {
+			placeCropsAndFarmland(east, false, ent);
+		}
+		state = level.getBlockState(west);
+		if(!state.isCollisionShapeFullBlock(level, west) && !(state.getBlock() instanceof FarmlandBlock) && !(state.getBlock() instanceof LiquidBlock)) {
+			placeCropsAndFarmland(west, false, ent);
+		}
+
+		BlockState northState = level.getBlockState(north);
+		BlockState southState = level.getBlockState(south);
+		BlockState eastState = level.getBlockState(east);
+		BlockState westState = level.getBlockState(west);
+		if((northState.isCollisionShapeFullBlock(level, north) || northState.getBlock() instanceof FarmlandBlock || northState.getBlock() instanceof LiquidBlock)
+			&& (southState.isCollisionShapeFullBlock(level, south) || southState.getBlock() instanceof FarmlandBlock || southState.getBlock() instanceof LiquidBlock)
+			&& (eastState.isCollisionShapeFullBlock(level, east) || eastState.getBlock() instanceof FarmlandBlock || eastState.getBlock() instanceof LiquidBlock)
+			&& (westState.isCollisionShapeFullBlock(level, west) || westState.getBlock() instanceof FarmlandBlock || westState.getBlock() instanceof LiquidBlock))
 		{
-			ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-			ent.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-			ent.getLevel().setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
-			if(!ent.getLevel().getBlockState(pos.below()).isCollisionShapeFullBlock(ent.getLevel(), pos.below())) {
-				ent.getLevel().getBlockState(pos.below()).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos.below(), ImprovedExplosion.dummyExplosion(ent.getLevel()));
-				ent.getLevel().setBlock(pos.below(), Blocks.AIR.defaultBlockState(), 3);
-				ent.getLevel().setBlock(pos.below(), Blocks.DIRT.defaultBlockState(), 3);
+			level.getBlockState(pos).getBlock().wasExploded(sLevel, pos, ImprovedExplosion.dummyExplosion(level));
+			level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+			level.setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
+			BlockPos below = pos.below();
+			BlockState belowState = level.getBlockState(below);
+			if(!belowState.isCollisionShapeFullBlock(level, below)) {
+				belowState.getBlock().wasExploded(sLevel, below, ImprovedExplosion.dummyExplosion(level));
+				level.setBlock(below, Blocks.AIR.defaultBlockState(), 3);
+				level.setBlock(below, Blocks.DIRT.defaultBlockState(), 3);
 			}
-			placed = true;
-		}
-		if(!placed) {
+		} else {
 			placeCropsAndFarmland(pos, false, ent);
 		}
 	}

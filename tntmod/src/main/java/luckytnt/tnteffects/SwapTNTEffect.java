@@ -1,7 +1,6 @@
 package luckytnt.tnteffects;
 
 import java.util.List;
-import java.util.Random;
 
 import org.joml.Vector3f;
 
@@ -12,6 +11,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.AABB;
@@ -22,7 +22,10 @@ public class SwapTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		int[] ids = entity.getPersistentData().getIntArray("entities").orElse(new int[0]);
-		if(entity.getTNTFuse() < 40 && ids.length == 0) {
+		// Only the 140 wide entity query is server guarded here. The swap loop below is deliberately
+		// left running on both sides because its particle spawning only has an effect client side;
+		// the id list and the fuse both reach the client through synched data.
+		if(entity.getTNTFuse() < 40 && ids.length == 0 && entity.getLevel() instanceof ServerLevel) {
 			List<Entity> entList = entity.getLevel().getEntities((Entity)entity, new AABB(entity.x() - 70, entity.y() - 70, entity.z() - 70, entity.x() + 70, entity.y() + 70, entity.z() + 70));
 			ids = new int[entList.size()];
 			entity.setTNTFuse(0);
@@ -37,7 +40,7 @@ public class SwapTNTEffect extends PrimedTNTEffect{
 		if(ids.length != 0 && entity.getTNTFuse() % 2 == 0) {
 			if(entity.getPersistentData().getIntOr("count", 0) < ids.length) {
 				Entity ent1 = entity.getLevel().getEntity(ids[entity.getPersistentData().getIntOr("count", 0)]);
-				Entity ent2 = entity.getLevel().getEntity(ids[new Random().nextInt(ids.length)]);
+				Entity ent2 = entity.getLevel().getEntity(ids[entity.getLevel().getRandom().nextInt(ids.length)]);
 				if(ent1 != null && ent2 != null) {
 					Vec3 pos1 = ent1.position();
 					Vec3 pos2 = ent2.position();

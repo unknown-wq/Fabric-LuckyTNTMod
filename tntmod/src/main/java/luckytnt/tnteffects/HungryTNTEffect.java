@@ -21,9 +21,16 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
+		// This 100 wide query ran on both logical sides every tick of a 600 tick fuse. Everything it
+		// does (discarding the target, the "amount" counter, the damage) is server authoritative;
+		// players are hurtMarked so the server still pushes the velocity down to them.
+		if(!(ent.getLevel() instanceof ServerLevel)) {
+			return;
+		}
 		Entity target = null;
 		double distance = 2000;
-		List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() - 50, ent.y() - 50, ent.z() - 50, ent.x() + 50, ent.y() + 50, ent.z() + 50));
+		AABB range = new AABB(ent.x() - 50, ent.y() - 50, ent.z() - 50, ent.x() + 50, ent.y() + 50, ent.z() + 50);
+		List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, range);
 
 		for(LivingEntity living : list) {
 			double x = living.getX() - ent.x();
@@ -46,8 +53,9 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 				Vec3 vec3d = new Vec3(x, y + 0.1D, z).normalize();
 				if(!(target instanceof Player)) {
 					target.setDeltaMovement(vec3d);
-				} else if(target instanceof Player) {
+				} else if(target instanceof Player player) {
 					target.setDeltaMovement(vec3d.scale(0.3D));
+					player.hurtMarked = true;
 				}
 			} else if(magnitude <= 2) {
 				if(!(target instanceof Player)) {
@@ -55,7 +63,7 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 					tag.putInt("amount", ent.getPersistentData().getIntOr("amount", 0) + 1);
 					ent.setPersistentData(tag);
         			target.discard();
-				} else if(target instanceof Player) {
+				} else if(target instanceof Player player) {
 					DamageSources sources = ent.getLevel().damageSources();
 
 					if(ent.getLevel() instanceof ServerLevel sLevel) {
@@ -63,6 +71,7 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 					}
 					Vec3 vec3d = new Vec3(target.getX() - ent.x(), target.getY() - ent.y(), target.getZ() - ent.z()).normalize().scale(10);
 					target.setDeltaMovement(vec3d);
+					player.hurtMarked = true;
 				}
 			}
 		}

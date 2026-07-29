@@ -68,6 +68,11 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 						}
 					}
 					living.setDeltaMovement(vec.normalize().scale(Math.min((1D / (0.25D * distance + 0.0001D)) + 0.5D, 2.5D)));
+					// the pull loop no longer runs client side, so the server has to actually push
+					// the velocity down to the affected player
+					if(living instanceof Player player) {
+						player.hurtMarked = true;
+					}
 				}
 			}
 

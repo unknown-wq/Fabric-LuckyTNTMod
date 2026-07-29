@@ -1,7 +1,5 @@
 package luckytnt.tnteffects;
 
-import java.util.List;
-
 import org.joml.Vector3f;
 
 import luckytnt.registry.BlockRegistry;
@@ -24,8 +22,13 @@ public class SensorTNTEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
 		if(level instanceof ServerLevel) {
-			List<Player> players = level.getEntitiesOfClass(Player.class, new AABB(entity.getPos().add(-10f, -10f, -10f), entity.getPos().add(10f, 10f, 10f)));
-			for(Player player : players) {
+			// this runs every tick of a 5000 tick fuse; iterating the player list skips the
+			// EntitySection walk entirely
+			AABB range = new AABB(entity.getPos().add(-10f, -10f, -10f), entity.getPos().add(10f, 10f, 10f));
+			for(Player player : level.players()) {
+				if(player.isSpectator() || player.isRemoved() || !range.intersects(player.getBoundingBox())) {
+					continue;
+				}
 				if(!player.equals(entity.owner())) {
 					ImprovedExplosion explosion = new ImprovedExplosion(level, entity.getPos(), 10);
 					explosion.doEntityExplosion(1f, true);
