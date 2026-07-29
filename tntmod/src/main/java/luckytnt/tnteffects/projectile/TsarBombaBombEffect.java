@@ -26,6 +26,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public class TsarBombaBombEffect extends PrimedTNTEffect implements NuclearBombLike {
@@ -51,18 +53,47 @@ public class TsarBombaBombEffect extends PrimedTNTEffect implements NuclearBombL
 			living.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getOrThrow(EffectRegistry.CONTAMINATED), 3600, 0, true, true, true));
 		}
 		
+		// Only the cells actually inside the r=300 sphere are visited: the z span is derived from the
+		// remaining squared radius instead of walking the full 601x201x601 cuboid and testing afterwards.
+		Level level = entity.getLevel();
+		int baseX = Mth.floor(entity.x());
+		int baseY = Mth.floor(entity.y());
+		int baseZ = Mth.floor(entity.z());
+		BlockState nuclearWaste = BlockRegistry.NUCLEAR_WASTE.get().defaultBlockState();
+		BlockState air = Blocks.AIR.defaultBlockState();
 		for(int offX = -300; offX <= 300; offX++) {
+			int dx2 = offX * offX;
 			for(int offY = -300 / 3; offY <= 300 / 3; offY++) {
-				for(int offZ = -300; offZ <= 300; offZ++) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					BlockPos pos = toBlockPos(new Vec3(entity.x() + offX, entity.y() + offY, entity.z() + offZ));
-					BlockState state = entity.getLevel().getBlockState(pos);
-					if(distance <= 300 && state.getBlock().getExplosionResistance() <= 200) {
-						if(distance <= 150 && entity.getLevel().getBlockState(pos.below()).isFaceSturdy(entity.getLevel(), pos.below(), Direction.UP) && Math.random() < 0.2D && (state.isAir() || state.getDestroySpeed(entity.getLevel(), pos) <= 0.2f)) {
-							entity.getLevel().setBlock(pos, BlockRegistry.NUCLEAR_WASTE.get().defaultBlockState(), 3);
+				int remaining = 90000 - dx2 - offY * offY;
+				if(remaining < 0) {
+					continue;
+				}
+				int zMax = (int)Math.sqrt(remaining);
+				while((zMax + 1) * (zMax + 1) <= remaining) {
+					zMax++;
+				}
+				while(zMax > 0 && zMax * zMax > remaining) {
+					zMax--;
+				}
+				if(zMax > 300) {
+					zMax = 300;
+				}
+				for(int offZ = -zMax; offZ <= zMax; offZ++) {
+					BlockPos pos = new BlockPos(baseX + offX, baseY + offY, baseZ + offZ);
+					BlockState state = level.getBlockState(pos);
+					if(state.getBlock().getExplosionResistance() <= 200) {
+						int d2 = dx2 + offY * offY + offZ * offZ;
+						// The cheap, pure "is this block soft enough" test moved ahead of the world read of
+						// the block below and of the RNG roll; the set of positions passing all three tests
+						// (and the 20% chance applied to each) is unchanged.
+						if(d2 <= 22500 && (state.isAir() || state.getDestroySpeed(level, pos) <= 0.2f)) {
+							BlockPos below = pos.below();
+							if(level.getBlockState(below).isFaceSturdy(level, below, Direction.UP) && Math.random() < 0.2D) {
+								level.setBlock(pos, nuclearWaste, 3);
+							}
 						}
 						if(state.is(BlockTags.LEAVES)) {
-							entity.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+							level.setBlock(pos, air, 3);
 						}
 					}
 				}

@@ -1,9 +1,6 @@
 package luckytnt.tnteffects;
 
 
-import java.util.List;
-
-import luckytnt.event.LevelEvents;
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.util.IExplosiveEntity;
@@ -18,12 +15,18 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
 
 public class BlackHoleTNTEffect extends PrimedTNTEffect {
+
+	/**
+	 * Upper bound on how many FallingBlockEntities may orbit the black hole at once.
+	 * Without it up to 800 were spawned every 20 ticks for 350 ticks (~13600 entities).
+	 */
+	private static final int MAX_LIVE_FALLING_BLOCKS = 2000;
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
@@ -100,19 +103,18 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 		EntityRegistry.TNT_X500_EFFECT.build().serverExplosion(ent);
 
 		AABB range = new AABB(ent.x() - 100, ent.y() - 100, ent.z() - 100, ent.x() + 100, ent.y() + 100, ent.z() + 100);
-		List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, range);
-		List<FallingBlockEntity> blocks = ent.getLevel().getEntitiesOfClass(FallingBlockEntity.class, range);
 
-		for(FallingBlockEntity block : blocks) {
-			block.discard();
-		}
-
-		for(LivingEntity living : list) {
-			double x = living.getX() - ent.x();
-			double y = living.getEyeY() - ent.y();
-			double z = living.getZ() - ent.z();
-			Vec3 vec = new Vec3(x, y, z).normalize().scale(4);
-			living.setDeltaMovement(vec);
+		// one section walk instead of two over the same 200 wide box
+		for(Entity target : ent.getLevel().getEntities((Entity)ent, range)) {
+			if(target instanceof FallingBlockEntity block) {
+				block.discard();
+			} else if(target instanceof LivingEntity living) {
+				double x = living.getX() - ent.x();
+				double y = living.getEyeY() - ent.y();
+				double z = living.getZ() - ent.z();
+				Vec3 vec = new Vec3(x, y, z).normalize().scale(4);
+				living.setDeltaMovement(vec);
+			}
 		}
 	}
 

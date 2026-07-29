@@ -69,11 +69,17 @@ public class NetherTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if((state.getBlock() instanceof LiquidBlock || state.getBlock() instanceof BubbleColumnBlock || Materials.isWaterPlant(state)) && pos.getY() <= 50) {
+				// The y test is a plain int compare and gates both branches: hoisting it skips the
+				// instanceof chain / property lookup for the whole upper cap of the sphere.
+				if(pos.getY() > 50) {
+					return;
+				}
+				Block block = state.getBlock();
+				if(block instanceof LiquidBlock || block instanceof BubbleColumnBlock || Materials.isWaterPlant(state)) {
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				}
-				
-				if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) && pos.getY() <= 50) {
+
+				if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
 					level.setBlock(pos, state.setValue(BlockStateProperties.WATERLOGGED, false), 3);
 				}
 			}

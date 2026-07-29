@@ -52,14 +52,18 @@ public class HydrogenBombBombEffect extends PrimedTNTEffect implements NuclearBo
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posTop = pos.offset(0, 1, 0);
+				// Both cheap rejects (radius + the 25% roll) now run before anything is allocated or read.
+				// Math.random() is still evaluated for exactly the same set of positions as before.
+				if(distance > 250 || Math.random() >= 0.25f) {
+					return;
+				}
+				if(state.isAir() || !Block.isFaceFull(state.getCollisionShape(level, pos), Direction.UP)) {
+					return;
+				}
+				BlockPos posTop = pos.above();
 				BlockState stateTop = level.getBlockState(posTop);
-				if(distance <= 250) {
-					if(Math.random() < 0.25f) {
-						if(Block.isFaceFull(state.getCollisionShape(level, pos), Direction.UP) && !state.isAir() && !Block.isFaceFull(stateTop.getCollisionShape(level, posTop), Direction.UP) && stateTop.getBlock().getExplosionResistance() < 200) {
-							level.setBlock(posTop, BlockRegistry.NUCLEAR_WASTE.get().defaultBlockState(), 3);
-						}
-					}
+				if(!Block.isFaceFull(stateTop.getCollisionShape(level, posTop), Direction.UP) && stateTop.getBlock().getExplosionResistance() < 200) {
+					level.setBlock(posTop, BlockRegistry.NUCLEAR_WASTE.get().defaultBlockState(), 3);
 				}
 			}
 		});
