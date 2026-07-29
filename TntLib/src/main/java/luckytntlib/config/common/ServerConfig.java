@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import luckytntlib.LuckyTNTLib;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -24,9 +25,16 @@ public class ServerConfig extends Config {
 		super(modid, configValues, packetCreator);
 	}
 
-	public void init() {
+	/**
+	 * @return the file this config is saved to, which lies inside the config directory of the game
+	 */
+	private File getConfigFile() {
 		Path path = FabricLoader.getInstance().getConfigDir();
-		File file = new File(path.toString() + "\\" + modid + "-server-config.json");
+		return path.resolve(modid + "-server-config.json").toFile();
+	}
+
+	public void init() {
+		File file = getConfigFile();
 
 		LuckyTNTLib.LOGGER.info("Init server config for " + modid + " from file " + file.toString());
 
@@ -39,22 +47,18 @@ public class ServerConfig extends Config {
 
 	public void save(@Nullable Level world) {
 		if(world != null && world instanceof ServerLevel sworld) {
-			Path path = FabricLoader.getInstance().getConfigDir();
-			File file = new File(path.toString() + "\\" + modid + "-server-config.json");
+			File file = getConfigFile();
 
 			LuckyTNTLib.LOGGER.info("Saving server config for " + modid + " to file " + file.toString());
 
-			if(!file.exists()) {
-				createConfigFile(file);
-			} else {
-				file.delete();
-				createConfigFile(file);
-			}
+			//no need to delete the file first, writing to it truncates it anyway
+			createConfigFile(file);
 
 			if(!packetCreator.isEmpty()) {
+				CustomPacketPayload packet = packetCreator.get().getPacket(configValues);
 				for(ServerLevel sw : sworld.getServer().getAllLevels()) {
 					for(ServerPlayer player : sw.players()) {
-						ServerPlayNetworking.send(player, packetCreator.get().getPacket(configValues));
+						ServerPlayNetworking.send(player, packet);
 					}
 				}
 			}

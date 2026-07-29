@@ -35,46 +35,70 @@ public class PlantationTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getExplosionResistance() <= 200) {
-					if((!state.isCollisionShapeFullBlock(level, pos) || state.is(Blocks.FIRE) || state.is(Blocks.SOUL_FIRE) 
+				Block block = state.getBlock();
+				if(block.getExplosionResistance() <= 200) {
+					if((!state.isCollisionShapeFullBlock(level, pos) || state.is(Blocks.FIRE) || state.is(Blocks.SOUL_FIRE)
 					|| state.is(BlockTags.LEAVES) || Materials.isPlant(state) || state.is(BlockTags.SNOW)
-					|| Materials.isWood(state)) && !(state.getBlock() instanceof GrassBlock) && !(state.getBlock() instanceof MyceliumBlock)) 
+					|| Materials.isWood(state)) && !(block instanceof GrassBlock) && !(block instanceof MyceliumBlock))
 					{
-						state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						block.wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(level));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}
 			}
 		});
-		
-		for(double offX = -42; offX <= 42; offX++) {
-			for(double offZ = -42; offZ <= 42; offZ++) {
-				double distance = Math.sqrt(offX * offX + offZ * offZ);
-				if(distance <= 42) {
-					int y = LevelEvents.getTopBlock(ent.getLevel(), ent.x() + offX, ent.z() + offZ, true);
-					BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), y, Mth.floor(ent.z() + offZ));
-					ent.getLevel().getBlockState(pos).getBlock().wasExploded((ServerLevel)ent.getLevel(), pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
-					ent.getLevel().setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
+
+		Level level = ent.getLevel();
+		ServerLevel sLevel = (ServerLevel)level;
+		int baseX = Mth.floor(ent.x());
+		int baseY = Mth.floor(ent.y());
+		int baseZ = Mth.floor(ent.z());
+
+		for(int offX = -42; offX <= 42; offX++) {
+			int dx2 = offX * offX;
+			if(dx2 > 1764) {
+				continue;
+			}
+			for(int offZ = -42; offZ <= 42; offZ++) {
+				if(dx2 + offZ * offZ > 1764) {
+					continue;
 				}
+				int y = LevelEvents.getTopBlock(level, ent.x() + offX, ent.z() + offZ, true);
+				BlockPos pos = new BlockPos(baseX + offX, y, baseZ + offZ);
+				level.getBlockState(pos).getBlock().wasExploded(sLevel, pos, ImprovedExplosion.dummyExplosion(level));
+				level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
 			}
 		}
-		
+
 		BlockPos posBelow = toBlockPos(ent.getPos()).below();
 		placeWater(posBelow, ent);
-		
-		for(double offX = -41; offX <= 41; offX++) {
-			for(double offZ = -41; offZ <= 41; offZ++) {
-				double distance = Math.sqrt(offX * offX + offZ * offZ);
-				boolean blockFound = false;
-				for(double offY = 320; offY > -64; offY--) {	
-					BlockPos pos = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY), Mth.floor(ent.z() + offZ));
-					BlockPos posUp = new BlockPos(Mth.floor(ent.x() + offX), Mth.floor(ent.y() + offY + 1), Mth.floor(ent.z() + offZ));
-					BlockState state = ent.getLevel().getBlockState(pos);
-					BlockState stateUp = ent.getLevel().getBlockState(posUp);
-					
-					if(state.getBlock().getExplosionResistance() < 200 && stateUp.getBlock().getExplosionResistance() < 200 && !blockFound) {
-						if(state.isCollisionShapeFullBlock(ent.getLevel(), pos) && !stateUp.isCollisionShapeFullBlock(ent.getLevel(), posUp) && !state.is(BlockTags.LEAVES) && !stateUp.is(Blocks.WATER) && !stateUp.is(Blocks.LAVA)) {
-							blockFound = true;
+
+		// Columns outside r=41 fell through every distance band without ever placing anything, so they
+		// are skipped outright; and the surface scan now stops at the first block found instead of
+		// running all 384 y levels with the flag merely disabling the body.
+		for(int offX = -41; offX <= 41; offX++) {
+			int dx2 = offX * offX;
+			if(dx2 > 1681) {
+				continue;
+			}
+			for(int offZ = -41; offZ <= 41; offZ++) {
+				int d2 = dx2 + offZ * offZ;
+				if(d2 > 1681) {
+					continue;
+				}
+				double distance = Math.sqrt(d2);
+				int posX = baseX + offX;
+				int posZ = baseZ + offZ;
+				BlockState stateUp = level.getBlockState(new BlockPos(posX, baseY + 321, posZ));
+				for(int offY = 320; offY > -64; offY--) {
+					BlockPos pos = new BlockPos(posX, baseY + offY, posZ);
+					BlockState state = level.getBlockState(pos);
+					BlockPos posUp = pos.above();
+					BlockState stateUpper = stateUp;
+					stateUp = state;
+
+					if(state.getBlock().getExplosionResistance() < 200 && stateUpper.getBlock().getExplosionResistance() < 200) {
+						if(state.isCollisionShapeFullBlock(level, pos) && !stateUpper.isCollisionShapeFullBlock(level, posUp) && !state.is(BlockTags.LEAVES) && !stateUpper.is(Blocks.WATER) && !stateUpper.is(Blocks.LAVA)) {
 							if(distance > 40 && distance <= 41) {
 								placeCropsAndFarmland(pos, true, ent);
 							} else if(distance > 39 && distance <= 40) {

@@ -26,6 +26,8 @@ import net.minecraft.core.Holder;
 
 public class HailstoneProjectile extends LExplosiveProjectile {
 
+	private static final BlockParticleOption SNOW_PARTICLE = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SNOW.defaultBlockState());
+
 	public HailstoneProjectile(EntityType<LExplosiveProjectile> type, Level level, PrimedTNTEffect effect) {
 		super(type, level, effect);
 	}
@@ -34,8 +36,11 @@ public class HailstoneProjectile extends LExplosiveProjectile {
 	public void onHitBlock(BlockHitResult result) {
 		super.onHitBlock(result);
 		level().playSound(null, new BlockPos(Mth.floor(x()), Mth.floor(y()), Mth.floor(z())), SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 0.5f, 1f);
-		for(int count = 0; count < 10; count++)
-			level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SNOW.defaultBlockState()), x(), y(), z(), 0, 0, 0);
+		//Level.addParticle is a no-op on the server, so this only ever allocated garbage there
+		if(level().isClientSide()) {
+			for(int count = 0; count < 10; count++)
+				level().addParticle(SNOW_PARTICLE, x(), y(), z(), 0, 0, 0);
+		}
 		destroy();
 	}
 

@@ -113,21 +113,20 @@ public class NetherTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				BlockPos posAbove = pos.above();
-				BlockState stateAbove = level.getBlockState(posAbove);
-				
-				if(stateAbove.isAir() && state.getBlock() == Blocks.NETHERRACK && pos.getY() <= -10) {
-					if(biome == 0) {
-						level.setBlock(pos, Blocks.CRIMSON_NYLIUM.defaultBlockState(), 3);
-					}
-					
-					if(biome == 1) {
-						level.setBlock(pos, Blocks.WARPED_NYLIUM.defaultBlockState(), 3);
-					}
-					
-					if(biome == 2) {
-						level.setBlock(pos, Blocks.SOUL_SAND.defaultBlockState(), 3);
-					}
+				// The two pure tests are cheaper than a chunk lookup, so the block above is only read
+				// for netherrack below y=-10 instead of for every block in the r=80 explosion.
+				if(pos.getY() > -10 || state.getBlock() != Blocks.NETHERRACK) {
+					return;
+				}
+				if(!level.getBlockState(pos.above()).isAir()) {
+					return;
+				}
+				if(biome == 0) {
+					level.setBlock(pos, Blocks.CRIMSON_NYLIUM.defaultBlockState(), 3);
+				} else if(biome == 1) {
+					level.setBlock(pos, Blocks.WARPED_NYLIUM.defaultBlockState(), 3);
+				} else if(biome == 2) {
+					level.setBlock(pos, Blocks.SOUL_SAND.defaultBlockState(), 3);
 				}
 			}
 		});

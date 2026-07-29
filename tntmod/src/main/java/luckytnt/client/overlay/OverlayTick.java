@@ -8,8 +8,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 
@@ -19,6 +21,16 @@ public class OverlayTick {
 	private static final Identifier CONTAMINATED_OUTLINE = Identifier.fromNamespaceAndPath("luckytntmod", "textures/contaminated_outline.png");
 
 	private static float contaminatedAmount = 0;
+
+	//resolved once instead of once per HUD frame; lazily, because this class may load before the registries are frozen
+	private static Holder<MobEffect> contaminatedHolder;
+
+	private static Holder<MobEffect> contaminatedHolder() {
+		if (contaminatedHolder == null) {
+			contaminatedHolder = BuiltInRegistries.MOB_EFFECT.getOrThrow(EffectRegistry.CONTAMINATED);
+		}
+		return contaminatedHolder;
+	}
 
 	/**
 	 * Registered as a {@link net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement};
@@ -31,7 +43,7 @@ public class OverlayTick {
 		}
 		int w = graphics.guiWidth();
 		int h = graphics.guiHeight();
-		boolean contaminated = player.hasEffect(BuiltInRegistries.MOB_EFFECT.getOrThrow(EffectRegistry.CONTAMINATED));
+		boolean contaminated = player.hasEffect(contaminatedHolder());
 		if (player instanceof LuckyTNTEntityExtension lplayer) {
 			int freezeTime = lplayer.getAdditionalPersistentData().getIntOr("freezeTime", 0);
 			if (freezeTime > 0 && !contaminated) {
