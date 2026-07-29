@@ -11,7 +11,8 @@ import net.minecraft.world.entity.LivingEntity;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
 
-	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+	//not cancellable: EventRegistry.LIVING_ENTITY_TICK has no way to signal a cancel and no listener ever did
+	@Inject(method = "tick", at = @At("HEAD"))
 	private void tickInject(CallbackInfo info) {
 		EventRegistry.LIVING_ENTITY_TICK.invoker().onLivingTick((LivingEntity)(Object)this);
 	}

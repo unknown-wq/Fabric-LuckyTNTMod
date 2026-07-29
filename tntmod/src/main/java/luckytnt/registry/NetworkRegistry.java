@@ -16,7 +16,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.PlayPayloadHan
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 
 public class NetworkRegistry {

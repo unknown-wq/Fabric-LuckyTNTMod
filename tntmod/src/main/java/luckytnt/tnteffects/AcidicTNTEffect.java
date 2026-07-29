@@ -22,6 +22,7 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -29,6 +30,22 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.server.level.ServerLevel;
 
 public class AcidicTNTEffect extends PrimedTNTEffect {
+
+	/**
+	 * Stateless, so it is allocated once instead of once per projectile per tick.
+	 * The cheap isAir/distance checks run before Math.random(), which previously was rolled
+	 * for every single position including air. 5D + Math.random() * 2 is always < 7D, so the
+	 * distance < 7D gate is exact.
+	 */
+	private static final IForEachBlockExplosionEffect DISSOLVE = new IForEachBlockExplosionEffect() {
+
+		@Override
+		public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
+			if(distance < 7D && !state.isAir() && state.getBlock().getExplosionResistance() <= 200 && distance <= 5D + Math.random() * 2) {
+				level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+			}
+		}
+	};
 
 	@Override
 	public void baseTick(IExplosiveEntity entity) {
@@ -57,21 +74,16 @@ public class AcidicTNTEffect extends PrimedTNTEffect {
 			if(ent.getTNTFuse() == 0) {
 				ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.FIRE_EXTINGUISH, SoundSource.MASTER, 1f, 1f);
 			}
-			if(!ent.getLevel().isClientSide()) {
-				ExplosionHelper.doCubicalExplosion(ent.getLevel(), ent.getPos(), 7, new IForEachBlockExplosionEffect() {
-					
-					@Override
-					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-						if(distance <= 5D + Math.random() * 2 && !state.isAir() && state.getBlock().getExplosionResistance() <= 200) {
-							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-						}
-					}
-				});
+			// 70 projectiles each sweeping a 15x15x15 cube every tick is ~236k getBlockState per tick;
+			// running the block pass every 4th tick keeps the same dissolving look for a quarter of the cost.
+			if(!ent.getLevel().isClientSide() && ent.getTNTFuse() % 4 == 0) {
+				ExplosionHelper.doCubicalExplosion(ent.getLevel(), ent.getPos(), 7, DISSOLVE);
 			}
 			if(ent.getTNTFuse() % 20 == 0) {
-				BlockPos min = toBlockPos(ent.getPos()).offset(-3, -3, -3);
-				BlockPos max = toBlockPos(ent.getPos()).offset(3, 3, 3);
-				List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));			
+				int minX = Mth.floor(ent.x());
+				int minY = Mth.floor(ent.y());
+				int minZ = Mth.floor(ent.z());
+				List<LivingEntity> list = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(minX - 3, minY - 3, minZ - 3, minX + 3, minY + 3, minZ + 3));
 				DamageSources sources = ent.getLevel().damageSources();
 				for(LivingEntity lent : list) {
 					lent.hurtServer((ServerLevel) ent.getLevel(), sources.magic(), 3f);

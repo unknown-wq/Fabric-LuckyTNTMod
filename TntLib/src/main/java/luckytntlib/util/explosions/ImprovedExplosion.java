@@ -1,20 +1,23 @@
 package luckytntlib.util.explosions;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntIterator;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import luckytntlib.config.LuckyTNTLibConfigValues;
 import luckytntlib.util.IExplosiveEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -50,9 +53,16 @@ public class ImprovedExplosion implements Explosion {
 	private final Entity source;
 	private final Vec3 center;
 	private final Map<Player, Vec3> affectedPlayers = new HashMap<>();
-	List<Integer> affectedBlocks = new ArrayList<>();
+	/**
+	 * Encoded (see {@link ImprovedExplosion#encodeBlockPos(int, int, int)}) positions of all blocks affected by the
+	 * explosions run on this object that were told to save their block positions.
+	 */
+	final IntArrayList affectedBlocks = new IntArrayList();
 
-	private static ImprovedExplosion dummyExplosion;
+	/**
+	 * Held weakly so an unloaded {@link Level} is not retained forever by this static field.
+	 */
+	private static WeakReference<ImprovedExplosion> dummyExplosion;
 
 	/**
 	 * Creates a new ImprovedExplosion
@@ -168,59 +178,100 @@ public class ImprovedExplosion implements Explosion {
 	 * @param isStrongExplosion  whether or not fluids should be ignored in the explosion resistance calculation. Very useful for large explosions
 	 */
 	public void doBlockExplosion(float xzStrength, float yStrength, float resistanceImpact, float randomVecLength, boolean fire, boolean isStrongExplosion) {
-		BlockPos posTNT = new BlockPos(floor(posX), floor(posY), floor(posZ));
-		Set<Integer> blocks = new HashSet<>();
-		for (int offX = -size; offX <= size; offX++) {
-			for (int offY = -size; offY <= size; offY++) {
-				for (int offZ = -size; offZ <= size; offZ++) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					if (((int) distance == size && LuckyTNTLibConfigValues.PERFORMANT_EXPLOSION.get()) || (!LuckyTNTLibConfigValues.PERFORMANT_EXPLOSION.get() && (offX == -size || offX == size || offY == -size || offY == size || offZ == -size || offZ == size))) {
-						double xStep = offX / distance;
-						double yStep = offY / distance;
-						double zStep = offZ / distance;
-						float vecLength = size * (0.7f + (float) Math.random() * 0.6f * randomVecLength);
-						double blockX = posX;
-						double blockY = posY;
-						double blockZ = posZ;
-						for (float vecStep = 0; vecStep < vecLength; vecStep += LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * 1.5f - 0.225f) {
-							blockX += xStep * LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * xzStrength;
-							blockY += yStep * LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * yStrength;
-							blockZ += zStep * LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * xzStrength;
-							BlockPos pos = new BlockPos((int)blockX, (int)blockY, (int)blockZ);
-							if (!level.isInWorldBounds(pos)) {
-								break;
-							}
-							BlockState blockState = level.getBlockState(pos);
-							FluidState fluidState = level.getFluidState(pos);
-							if (!(isStrongExplosion && !fluidState.isEmpty())) {
-								Optional<Float> explosionResistance = damageCalculator.getBlockExplosionResistance(this, level, pos, blockState, fluidState);
-								if (explosionResistance.isPresent()) {
-									vecLength -= (explosionResistance.get() + 0.3f) * 0.3f * resistanceImpact;
-								}
-								if (vecLength > 0 && damageCalculator.shouldBlockExplode(this, level, pos, blockState, vecLength) && !blockState.isAir()) {
-									blocks.add(encodeBlockPos(pos.subtract(posTNT).getX(), pos.subtract(posTNT).getY(), pos.subtract(posTNT).getZ()));
-								}
-							} else {
-								blocks.add(encodeBlockPos(pos.subtract(posTNT).getX(), pos.subtract(posTNT).getY(), pos.subtract(posTNT).getZ()));
-							}
-						}
+		doBlockExplosion(xzStrength, yStrength, resistanceImpact, randomVecLength, fire, isStrongExplosion, true);
+	}
+
+	/**
+	 * Gets all blocks in an area calculated by shooting vectors to the borders of a cube determined by the {@link ImprovedExplosion#size} and destroys them.
+	 * If any of the relative coordinates of the affected block exceed 511 they will be clamped to that value.
+	 * Encodes block positions into a singular int, increasing performance.
+	 * The shape the vectors orient to can either be a sphere or a cube, depending on the players config.
+	 * @param xzStrength  a multiplier to the x and z vector addition, which makes the explosion more powerful. It should not be set higher than 1.2, otherwise blocks might be skipped
+	 * @param yStrength  a multiplier to the y vector addition, which makes the explosion more powerful. It should not be set to high, otherwise blocks might be skipped
+	 * @param resistanceImpact  the relative impact that explosion resistance of blocks has on the penetration force of explosion
+	 * @param randomVecLength  the greater this value, the more distributed the length of the explosion vectors will be. Large explosions should have a value less than 1
+	 * @param fire  whether or not the explosion should spawn fire afterwards
+	 * @param isStrongExplosion  whether or not fluids should be ignored in the explosion resistance calculation. Very useful for large explosions
+	 * @param saveBlockPos  whether or not affected blocks should be saved to be used externally by {@link ImprovedExplosion#getAffectedBlocks()}
+	 */
+	public void doBlockExplosion(float xzStrength, float yStrength, float resistanceImpact, float randomVecLength, boolean fire, boolean isStrongExplosion, boolean saveBlockPos) {
+		final BlockPos posTNT = new BlockPos(floor(posX), floor(posY), floor(posZ));
+		final int tntX = posTNT.getX();
+		final int tntY = posTNT.getY();
+		final int tntZ = posTNT.getZ();
+		final IntOpenHashSet blocks = new IntOpenHashSet();
+		final RandomSource random = level.getRandom();
+		final double factor = LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get();
+		final double vecStepSize = factor * 1.5f - 0.225f;
+		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+
+		forEachShellCell((offX, offY, offZ, distance) -> {
+			double xStep = offX / distance;
+			double yStep = offY / distance;
+			double zStep = offZ / distance;
+			float vecLength = size * (0.7f + random.nextFloat() * 0.6f * randomVecLength);
+			double blockX = posX;
+			double blockY = posY;
+			double blockZ = posZ;
+			final double addX = xStep * factor * xzStrength;
+			final double addY = yStep * factor * yStrength;
+			final double addZ = zStep * factor * xzStrength;
+			int lastX = Integer.MIN_VALUE, lastY = Integer.MIN_VALUE, lastZ = Integer.MIN_VALUE;
+			BlockState blockState = null;
+			FluidState fluidState = null;
+			Optional<Float> explosionResistance = null;
+			for(float vecStep = 0; vecStep < vecLength; vecStep += vecStepSize) {
+				blockX += addX;
+				blockY += addY;
+				blockZ += addZ;
+				int blockPosX = (int)blockX;
+				int blockPosY = (int)blockY;
+				int blockPosZ = (int)blockZ;
+				if(blockPosX != lastX || blockPosY != lastY || blockPosZ != lastZ) {
+					lastX = blockPosX;
+					lastY = blockPosY;
+					lastZ = blockPosZ;
+					pos.set(blockPosX, blockPosY, blockPosZ);
+					if(!level.isInWorldBounds(pos)) {
+						break;
 					}
+					blockState = level.getBlockState(pos);
+					fluidState = level.getFluidState(pos);
+					explosionResistance = null;
+				}
+				if(!(isStrongExplosion && !fluidState.isEmpty())) {
+					if(explosionResistance == null) {
+						explosionResistance = damageCalculator.getBlockExplosionResistance(this, level, pos, blockState, fluidState);
+					}
+					if(explosionResistance.isPresent()) {
+						vecLength -= (explosionResistance.get() + 0.3f) * 0.3f * resistanceImpact;
+					}
+					if(vecLength > 0 && damageCalculator.shouldBlockExplode(this, level, pos, blockState, vecLength) && !blockState.isAir()) {
+						blocks.add(encodeBlockPos(blockPosX - tntX, blockPosY - tntY, blockPosZ - tntZ));
+					}
+				} else {
+					blocks.add(encodeBlockPos(blockPosX - tntX, blockPosY - tntY, blockPosZ - tntZ));
 				}
 			}
+		});
+
+		if(saveBlockPos) {
+			affectedBlocks.addAll(blocks);
 		}
-		affectedBlocks.addAll(blocks);
-		for(int intPos : blocks) {
-			BlockPos pos = decodeBlockPos(intPos).offset(posTNT);
-			if(level instanceof ServerLevel serverLevel) {
-				level.getBlockState(pos).getBlock().wasExploded(serverLevel, pos, this);
+		final ServerLevel serverLevel = level instanceof ServerLevel sLevel ? sLevel : null;
+		final BlockState air = Blocks.AIR.defaultBlockState();
+		for(IntIterator iterator = blocks.iterator(); iterator.hasNext();) {
+			BlockPos blockPos = decodeBlockPos(iterator.nextInt(), tntX, tntY, tntZ);
+			if(serverLevel != null) {
+				level.getBlockState(blockPos).getBlock().wasExploded(serverLevel, blockPos, this);
 			}
-			level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+			level.setBlock(blockPos, air, 3);
 		}
 		if(fire) {
-			for(int intPos : blocks) {
-				BlockPos pos = decodeBlockPos(intPos).offset(posTNT);
-				if(Math.random() > 0.75f && level.getBlockState(pos).isAir() && level.getBlockState(pos.below()).isSolidRender()) {
-					level.setBlock(pos, BaseFireBlock.getState(level, pos), 3);
+			for(IntIterator iterator = blocks.iterator(); iterator.hasNext();) {
+				BlockPos blockPos = decodeBlockPos(iterator.nextInt(), tntX, tntY, tntZ);
+				if(random.nextDouble() > 0.75f && level.getBlockState(blockPos).isAir() && level.getBlockState(blockPos.below()).isSolidRender()) {
+					level.setBlock(blockPos, BaseFireBlock.getState(level, blockPos), 3);
 				}
 			}
 		}
@@ -240,52 +291,91 @@ public class ImprovedExplosion implements Explosion {
 	 * @param blockEffect  determines what should happen to the blocks gotten by this explosion
 	 */
 	public void doBlockExplosion(float xzStrength, float yStrength, float resistanceImpact, float randomVecLength, boolean isStrongExplosion, IForEachBlockExplosionEffect blockEffect) {
-		BlockPos posTNT = new BlockPos(floor(posX), floor(posY), floor(posZ));
-		Set<Integer> blocks = new HashSet<>();
-		for(int offX = -size; offX <= size; offX++) {
-			for(int offY = -size; offY <= size; offY++) {
-				for(int offZ = -size; offZ <= size; offZ++) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					if(((int)distance == size && LuckyTNTLibConfigValues.PERFORMANT_EXPLOSION.get()) || (!LuckyTNTLibConfigValues.PERFORMANT_EXPLOSION.get() && (offX == -size || offX == size || offY == -size || offY == size || offZ == -size || offZ == size))) {
-						double xStep = offX / distance;
-						double yStep = offY / distance;
-						double zStep = offZ / distance;
-						float vecLength = size * (0.7f + (float)Math.random() * 0.6f * randomVecLength);
-						double blockX = posX;
-						double blockY = posY;
-						double blockZ = posZ;
-						for(float vecStep = 0; vecStep < vecLength; vecStep += LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * 1.5f - 0.225f) {
-							blockX += xStep * LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * xzStrength;
-							blockY += yStep * LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * yStrength;
-							blockZ += zStep * LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * xzStrength;
-							BlockPos pos = new BlockPos((int)blockX, (int)blockY, (int)blockZ);
-							if(!level.isInWorldBounds(pos)) {
-								break;
-							}
-							BlockState blockState = level.getBlockState(pos);
-							FluidState fluidState = level.getFluidState(pos);
-							if(!(isStrongExplosion && !fluidState.isEmpty())) {
-								Optional<Float> explosionResistance = damageCalculator.getBlockExplosionResistance(this, level, pos, blockState, fluidState);
-								if(explosionResistance.isPresent()) {
-									vecLength -= (explosionResistance.get() + 0.3f) * 0.3f * resistanceImpact;
-								}
-								if(vecLength > 0 && damageCalculator.shouldBlockExplode(this, level, pos, blockState, vecLength) && !blockState.isAir()) {
-									blocks.add(encodeBlockPos(pos.subtract(posTNT).getX(), pos.subtract(posTNT).getY(), pos.subtract(posTNT).getZ()));
-								}
-							}
-							else {
-								blocks.add(encodeBlockPos(pos.subtract(posTNT).getX(), pos.subtract(posTNT).getY(), pos.subtract(posTNT).getZ()));
-							}
-						}
+		doBlockExplosion(xzStrength, yStrength, resistanceImpact, randomVecLength, isStrongExplosion, blockEffect, false);
+	}
+
+	/**
+	 * Gets all blocks in an area calculated by shooting vectors to the borders of a cube determined by the {@link ImprovedExplosion#size}
+	 * and does to them whatever specified in the {@link IForEachBlockExplosionEffect}.
+	 * If any of the relative coordinates of the affected block exceed 511 they will be clamped to that value.
+	 * Encodes block positions into a singular int, increasing performance.
+	 * The shape the vectors orient to can either be a sphere or a cube, depending on the players config.
+	 * @param xzStrength  a multiplier to the x and z vector addition, which makes the explosion more powerful. It should not be set to high, otherwise blocks might be skipped
+	 * @param yStrength  a multiplier to the y vector addition, which makes the explosion more powerful. It should not be set to high, otherwise blocks might be skipped
+	 * @param resistanceImpact  the relative impact that explosion resistance of blocks has on the penetration force of explosion
+	 * @param randomVecLength  the greater this value, the more distributed the length of the explosion vectors will be. Large explosions should have a value less than 1
+	 * @param isStrongExplosion  whether or not fluids should be ignored in the explosion resistance calculation. Very useful for large explosions
+	 * @param blockEffect  determines what should happen to the blocks gotten by this explosion
+	 * @param saveBlockPos  whether or not affected blocks should be saved to be used externally by {@link ImprovedExplosion#getAffectedBlocks()}
+	 */
+	public void doBlockExplosion(float xzStrength, float yStrength, float resistanceImpact, float randomVecLength, boolean isStrongExplosion, IForEachBlockExplosionEffect blockEffect, boolean saveBlockPos) {
+		final BlockPos posTNT = new BlockPos(floor(posX), floor(posY), floor(posZ));
+		final int tntX = posTNT.getX();
+		final int tntY = posTNT.getY();
+		final int tntZ = posTNT.getZ();
+		final IntOpenHashSet blocks = new IntOpenHashSet();
+		final RandomSource random = level.getRandom();
+		final double factor = LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get();
+		final double vecStepSize = factor * 1.5f - 0.225f;
+		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+
+		forEachShellCell((offX, offY, offZ, distance) -> {
+			double xStep = offX / distance;
+			double yStep = offY / distance;
+			double zStep = offZ / distance;
+			float vecLength = size * (0.7f + random.nextFloat() * 0.6f * randomVecLength);
+			double blockX = posX;
+			double blockY = posY;
+			double blockZ = posZ;
+			final double addX = xStep * factor * xzStrength;
+			final double addY = yStep * factor * yStrength;
+			final double addZ = zStep * factor * xzStrength;
+			int lastX = Integer.MIN_VALUE, lastY = Integer.MIN_VALUE, lastZ = Integer.MIN_VALUE;
+			BlockState blockState = null;
+			FluidState fluidState = null;
+			Optional<Float> explosionResistance = null;
+			for(float vecStep = 0; vecStep < vecLength; vecStep += vecStepSize) {
+				blockX += addX;
+				blockY += addY;
+				blockZ += addZ;
+				int blockPosX = (int)blockX;
+				int blockPosY = (int)blockY;
+				int blockPosZ = (int)blockZ;
+				if(blockPosX != lastX || blockPosY != lastY || blockPosZ != lastZ) {
+					lastX = blockPosX;
+					lastY = blockPosY;
+					lastZ = blockPosZ;
+					pos.set(blockPosX, blockPosY, blockPosZ);
+					if(!level.isInWorldBounds(pos)) {
+						break;
 					}
+					blockState = level.getBlockState(pos);
+					fluidState = level.getFluidState(pos);
+					explosionResistance = null;
+				}
+				if(!(isStrongExplosion && !fluidState.isEmpty())) {
+					if(explosionResistance == null) {
+						explosionResistance = damageCalculator.getBlockExplosionResistance(this, level, pos, blockState, fluidState);
+					}
+					if(explosionResistance.isPresent()) {
+						vecLength -= (explosionResistance.get() + 0.3f) * 0.3f * resistanceImpact;
+					}
+					if(vecLength > 0 && damageCalculator.shouldBlockExplode(this, level, pos, blockState, vecLength) && !blockState.isAir()) {
+						blocks.add(encodeBlockPos(blockPosX - tntX, blockPosY - tntY, blockPosZ - tntZ));
+					}
+				} else {
+					blocks.add(encodeBlockPos(blockPosX - tntX, blockPosY - tntY, blockPosZ - tntZ));
 				}
 			}
+		});
+
+		if(saveBlockPos) {
+			affectedBlocks.addAll(blocks);
 		}
-		affectedBlocks.addAll(blocks);
-		for(int intPos : blocks) {
-			BlockPos pos = decodeBlockPos(intPos).offset(posTNT);
-			double distance = Math.sqrt(pos.distToCenterSqr(posX, posY, posZ));
-			blockEffect.doBlockExplosion(level, pos, level.getBlockState(pos), distance);
+		for(IntIterator iterator = blocks.iterator(); iterator.hasNext();) {
+			BlockPos blockPos = decodeBlockPos(iterator.nextInt(), tntX, tntY, tntZ);
+			double distance = Math.sqrt(blockPos.distToCenterSqr(posX, posY, posZ));
+			blockEffect.doBlockExplosion(level, blockPos, level.getBlockState(blockPos), distance);
 		}
 	}
 
@@ -300,60 +390,100 @@ public class ImprovedExplosion implements Explosion {
 	 * @param resistanceImpact  the relative impact that explosion resistance of blocks has on the penetration force of explosion
 	 * @param randomVecLength  the greater this value, the more distributed the length of the explosion vectors will be. Large explosions should have a value less than 1
 	 * @param isStrongExplosion  whether or not fluids should be ignored in the explosion resistance calculation. Very useful for large explosions
-	 * @param condition  the condition on which a block is added to the {@link Set} of blocks
+	 * @param condition  the condition on which a block is added to the set of blocks
 	 * @param blockEffect  determines what should happen to the blocks gotten by this explosion
 	 */
 	public void doBlockExplosion(float xzStrength, float yStrength, float resistanceImpact, float randomVecLength, boolean isStrongExplosion, IBlockExplosionCondition condition, IForEachBlockExplosionEffect blockEffect) {
-		BlockPos posTNT = new BlockPos(floor(posX), floor(posY), floor(posZ));
-		Set<Integer> blocks = new HashSet<>();
-		for(int offX = -size; offX <= size; offX++) {
-			for(int offY = -size; offY <= size; offY++) {
-				for(int offZ = -size; offZ <= size; offZ++) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					if(((int)distance == size && LuckyTNTLibConfigValues.PERFORMANT_EXPLOSION.get()) || (!LuckyTNTLibConfigValues.PERFORMANT_EXPLOSION.get() && (offX == -size || offX == size || offY == -size || offY == size || offZ == -size || offZ == size))) {
-						double xStep = offX / distance;
-						double yStep = offY / distance;
-						double zStep = offZ / distance;
-						float vecLength = size * (0.7f + (float)Math.random() * 0.6f * randomVecLength);
-						double blockX = posX;
-						double blockY = posY;
-						double blockZ = posZ;
-						for(float vecStep = 0; vecStep < vecLength; vecStep += LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * 1.5f - 0.225f) {
-							blockX += xStep * LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * xzStrength;
-							blockY += yStep * LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * yStrength;
-							blockZ += zStep * LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * xzStrength;
-							BlockPos pos = new BlockPos((int)blockX, (int)blockY, (int)blockZ);
-							if(!level.isInWorldBounds(pos)) {
-								break;
-							}
-							BlockState blockState = level.getBlockState(pos);
-							FluidState fluidState = level.getFluidState(pos);
-							if(!(isStrongExplosion && !fluidState.isEmpty())) {
-								Optional<Float> explosionResistance = damageCalculator.getBlockExplosionResistance(this, level, pos, blockState, fluidState);
-								if(explosionResistance.isPresent()) {
-									vecLength -= (explosionResistance.get() + 0.3f) * 0.3f * resistanceImpact;
-								}
-								if(vecLength > 0 && damageCalculator.shouldBlockExplode(this, level, pos, blockState, vecLength) && !blockState.isAir()) {
-									if(condition.conditionMet(level, pos, blockState, distance)) {
-										blocks.add(encodeBlockPos(pos.subtract(posTNT).getX(), pos.subtract(posTNT).getY(), pos.subtract(posTNT).getZ()));
-									}
-								}
-							}
-							else {
-								if(condition.conditionMet(level, pos, blockState, distance)) {
-									blocks.add(encodeBlockPos(pos.subtract(posTNT).getX(), pos.subtract(posTNT).getY(), pos.subtract(posTNT).getZ()));
-								}
-							}
+		doBlockExplosion(xzStrength, yStrength, resistanceImpact, randomVecLength, isStrongExplosion, condition, blockEffect, false);
+	}
+
+	/**
+	 * Gets blocks in an area calculated by shooting vectors to the borders of a cube determined by the {@link ImprovedExplosion#size} if the {@link IBlockExplosionCondition} is met
+	 * and does to them whatever specified in the blockEffect.
+	 * If any of the relative coordinates of the affected block exceed 511 they will be clamped to that value.
+	 * Encodes block positions into a singular int, increasing performance.
+	 * The shape the vectors orient to can either be a sphere or a cube, depending on the players config.
+	 * @param xzStrength  a multiplier to the x and z vector addition, which makes the explosion more powerful. It should not be set to high, otherwise blocks might be skipped
+	 * @param yStrength  a multiplier to the y vector addition, which makes the explosion more powerful. It should not be set to high, otherwise blocks might be skipped
+	 * @param resistanceImpact  the relative impact that explosion resistance of blocks has on the penetration force of explosion
+	 * @param randomVecLength  the greater this value, the more distributed the length of the explosion vectors will be. Large explosions should have a value less than 1
+	 * @param isStrongExplosion  whether or not fluids should be ignored in the explosion resistance calculation. Very useful for large explosions
+	 * @param condition  the condition on which a block is added to the set of blocks
+	 * @param blockEffect  determines what should happen to the blocks gotten by this explosion
+	 * @param saveBlockPos  whether or not affected blocks should be saved to be used externally by {@link ImprovedExplosion#getAffectedBlocks()}
+	 */
+	public void doBlockExplosion(float xzStrength, float yStrength, float resistanceImpact, float randomVecLength, boolean isStrongExplosion, IBlockExplosionCondition condition, IForEachBlockExplosionEffect blockEffect, boolean saveBlockPos) {
+		final BlockPos posTNT = new BlockPos(floor(posX), floor(posY), floor(posZ));
+		final int tntX = posTNT.getX();
+		final int tntY = posTNT.getY();
+		final int tntZ = posTNT.getZ();
+		final IntOpenHashSet blocks = new IntOpenHashSet();
+		final RandomSource random = level.getRandom();
+		final double factor = LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get();
+		final double vecStepSize = factor * 1.5f - 0.225f;
+		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+
+		forEachShellCell((offX, offY, offZ, distance) -> {
+			double xStep = offX / distance;
+			double yStep = offY / distance;
+			double zStep = offZ / distance;
+			float vecLength = size * (0.7f + random.nextFloat() * 0.6f * randomVecLength);
+			double blockX = posX;
+			double blockY = posY;
+			double blockZ = posZ;
+			final double addX = xStep * factor * xzStrength;
+			final double addY = yStep * factor * yStrength;
+			final double addZ = zStep * factor * xzStrength;
+			int lastX = Integer.MIN_VALUE, lastY = Integer.MIN_VALUE, lastZ = Integer.MIN_VALUE;
+			BlockState blockState = null;
+			FluidState fluidState = null;
+			Optional<Float> explosionResistance = null;
+			for(float vecStep = 0; vecStep < vecLength; vecStep += vecStepSize) {
+				blockX += addX;
+				blockY += addY;
+				blockZ += addZ;
+				int blockPosX = (int)blockX;
+				int blockPosY = (int)blockY;
+				int blockPosZ = (int)blockZ;
+				if(blockPosX != lastX || blockPosY != lastY || blockPosZ != lastZ) {
+					lastX = blockPosX;
+					lastY = blockPosY;
+					lastZ = blockPosZ;
+					pos.set(blockPosX, blockPosY, blockPosZ);
+					if(!level.isInWorldBounds(pos)) {
+						break;
+					}
+					blockState = level.getBlockState(pos);
+					fluidState = level.getFluidState(pos);
+					explosionResistance = null;
+				}
+				if(!(isStrongExplosion && !fluidState.isEmpty())) {
+					if(explosionResistance == null) {
+						explosionResistance = damageCalculator.getBlockExplosionResistance(this, level, pos, blockState, fluidState);
+					}
+					if(explosionResistance.isPresent()) {
+						vecLength -= (explosionResistance.get() + 0.3f) * 0.3f * resistanceImpact;
+					}
+					if(vecLength > 0 && damageCalculator.shouldBlockExplode(this, level, pos, blockState, vecLength) && !blockState.isAir()) {
+						if(condition.conditionMet(level, pos, blockState, distance)) {
+							blocks.add(encodeBlockPos(blockPosX - tntX, blockPosY - tntY, blockPosZ - tntZ));
 						}
+					}
+				} else {
+					if(condition.conditionMet(level, pos, blockState, distance)) {
+						blocks.add(encodeBlockPos(blockPosX - tntX, blockPosY - tntY, blockPosZ - tntZ));
 					}
 				}
 			}
+		});
+
+		if(saveBlockPos) {
+			affectedBlocks.addAll(blocks);
 		}
-		affectedBlocks.addAll(blocks);
-		for(int intPos : blocks) {
-			BlockPos pos = decodeBlockPos(intPos).offset(posTNT);
-			double distance = Math.sqrt(pos.distToCenterSqr(posX, posY, posZ));
-			blockEffect.doBlockExplosion(level, pos, level.getBlockState(pos), distance);
+		for(IntIterator iterator = blocks.iterator(); iterator.hasNext();) {
+			BlockPos blockPos = decodeBlockPos(iterator.nextInt(), tntX, tntY, tntZ);
+			double distance = Math.sqrt(blockPos.distToCenterSqr(posX, posY, posZ));
+			blockEffect.doBlockExplosion(level, blockPos, level.getBlockState(blockPos), distance);
 		}
 	}
 
@@ -393,64 +523,193 @@ public class ImprovedExplosion implements Explosion {
 	 * @param saveBlockPos  whether or not affected blocks should be saved to be used externally
 	 */
 	public void doOldBlockExplosion(float xzStrength, float yStrength, float resistanceImpact, float randomVecLength, boolean fire, boolean isStrongExplosion, boolean saveBlockPos) {
-		Set<BlockPos> blocks = new HashSet<>();
-		for(int offX = -size; offX <= size; offX++) {
-			for(int offY = -size; offY <= size; offY++) {
-				for(int offZ = -size; offZ <= size; offZ++) {
-					double distance = Math.sqrt(offX * offX + offY * offY + offZ * offZ);
-					if(((int)distance == size && LuckyTNTLibConfigValues.PERFORMANT_EXPLOSION.get()) || (!LuckyTNTLibConfigValues.PERFORMANT_EXPLOSION.get() && (offX == -size || offX == size || offY == -size || offY == size || offZ == -size || offZ == size))) {
-						double xStep = offX / distance;
-						double yStep = offY / distance;
-						double zStep = offZ / distance;
-						float vecLength = size * (0.7f + (float)Math.random() * 0.6f * randomVecLength);
-						double blockX = posX;
-						double blockY = posY;
-						double blockZ = posZ;
-						for(float vecStep = 0; vecStep < vecLength; vecStep += LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * 1.5f - 0.225f) {
-							blockX += xStep * LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * xzStrength;
-							blockY += yStep * LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * yStrength;
-							blockZ += zStep * LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get() * xzStrength;
-							BlockPos pos = new BlockPos((int)blockX, (int)blockY, (int)blockZ);
-							if(!level.isInWorldBounds(pos)) {
-								break;
-							}
-							BlockState blockState = level.getBlockState(pos);
-							FluidState fluidState = level.getFluidState(pos);
-							if(!(isStrongExplosion && !fluidState.isEmpty())) {
-								Optional<Float> explosionResistance = damageCalculator.getBlockExplosionResistance(this, level, pos, blockState, fluidState);
-								if(explosionResistance.isPresent()) {
-									vecLength -= (explosionResistance.get() + 0.3f) * 0.3f * resistanceImpact;
-								}
-								if(vecLength > 0 && damageCalculator.shouldBlockExplode(this, level, pos, blockState, vecLength) && !blockState.isAir()) {
-									blocks.add(pos);
-								}
-							}
-							else {
-								blocks.add(pos);
-							}
+		final List<BlockPos> blocks = new ArrayList<>();
+		final java.util.Set<BlockPos> blockSet = new java.util.HashSet<>();
+		final RandomSource random = level.getRandom();
+		final double factor = LuckyTNTLibConfigValues.EXPLOSION_PERFORMANCE_FACTOR.get();
+		final double vecStepSize = factor * 1.5f - 0.225f;
+		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+
+		forEachShellCell((offX, offY, offZ, distance) -> {
+			double xStep = offX / distance;
+			double yStep = offY / distance;
+			double zStep = offZ / distance;
+			float vecLength = size * (0.7f + random.nextFloat() * 0.6f * randomVecLength);
+			double blockX = posX;
+			double blockY = posY;
+			double blockZ = posZ;
+			final double addX = xStep * factor * xzStrength;
+			final double addY = yStep * factor * yStrength;
+			final double addZ = zStep * factor * xzStrength;
+			int lastX = Integer.MIN_VALUE, lastY = Integer.MIN_VALUE, lastZ = Integer.MIN_VALUE;
+			BlockState blockState = null;
+			FluidState fluidState = null;
+			Optional<Float> explosionResistance = null;
+			for(float vecStep = 0; vecStep < vecLength; vecStep += vecStepSize) {
+				blockX += addX;
+				blockY += addY;
+				blockZ += addZ;
+				int blockPosX = (int)blockX;
+				int blockPosY = (int)blockY;
+				int blockPosZ = (int)blockZ;
+				if(blockPosX != lastX || blockPosY != lastY || blockPosZ != lastZ) {
+					lastX = blockPosX;
+					lastY = blockPosY;
+					lastZ = blockPosZ;
+					pos.set(blockPosX, blockPosY, blockPosZ);
+					if(!level.isInWorldBounds(pos)) {
+						break;
+					}
+					blockState = level.getBlockState(pos);
+					fluidState = level.getFluidState(pos);
+					explosionResistance = null;
+				}
+				if(!(isStrongExplosion && !fluidState.isEmpty())) {
+					if(explosionResistance == null) {
+						explosionResistance = damageCalculator.getBlockExplosionResistance(this, level, pos, blockState, fluidState);
+					}
+					if(explosionResistance.isPresent()) {
+						vecLength -= (explosionResistance.get() + 0.3f) * 0.3f * resistanceImpact;
+					}
+					if(vecLength > 0 && damageCalculator.shouldBlockExplode(this, level, pos, blockState, vecLength) && !blockState.isAir()) {
+						if(blockSet.add(pos)) {
+							blocks.add(pos.immutable());
+						}
+					}
+				} else {
+					if(blockSet.add(pos)) {
+						blocks.add(pos.immutable());
+					}
+				}
+			}
+		});
+
+		if(saveBlockPos) {
+			BlockPos posTNT = new BlockPos(floor(posX), floor(posY), floor(posZ));
+			for(BlockPos blockPos : blocks) {
+				affectedBlocks.add(encodeBlockPos(blockPos.getX() - posTNT.getX(), blockPos.getY() - posTNT.getY(), blockPos.getZ() - posTNT.getZ()));
+			}
+		}
+		if(level instanceof ServerLevel serverLevel) {
+			for(BlockPos blockPos : blocks) {
+				level.getBlockState(blockPos).getBlock().wasExploded(serverLevel, blockPos, this);
+			}
+		}
+		if(fire) {
+			for(BlockPos blockPos : blocks) {
+				if(random.nextDouble() > 0.75f && level.getBlockState(blockPos).isAir() && level.getBlockState(blockPos.below()).isSolidRender()) {
+					level.setBlock(blockPos, BaseFireBlock.getState(level, blockPos), 3);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Iterates over every cell of the shell of this explosion, which is either a spherical shell or the surface of a cube,
+	 * depending on the players config. <br>
+	 * The set of cells passed to the consumer is exactly the set of cells for which
+	 * {@code (int)Math.sqrt(offX * offX + offY * offY + offZ * offZ) == size} (spherical shell) or
+	 * {@code offX == -size || offX == size || offY == -size || offY == size || offZ == -size || offZ == size} (cube surface) holds,
+	 * but the whole interior of the cube is never visited.
+	 * @param cell  the consumer that is called for every cell of the shell
+	 */
+	private void forEachShellCell(IShellCellConsumer cell) {
+		if(LuckyTNTLibConfigValues.PERFORMANT_EXPLOSION.get()) {
+			//(int)sqrt(dSqr) == size is exactly size * size <= dSqr < (size + 1) * (size + 1),
+			//so the range of valid offZ can be calculated in closed form for every column
+			final long innerSqr = (long)size * size;
+			final long outerSqr = (long)(size + 1) * (size + 1);
+			for(int offX = -size; offX <= size; offX++) {
+				final long xSqr = (long)offX * offX;
+				for(int offY = -size; offY <= size; offY++) {
+					final long xySqr = xSqr + (long)offY * offY;
+					final long maxSqr = outerSqr - xySqr;
+					if(maxSqr <= 0) {
+						continue;
+					}
+					final int zMax = floorSqrt(maxSqr - 1);
+					final long minSqr = innerSqr - xySqr;
+					final int zMin = minSqr <= 0 ? 0 : ceilSqrt(minSqr);
+					if(zMin > zMax) {
+						continue;
+					}
+					if(zMin == 0) {
+						for(int offZ = -zMax; offZ <= zMax; offZ++) {
+							cell.accept(offX, offY, offZ, Math.sqrt(xySqr + (double)offZ * offZ));
+						}
+					} else {
+						for(int offZ = -zMax; offZ <= -zMin; offZ++) {
+							cell.accept(offX, offY, offZ, Math.sqrt(xySqr + (double)offZ * offZ));
+						}
+						for(int offZ = zMin; offZ <= zMax; offZ++) {
+							cell.accept(offX, offY, offZ, Math.sqrt(xySqr + (double)offZ * offZ));
 						}
 					}
 				}
 			}
-		}
-		if(saveBlockPos) {
-			BlockPos posTNT = new BlockPos(floor(posX), floor(posY), floor(posZ));
-			for(BlockPos pos : blocks) {
-				affectedBlocks.add(encodeBlockPos(pos.subtract(posTNT).getX(), pos.subtract(posTNT).getY(), pos.subtract(posTNT).getZ()));
+		} else {
+			//only the 6 faces of the cube are visited, every cell exactly once
+			for(int offY = -size; offY <= size; offY++) {
+				for(int offZ = -size; offZ <= size; offZ++) {
+					cell.accept(-size, offY, offZ, cellDistance(-size, offY, offZ));
+					if(size != 0) {
+						cell.accept(size, offY, offZ, cellDistance(size, offY, offZ));
+					}
+				}
 			}
-		}
-		for(BlockPos pos : blocks) {
-			if(level instanceof ServerLevel serverLevel) {
-				level.getBlockState(pos).getBlock().wasExploded(serverLevel, pos, this);
+			for(int offX = -size + 1; offX <= size - 1; offX++) {
+				for(int offZ = -size; offZ <= size; offZ++) {
+					cell.accept(offX, -size, offZ, cellDistance(offX, -size, offZ));
+					cell.accept(offX, size, offZ, cellDistance(offX, size, offZ));
+				}
 			}
-		}
-		if(fire) {
-			for(BlockPos pos : blocks) {
-				if(Math.random() > 0.75f && level.getBlockState(pos).isAir() && level.getBlockState(pos.below()).isSolidRender()) {
-					level.setBlock(pos, BaseFireBlock.getState(level, pos), 3);
+			for(int offX = -size + 1; offX <= size - 1; offX++) {
+				for(int offY = -size + 1; offY <= size - 1; offY++) {
+					cell.accept(offX, offY, -size, cellDistance(offX, offY, -size));
+					cell.accept(offX, offY, size, cellDistance(offX, offY, size));
 				}
 			}
 		}
+	}
+
+	private static double cellDistance(int offX, int offY, int offZ) {
+		return Math.sqrt((double)offX * offX + (double)offY * offY + (double)offZ * offZ);
+	}
+
+	/**
+	 * @param value  a value greater than or equal to 0
+	 * @return the greatest int whose square is less than or equal to the given value
+	 */
+	private static int floorSqrt(long value) {
+		int root = (int)Math.sqrt((double)value);
+		while(root > 0 && (long)root * root > value) {
+			root--;
+		}
+		while((long)(root + 1) * (root + 1) <= value) {
+			root++;
+		}
+		return root;
+	}
+
+	/**
+	 * @param value  a value greater than or equal to 0
+	 * @return the smallest int whose square is greater than or equal to the given value
+	 */
+	private static int ceilSqrt(long value) {
+		int root = (int)Math.sqrt((double)value);
+		while((long)root * root < value) {
+			root++;
+		}
+		while(root > 0 && (long)(root - 1) * (root - 1) >= value) {
+			root--;
+		}
+		return root;
+	}
+
+	@FunctionalInterface
+	private interface IShellCellConsumer {
+
+		void accept(int offX, int offY, int offZ, double distance);
 	}
 
 	/**
@@ -491,6 +750,19 @@ public class ImprovedExplosion implements Explosion {
 	 * @return BlockPos with the relative x, y and z coordinates decoded again with an absolute max value of 511
 	 */
 	protected BlockPos decodeBlockPos(int encodedVal) {
+		return decodeBlockPos(encodedVal, 0, 0, 0);
+	}
+
+	/**
+	 * Decodes an encoded value generated by {@link ImprovedExplosion#encodeBlockPos(int, int, int)} into a {@link BlockPos}
+	 * and offsets it by the given values, all in one allocation.
+	 * @param encodedVal  the position encoded by {@link ImprovedExplosion#encodeBlockPos(int, int, int)}
+	 * @param offX  the value the decoded x coordinate is offset by
+	 * @param offY  the value the decoded y coordinate is offset by
+	 * @param offZ  the value the decoded z coordinate is offset by
+	 * @return BlockPos with the offset x, y and z coordinates
+	 */
+	protected BlockPos decodeBlockPos(int encodedVal, int offX, int offY, int offZ) {
 		int zRaw = (encodedVal & 0b00000000000000000000000111111111);
 		int zNeg = (encodedVal & 0b00000000000000000000001000000000) >> 9;
 		int yRaw = (encodedVal & 0b00000000000001111111110000000000) >> 10;
@@ -500,7 +772,7 @@ public class ImprovedExplosion implements Explosion {
 		int xVal = xNeg == 1 ? -xRaw : xRaw;
 		int yVal = yNeg == 1 ? -yRaw : yRaw;
 		int zVal = zNeg == 1 ? -zRaw : zRaw;
-		return new BlockPos(xVal, yVal, zVal);
+		return new BlockPos(xVal + offX, yVal + offY, zVal + offZ);
 	}
 
 	/**
@@ -509,7 +781,7 @@ public class ImprovedExplosion implements Explosion {
 	 * @param damageEntities  whether or not entities should be damaged by this explosion
 	 */
 	public void doEntityExplosion(float knockbackStrength, boolean damageEntities) {
-		List<Entity> entities = level.getEntities(source, new AABB(posX - size * 2, posY - size * 2, posZ - size * 2, posX + size * 2, posY + size * 2, posZ + size * 2));
+		List<Entity> entities = level.getEntities(source, entityBoundingBox());
 		for(Entity entity : entities) {
 			if(!entity.ignoreExplosion(this)) {
 				double distance = Math.sqrt(entity.distanceToSqr(center)) / (size * 2);
@@ -521,8 +793,9 @@ public class ImprovedExplosion implements Explosion {
 					offX /= distance2;
 					offY /= distance2;
 					offZ /= distance2;
-					double seenPercent = ServerExplosion.getSeenPercent(center, entity);
-					float damage = (1f - (float)distance) * (float)seenPercent;
+					//the visibility raycast can be skipped whenever the falloff is 0, because the damage is 0 either way
+					float falloff = 1f - (float)distance;
+					float damage = falloff <= 0f ? 0f : falloff * (float)ServerExplosion.getSeenPercent(center, entity);
 					if(damageEntities && level instanceof ServerLevel serverLevel) {
 						entity.hurtServer(serverLevel, damageSource, (damage * damage + damage) / 2f * 7 * size + 1f);
 					}
@@ -548,7 +821,7 @@ public class ImprovedExplosion implements Explosion {
 	 * @param entityEffect  determines what should be done to the entities gotten by this explosion
 	 */
 	public void doEntityExplosion(IForEachEntityExplosionEffect entityEffect) {
-		List<Entity> entities = level.getEntities(source, new AABB(posX - size * 2, posY - size * 2, posZ - size * 2, posX + size * 2, posY + size * 2, posZ + size * 2));
+		List<Entity> entities = level.getEntities(source, entityBoundingBox());
 		for(Entity entity : entities) {
 			if(!entity.ignoreExplosion(this)) {
 				double distance = Math.sqrt(entity.distanceToSqr(center)) / (size * 2);
@@ -557,6 +830,16 @@ public class ImprovedExplosion implements Explosion {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @return the {@link AABB} entities are searched in, clamped to the build height of the level
+	 */
+	private AABB entityBoundingBox() {
+		double reach = size * 2;
+		double minY = Math.max(posY - reach, level.getMinY());
+		double maxY = Math.min(posY + reach, level.getMaxY() + 1);
+		return new AABB(posX - reach, minY, posZ - reach, posX + reach, maxY, posZ + reach);
 	}
 
 	/**
@@ -587,17 +870,22 @@ public class ImprovedExplosion implements Explosion {
 	 * @return ImprovedExplosion with no strength and position at (0, 0, 0)
 	 */
 	public static ImprovedExplosion dummyExplosion(Level level) {
-		if(dummyExplosion == null || dummyExplosion.level != level) {
-			dummyExplosion = new ImprovedExplosion(level, new Vec3(0, 0, 0), 0);
+		ImprovedExplosion dummy = dummyExplosion == null ? null : dummyExplosion.get();
+		if(dummy == null || dummy.level != level) {
+			dummy = new ImprovedExplosion(level, new Vec3(0, 0, 0), 0);
+			dummyExplosion = new WeakReference<>(dummy);
 		}
-		return dummyExplosion;
+		return dummy;
 	}
 
 	@Nullable
 	public List<BlockPos> getAffectedBlocks() {
-		List<BlockPos> blocks = new ArrayList<>();
-		for(int intPos : affectedBlocks) {
-			blocks.add(decodeBlockPos(intPos).offset(floor(posX), floor(posY), floor(posZ)));
+		List<BlockPos> blocks = new ArrayList<>(affectedBlocks.size());
+		int offX = floor(posX);
+		int offY = floor(posY);
+		int offZ = floor(posZ);
+		for(int index = 0; index < affectedBlocks.size(); index++) {
+			blocks.add(decodeBlockPos(affectedBlocks.getInt(index), offX, offY, offZ));
 		}
 		return blocks;
 	}
