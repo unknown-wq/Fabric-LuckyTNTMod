@@ -283,6 +283,7 @@
 	"item.luckytntmod.prism_dynamite" : "Prisma Dynamit",
 	"item.luckytntmod.ring_dynamite" : "Ring Dynamit",
 	"item.luckytntmod.sculk_dynamite" : "Sculk Dynamit",
+	"item.luckytntmod.bomb_rain_dynamite" : "Bombenregen Dynamit",
 
 	"item.luckytntmod.tnt_x5_minecart" : "TNT x5-Lore",
 	"item.luckytntmod.tnt_x20_minecart" : "TNT x20-Lore",
@@ -649,6 +650,7 @@
 	"entity.luckytntmod.prism_dynamite" : "Prisma Dynamit",
 	"entity.luckytntmod.ring_dynamite" : "Ring Dynamit",
 	"entity.luckytntmod.sculk_dynamite" : "Sculk Dynamit",
+	"entity.luckytntmod.bomb_rain_dynamite" : "Bombenregen Dynamit",
 
 	"entity.luckytntmod.tnt_x5_minecart" : "TNT x5-Lore",
 	"entity.luckytntmod.tnt_x20_minecart" : "TNT x20-Lore",

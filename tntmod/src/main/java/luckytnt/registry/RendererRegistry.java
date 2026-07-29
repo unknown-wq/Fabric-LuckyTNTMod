@@ -286,6 +286,7 @@ public class RendererRegistry {
 		EntityRendererRegistry.register(EntityRegistry.PRISM_DYNAMITE.get(), LDynamiteRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.RING_DYNAMITE.get(), LDynamiteRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.SCULK_DYNAMITE.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.BOMB_RAIN_DYNAMITE.get(), LDynamiteRenderer::new);
 
 		//Minecarts
 		EntityRendererRegistry.register(EntityRegistry.TNT_X5_MINECART.get(), LTNTMinecartRenderer::new);
