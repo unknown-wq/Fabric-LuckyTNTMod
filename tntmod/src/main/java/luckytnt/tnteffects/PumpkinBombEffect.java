@@ -1,7 +1,5 @@
 package luckytnt.tnteffects;
 
-import java.util.Random;
-
 import org.joml.Vector3f;
 
 import luckytnt.registry.BlockRegistry;
@@ -14,6 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.util.RandomSource;
 
 public class PumpkinBombEffect extends PrimedTNTEffect{
 
@@ -22,7 +21,8 @@ public class PumpkinBombEffect extends PrimedTNTEffect{
 		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), 10);
 		explosion.doEntityExplosion(1.5f, true);
 		explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
-		Random random = new Random();
+		// was `new Random()`, which seeds itself through a contended global CAS
+		RandomSource random = entity.getLevel().getRandom();
 		for(int count = 0; count < 30 + random.nextInt(11); count++) {
 			ItemEntity candy = new ItemEntity(entity.getLevel(), entity.x(), entity.y(), entity.z(), new ItemStack(ItemRegistry.RED_CANDY.get()));
 			candy.setDeltaMovement(Math.random() - 0.5f, Math.random() - 0.5f, Math.random() - 0.5f);

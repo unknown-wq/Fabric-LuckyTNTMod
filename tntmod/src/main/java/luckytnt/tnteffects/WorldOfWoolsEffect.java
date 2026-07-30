@@ -1,7 +1,6 @@
 package luckytnt.tnteffects;
 
 import java.util.List;
-import java.util.Random;
 
 import org.joml.Math;
 import org.joml.Vector3f;
@@ -28,6 +27,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.EntityTypes;
 
@@ -131,7 +131,8 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 
 		// new Random() sat in the loop *condition*, so the bound was re-rolled on every iteration.
 		// It is now rolled once, which is the intended "3 + rand(6) towers" semantics.
-		Random random = new Random();
+		// The level's RandomSource replaces the java.util.Random allocation (AnimalKingdomEffect:89).
+		RandomSource random = ent.getLevel().getRandom();
 		int towers = 3 + random.nextInt(6);
 		for(int i = 0; i < towers; i++) {
 			int x = random.nextInt(151) - 75;
@@ -179,7 +180,7 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 		BlockPos max = toBlockPos(ent.getPos()).offset(-100, -100, -100);
 		List<Sheep> list = ent.getLevel().getEntitiesOfClass(Sheep.class, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
 		for(Sheep sheep : list) {
-			sheep.setColor(randomColor());
+			sheep.setColor(randomColor(random));
 		}
 	}
 	
@@ -200,9 +201,20 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 		return 150;
 	}
 	
+	/** Enum#values() clones its backing array on every call; this one is read once per sheep. */
+	private static final DyeColor[] DYE_COLORS = DyeColor.values();
+
+	/**
+	 * @deprecated allocates a fresh RandomSource per call, use {@link #randomColor(RandomSource)}
+	 */
+	@Deprecated
 	public DyeColor randomColor() {
-		int random = new Random().nextInt(DyeColor.values().length);
-		return DyeColor.values()[random];
+		return randomColor(RandomSource.create());
+	}
+
+	public DyeColor randomColor(RandomSource source) {
+		// was `new Random()` plus two DyeColor.values() array clones, once per sheep in a 200 wide AABB
+		return DYE_COLORS[source.nextInt(DYE_COLORS.length)];
 	}
 	
 	public void placeRing(IExplosiveEntity ent, BlockPos origin, Block block, int radius, boolean xOrZ) {

@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 
 public class PhantomTNTEffect extends PrimedTNTEffect{
@@ -20,17 +21,25 @@ public class PhantomTNTEffect extends PrimedTNTEffect{
 	}
 	
 	public void explosionTick(IExplosiveEntity entity) {
-		if(entity.getTNTFuse() == 5) {
-			double offX = Math.random() * 90 - 45;
-			double offZ = Math.random() * 90 - 45;
-			boolean foundBlock = false;
-			for(int offY = 320; offY > -64; offY--) {
-	      		BlockPos pos = new BlockPos(Mth.floor(entity.x() + offX), offY, Mth.floor(entity.z() + offZ));
-	      		BlockState state = entity.getLevel().getBlockState(pos);
-	      		if(state.isCollisionShapeFullBlock(entity.getLevel(), pos) && !state.isAir() && !foundBlock) {
-	      			((Entity)entity).setPos(entity.x() + offX, offY + 1, entity.z() + offZ);
-	      			foundBlock = true;
-	      		}
+		// explosionTick runs on both logical sides; the teleport is server authoritative and gets synced,
+		// so the client used to run the whole 384 step column scan for a position it then had overwritten.
+		if(!(entity.getLevel() instanceof ServerLevel level) || entity.getTNTFuse() != 5) {
+			return;
+		}
+		double offX = Math.random() * 90 - 45;
+		double offZ = Math.random() * 90 - 45;
+		// "foundBlock" only suppressed further assignments, so the scan always ran all 384 steps with a
+		// fresh BlockPos and a getBlockState each. Breaking at the hit stops at the first surface, and the
+		// position is reused instead of reallocated: 384 reads + 384 allocations -> ~250 reads + 1.
+		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		final int blockX = Mth.floor(entity.x() + offX);
+		final int blockZ = Mth.floor(entity.z() + offZ);
+		for(int offY = 320; offY > -64; offY--) {
+			pos.set(blockX, offY, blockZ);
+			BlockState state = level.getBlockState(pos);
+			if(state.isCollisionShapeFullBlock(level, pos) && !state.isAir()) {
+				((Entity)entity).setPos(entity.x() + offX, offY + 1, entity.z() + offZ);
+				break;
 			}
 		}
 	}

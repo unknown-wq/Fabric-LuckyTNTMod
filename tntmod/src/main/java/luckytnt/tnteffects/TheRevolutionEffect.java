@@ -9,6 +9,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -20,7 +21,10 @@ public class TheRevolutionEffect extends PrimedTNTEffect {
 		if(entity instanceof PrimedLTNT) {
 			Entity ent = (Entity)entity;
 			ent.setDeltaMovement(ent.getDeltaMovement().x, 0.15f, ent.getDeltaMovement().z);
-			if(entity.getTNTFuse() < 60) {
+			// explosionTick runs on both logical sides and addFreshEntity is a no-op on the client, so the
+			// spiral TNT was built and discarded there too. The delta movement above stays unguarded so
+			// the client keeps predicting the rise.
+			if(entity.getTNTFuse() < 60 && entity.getLevel() instanceof ServerLevel) {
 				if(entity.getTNTFuse() % 6 == 0) {
 					CompoundTag tag = entity.getPersistentData();
 					tag.putFloat("spiral_power", Mth.clamp(entity.getPersistentData().getFloatOr("spiral_power", 0f) + 0.15f, 0.15f, Float.MAX_VALUE));

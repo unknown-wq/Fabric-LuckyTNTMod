@@ -2,8 +2,6 @@ package luckytnt.tnteffects;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
-
 import org.joml.Vector3f;
 
 import luckytnt.registry.BlockRegistry;
@@ -106,7 +104,8 @@ public class NetherTNTEffect extends PrimedTNTEffect {
 			}
 		});
 		
-		int biome = new Random().nextInt(3);
+		// was `new Random()`; the level already owns a RandomSource (AnimalKingdomEffect:89)
+		int biome = ent.getLevel().getRandom().nextInt(3);
 		
 		ImprovedExplosion explosion4 = new ImprovedExplosion(ent.getLevel(), new Vec3(ent.x(), 0, ent.z()), 80);
 		explosion4.doBlockExplosion(1f, 0.8f, 1f, 0.2f, true, new IForEachBlockExplosionEffect() {

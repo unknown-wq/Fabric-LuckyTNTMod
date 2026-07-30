@@ -17,7 +17,9 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -52,31 +54,49 @@ public class GrandeFinaleEffect extends PrimedTNTEffect {
 	public void explosionTick(IExplosiveEntity ent) {
 		Level level = ent.getLevel();
 		RandomSource rng = level.getRandom();
-		if(ent.getTNTFuse() % (int)(1 + Math.random() * 50) == 0) {
-			PrimedLTNT entity = EntityRegistry.SAND_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+		// explosionTick runs on both logical sides and addFreshEntity is a no-op on the client, so every
+		// entity below (1000 of them through a reflective newInstance that cannot be inlined) used to be
+		// built and thrown away a second time in single player. The delta movement and the particle still
+		// have to run client side, so the guard is per block rather than at the top of the method.
+		final boolean server = level instanceof ServerLevel;
+		if(server && ent.getTNTFuse() % (int)(1 + Math.random() * 50) == 0) {
+			PrimedLTNT entity = EntityRegistry.SAND_FIREWORK.get().create(level, EntitySpawnReason.MOB_SUMMONED);
 			int random = rng.nextInt(4);
 			switch(random){
-				case 0: entity = EntityRegistry.SAND_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED); break;
-				case 1: entity = EntityRegistry.GRAVEL_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED); break;
-				case 2: entity = EntityRegistry.RAINBOW_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);; break;
-				case 3: entity = EntityRegistry.NEW_YEARS_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+				case 0: entity = EntityRegistry.SAND_FIREWORK.get().create(level, EntitySpawnReason.MOB_SUMMONED); break;
+				case 1: entity = EntityRegistry.GRAVEL_FIREWORK.get().create(level, EntitySpawnReason.MOB_SUMMONED); break;
+				case 2: entity = EntityRegistry.RAINBOW_FIREWORK.get().create(level, EntitySpawnReason.MOB_SUMMONED);; break;
+				case 3: entity = EntityRegistry.NEW_YEARS_FIREWORK.get().create(level, EntitySpawnReason.MOB_SUMMONED);
 						CompoundTag tag = entity.getPersistentData();
 						tag.putInt("type", 1);
 						entity.setPersistentData(tag); break;
 			}
-			ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.MASTER, 3, 1);
+			level.playSound(null, toBlockPos(ent.getPos()), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.MASTER, 3, 1);
 			entity.setPos(ent.getPos());
 			entity.setOwner(ent.owner());
 			entity.setDeltaMovement(Math.random() * 5 - Math.random() * 5, 0, Math.random() * 5 - Math.random() * 5);
 			entity.setTNTFuse(40 + rng.nextInt(41));
-			ent.getLevel().addFreshEntity(entity);
+			level.addFreshEntity(entity);
 		}
-		ent.getLevel().setBlock(toBlockPos(ent.getPos()), Blocks.AIR.defaultBlockState(), 3);
-		ent.getLevel().setBlock(toBlockPos(ent.getPos()).offset(0, 1, 0), Blocks.AIR.defaultBlockState(), 3);
+		if(server) {
+			// These two positions are cleared once (when the TNT is primed) and are air for the remaining
+			// 439 ticks, but the writes ran unconditionally: 880 flag-3 setBlock calls - each a six way
+			// neighbour cascade plus a client packet - per detonation. Two getBlockState reads per tick
+			// replace them; the actual writes still use flag 3 so anything resting on the cleared block
+			// keeps updating.
+			BlockPos self = toBlockPos(ent.getPos());
+			if(!level.getBlockState(self).isAir()) {
+				level.setBlock(self, Blocks.AIR.defaultBlockState(), 3);
+			}
+			BlockPos above = self.above();
+			if(!level.getBlockState(above).isAir()) {
+				level.setBlock(above, Blocks.AIR.defaultBlockState(), 3);
+			}
+		}
 		if(ent.getTNTFuse() <= 40) {
 			((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 1.6f, ((Entity)ent).getDeltaMovement().z);
-			ent.getLevel().addParticle(ParticleTypes.LARGE_SMOKE, ent.x(), ent.y(), ent.z(), 0, -0.5f, 0);
-			if(ent.getTNTFuse() == 0) {
+			level.addParticle(ParticleTypes.LARGE_SMOKE, ent.x(), ent.y(), ent.z(), 0, -0.5f, 0);
+			if(server && ent.getTNTFuse() == 0) {
 				BlockState[] colors = concreteStates();
 				for(int count = 0; count < 1000; count++) {
 					BlockState template = colors[rng.nextInt(colors.length)];

@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.Level;
 
@@ -17,8 +18,8 @@ public class SupernovaEffect extends SphereTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
-		if(ent.getTNTFuse() == 300) {
-			Level level = ent.getLevel();
+		// explosionTick runs on both logical sides and addFreshEntity is a no-op on the client
+		if(ent.getTNTFuse() == 300 && ent.getLevel() instanceof ServerLevel level) {
 			Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, level);
 			lighting.setPos(ent.x(), ent.y(), ent.z());
 			level.addFreshEntity(lighting);

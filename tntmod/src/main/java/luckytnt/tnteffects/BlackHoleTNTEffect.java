@@ -16,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
@@ -25,8 +26,24 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 	/**
 	 * Upper bound on how many FallingBlockEntities may orbit the black hole at once.
 	 * Without it up to 800 were spawned every 20 ticks for 350 ticks (~13600 entities).
+	 * 2000 was still 2000 physics entities: each one resolves collisions in move() and is tracked and
+	 * synced to every nearby player once per tick for up to 350 ticks. 400 keeps the orbit visually
+	 * dense (the blocks are packed into a 150x150 footprint) at a fifth of that sustained cost.
 	 */
-	private static final int MAX_LIVE_FALLING_BLOCKS = 2000;
+	private static final int MAX_LIVE_FALLING_BLOCKS = 400;
+
+	/**
+	 * Half extents of the per tick pull query. The old box was 200x200x200 = ~13^3 = 2197 entity
+	 * sections walked every tick for 350 consecutive ticks (~769000 section visits per detonation).
+	 * The falling blocks are only ever spawned within +-75 horizontally and the pull is negligible
+	 * past ~50 blocks, while the 100 block y extent usually spanned most of the world height for
+	 * nothing. 160x96x160 is ~10*6*10 = 600 sections, a 3.7x cut (~210000 section visits).
+	 */
+	private static final double PULL_RANGE_XZ = 80D;
+	private static final double PULL_RANGE_Y = 48D;
+
+	/** DustParticleOptions is immutable; this used to be allocated 150 times a tick, 52500 per detonation. */
+	private static final DustParticleOptions BLACK_DUST = new DustParticleOptions(0x000000, 0.75f);
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
@@ -41,9 +58,9 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 		// (the client discards spawned entities and its delta movements get overwritten by the
 		// server sync anyway), so the whole block is guarded once.
 		if(ent.getTNTFuse() < 350 && ent.getTNTFuse() > 0 && ent.getLevel() instanceof ServerLevel sLevel) {
-			AABB range = new AABB(ent.x() - 100, ent.y() - 100, ent.z() - 100, ent.x() + 100, ent.y() + 100, ent.z() + 100);
+			AABB range = new AABB(ent.x() - PULL_RANGE_XZ, ent.y() - PULL_RANGE_Y, ent.z() - PULL_RANGE_XZ, ent.x() + PULL_RANGE_XZ, ent.y() + PULL_RANGE_Y, ent.z() + PULL_RANGE_XZ);
 
-			// One pass over the ~2197 entity sections instead of two identical ones.
+			// One pass over the ~600 entity sections instead of two identical ones over ~2197.
 			int liveBlocks = 0;
 			for(Entity target : sLevel.getEntities((Entity)ent, range)) {
 				if(target instanceof FallingBlockEntity block) {
@@ -126,6 +143,10 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() < 350) {
+			final Level level = ent.getLevel();
+			final double cx = ent.x();
+			final double cy = ent.y() + 0.5D;
+			final double cz = ent.z();
 			int amount = 150;
 			double phi = Math.PI * (3D - Math.sqrt(5D));
 			for(int i = 0; i < amount; i++) {
@@ -137,7 +158,7 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 				double x = Math.cos(theta) * radius;
 				double z = Math.sin(theta) * radius;
 
-				ent.getLevel().addParticle(new DustParticleOptions(0x000000, 0.75f), ent.x() + x * 2, ent.y() + 0.5D + y * 2, ent.z() + z * 2, 0, 0, 0);
+				level.addParticle(BLACK_DUST, cx + x * 2, cy + y * 2, cz + z * 2, 0, 0, 0);
 			}
 		}
 	}
