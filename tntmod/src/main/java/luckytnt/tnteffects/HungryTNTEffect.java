@@ -4,8 +4,8 @@ import java.util.List;
 
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
-import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
+import luckytntlib.util.tnteffects.TNTXStrengthEffect.SectionSkippingExplosion;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerLevel;
@@ -91,10 +91,13 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 		float yStrength = 1.3f - ((0.3f / 20f) * amount);
 		float resistanceImpact = 1f - ((0.833f / 20f) * amount);
 		float knockback = 5f + ((10f / 20f) * amount);
-		
-		ImprovedExplosion explosion = new ImprovedExplosion(ent.getLevel(), (Entity)ent, ent.getPos(), Mth.floor((double)size));
+
+		//969 ms of the 981 ms this TNT costs is the r=80..160 ray walk. SectionSkippingExplosion walks the
+		//same rays but jumps over all-air chunk sections and over the sky above a chunk's WORLD_SURFACE.
+		//The affected positions are never read back, so saveBlockPos is off.
+		SectionSkippingExplosion explosion = new SectionSkippingExplosion(ent.getLevel(), (Entity)ent, ent.getPos(), Mth.floor((double)size));
 		explosion.doEntityExplosion(knockback, true);
-		explosion.doBlockExplosion(1f, yStrength, resistanceImpact, size >= 110f ? 0.05f : 1f, false, size >= 110f ? true : false);
+		explosion.doBlockExplosion(1f, yStrength, resistanceImpact, size >= 110f ? 0.05f : 1f, false, size >= 110f ? true : false, false);
 	}
 	
 	@Override
