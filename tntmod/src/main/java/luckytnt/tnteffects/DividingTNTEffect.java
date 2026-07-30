@@ -1,7 +1,5 @@
 package luckytnt.tnteffects;
 
-import java.util.Random;
-
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
 import luckytntlib.entity.PrimedLTNT;
@@ -44,7 +42,7 @@ public class DividingTNTEffect extends PrimedTNTEffect{
 							projectile.setPos(entity.getPos().add(offX, offY, offZ));
 							projectile.setOwner(entity.owner() instanceof LivingEntity ? (LivingEntity)entity.owner() : null);
 							CompoundTag tag = projectile.getPersistentData();
-							tag.putInt("maxLevel", new Random().nextInt(5));
+							tag.putInt("maxLevel", entity.getLevel().getRandom().nextInt(5));
 							tag.putInt("level", entity.getPersistentData().getIntOr("level", 0) + 1);
 							tag.putDouble("x", entity.x());
 							tag.putDouble("z", entity.z());

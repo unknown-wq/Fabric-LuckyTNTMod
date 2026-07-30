@@ -1,7 +1,6 @@
-package luckytnt.tnteffects; 
+package luckytnt.tnteffects;
 
 import net.minecraft.server.level.ServerLevel;
-import java.util.Random;
 
 import org.joml.Vector3f;
 
@@ -25,14 +24,22 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 public class PlantationTNTEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 41, new IForEachBlockExplosionEffect() {
-			
+		Level level = ent.getLevel();
+		if(!(level instanceof ServerLevel sLevel)) {
+			return;
+		}
+		final ImprovedExplosion dummy = ImprovedExplosion.dummyExplosion(level);
+		final BlockState air = Blocks.AIR.defaultBlockState();
+		ExplosionHelper.doSphericalExplosion(level, ent.getPos(), 41, new IForEachBlockExplosionEffect() {
+
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				Block block = state.getBlock();
@@ -41,32 +48,38 @@ public class PlantationTNTEffect extends PrimedTNTEffect {
 					|| state.is(BlockTags.LEAVES) || Materials.isPlant(state) || state.is(BlockTags.SNOW)
 					|| Materials.isWood(state)) && !(block instanceof GrassBlock) && !(block instanceof MyceliumBlock))
 					{
-						block.wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(level));
-						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+						block.wasExploded(sLevel, pos, dummy);
+						level.setBlock(pos, air, 3);
 					}
 				}
 			}
 		});
 
-		Level level = ent.getLevel();
-		ServerLevel sLevel = (ServerLevel)level;
+		final BlockState grass = Blocks.GRASS_BLOCK.defaultBlockState();
 		int baseX = Mth.floor(ent.x());
 		int baseY = Mth.floor(ent.y());
 		int baseZ = Mth.floor(ent.z());
+		BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+		BlockPos.MutableBlockPos mutableUp = new BlockPos.MutableBlockPos();
 
 		for(int offX = -42; offX <= 42; offX++) {
 			int dx2 = offX * offX;
 			if(dx2 > 1764) {
 				continue;
 			}
+			int posX = baseX + offX;
 			for(int offZ = -42; offZ <= 42; offZ++) {
 				if(dx2 + offZ * offZ > 1764) {
 					continue;
 				}
+				int posZ = baseZ + offZ;
+				if(!level.hasChunk(posX >> 4, posZ >> 4)) {
+					continue;
+				}
 				int y = LevelEvents.getTopBlock(level, ent.x() + offX, ent.z() + offZ, true);
-				BlockPos pos = new BlockPos(baseX + offX, y, baseZ + offZ);
-				level.getBlockState(pos).getBlock().wasExploded(sLevel, pos, ImprovedExplosion.dummyExplosion(level));
-				level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
+				BlockPos pos = mutable.set(posX, y, posZ).immutable();
+				level.getBlockState(pos).getBlock().wasExploded(sLevel, pos, dummy);
+				level.setBlock(pos, grass, 3);
 			}
 		}
 
@@ -76,29 +89,40 @@ public class PlantationTNTEffect extends PrimedTNTEffect {
 		// Columns outside r=41 fell through every distance band without ever placing anything, so they
 		// are skipped outright; and the surface scan now stops at the first block found instead of
 		// running all 384 y levels with the flag merely disabling the body.
+		// It also *starts* at the game's own WORLD_SURFACE heightmap instead of at ent.y() + 320, which
+		// is ~320 blocks above the terrain and usually above the world ceiling: the loop body can only
+		// ever fire on a block with a full collision shape, and every such block is by definition at or
+		// below the highest non air block of its column, so the skipped prefix was guaranteed air.
+		// 5 281 columns x 384 steps = 2.03M getBlockState -> ~5 281 x a handful = ~20k.
 		for(int offX = -41; offX <= 41; offX++) {
 			int dx2 = offX * offX;
 			if(dx2 > 1681) {
 				continue;
 			}
+			int posX = baseX + offX;
 			for(int offZ = -41; offZ <= 41; offZ++) {
 				int d2 = dx2 + offZ * offZ;
 				if(d2 > 1681) {
 					continue;
 				}
-				double distance = Math.sqrt(d2);
-				int posX = baseX + offX;
 				int posZ = baseZ + offZ;
-				BlockState stateUp = level.getBlockState(new BlockPos(posX, baseY + 321, posZ));
-				for(int offY = 320; offY > -64; offY--) {
-					BlockPos pos = new BlockPos(posX, baseY + offY, posZ);
-					BlockState state = level.getBlockState(pos);
-					BlockPos posUp = pos.above();
+				if(!level.hasChunk(posX >> 4, posZ >> 4)) {
+					continue;
+				}
+				double distance = Math.sqrt(d2);
+				int startOff = Math.min(320, level.getHeight(Heightmap.Types.WORLD_SURFACE, posX, posZ) - 1 - baseY);
+				BlockState stateUp = level.getBlockState(mutable.set(posX, baseY + startOff + 1, posZ));
+				for(int offY = startOff; offY > -64; offY--) {
+					int posY = baseY + offY;
+					mutable.set(posX, posY, posZ);
+					BlockState state = level.getBlockState(mutable);
+					mutableUp.set(posX, posY + 1, posZ);
 					BlockState stateUpper = stateUp;
 					stateUp = state;
 
 					if(state.getBlock().getExplosionResistance() < 200 && stateUpper.getBlock().getExplosionResistance() < 200) {
-						if(state.isCollisionShapeFullBlock(level, pos) && !stateUpper.isCollisionShapeFullBlock(level, posUp) && !state.is(BlockTags.LEAVES) && !stateUpper.is(Blocks.WATER) && !stateUpper.is(Blocks.LAVA)) {
+						if(state.isCollisionShapeFullBlock(level, mutable) && !stateUpper.isCollisionShapeFullBlock(level, mutableUp) && !state.is(BlockTags.LEAVES) && !stateUpper.is(Blocks.WATER) && !stateUpper.is(Blocks.LAVA)) {
+							BlockPos pos = mutable.immutable();
 							if(distance > 40 && distance <= 41) {
 								placeCropsAndFarmland(pos, true, ent);
 							} else if(distance > 39 && distance <= 40) {
@@ -134,40 +158,44 @@ public class PlantationTNTEffect extends PrimedTNTEffect {
 	public void spawnParticles(IExplosiveEntity ent) {
 		ent.getLevel().addParticle(new DustParticleOptions(((int)(1f*255)<<16)|((int)(0.5f*255)<<8)|(int)(0.1f*255), 1f), ent.x(), ent.y() + 1f, ent.z(), 0, 0, 0);
 	}
-	
+
 	@Override
 	public Block getBlock() {
 		return BlockRegistry.PLANTATION_TNT.get();
 	}
-	
+
 	@Override
 	public int getDefaultFuse(IExplosiveEntity ent) {
 		return 160;
 	}
-	
+
 	public void placeCropsAndFarmland(BlockPos pos, boolean melonOrPumpkin, IExplosiveEntity ent) {
 		Level level = ent.getLevel();
 		ServerLevel sLevel = (ServerLevel)level;
+		// up to two `new Random()` per crop (each hitting the global seed uniquifier CAS) replaced by the
+		// level's own RandomSource; identical distributions, thousands of allocations fewer per detonation
+		RandomSource random = level.getRandom();
+		ImprovedExplosion dummy = ImprovedExplosion.dummyExplosion(level);
 		BlockState crop;
 		if(!melonOrPumpkin) {
-			level.getBlockState(pos).getBlock().wasExploded(sLevel, pos, ImprovedExplosion.dummyExplosion(level));
+			level.getBlockState(pos).getBlock().wasExploded(sLevel, pos, dummy);
 			level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-			int rand = new Random().nextInt(4);
+			int rand = random.nextInt(4);
 			crop = Blocks.POTATOES.defaultBlockState();
 			switch(rand) {
-				case 0: crop = Blocks.CARROTS.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
-				case 1: crop = Blocks.POTATOES.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
-				case 2: crop = Blocks.WHEAT.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
-				case 3: crop = Blocks.BEETROOTS.defaultBlockState().setValue(BlockStateProperties.AGE_3, new Random().nextInt(4)); break;
+				case 0: crop = Blocks.CARROTS.defaultBlockState().setValue(BlockStateProperties.AGE_7, random.nextInt(8)); break;
+				case 1: crop = Blocks.POTATOES.defaultBlockState().setValue(BlockStateProperties.AGE_7, random.nextInt(8)); break;
+				case 2: crop = Blocks.WHEAT.defaultBlockState().setValue(BlockStateProperties.AGE_7, random.nextInt(8)); break;
+				case 3: crop = Blocks.BEETROOTS.defaultBlockState().setValue(BlockStateProperties.AGE_3, random.nextInt(4)); break;
 			}
 		} else {
-			level.getBlockState(pos).getBlock().wasExploded(sLevel, pos, ImprovedExplosion.dummyExplosion(level));
+			level.getBlockState(pos).getBlock().wasExploded(sLevel, pos, dummy);
 			level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-			int rand = Math.random() > 0.5 ? 0 : 1;
+			int rand = random.nextInt(2);
 			crop = Blocks.POTATOES.defaultBlockState();
 			switch(rand) {
-				case 0: crop = Blocks.PUMPKIN_STEM.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
-				case 1: crop = Blocks.MELON_STEM.defaultBlockState().setValue(BlockStateProperties.AGE_7, new Random().nextInt(8)); break;
+				case 0: crop = Blocks.PUMPKIN_STEM.defaultBlockState().setValue(BlockStateProperties.AGE_7, random.nextInt(8)); break;
+				case 1: crop = Blocks.MELON_STEM.defaultBlockState().setValue(BlockStateProperties.AGE_7, random.nextInt(8)); break;
 			}
 		}
 		level.setBlock(pos, Blocks.FARMLAND.defaultBlockState().setValue(FarmlandBlock.MOISTURE, 7), 3);
@@ -187,6 +215,7 @@ public class PlantationTNTEffect extends PrimedTNTEffect {
 	public void placeWater(BlockPos pos, IExplosiveEntity ent) {
 		Level level = ent.getLevel();
 		ServerLevel sLevel = (ServerLevel)level;
+		ImprovedExplosion dummy = ImprovedExplosion.dummyExplosion(level);
 		BlockPos north = pos.north();
 		BlockPos south = pos.south();
 		BlockPos east = pos.east();
@@ -218,13 +247,13 @@ public class PlantationTNTEffect extends PrimedTNTEffect {
 			&& (eastState.isCollisionShapeFullBlock(level, east) || eastState.getBlock() instanceof FarmlandBlock || eastState.getBlock() instanceof LiquidBlock)
 			&& (westState.isCollisionShapeFullBlock(level, west) || westState.getBlock() instanceof FarmlandBlock || westState.getBlock() instanceof LiquidBlock))
 		{
-			level.getBlockState(pos).getBlock().wasExploded(sLevel, pos, ImprovedExplosion.dummyExplosion(level));
+			level.getBlockState(pos).getBlock().wasExploded(sLevel, pos, dummy);
 			level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 			level.setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
 			BlockPos below = pos.below();
 			BlockState belowState = level.getBlockState(below);
 			if(!belowState.isCollisionShapeFullBlock(level, below)) {
-				belowState.getBlock().wasExploded(sLevel, below, ImprovedExplosion.dummyExplosion(level));
+				belowState.getBlock().wasExploded(sLevel, below, dummy);
 				level.setBlock(below, Blocks.AIR.defaultBlockState(), 3);
 				level.setBlock(below, Blocks.DIRT.defaultBlockState(), 3);
 			}

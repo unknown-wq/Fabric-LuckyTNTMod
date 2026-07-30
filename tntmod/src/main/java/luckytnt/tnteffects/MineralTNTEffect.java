@@ -1,8 +1,6 @@
 package luckytnt.tnteffects;
 import net.minecraft.server.level.ServerLevel;
 
-import java.util.Random;
-
 import luckytnt.registry.BlockRegistry;
 import luckytnt.util.Materials;
 import luckytntlib.util.IExplosiveEntity;
@@ -19,6 +17,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 
 public class MineralTNTEffect extends PrimedTNTEffect {
@@ -50,6 +49,7 @@ public class MineralTNTEffect extends PrimedTNTEffect {
 		Level level = ent.getLevel();
 		ServerLevel sLevel = (ServerLevel)level;
 		ImprovedExplosion dummy = ImprovedExplosion.dummyExplosion(level);
+		RandomSource rng = level.getRandom();
 		BlockState air = Blocks.AIR.defaultBlockState();
 		int baseX = Mth.floor(ent.x());
 		int baseY = Mth.floor(ent.y());
@@ -109,7 +109,9 @@ public class MineralTNTEffect extends PrimedTNTEffect {
 						double randomNumber = Math.random();
 						if(randomNumber < 0.9D) {
 							Block replacement;
-							int random = new Random().nextInt(7);
+							// was `new Random().nextInt(7)` - one allocation per replaced block (~38000 in
+							// this one tick), each of which also hits the global seed uniquifier CAS
+							int random = rng.nextInt(7);
 							switch(random) {
 								case 0: replacement = Blocks.COAL_BLOCK; break;
 								case 1: replacement = Blocks.IRON_BLOCK; break;

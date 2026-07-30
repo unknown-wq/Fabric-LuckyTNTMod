@@ -1,8 +1,6 @@
 package luckytnt.tnteffects;
 
 import java.util.List;
-import java.util.Random;
-
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.LuckyTNTEntityExtension;
@@ -12,6 +10,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -21,10 +20,12 @@ public class EarthquakeTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {	
 		if(entity.getTNTFuse() == 200) {
-			double vecx = Math.random() * new Random().nextInt(11);
-			double vecz = Math.random() * new Random().nextInt(11);
-			vecx *= new Random().nextBoolean() ? 1D : -1D;
-			vecz *= new Random().nextBoolean() ? 1D : -1D;
+			// four `new Random()` allocations replaced by the level's RandomSource
+			RandomSource random = entity.getLevel().getRandom();
+			double vecx = Math.random() * random.nextInt(11);
+			double vecz = Math.random() * random.nextInt(11);
+			vecx *= random.nextBoolean() ? 1D : -1D;
+			vecz *= random.nextBoolean() ? 1D : -1D;
 			Vec3 vec = new Vec3(vecx, 0, vecz).normalize();
 			CompoundTag tag = entity.getPersistentData();
 			tag.putDouble("vecx", vec.x);

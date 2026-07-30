@@ -1,6 +1,7 @@
 package luckytnt.tnteffects.projectile;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.joml.Vector3f;
 
@@ -12,6 +13,7 @@ import luckytnt.util.NuclearBombLike;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
@@ -27,8 +29,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 public class TsarBombaBombEffect extends PrimedTNTEffect implements NuclearBombLike {
 
@@ -53,54 +57,158 @@ public class TsarBombaBombEffect extends PrimedTNTEffect implements NuclearBombL
 			living.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getOrThrow(EffectRegistry.CONTAMINATED), 3600, 0, true, true, true));
 		}
 		
-		// Only the cells actually inside the r=300 sphere are visited: the z span is derived from the
-		// remaining squared radius instead of walking the full 601x201x601 cuboid and testing afterwards.
-		Level level = entity.getLevel();
-		int baseX = Mth.floor(entity.x());
-		int baseY = Mth.floor(entity.y());
-		int baseZ = Mth.floor(entity.z());
-		BlockState nuclearWaste = BlockRegistry.NUCLEAR_WASTE.get().defaultBlockState();
-		BlockState air = Blocks.AIR.defaultBlockState();
-		for(int offX = -300; offX <= 300; offX++) {
-			int dx2 = offX * offX;
-			for(int offY = -300 / 3; offY <= 300 / 3; offY++) {
-				int remaining = 90000 - dx2 - offY * offY;
-				if(remaining < 0) {
+		// The single r=300 ball that used to do both jobs at once has been split, see the two methods below.
+		if(entity.getLevel() instanceof ServerLevel level) {
+			int baseX = Mth.floor(entity.x());
+			int baseY = Mth.floor(entity.y());
+			int baseZ = Mth.floor(entity.z());
+			spreadNuclearWaste(level, baseX, baseY, baseZ);
+			clearLeaves(level, baseX, baseY, baseZ);
+		}
+	}
+
+	/**
+	 * Covers the surface within r=150 of the blast with nuclear waste.
+	 * <p>The waste branch of the old r=300 ball was gated on {@code d2 <= 22500} and on the block below
+	 * having a sturdy upwards face, so it only ever wrote to the block sitting on top of a solid surface.
+	 * Walking the r=150 disc instead of the r=150 ball turns 4/3*pi*150^3 = 14.1M cells into
+	 * <b>70 686 columns</b>, of which the unchanged 20% roll keeps ~14 100 - a ~200x cut - and places the
+	 * waste on exactly the same "block above a sturdy face" positions.
+	 * <p>Waste is no longer placed on buried ledges (cave floors, overhangs); only the topmost placement of
+	 * each column, which is the only one that was ever visible, survives.
+	 */
+	private static void spreadNuclearWaste(ServerLevel level, int baseX, int baseY, int baseZ) {
+		final RandomSource random = level.getRandom();
+		final BlockState nuclearWaste = BlockRegistry.NUCLEAR_WASTE.get().defaultBlockState();
+		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		final BlockPos.MutableBlockPos below = new BlockPos.MutableBlockPos();
+		for(int offX = -150; offX <= 150; offX++) {
+			final int xSqr = offX * offX;
+			for(int offZ = -150; offZ <= 150; offZ++) {
+				final int xzSqr = xSqr + offZ * offZ;
+				if(xzSqr > 22500) {
 					continue;
 				}
-				int zMax = (int)Math.sqrt(remaining);
-				while((zMax + 1) * (zMax + 1) <= remaining) {
-					zMax++;
+				//the 20% roll is the cheapest of all the tests, so it runs before any chunk is touched
+				if(random.nextDouble() >= 0.2D) {
+					continue;
 				}
-				while(zMax > 0 && zMax * zMax > remaining) {
-					zMax--;
+				final int x = baseX + offX;
+				final int z = baseZ + offZ;
+				pos.set(x, baseY, z);
+				if(!level.isLoaded(pos)) {
+					continue;
 				}
-				if(zMax > 300) {
-					zMax = 300;
+				//OCEAN_FLOOR is the topmost block that blocks motion and is not a fluid, so the block right
+				//above it is the position the old traversal was looking for
+				final int y = level.getHeight(Heightmap.Types.OCEAN_FLOOR, x, z);
+				final int offY = y - baseY;
+				//the old loop clipped the ball to |offY| <= 100 on top of the d2 <= 22500 radius test
+				if(offY > 100 || offY < -100 || xzSqr + offY * offY > 22500) {
+					continue;
 				}
-				for(int offZ = -zMax; offZ <= zMax; offZ++) {
-					BlockPos pos = new BlockPos(baseX + offX, baseY + offY, baseZ + offZ);
-					BlockState state = level.getBlockState(pos);
-					if(state.getBlock().getExplosionResistance() <= 200) {
-						int d2 = dx2 + offY * offY + offZ * offZ;
-						// The cheap, pure "is this block soft enough" test moved ahead of the world read of
-						// the block below and of the RNG roll; the set of positions passing all three tests
-						// (and the 20% chance applied to each) is unchanged.
-						if(d2 <= 22500 && (state.isAir() || state.getDestroySpeed(level, pos) <= 0.2f)) {
-							BlockPos below = pos.below();
-							if(level.getBlockState(below).isFaceSturdy(level, below, Direction.UP) && Math.random() < 0.2D) {
-								level.setBlock(pos, nuclearWaste, 3);
-							}
+				pos.set(x, y, z);
+				final BlockState state = level.getBlockState(pos);
+				if(state.getBlock().getExplosionResistance() > 200 || !(state.isAir() || state.getDestroySpeed(level, pos) <= 0.2f)) {
+					continue;
+				}
+				below.set(x, y - 1, z);
+				if(level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)) {
+					//the support below has just been verified and nothing sits on the replaced block, so the
+					//neighbour cascade of flag 3 has nothing to tell anybody
+					level.setBlock(pos.immutable(), nuclearWaste, Block.UPDATE_CLIENTS);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Burns away every leaf block in the r=300, |y| &lt;= 100 blast region.
+	 * <p>This is the only reason the old traversal reached out to r=300 at all, and it made it read every
+	 * one of the 54.7M cells of that region through {@code Level.getBlockState} - which resolves its chunk
+	 * with load-or-generate, so the 600x600 footprint pulled ~1521 chunks to ChunkStatus.FULL synchronously.
+	 * <p>Leaves are extremely clustered, so the search runs per chunk section instead: chunks that are not
+	 * already loaded are skipped (nothing is ever generated), and a section that contains no leaves at all is
+	 * rejected by a single {@code LevelChunkSection.maybeHas} palette scan instead of 4096 block reads. Of the
+	 * 1521 x 24 = ~36 500 sections of the region only the handful that actually hold leaves - in a forest
+	 * typically one or two per chunk near the surface - are walked, and those are walked through the section's
+	 * own storage, without a chunk lookup per block. <b>54.7M level block reads -&gt; ~36 500 palette probes
+	 * plus a few 100k section local reads.</b>
+	 */
+	private static void clearLeaves(ServerLevel level, int baseX, int baseY, int baseZ) {
+		final Predicate<BlockState> isLeaves = state -> state.is(BlockTags.LEAVES);
+		final BlockState air = Blocks.AIR.defaultBlockState();
+		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		final int minY = Math.max(level.getMinY(), baseY - 100);
+		final int maxY = Math.min(level.getMaxY(), baseY + 100);
+		final int minSectionY = level.getMinSectionY();
+		final int minChunkX = (baseX - 300) >> 4;
+		final int maxChunkX = (baseX + 300) >> 4;
+		final int minChunkZ = (baseZ - 300) >> 4;
+		final int maxChunkZ = (baseZ + 300) >> 4;
+		for(int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+			final int chunkMinX = chunkX << 4;
+			//distance from the blast to the nearest x of this chunk, so corner chunks are rejected wholesale
+			final int nearX = Math.max(0, Math.max(chunkMinX - baseX, baseX - (chunkMinX + 15)));
+			final int remainingX = 90000 - nearX * nearX;
+			if(remainingX < 0) {
+				continue;
+			}
+			for(int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+				final int chunkMinZ = chunkZ << 4;
+				final int nearZ = Math.max(0, Math.max(chunkMinZ - baseZ, baseZ - (chunkMinZ + 15)));
+				if(nearZ * nearZ > remainingX) {
+					continue;
+				}
+				pos.set(chunkMinX, baseY, chunkMinZ);
+				if(!level.isLoaded(pos)) {
+					continue;
+				}
+				final LevelChunk chunk = level.getChunk(chunkX, chunkZ);
+				final LevelChunkSection[] sections = chunk.getSections();
+				for(int index = 0; index < sections.length; index++) {
+					final int sectionMinY = (minSectionY + index) << 4;
+					if(sectionMinY > maxY || sectionMinY + 15 < minY) {
+						continue;
+					}
+					final LevelChunkSection section = sections[index];
+					if(section.hasOnlyAir() || !section.maybeHas(isLeaves)) {
+						continue;
+					}
+					for(int localY = 0; localY < 16; localY++) {
+						final int y = sectionMinY + localY;
+						if(y < minY || y > maxY) {
+							continue;
 						}
-						if(state.is(BlockTags.LEAVES)) {
-							level.setBlock(pos, air, 3);
+						final int offY = y - baseY;
+						final int remainingY = 90000 - offY * offY;
+						for(int localX = 0; localX < 16; localX++) {
+							final int x = chunkMinX + localX;
+							final int offX = x - baseX;
+							final int remaining = remainingY - offX * offX;
+							if(remaining < 0) {
+								continue;
+							}
+							for(int localZ = 0; localZ < 16; localZ++) {
+								final int offZ = chunkMinZ + localZ - baseZ;
+								if(offZ * offZ > remaining) {
+									continue;
+								}
+								final BlockState state = section.getBlockState(localX, localY, localZ);
+								if(state.is(BlockTags.LEAVES) && state.getBlock().getExplosionResistance() <= 200) {
+									pos.set(x, y, chunkMinZ + localZ);
+									//a bulk leaf clear: the shape updates that flag 2 still performs are what
+									//pops vines and similar attachments, the neighbour cascade is not needed
+									level.setBlock(pos.immutable(), air, Block.UPDATE_CLIENTS);
+								}
+							}
 						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	@Override
 	public void displayMushroomCloud(IExplosiveEntity ent) {
 		for(int count = 0; count < 1500; count++) {

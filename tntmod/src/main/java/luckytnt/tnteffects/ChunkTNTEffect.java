@@ -7,6 +7,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityTypes;
 
 public class ChunkTNTEffect extends CubicTNTEffect {
@@ -17,10 +18,11 @@ public class ChunkTNTEffect extends CubicTNTEffect {
 	
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
-		if(ent.getTNTFuse() == 160) {
-			Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, ent.getLevel());
+		// explosionTick runs on both logical sides and addFreshEntity is a no-op on the client
+		if(ent.getTNTFuse() == 160 && ent.getLevel() instanceof ServerLevel level) {
+			Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, level);
 			lighting.setPos(ent.getPos());
-			ent.getLevel().addFreshEntity(lighting);
+			level.addFreshEntity(lighting);
 		}
 	}
 

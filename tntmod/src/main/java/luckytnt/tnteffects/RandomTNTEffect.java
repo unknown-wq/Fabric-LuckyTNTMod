@@ -1,7 +1,5 @@
 package luckytnt.tnteffects;
 
-import java.util.Random;
-
 import luckytnt.registry.BlockRegistry;
 import luckytntlib.util.IExplosiveEntity;
 import luckytntlib.util.explosions.ImprovedExplosion;
@@ -19,7 +17,7 @@ public class RandomTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), new Random().nextInt(maxStrength + 1));
+		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos(), entity.getLevel().getRandom().nextInt(maxStrength + 1));
 		explosion.doEntityExplosion(1.25f, true);
 		explosion.doBlockExplosion();
 	}

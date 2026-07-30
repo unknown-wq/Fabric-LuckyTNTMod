@@ -148,17 +148,41 @@ public class ExplosionHelper {
 		final double radiusSqr = (double)radius * radius * 1.000001d + 1d;
 		//culling is only valid if every summand of the distance is positive
 		final boolean cull = scaling.x > 0 && scaling.y > 0 && scaling.z > 0;
+		//offZ only ever takes the values zStart + n for a whole n, so the span of the inner loop can be moved
+		//without changing which positions are visited
+		final double zStart = -radius * scaling.z;
+		final double zEnd = radius * scaling.z;
 		for(double offX = -radius * scaling.x; offX <= radius * scaling.x; offX++) {
 			final double xTerm = offX * offX / scaling.x;
 			if(cull && xTerm > radiusSqr) {
 				continue;
 			}
 			for(double offY = radius * scaling.y; offY >= -radius * scaling.y; offY--) {
-				if(cull && xTerm + offY * offY / scaling.y > radiusSqr) {
+				final double xyTerm = xTerm + offY * offY / scaling.y;
+				if(cull && xyTerm > radiusSqr) {
 					continue;
 				}
-				for(double offZ = -radius * scaling.z; offZ <= radius * scaling.z; offZ++) {
-					double distance = Math.sqrt(offX * offX / scaling.x + offY * offY / scaling.y + offZ * offZ / scaling.z);
+				//the x and y loops were culled but the z loop always ran its full 2 * radius * scaling.z span,
+				//paying three divisions and a square root for every cell outside the ellipsoid.
+				//A cell can only be accepted while offZ * offZ / scaling.z <= radiusSqr - xyTerm, so the span is
+				//derived in closed form instead. At radius 250 with a scaling of (1, 2/3, 1) that turns
+				//80.3 M inner iterations into the 53.4 M that are actually inside the ellipsoid.
+				//The tolerance already contained in radiusSqr, the rounding down of the start and the
+				//unchanged individual test below guarantee that no accepted cell is ever culled.
+				double zFrom = zStart;
+				double zTo = zEnd;
+				if(cull) {
+					final double zLimit = Math.sqrt(Math.max(radiusSqr - xyTerm, 0d) * scaling.z);
+					final double steps = Math.floor(-zLimit - zStart);
+					if(steps > 0d) {
+						zFrom = zStart + steps;
+					}
+					if(zLimit < zTo) {
+						zTo = zLimit;
+					}
+				}
+				for(double offZ = zFrom; offZ <= zTo; offZ++) {
+					double distance = Math.sqrt(xyTerm + offZ * offZ / scaling.z);
 					if(distance <= radius) {
 						BlockPos pos = new BlockPos(cx + (int)offX, cy + (int)offY, cz + (int)offZ);
 						BlockState state = level.getBlockState(pos);
@@ -180,15 +204,23 @@ public class ExplosionHelper {
 		final int cx = Mth.floor(position.x);
 		final int cy = Mth.floor(position.y);
 		final int cz = Mth.floor(position.z);
+		//every cell of the cube is handed to the blockEffect, so unlike the spherical traversals there is
+		//nothing that could be culled here. The distance however only depends on the absolute value of the
+		//z offset, so a column of 2 * radius + 1 cells needs radius + 1 square roots instead of one per cell
+		final double[] distances = new double[Math.max(radius, 0) + 1];
 		for(int offX = -radius; offX <= radius; offX++) {
 			final long xSqr = (long)offX * offX;
+			final int x = cx + offX;
 			for(int offY = -radius; offY <= radius; offY++) {
 				final long xySqr = xSqr + (long)offY * offY;
+				final int y = cy + offY;
+				for(int offZ = 0; offZ <= radius; offZ++) {
+					distances[offZ] = Math.sqrt(xySqr + (double)offZ * offZ);
+				}
 				for(int offZ = -radius; offZ <= radius; offZ++) {
-					double distance = Math.sqrt(xySqr + (double)offZ * offZ);
-					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
+					BlockPos pos = new BlockPos(x, y, cz + offZ);
 					BlockState state = level.getBlockState(pos);
-					blockEffect.doBlockExplosion(level, pos, state, distance);
+					blockEffect.doBlockExplosion(level, pos, state, distances[Math.abs(offZ)]);
 				}
 			}
 		}
@@ -205,15 +237,23 @@ public class ExplosionHelper {
 		final int cx = Mth.floor(position.x);
 		final int cy = Mth.floor(position.y);
 		final int cz = Mth.floor(position.z);
+		final int radiusZ = (int)radii.z;
+		//see doCubicalExplosion: nothing can be culled, but the square root only depends on the absolute
+		//value of the z offset and is therefore computed once per half column
+		final double[] distances = new double[Math.max(radiusZ, 0) + 1];
 		for(int offX = (int)-radii.x; offX <= (int)radii.x; offX++) {
 			final long xSqr = (long)offX * offX;
+			final int x = cx + offX;
 			for(int offY = (int)-radii.y; offY <= (int)radii.y; offY++) {
 				final long xySqr = xSqr + (long)offY * offY;
-				for(int offZ = (int)-radii.z; offZ <= (int)radii.z; offZ++) {
-					double distance = Math.sqrt(xySqr + (double)offZ * offZ);
-					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
+				final int y = cy + offY;
+				for(int offZ = 0; offZ <= radiusZ; offZ++) {
+					distances[offZ] = Math.sqrt(xySqr + (double)offZ * offZ);
+				}
+				for(int offZ = -radiusZ; offZ <= radiusZ; offZ++) {
+					BlockPos pos = new BlockPos(x, y, cz + offZ);
 					BlockState state = level.getBlockState(pos);
-					blockEffect.doBlockExplosion(level, pos, state, distance);
+					blockEffect.doBlockExplosion(level, pos, state, distances[Math.abs(offZ)]);
 				}
 			}
 		}
@@ -264,24 +304,41 @@ public class ExplosionHelper {
 		final int cy = Mth.floor(position.y);
 		final int cz = Mth.floor(position.z);
 		final long radiusSqr = (long)radius * radius;
+		//see doTopBlockExplosionForAll for the reasoning behind the two mutable positions, the carried
+		//block state and the guard in front of the DirectionalPlaceContext
+		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		final BlockPos.MutableBlockPos below = new BlockPos.MutableBlockPos();
 		for(int offX = -radius; offX <= radius; offX++) {
 			final long xSqr = (long)offX * offX;
+			final int x = cx + offX;
 			for(int offZ = -radius; offZ <= radius; offZ++) {
 				final long xzSqr = xSqr + (long)offZ * offZ;
 				if(xzSqr > radiusSqr) {
 					continue;
 				}
+				final int z = cz + offZ;
 				final int yMax = floorSqrt(radiusSqr - xzSqr);
+				BlockState state = null;
 				topToBottom: for(int offY = yMax; offY >= -yMax; offY--) {
-					double distance = Math.sqrt(xzSqr + (double)offY * offY);
-					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
-					BlockState state = level.getBlockState(pos);
-					BlockPos below = pos.below();
-					BlockState belowState = level.getBlockState(below);
-					if((belowState.isCollisionShapeFullBlock(level, below) || belowState.isFaceSturdy(level, below, Direction.UP)) && (state.isAir() || (!state.isCollisionShapeFullBlock(level, pos) && state.getBlock().getExplosionResistance() == 0) || state.is(BlockTags.FLOWERS) || state.canBeReplaced(new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP)))) {
-						blockEffect.doBlockExplosion(level, pos, state, distance);
-						break topToBottom;
+					final int y = cy + offY;
+					pos.set(x, y, z);
+					if(state == null) {
+						state = level.getBlockState(pos);
 					}
+					below.set(x, y - 1, z);
+					final BlockState belowState = level.getBlockState(below);
+					if(belowState.isCollisionShapeFullBlock(level, below) || belowState.isFaceSturdy(level, below, Direction.UP)) {
+						final boolean noFullCollision = !state.isCollisionShapeFullBlock(level, pos);
+						if(state.isAir()
+								|| (noFullCollision && state.getBlock().getExplosionResistance() == 0)
+								|| state.is(BlockTags.FLOWERS)
+								|| ((noFullCollision || state.canBeReplaced()) && state.canBeReplaced(new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP)))) {
+							//the effect may keep the position, so only the accepted one becomes a real BlockPos
+							blockEffect.doBlockExplosion(level, pos.immutable(), state, Math.sqrt(xzSqr + (double)offY * offY));
+							break topToBottom;
+						}
+					}
+					state = belowState;
 				}
 			}
 		}
@@ -302,25 +359,41 @@ public class ExplosionHelper {
 		final int cy = Mth.floor(position.y);
 		final int cz = Mth.floor(position.z);
 		final long radiusSqr = (long)radius * radius;
+		//two reused mutable positions instead of two BlockPos per visited cell. The state read one block
+		//further down is carried into the next iteration, but only while the condition was not consulted:
+		//a condition is allowed to edit the world (NetherGroveTNTEffect does), so after every call to it the
+		//state is read again. Above the ground, where belowState is air and the condition is skipped, this
+		//halves the block state lookups of the column walk.
+		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		final BlockPos.MutableBlockPos below = new BlockPos.MutableBlockPos();
 		for(int offX = -radius; offX <= radius; offX++) {
 			final long xSqr = (long)offX * offX;
+			final int x = cx + offX;
 			for(int offZ = -radius; offZ <= radius; offZ++) {
 				final long xzSqr = xSqr + (long)offZ * offZ;
 				if(xzSqr > radiusSqr) {
 					continue;
 				}
+				final int z = cz + offZ;
 				final int yMax = floorSqrt(radiusSqr - xzSqr);
+				BlockState state = null;
 				topToBottom: for(int offY = yMax; offY >= -yMax; offY--) {
-					double distance = Math.sqrt(xzSqr + (double)offY * offY);
-					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
-					BlockState state = level.getBlockState(pos);
-					BlockPos below = pos.below();
-					BlockState belowState = level.getBlockState(below);
+					final int y = cy + offY;
+					pos.set(x, y, z);
+					if(state == null) {
+						state = level.getBlockState(pos);
+					}
+					below.set(x, y - 1, z);
+					final BlockState belowState = level.getBlockState(below);
 					if(!belowState.isAir()) {
-						if(condition.conditionMet(level, below, belowState, Math.sqrt(xzSqr + (double)(offY - 1) * (offY - 1)))) {
-							blockEffect.doBlockExplosion(level, pos, state, distance);
+						//the condition may keep the position, so it gets a real BlockPos
+						if(condition.conditionMet(level, below.immutable(), belowState, Math.sqrt(xzSqr + (double)(offY - 1) * (offY - 1)))) {
+							blockEffect.doBlockExplosion(level, pos.immutable(), state, Math.sqrt(xzSqr + (double)offY * offY));
 							break topToBottom;
 						}
+						state = null;
+					} else {
+						state = belowState;
 					}
 				}
 			}
@@ -340,23 +413,51 @@ public class ExplosionHelper {
 		final int cy = Mth.floor(position.y);
 		final int cz = Mth.floor(position.z);
 		final long radiusSqr = (long)radius * radius;
+		//This traversal visits the whole volume of the sphere and used to pay, per visited cell, two BlockPos
+		//(pos and pos.below()), two block state lookups and - for every solid block sitting on another solid
+		//block, which is essentially all underground rock - a DirectionalPlaceContext plus the BlockHitResult
+		//and Vec3 it allocates, only for canBeReplaced to return false.
+		//Now two mutable positions are reused, the state read one block further down is carried into the next
+		//iteration (one lookup per cell instead of two) and the context is only built for a state that can
+		//possibly be replaceable: a block whose collision shape is a full block is never replaceable unless it
+		//carries the replaceable property.
+		//At radius 150 (WinterTNTEffect) that is 14.1 M cells, so ~28 M state reads and ~10 M contexts before
+		//and ~14 M state reads and next to no contexts after. Only the far smaller set of accepted positions
+		//is still turned into a real BlockPos, because the effect may keep it.
+		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		final BlockPos.MutableBlockPos below = new BlockPos.MutableBlockPos();
 		for(int offX = -radius; offX <= radius; offX++) {
 			final long xSqr = (long)offX * offX;
+			final int x = cx + offX;
 			for(int offZ = -radius; offZ <= radius; offZ++) {
 				final long xzSqr = xSqr + (long)offZ * offZ;
 				if(xzSqr > radiusSqr) {
 					continue;
 				}
+				final int z = cz + offZ;
 				final int yMax = floorSqrt(radiusSqr - xzSqr);
+				BlockState state = null;
 				for(int offY = yMax; offY >= -yMax; offY--) {
-					double distance = Math.sqrt(xzSqr + (double)offY * offY);
-					BlockPos pos = new BlockPos(cx + offX, cy + offY, cz + offZ);
-					BlockState state = level.getBlockState(pos);
-					BlockPos below = pos.below();
-					BlockState belowState = level.getBlockState(below);
-					if((belowState.isCollisionShapeFullBlock(level, below) || belowState.isFaceSturdy(level, below, Direction.UP)) && (state.isAir() || (!state.isCollisionShapeFullBlock(level, pos) && state.getBlock().getExplosionResistance() == 0) || state.is(BlockTags.FLOWERS) || state.canBeReplaced(new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP)))) {
-						blockEffect.doBlockExplosion(level, pos, state, distance);
+					final int y = cy + offY;
+					pos.set(x, y, z);
+					if(state == null) {
+						state = level.getBlockState(pos);
 					}
+					below.set(x, y - 1, z);
+					final BlockState belowState = level.getBlockState(below);
+					if(belowState.isCollisionShapeFullBlock(level, below) || belowState.isFaceSturdy(level, below, Direction.UP)) {
+						final boolean noFullCollision = !state.isCollisionShapeFullBlock(level, pos);
+						if(state.isAir()
+								|| (noFullCollision && state.getBlock().getExplosionResistance() == 0)
+								|| state.is(BlockTags.FLOWERS)
+								|| ((noFullCollision || state.canBeReplaced()) && state.canBeReplaced(new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP)))) {
+							blockEffect.doBlockExplosion(level, pos.immutable(), state, Math.sqrt(xzSqr + (double)offY * offY));
+							//the effect may have edited this position, so the state below is read again instead of being reused
+							state = null;
+							continue;
+						}
+					}
+					state = belowState;
 				}
 			}
 		}

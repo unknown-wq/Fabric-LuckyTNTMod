@@ -2,8 +2,6 @@ package luckytnt.tnteffects;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 
-import java.util.Random;
-
 import org.jetbrains.annotations.Nullable;
 
 import luckytnt.registry.BlockRegistry;
@@ -24,6 +22,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 
 public class NewYearsFireworkEffect extends PrimedTNTEffect {
@@ -44,7 +43,7 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 				((Entity)ent).setYRot(((Entity)ent).getYRot() + 36);
 			}
 		} else {
-			Block block = getRandomConcrete();
+			Block block = getRandomConcrete(ent.getLevel().getRandom());
 			Shape shape = Shape.byName(ent.getPersistentData().getStringOr("shape", ""));
 			switch(shape) {
 				case SPHERE: 	if(Math.random() < 0.75) {
@@ -75,7 +74,8 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 		((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 0.8f, ((Entity)ent).getDeltaMovement().z);
 		if(ent.getPersistentData().getStringOr("shape", "").equals("")) {
 			String string = "";
-			int rand = new Random().nextInt(5);
+			// was `new Random()`; the level already owns a RandomSource (AnimalKingdomEffect:89)
+			int rand = ent.getLevel().getRandom().nextInt(5);
 			switch(rand) {
 				case 0: string = Shape.SPHERE.getSerializedName(); break;
 				case 1: string = Shape.SPHERE.getSerializedName(); break;
@@ -112,7 +112,7 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
      	double d0 = shape[0][0];
      	double d1 = shape[0][1];
      	addFallingBlock(ent.x(), ent.y(), ent.z(), d0 * speed, d1 * speed, 0.0D, state, ent);
-     	float f = new Random().nextFloat() * (float)Math.PI;
+     	float f = ent.getLevel().getRandom().nextFloat() * (float)Math.PI;
      	double d2 = flag ? 0.034D : 0.34D;
      	int i = flag ? 1 : 3;
 
@@ -152,9 +152,17 @@ public class NewYearsFireworkEffect extends PrimedTNTEffect {
 		return 40;
 	}
 	
+	/**
+	 * @deprecated allocates a fresh RandomSource per call, use {@link #getRandomConcrete(RandomSource)}
+	 */
+	@Deprecated
 	public Block getRandomConcrete() {
+		return getRandomConcrete(RandomSource.create());
+	}
+
+	public Block getRandomConcrete(RandomSource source) {
 		Block template = null;
-		int rand = new Random().nextInt(12);
+		int rand = source.nextInt(12);
 		switch (rand) {
 			case 0: template = Blocks.CONCRETE.red(); break;
 			case 1: template = Blocks.CONCRETE.green(); break;

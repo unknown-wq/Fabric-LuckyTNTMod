@@ -31,6 +31,7 @@ import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -262,12 +263,25 @@ public class ImprovedExplosion implements Explosion {
 		}
 		final ServerLevel serverLevel = level instanceof ServerLevel sLevel ? sLevel : null;
 		final BlockState air = Blocks.AIR.defaultBlockState();
+		//Vanilla removes exploded blocks with UPDATE_NEIGHBORS | UPDATE_CLIENTS, which makes every removed block
+		//run 6 neighbourChanged dispatches and, because UPDATE_KNOWN_SHAPE is not set, 6 updateShape dispatches
+		//on top of that - roughly 12 extra block state lookups per block. Vanilla explosions are small; a bulk
+		//annihilation here can be hundreds of thousands of blocks.
+		//For a block whose 6 direct neighbours are all part of this same annihilation those updates only ever
+		//notify positions that are turned into air a few microseconds later, so they are dropped. Every block
+		//that touches something the explosion does not remove keeps the full vanilla flags, which is what makes
+		//gravel above the crater fall, water flow back in and redstone at the rim re-evaluate.
+		//Lighting and client rendering are unaffected: they are driven by the chunk write and by UPDATE_CLIENTS,
+		//both of which every block still gets. The test costs 6 int encodes plus 6 hash probes per block.
 		for(IntIterator iterator = blocks.iterator(); iterator.hasNext();) {
-			BlockPos blockPos = decodeBlockPos(iterator.nextInt(), tntX, tntY, tntZ);
+			final int encodedPos = iterator.nextInt();
+			BlockPos blockPos = decodeBlockPos(encodedPos, tntX, tntY, tntZ);
 			if(serverLevel != null) {
 				level.getBlockState(blockPos).getBlock().wasExploded(serverLevel, blockPos, this);
 			}
-			level.setBlock(blockPos, air, 3);
+			level.setBlock(blockPos, air, isEnclosedByAffectedBlocks(blocks, encodedPos)
+					? Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE
+					: Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS);
 		}
 		if(fire) {
 			for(IntIterator iterator = blocks.iterator(); iterator.hasNext();) {
@@ -743,6 +757,34 @@ public class ImprovedExplosion implements Explosion {
 		z += z0;
 
 		return (x + y + z);
+	}
+
+	/**
+	 * Tests whether all 6 direct neighbours of an encoded position are part of the given set of encoded positions.
+	 * A position for which this holds is completely surrounded by blocks the same explosion is about to remove,
+	 * so removing it cannot have any effect on a block that survives the explosion.
+	 * Positions whose relative coordinates were clamped by {@link ImprovedExplosion#encodeBlockPos(int, int, int)}
+	 * cannot be tested reliably and are reported as not enclosed.
+	 * @param blocks  the encoded positions of all blocks the explosion removes
+	 * @param encodedVal  the encoded position that is tested
+	 * @return whether every direct neighbour of the given position is contained in the given set
+	 */
+	private boolean isEnclosedByAffectedBlocks(IntOpenHashSet blocks, int encodedVal) {
+		int xRaw = (encodedVal & 0b00011111111100000000000000000000) >> 20;
+		int yRaw = (encodedVal & 0b00000000000001111111110000000000) >> 10;
+		int zRaw = (encodedVal & 0b00000000000000000000000111111111);
+		if(xRaw >= 510 || yRaw >= 510 || zRaw >= 510) {
+			return false;
+		}
+		int x = (encodedVal & 0b00100000000000000000000000000000) != 0 ? -xRaw : xRaw;
+		int y = (encodedVal & 0b00000000000010000000000000000000) != 0 ? -yRaw : yRaw;
+		int z = (encodedVal & 0b00000000000000000000001000000000) != 0 ? -zRaw : zRaw;
+		return blocks.contains(encodeBlockPos(x - 1, y, z))
+				&& blocks.contains(encodeBlockPos(x + 1, y, z))
+				&& blocks.contains(encodeBlockPos(x, y - 1, z))
+				&& blocks.contains(encodeBlockPos(x, y + 1, z))
+				&& blocks.contains(encodeBlockPos(x, y, z - 1))
+				&& blocks.contains(encodeBlockPos(x, y, z + 1));
 	}
 
 	/**
