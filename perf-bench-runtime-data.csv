@@ -86,6 +86,7 @@ reversed_tnt,ReversedTNTEffect,140,block+redstone,0.911,1.2,31.9,0.942,50.5,289,
 inverted_tnt,InvertedTNTEffect,120,block+redstone,1.011,1.3,28.3,0.997,55.9,266,13.31,4,0
 leaping_tnt,LeapingTNTEffect,100000,block+redstone,1.556,1.3,25.3,1.062,52.5,1218,60.87,4,0
 lava_ocean_tnt,LavaOceanTNTEffect,160,block+redstone,1.133,1.4,24.9,1.055,50.9,307,15.34,4,0
+woodhouse_tnt,HouseTNTEffect,80,block+redstone,1.244,1.3,24.6,1.009,50.6,229,11.48,4,0
 sensor_tnt,SensorTNTEffect,5000,block+redstone,1.4,1.2,24.4,0.9,58.1,1217,60.84,4,0
 meteor_storm,MeteorStormEffect,720,block+redstone,1.1,2.1,23.9,1.452,60.2,1036,51.8,31,0
 compressed_tnt,StackedPrimedTNTEffect,240,block+redstone,1.178,1.2,23.1,0.979,56.7,556,27.82,4,0

@@ -1,12 +1,12 @@
 # Lucky TNT Mod — Empirical Runtime Performance Benchmark (Fabric / MC 26.2)
 
-*Live document — regenerated after every batch. Last update: **2026-07-30 04:34 UTC**.*
+*Live document — regenerated after every batch. Last update: **2026-07-30 04:36 UTC**.*
 
-**Coverage so far: 156 of 203 TNT variants measured on a real dedicated server.**
+**Coverage so far: 157 of 203 TNT variants measured on a real dedicated server.**
 
 ## Headline
 
-- **44 of 156** measured TNTs made the server fall behind 20 TPS (a tick budget is 50 ms).
+- **44 of 157** measured TNTs made the server fall behind 20 TPS (a tick budget is 50 ms).
 - Worst single tick observed: **`tnt_x10000` at 24092 ms** — 482x the 50 ms tick budget.
 - Most entities spawned: **`particle_physics_tnt` — 5848 entities** within 400 blocks.
 - Idle baseline across all runs: **1.20 ms/tick** median (superflat, 225 forceloaded chunks, no players).
@@ -286,75 +286,76 @@ means the server was **not** keeping up with 20 TPS.
 | 85 | `inverted_tnt` | `InvertedTNTEffect` | 120 | 1.01 | 1.3 | 28.3 | 1.00 | 56 | sustained | 266 | 4 | no |  |
 | 86 | `leaping_tnt` | `LeapingTNTEffect` | 100000 | 1.56 | 1.3 | 25.3 | 1.06 | 52 | sustained | 1218 | 4 | no | trigger-fused (no timer detonation) |
 | 87 | `lava_ocean_tnt` | `LavaOceanTNTEffect` | 160 | 1.13 | 1.4 | 24.9 | 1.05 | 51 | sustained | 307 | 4 | no |  |
-| 88 | `sensor_tnt` | `SensorTNTEffect` | 5000 | 1.40 | 1.2 | 24.4 | 0.90 | 58 | sustained | 1217 | 4 | no | trigger-fused (no timer detonation) |
-| 89 | `meteor_storm` | `MeteorStormEffect` | 720 | 1.10 | 2.1 | 23.9 | 1.45 | 60 | sustained | 1036 | 31 | no |  |
-| 90 | `compressed_tnt` | `StackedPrimedTNTEffect` | 240 | 1.18 | 1.2 | 23.1 | 0.98 | 57 | sustained | 556 | 4 | no |  |
-| 91 | `floating_island` | `FloatingIslandEffect` | 120 | 1.20 | 1.5 | 22.8 | 1.20 | 54 | sustained | 266 | 4 | no |  |
-| 92 | `swap_tnt` | `SwapTNTEffect` | 120 | 1.42 | 1.0 | 22.6 | 0.89 | 51 | sustained | 266 | 4 | no |  |
-| 93 | `flak_tnt` | `FlakTNTEffect` | 800 | 0.98 | 1.1 | 21.9 | 0.88 | 55 | sustained | 1119 | 4 | no |  |
-| 94 | `the_revolution` | `TheRevolutionEffect` | 140 | 0.93 | 7.0 | 21.7 | 2.49 | 51 | sustained | 398 | 121 | no |  |
-| 95 | `reaction_tnt` | `ReactionTNTEffect` | 240 | 1.04 | 2.2 | 18.7 | 1.06 | 50 | sustained | 560 | 4 | no |  |
-| 96 | `structure_tnt` | `StructureTNTEffect` | 160 | 1.29 | 1.0 | 17.4 | 0.89 | 51 | sustained | 476 | 4 | no |  |
-| 97 | `timer_tnt` | `StackedPrimedTNTEffect` | 80 | 1.01 | 1.1 | 15.9 | 0.93 | 54 | sustained | 226 | 4 | no |  |
-| 98 | `cobblestone_house_tnt` | `HouseTNTEffect` | 80 | 1.32 | 1.4 | 15.8 | 1.24 | 51 | sustained | 229 | 4 | no |  |
-| 99 | `pulse_tnt` | `PulseTNTEffect` | 300 | 0.98 | 1.3 | 15.7 | 0.93 | 57 | sustained | 617 | 4 | no |  |
-| 100 | `toxic_clouds` | `DisasterTNTEffect` | 80 | 1.17 | 1.3 | 15.5 | 1.14 | 53 | sustained | 229 | 4 | no |  |
-| 101 | `big_tnt` | `BigTNTEffect` | 120 | 1.40 | 1.4 | 15.0 | 1.07 | 51 | sustained | 266 | 4 | no |  |
-| 102 | `chemical_tnt` | `ChemicalTNTEffect` | 80 | 1.34 | 1.9 | 14.5 | 1.23 | 54 | sustained | 230 | 33 | no |  |
-| 103 | `midas_tnt` | `MidasTNTEffect` | 160 | 1.32 | 1.6 | 14.2 | 1.20 | 51 | sustained | 306 | 4 | no |  |
-| 104 | `dense_tnt` | `StackedPrimedTNTEffect` | 160 | 0.99 | 1.1 | 14.0 | 0.97 | 56 | sustained | 307 | 4 | no |  |
-| 105 | `miningflat_tnt` | `MiningflatTNTEffect` | 80 | 1.00 | 1.2 | 13.8 | 1.01 | 55 | sustained | 229 | 4 | no |  |
-| 106 | `solar_eruption` | `SolarEruptionEffect` | 360 | 0.92 | 6.2 | 13.7 | 3.10 | 54 | sustained | 677 | 450 | no |  |
-| 107 | `pompeii` | `PompeiiEffect` | 80 | 1.89 | 3.9 | 13.4 | 1.78 | 57 | sustained | 226 | 264 | no |  |
-| 108 | `spiral_tnt` | `SpiralTNTEffect` | 80 | 1.21 | 2.2 | 13.1 | 1.49 | 51 | sustained | 229 | 15 | no |  |
-| 109 | `earthquake_tnt` | `EarthquakeTNTEffect` | 280 | 1.30 | 1.3 | 12.3 | 1.11 | 59 | sustained | 597 | 4 | no |  |
-| 110 | `dust_bowl` | `DustBowlEffect` | 120 | 1.24 | 1.0 | 12.1 | 0.88 | 51 | sustained | 266 | 4 | no |  |
-| 111 | `doomsday` | `DisasterTNTEffect` | 80 | 1.13 | 0.9 | 12.1 | 0.85 | 52 | sustained | 231 | 4 | no |  |
-| 112 | `eye_of_the_sahara` | `EyeOfTheSaharaEffect` | 120 | 1.73 | 2.0 | 12.0 | 1.49 | 55 | sustained | 267 | 63 | no |  |
-| 113 | `pumpkin_bomb` | `PumpkinBombEffect` | 80 | 1.57 | 2.2 | 11.7 | 1.59 | 51 | sustained | 227 | 244 | no |  |
-| 114 | `erupting_tnt` | `EruptingTNTEffect` | 80 | 1.42 | 1.7 | 11.1 | 1.21 | 51 | sustained | 226 | 23 | no |  |
-| 115 | `nuclear_waste_tnt` | `NuclearWasteTNTEffect` | 80 | 1.49 | 1.9 | 11.1 | 1.47 | 51 | sustained | 230 | 4 | no |  |
-| 116 | `meteor_shower` | `MeteorShowerEffect` | 720 | 1.69 | 2.5 | 10.5 | 1.87 | 58 | sustained | 1037 | 114 | no |  |
-| 117 | `lightning_storm` | `LightningStormEffect` | 160 | 1.17 | 1.5 | 10.4 | 1.12 | 52 | sustained | 306 | 69 | no |  |
-| 118 | `squaring_tnt` | `SquaringTNTEffect` | 80 | 0.98 | 1.1 | 10.2 | 0.93 | 52 | sustained | 226 | 7 | no |  |
-| 119 | `christmas_tnt` | `StackedPrimedTNTEffect` | 80 | 1.24 | 1.5 | 10.1 | 1.13 | 51 | sustained | 226 | 8 | no |  |
-| 120 | `replay_tnt` | `?` | 80 | 1.32 | 1.5 | 9.7 | 1.32 | 52 | sustained | 399 | 4 | no |  |
-| 121 | `unbreakable_tnt` | `UnbreakableTNTEffect` | 80 | 1.36 | 1.4 | 9.5 | 1.26 | 53 | sustained | 226 | 4 | no |  |
-| 122 | `heat_death` | `DisasterTNTEffect` | 80 | 1.06 | 0.9 | 8.8 | 0.87 | 52 | sustained | 229 | 4 | no |  |
-| 123 | `helix` | `HelixEffect` | 140 | 1.01 | 1.4 | 8.7 | 1.01 | 58 | sustained | 286 | 109 | no |  |
-| 124 | `tnt_x5` | `TNTXStrengthEffect` | 120 | 1.18 | 1.2 | 8.5 | 1.13 | 51 | sustained | 266 | 4 | no |  |
-| 125 | `farming_tnt` | `FarmingTNTEffect` | 80 | 1.16 | 1.3 | 8.4 | 1.18 | 55 | sustained | 229 | 4 | no |  |
-| 126 | `acidic_tnt` | `AcidicTNTEffect` | 80 | 0.91 | 2.8 | 6.9 | 1.44 | 51 | sustained | 398 | 73 | no |  |
-| 127 | `fire_tnt` | `FireTNTEffect` | 80 | 1.51 | 1.3 | 6.5 | 1.17 | 51 | sustained | 229 | 4 | no |  |
-| 128 | `ring_tnt` | `RingTNTEffect` | 80 | 1.29 | 1.4 | 6.3 | 1.23 | 55 | sustained | 226 | 15 | no |  |
-| 129 | `hexahedron` | `HexahedronEffect` | 140 | 0.89 | 0.9 | 6.2 | 0.86 | 54 | sustained | 286 | 4 | no |  |
-| 130 | `bouncing_tnt` | `BouncingTNTEffect` | 100000 | 1.19 | 1.2 | 6.1 | 1.14 | 51 | sustained | 1217 | 4 | no | trigger-fused (no timer detonation) |
-| 131 | `eating_tnt` | `EatingTNTEffect` | 400 | 1.10 | 1.2 | 6.1 | 1.11 | 51 | sustained | 719 | 4 | no |  |
-| 132 | `toxic_cloud` | `ToxicCloudEffect` | 1200 | 0.97 | 1.3 | 5.8 | 1.07 | 52 | sustained | 1217 | 4 | no | trigger-fused (no timer detonation), summoned (no block) |
-| 133 | `tunneling_tnt` | `TunnelingTNTEffect` | 80 | 1.08 | 1.0 | 5.8 | 0.91 | 52 | sustained | 227 | 4 | no |  |
-| 134 | `random_tnt` | `RandomTNTEffect` | 120 | 1.23 | 1.2 | 5.6 | 1.08 | 50 | sustained | 269 | 4 | no |  |
-| 135 | `knockback_tnt` | `KnockbackTNTEffect` | 300 | 1.07 | 1.3 | 4.6 | 1.13 | 52 | sustained | 617 | 4 | no |  |
-| 136 | `multiplying_tnt` | `MultiplyingTNTEffect` | 80 | 1.48 | 1.3 | 3.9 | 1.22 | 50 | sustained | 229 | 20 | no |  |
-| 137 | `vaporize_tnt` | `VaporizeTNTEffect` | 80 | 1.27 | 1.3 | 3.6 | 1.22 | 59 | sustained | 226 | 4 | no |  |
-| 138 | `tnt_rain` | `DisasterTNTEffect` | 80 | 1.40 | 1.2 | 3.6 | 1.18 | 53 | sustained | 229 | 4 | no |  |
-| 139 | `redstone_tnt` | `RedstoneTNTEffect` | 80 | 0.91 | 0.9 | 3.4 | 0.84 | 50 | sustained | 229 | 3 | no |  |
-| 140 | `flat_tnt` | `FlatTNTEffect` | 80 | 1.22 | 1.3 | 3.4 | 1.17 | 58 | sustained | 227 | 4 | no |  |
-| 141 | `ice_age` | `DisasterTNTEffect` | 80 | 1.20 | 1.2 | 3.2 | 1.09 | 52 | sustained | 230 | 4 | no |  |
-| 142 | `lightning_tnt` | `LightningTNTEffect` | 200 | 0.92 | 1.5 | 3.1 | 1.11 | 51 | sustained | 347 | 21 | no |  |
-| 143 | `kola_borehole_tnt` | `KolaBoreholeTNTEffect` | 200 | 1.09 | 1.1 | 3.0 | 1.07 | 54 | sustained | 516 | 4 | no |  |
-| 144 | `mimic_tnt` | `MimicTNTEffect` | 20000 | 1.03 | 1.2 | 2.5 | 1.03 | 51 | sustained | 1217 | 4 | no | trigger-fused (no timer detonation) |
-| 145 | `static_tnt` | `StackedPrimedTNTEffect` | 80 | 1.20 | 1.2 | 2.3 | 1.11 | 51 | sustained | 226 | 4 | no |  |
-| 146 | `drilling_tnt` | `DrillingTNTEffect` | 80 | 1.30 | 1.1 | 2.2 | 1.07 | 54 | sustained | 230 | 4 | no |  |
-| 147 | `cannon_tnt` | `CannonTNTEffect` | 600 | 1.29 | 1.2 | 2.1 | 1.10 | 56 | sustained | 919 | 4 | no |  |
-| 148 | `gravity_tnt` | `GravityTNTEffect` | 300 | 1.34 | 1.2 | 2.1 | 1.13 | 51 | sustained | 616 | 4 | no |  |
-| 149 | `prism_tnt` | `PrismTNTEffect` | 80 | 1.64 | 1.0 | 2.1 | 0.87 | 50 | sustained | 226 | 4 | no |  |
-| 150 | `disaster_clearer` | `DisasterTNTEffect` | 80 | 1.29 | 1.3 | 1.9 | 1.25 | 51 | sustained | 230 | 4 | no |  |
-| 151 | `tnt` | `TNTXStrengthEffect` | 80 | 0.99 | 0.9 | 1.8 | 0.85 | 52 | sustained | 229 | 4 | no |  |
-| 152 | `digging_tnt` | `DiggingTNTEffect` | 80 | 0.89 | 0.9 | 1.8 | 0.83 | 50 | sustained | 230 | 4 | no |  |
-| 153 | `say_goodbye` | `SayGoodbyeEffect` | 80 | 1.19 | 1.2 | 1.8 | 1.15 | 53 | sustained | 227 | 4 | no |  |
-| 154 | `smoke_tnt` | `SmokeTNTEffect` | 520 | 1.20 | 1.2 | 1.7 | 1.09 | 50 | sustained | 837 | 4 | no |  |
-| 155 | `turret_tnt` | `TurretTNTEffect` | 400 | 1.14 | 1.2 | 1.6 | 1.11 | 54 | sustained | 717 | 4 | no |  |
-| 156 | `custom_tnt` | `CustomTNTEffect` | 80 | 0.93 | 0.9 | 1.5 | 0.81 | 58 | sustained | 226 | 4 | no |  |
+| 88 | `woodhouse_tnt` | `HouseTNTEffect` | 80 | 1.24 | 1.3 | 24.6 | 1.01 | 51 | sustained | 229 | 4 | no |  |
+| 89 | `sensor_tnt` | `SensorTNTEffect` | 5000 | 1.40 | 1.2 | 24.4 | 0.90 | 58 | sustained | 1217 | 4 | no | trigger-fused (no timer detonation) |
+| 90 | `meteor_storm` | `MeteorStormEffect` | 720 | 1.10 | 2.1 | 23.9 | 1.45 | 60 | sustained | 1036 | 31 | no |  |
+| 91 | `compressed_tnt` | `StackedPrimedTNTEffect` | 240 | 1.18 | 1.2 | 23.1 | 0.98 | 57 | sustained | 556 | 4 | no |  |
+| 92 | `floating_island` | `FloatingIslandEffect` | 120 | 1.20 | 1.5 | 22.8 | 1.20 | 54 | sustained | 266 | 4 | no |  |
+| 93 | `swap_tnt` | `SwapTNTEffect` | 120 | 1.42 | 1.0 | 22.6 | 0.89 | 51 | sustained | 266 | 4 | no |  |
+| 94 | `flak_tnt` | `FlakTNTEffect` | 800 | 0.98 | 1.1 | 21.9 | 0.88 | 55 | sustained | 1119 | 4 | no |  |
+| 95 | `the_revolution` | `TheRevolutionEffect` | 140 | 0.93 | 7.0 | 21.7 | 2.49 | 51 | sustained | 398 | 121 | no |  |
+| 96 | `reaction_tnt` | `ReactionTNTEffect` | 240 | 1.04 | 2.2 | 18.7 | 1.06 | 50 | sustained | 560 | 4 | no |  |
+| 97 | `structure_tnt` | `StructureTNTEffect` | 160 | 1.29 | 1.0 | 17.4 | 0.89 | 51 | sustained | 476 | 4 | no |  |
+| 98 | `timer_tnt` | `StackedPrimedTNTEffect` | 80 | 1.01 | 1.1 | 15.9 | 0.93 | 54 | sustained | 226 | 4 | no |  |
+| 99 | `cobblestone_house_tnt` | `HouseTNTEffect` | 80 | 1.32 | 1.4 | 15.8 | 1.24 | 51 | sustained | 229 | 4 | no |  |
+| 100 | `pulse_tnt` | `PulseTNTEffect` | 300 | 0.98 | 1.3 | 15.7 | 0.93 | 57 | sustained | 617 | 4 | no |  |
+| 101 | `toxic_clouds` | `DisasterTNTEffect` | 80 | 1.17 | 1.3 | 15.5 | 1.14 | 53 | sustained | 229 | 4 | no |  |
+| 102 | `big_tnt` | `BigTNTEffect` | 120 | 1.40 | 1.4 | 15.0 | 1.07 | 51 | sustained | 266 | 4 | no |  |
+| 103 | `chemical_tnt` | `ChemicalTNTEffect` | 80 | 1.34 | 1.9 | 14.5 | 1.23 | 54 | sustained | 230 | 33 | no |  |
+| 104 | `midas_tnt` | `MidasTNTEffect` | 160 | 1.32 | 1.6 | 14.2 | 1.20 | 51 | sustained | 306 | 4 | no |  |
+| 105 | `dense_tnt` | `StackedPrimedTNTEffect` | 160 | 0.99 | 1.1 | 14.0 | 0.97 | 56 | sustained | 307 | 4 | no |  |
+| 106 | `miningflat_tnt` | `MiningflatTNTEffect` | 80 | 1.00 | 1.2 | 13.8 | 1.01 | 55 | sustained | 229 | 4 | no |  |
+| 107 | `solar_eruption` | `SolarEruptionEffect` | 360 | 0.92 | 6.2 | 13.7 | 3.10 | 54 | sustained | 677 | 450 | no |  |
+| 108 | `pompeii` | `PompeiiEffect` | 80 | 1.89 | 3.9 | 13.4 | 1.78 | 57 | sustained | 226 | 264 | no |  |
+| 109 | `spiral_tnt` | `SpiralTNTEffect` | 80 | 1.21 | 2.2 | 13.1 | 1.49 | 51 | sustained | 229 | 15 | no |  |
+| 110 | `earthquake_tnt` | `EarthquakeTNTEffect` | 280 | 1.30 | 1.3 | 12.3 | 1.11 | 59 | sustained | 597 | 4 | no |  |
+| 111 | `dust_bowl` | `DustBowlEffect` | 120 | 1.24 | 1.0 | 12.1 | 0.88 | 51 | sustained | 266 | 4 | no |  |
+| 112 | `doomsday` | `DisasterTNTEffect` | 80 | 1.13 | 0.9 | 12.1 | 0.85 | 52 | sustained | 231 | 4 | no |  |
+| 113 | `eye_of_the_sahara` | `EyeOfTheSaharaEffect` | 120 | 1.73 | 2.0 | 12.0 | 1.49 | 55 | sustained | 267 | 63 | no |  |
+| 114 | `pumpkin_bomb` | `PumpkinBombEffect` | 80 | 1.57 | 2.2 | 11.7 | 1.59 | 51 | sustained | 227 | 244 | no |  |
+| 115 | `erupting_tnt` | `EruptingTNTEffect` | 80 | 1.42 | 1.7 | 11.1 | 1.21 | 51 | sustained | 226 | 23 | no |  |
+| 116 | `nuclear_waste_tnt` | `NuclearWasteTNTEffect` | 80 | 1.49 | 1.9 | 11.1 | 1.47 | 51 | sustained | 230 | 4 | no |  |
+| 117 | `meteor_shower` | `MeteorShowerEffect` | 720 | 1.69 | 2.5 | 10.5 | 1.87 | 58 | sustained | 1037 | 114 | no |  |
+| 118 | `lightning_storm` | `LightningStormEffect` | 160 | 1.17 | 1.5 | 10.4 | 1.12 | 52 | sustained | 306 | 69 | no |  |
+| 119 | `squaring_tnt` | `SquaringTNTEffect` | 80 | 0.98 | 1.1 | 10.2 | 0.93 | 52 | sustained | 226 | 7 | no |  |
+| 120 | `christmas_tnt` | `StackedPrimedTNTEffect` | 80 | 1.24 | 1.5 | 10.1 | 1.13 | 51 | sustained | 226 | 8 | no |  |
+| 121 | `replay_tnt` | `?` | 80 | 1.32 | 1.5 | 9.7 | 1.32 | 52 | sustained | 399 | 4 | no |  |
+| 122 | `unbreakable_tnt` | `UnbreakableTNTEffect` | 80 | 1.36 | 1.4 | 9.5 | 1.26 | 53 | sustained | 226 | 4 | no |  |
+| 123 | `heat_death` | `DisasterTNTEffect` | 80 | 1.06 | 0.9 | 8.8 | 0.87 | 52 | sustained | 229 | 4 | no |  |
+| 124 | `helix` | `HelixEffect` | 140 | 1.01 | 1.4 | 8.7 | 1.01 | 58 | sustained | 286 | 109 | no |  |
+| 125 | `tnt_x5` | `TNTXStrengthEffect` | 120 | 1.18 | 1.2 | 8.5 | 1.13 | 51 | sustained | 266 | 4 | no |  |
+| 126 | `farming_tnt` | `FarmingTNTEffect` | 80 | 1.16 | 1.3 | 8.4 | 1.18 | 55 | sustained | 229 | 4 | no |  |
+| 127 | `acidic_tnt` | `AcidicTNTEffect` | 80 | 0.91 | 2.8 | 6.9 | 1.44 | 51 | sustained | 398 | 73 | no |  |
+| 128 | `fire_tnt` | `FireTNTEffect` | 80 | 1.51 | 1.3 | 6.5 | 1.17 | 51 | sustained | 229 | 4 | no |  |
+| 129 | `ring_tnt` | `RingTNTEffect` | 80 | 1.29 | 1.4 | 6.3 | 1.23 | 55 | sustained | 226 | 15 | no |  |
+| 130 | `hexahedron` | `HexahedronEffect` | 140 | 0.89 | 0.9 | 6.2 | 0.86 | 54 | sustained | 286 | 4 | no |  |
+| 131 | `bouncing_tnt` | `BouncingTNTEffect` | 100000 | 1.19 | 1.2 | 6.1 | 1.14 | 51 | sustained | 1217 | 4 | no | trigger-fused (no timer detonation) |
+| 132 | `eating_tnt` | `EatingTNTEffect` | 400 | 1.10 | 1.2 | 6.1 | 1.11 | 51 | sustained | 719 | 4 | no |  |
+| 133 | `toxic_cloud` | `ToxicCloudEffect` | 1200 | 0.97 | 1.3 | 5.8 | 1.07 | 52 | sustained | 1217 | 4 | no | trigger-fused (no timer detonation), summoned (no block) |
+| 134 | `tunneling_tnt` | `TunnelingTNTEffect` | 80 | 1.08 | 1.0 | 5.8 | 0.91 | 52 | sustained | 227 | 4 | no |  |
+| 135 | `random_tnt` | `RandomTNTEffect` | 120 | 1.23 | 1.2 | 5.6 | 1.08 | 50 | sustained | 269 | 4 | no |  |
+| 136 | `knockback_tnt` | `KnockbackTNTEffect` | 300 | 1.07 | 1.3 | 4.6 | 1.13 | 52 | sustained | 617 | 4 | no |  |
+| 137 | `multiplying_tnt` | `MultiplyingTNTEffect` | 80 | 1.48 | 1.3 | 3.9 | 1.22 | 50 | sustained | 229 | 20 | no |  |
+| 138 | `vaporize_tnt` | `VaporizeTNTEffect` | 80 | 1.27 | 1.3 | 3.6 | 1.22 | 59 | sustained | 226 | 4 | no |  |
+| 139 | `tnt_rain` | `DisasterTNTEffect` | 80 | 1.40 | 1.2 | 3.6 | 1.18 | 53 | sustained | 229 | 4 | no |  |
+| 140 | `redstone_tnt` | `RedstoneTNTEffect` | 80 | 0.91 | 0.9 | 3.4 | 0.84 | 50 | sustained | 229 | 3 | no |  |
+| 141 | `flat_tnt` | `FlatTNTEffect` | 80 | 1.22 | 1.3 | 3.4 | 1.17 | 58 | sustained | 227 | 4 | no |  |
+| 142 | `ice_age` | `DisasterTNTEffect` | 80 | 1.20 | 1.2 | 3.2 | 1.09 | 52 | sustained | 230 | 4 | no |  |
+| 143 | `lightning_tnt` | `LightningTNTEffect` | 200 | 0.92 | 1.5 | 3.1 | 1.11 | 51 | sustained | 347 | 21 | no |  |
+| 144 | `kola_borehole_tnt` | `KolaBoreholeTNTEffect` | 200 | 1.09 | 1.1 | 3.0 | 1.07 | 54 | sustained | 516 | 4 | no |  |
+| 145 | `mimic_tnt` | `MimicTNTEffect` | 20000 | 1.03 | 1.2 | 2.5 | 1.03 | 51 | sustained | 1217 | 4 | no | trigger-fused (no timer detonation) |
+| 146 | `static_tnt` | `StackedPrimedTNTEffect` | 80 | 1.20 | 1.2 | 2.3 | 1.11 | 51 | sustained | 226 | 4 | no |  |
+| 147 | `drilling_tnt` | `DrillingTNTEffect` | 80 | 1.30 | 1.1 | 2.2 | 1.07 | 54 | sustained | 230 | 4 | no |  |
+| 148 | `cannon_tnt` | `CannonTNTEffect` | 600 | 1.29 | 1.2 | 2.1 | 1.10 | 56 | sustained | 919 | 4 | no |  |
+| 149 | `gravity_tnt` | `GravityTNTEffect` | 300 | 1.34 | 1.2 | 2.1 | 1.13 | 51 | sustained | 616 | 4 | no |  |
+| 150 | `prism_tnt` | `PrismTNTEffect` | 80 | 1.64 | 1.0 | 2.1 | 0.87 | 50 | sustained | 226 | 4 | no |  |
+| 151 | `disaster_clearer` | `DisasterTNTEffect` | 80 | 1.29 | 1.3 | 1.9 | 1.25 | 51 | sustained | 230 | 4 | no |  |
+| 152 | `tnt` | `TNTXStrengthEffect` | 80 | 0.99 | 0.9 | 1.8 | 0.85 | 52 | sustained | 229 | 4 | no |  |
+| 153 | `digging_tnt` | `DiggingTNTEffect` | 80 | 0.89 | 0.9 | 1.8 | 0.83 | 50 | sustained | 230 | 4 | no |  |
+| 154 | `say_goodbye` | `SayGoodbyeEffect` | 80 | 1.19 | 1.2 | 1.8 | 1.15 | 53 | sustained | 227 | 4 | no |  |
+| 155 | `smoke_tnt` | `SmokeTNTEffect` | 520 | 1.20 | 1.2 | 1.7 | 1.09 | 50 | sustained | 837 | 4 | no |  |
+| 156 | `turret_tnt` | `TurretTNTEffect` | 400 | 1.14 | 1.2 | 1.6 | 1.11 | 54 | sustained | 717 | 4 | no |  |
+| 157 | `custom_tnt` | `CustomTNTEffect` | 80 | 0.93 | 0.9 | 1.5 | 0.81 | 58 | sustained | 226 | 4 | no |  |
 
 ## Detail — worst offenders
 
@@ -2529,19 +2530,19 @@ warnings, scraped from `logs/latest.log` and attributed per TNT, agree with both
 
 ## Coverage
 
-Measured **157 / 203** registered TNT variants. The sweep runs in priority order (the 20 the user called out first, then everything else sorted by fuse length and effect-class size), so the untested tail is the *short-fuse, small-effect* end of the distribution.
+Measured **158 / 203** registered TNT variants. The sweep runs in priority order (the 20 the user called out first, then everything else sorted by fuse length and effect-class size), so the untested tail is the *short-fuse, small-effect* end of the distribution.
 
-<details><summary>46 not yet measured</summary>
+<details><summary>45 not yet measured</summary>
 
 ```
-woodhouse_tnt             silk_touch_tnt            shatterproof_tnt          extinction                freeze_tnt                angry_miners
-igniter_tnt               phantom_tnt               sphere_tnt                cubic_tnt                 snow_tnt                  arrow_tnt
-chicxulub                 deimos                    ice_meteor_tnt            meteor_tnt                phobos                    present_drop
-vredefort                 cluster_bomb_tnt          night_tnt                 mansion                   ender_tnt                 butter_tnt
-day_tnt                   roulette_tnt              bomb_rain_tnt             mankinds_mark             village_defense           cluster_bomb
-custom_firework           item_firework             lucky_doomsday            lucky_god                 lucky_tnt                 ore_tnt
-new_years_firework        entity_firework           rainbow_firework          gravel_firework           sand_firework             city_firework
-tnt_firework              troll_tnt_mk3             troll_tnt                 troll_tnt_mk2
+silk_touch_tnt            shatterproof_tnt          extinction                freeze_tnt                angry_miners              igniter_tnt
+phantom_tnt               sphere_tnt                cubic_tnt                 snow_tnt                  arrow_tnt                 chicxulub
+deimos                    ice_meteor_tnt            meteor_tnt                phobos                    present_drop              vredefort
+cluster_bomb_tnt          night_tnt                 mansion                   ender_tnt                 butter_tnt                day_tnt
+roulette_tnt              bomb_rain_tnt             mankinds_mark             village_defense           cluster_bomb              custom_firework
+item_firework             lucky_doomsday            lucky_god                 lucky_tnt                 ore_tnt                   new_years_firework
+entity_firework           rainbow_firework          gravel_firework           sand_firework             city_firework             tnt_firework
+troll_tnt_mk3             troll_tnt                 troll_tnt_mk2
 ```
 
 </details>
