@@ -32,18 +32,27 @@ public class FlowerForestTNTEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		ExplosionHelper.doCylindricalExplosion(ent.getLevel(), ent.getPos(), 75, 75, new IForEachBlockExplosionEffect() {
-			
+		Level level = ent.getLevel();
+		if(!(level instanceof ServerLevel sLevel)) {
+			return;
+		}
+		final ImprovedExplosion dummy = ImprovedExplosion.dummyExplosion(level);
+		final BlockState air = Blocks.AIR.defaultBlockState();
+		// The callback rejected everything past a *horizontal* distance of 50, so the helper was being
+		// asked for a 75 wide cylinder and then threw away pi*(75^2 - 50^2)*151 = 1.48M of its 2.67M
+		// reads. Asking for the radius it actually uses visits exactly the same accepted cells.
+		ExplosionHelper.doCylindricalExplosion(level, ent.getPos(), 50, 75, new IForEachBlockExplosionEffect() {
+
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				Block block = state.getBlock();
-				if(distance <= 50 && block.getExplosionResistance() <= 200) {
+				if(block.getExplosionResistance() <= 200) {
 					if((!state.isCollisionShapeFullBlock(level, pos) || state.is(Blocks.FIRE) || state.is(Blocks.SOUL_FIRE)
 					|| state.is(BlockTags.LEAVES) || Materials.isPlant(state) || state.is(BlockTags.SNOW)
 					|| Materials.isWood(state)) && !(block instanceof GrassBlock) && !(block instanceof MyceliumBlock))
 					{
-						block.wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(level));
-						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+						block.wasExploded(sLevel, pos, dummy);
+						level.setBlock(pos, air, 3);
 					}
 				}
 			}
@@ -51,22 +60,32 @@ public class FlowerForestTNTEffect extends PrimedTNTEffect {
 
 		// The radius test now runs before the (very expensive) top-block column scan, so the ~29% of
 		// the 151x151 square that lies outside the circle no longer scans a full world column each.
-		Level level = ent.getLevel();
+		// The two BlockPos per column and the duplicated state read are gone as well, and a column in an
+		// unloaded chunk is skipped instead of generating it.
+		final BlockState grass = Blocks.GRASS_BLOCK.defaultBlockState();
 		int baseX = Mth.floor(ent.x());
 		int baseZ = Mth.floor(ent.z());
+		BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+		BlockPos.MutableBlockPos above = new BlockPos.MutableBlockPos();
 		for(int offX = -75; offX <= 75; offX++) {
 			int dx2 = offX * offX;
 			if(dx2 > 5625) {
 				continue;
 			}
+			int posX = baseX + offX;
 			for(int offZ = -75; offZ <= 75; offZ++) {
 				if(dx2 + offZ * offZ > 5625) {
 					continue;
 				}
+				int posZ = baseZ + offZ;
+				if(!level.hasChunk(posX >> 4, posZ >> 4)) {
+					continue;
+				}
 				int y = LevelEvents.getTopBlock(level, ent.x() + offX, ent.z() + offZ, true);
-				BlockPos pos = new BlockPos(baseX + offX, y, baseZ + offZ);
-				if(level.getBlockState(pos).getBlock().getExplosionResistance() <= 200 && level.getBlockState(pos.above()).isAir()) {
-					level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
+				mutable.set(posX, y, posZ);
+				above.set(posX, y + 1, posZ);
+				if(level.getBlockState(mutable).getBlock().getExplosionResistance() <= 200 && level.getBlockState(above).isAir()) {
+					level.setBlock(mutable.immutable(), grass, 3);
 				}
 			}
 		}
