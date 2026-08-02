@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#0#",
+    "###"
+  ],
+  "key": {
+    "#": "luckytntmod:dynamite",
+    "0": "luckytntmod:air_strike"
+  },
+  "result": {
+    "id": "luckytntmod:bomb_rain_tnt",
+    "count": 1
+  }
+}

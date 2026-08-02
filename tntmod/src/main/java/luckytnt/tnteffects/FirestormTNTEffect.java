@@ -33,12 +33,13 @@ public class FirestormTNTEffect extends PrimedTNTEffect {
 			
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(distance <= 50 && state.getBlock().getExplosionResistance() <= 200) {
-					if((!state.isCollisionShapeFullBlock(level, pos) || state.is(Blocks.FIRE) || state.is(Blocks.SOUL_FIRE) 
+				Block block = state.getBlock();
+				if(distance <= 50 && block.getExplosionResistance() <= 200) {
+					if((!state.isCollisionShapeFullBlock(level, pos) || state.is(Blocks.FIRE) || state.is(Blocks.SOUL_FIRE)
 					|| state.is(BlockTags.LEAVES) || Materials.isPlant(state) || state.is(BlockTags.SNOW)
-					|| Materials.isWood(state)) && !(state.getBlock() instanceof GrassBlock) && !(state.getBlock() instanceof MyceliumBlock)) 
+					|| Materials.isWood(state)) && !(block instanceof GrassBlock) && !(block instanceof MyceliumBlock))
 					{
-						state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+						block.wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(level));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}
@@ -46,22 +47,28 @@ public class FirestormTNTEffect extends PrimedTNTEffect {
 		});
 		
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 50, new IForEachBlockExplosionEffect() {
-			
+
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(state.getBlock().getExplosionResistance() <= 200 && !state.isAir()) {
-					state.getBlock().wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(ent.getLevel()));
+				Block block = state.getBlock();
+				if(!state.isAir() && block.getExplosionResistance() <= 200) {
+					block.wasExploded((ServerLevel) level, pos, ImprovedExplosion.dummyExplosion(level));
 					level.setBlock(pos, Blocks.NETHERRACK.defaultBlockState(), 3);
 				}
 			}
 		});
-		
+
+		// Loop invariants (the flint & steel stack and the hit vector) hoisted out of the callback;
+		// FireBlock only reads the level and the clicked position out of the place context, but the
+		// BlockGetter/BlockPos overload of getStateForPlacement is protected, so the context stays.
+		final ItemStack flintAndSteel = new ItemStack(Items.FLINT_AND_STEEL);
+		final Vec3 hitVec = new Vec3(ent.x(), ent.y(), ent.z());
 		ExplosionHelper.doTopBlockExplosionForAll(ent.getLevel(), ent.getPos(), 50, new IForEachBlockExplosionEffect() {
-			
+
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 				if(Math.random() < 0.75f) {
-					BlockPlaceContext ctx = new BlockPlaceContext(level, null, InteractionHand.MAIN_HAND, new ItemStack(Items.FLINT_AND_STEEL), new BlockHitResult(new Vec3(ent.x(), ent.y(), ent.z()), Direction.DOWN, pos, true));
+					BlockPlaceContext ctx = new BlockPlaceContext(level, null, InteractionHand.MAIN_HAND, flintAndSteel, new BlockHitResult(hitVec, Direction.DOWN, pos, true));
 					level.setBlock(pos, Blocks.FIRE.getStateForPlacement(ctx), 3);
 				}
 			}

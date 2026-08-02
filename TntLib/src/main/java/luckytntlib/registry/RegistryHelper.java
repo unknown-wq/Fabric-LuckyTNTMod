@@ -207,12 +207,14 @@ public class RegistryHelper {
 		FlammableBlockRegistry.getDefaultInstance().add(rblock, 15, 100);
 
 		if(itemRegistry != null && blockData.makeItem()) {
+			//resolving the description just to check whether it is empty is way too expensive to do every tooltip frame
+			final boolean hasDescription = !blockData.getDescription().getString().isEmpty();
 			Item ritem = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(itemRegistry, blockData.getRegistryName()), new BlockItem(block.get(), new Item.Properties().setId(itemKey(itemRegistry, blockData.getRegistryName()))) {
 
 				@Override
 				public void appendHoverText(net.minecraft.world.item.ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> adder, TooltipFlag flag) {
 					super.appendHoverText(stack, context, display, adder, flag);
-					if(!blockData.getDescription().getString().equals("")) {
+					if(hasDescription) {
 						adder.accept(blockData.getDescription());
 					}
 				}
@@ -298,12 +300,14 @@ public class RegistryHelper {
 		FlammableBlockRegistry.getDefaultInstance().add(rblock, 15, 100);
 
 		if(itemRegistry != null && blockData.makeItem()) {
+			//resolving the description just to check whether it is empty is way too expensive to do every tooltip frame
+			final boolean hasDescription = !blockData.getDescription().getString().isEmpty();
 			Item ritem = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(itemRegistry, blockData.getRegistryName()), new BlockItem(block.get(), new Item.Properties().setId(itemKey(itemRegistry, blockData.getRegistryName()))) {
 
 				@Override
 				public void appendHoverText(net.minecraft.world.item.ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> adder, TooltipFlag flag) {
 					super.appendHoverText(stack, context, display, adder, flag);
-					if(!blockData.getDescription().getString().equals("")) {
+					if(hasDescription) {
 						adder.accept(blockData.getDescription());
 					}
 				}

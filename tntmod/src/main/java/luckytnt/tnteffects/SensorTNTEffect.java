@@ -1,7 +1,5 @@
 package luckytnt.tnteffects;
 
-import java.util.List;
-
 import org.joml.Vector3f;
 
 import luckytnt.registry.BlockRegistry;
@@ -24,15 +22,21 @@ public class SensorTNTEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
 		if(level instanceof ServerLevel) {
-			List<Player> players = level.getEntitiesOfClass(Player.class, new AABB(entity.getPos().add(-10f, -10f, -10f), entity.getPos().add(10f, 10f, 10f)));
-			for(Player player : players) {
-				if(!player.equals(entity.owner())) {
-					ImprovedExplosion explosion = new ImprovedExplosion(level, entity.getPos(), 10);
-					explosion.doEntityExplosion(1f, true);
-					explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
-					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
-					entity.destroy();
+			// this runs every tick of a 5000 tick fuse; iterating the player list skips the
+			// EntitySection walk entirely
+			AABB range = new AABB(entity.getPos().add(-10f, -10f, -10f), entity.getPos().add(10f, 10f, 10f));
+			for(Player player : level.players()) {
+				if(player.isSpectator() || player.isRemoved() || !range.intersects(player.getBoundingBox())) {
+					continue;
 				}
+				// Triggers on any player in range, the placer included.
+				ImprovedExplosion explosion = new ImprovedExplosion(level, entity.getPos(), 10);
+				explosion.doEntityExplosion(1f, true);
+				explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
+				level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
+				entity.destroy();
+				// Stop after one detonation instead of exploding once per player in range.
+				break;
 			}
 		}
 	}

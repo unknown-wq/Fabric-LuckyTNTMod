@@ -187,6 +187,7 @@
 	"block.luckytntmod.heat_wave" : "Тепловая Волна",
 	"block.luckytntmod.winter_tnt" : "Зимний Динамит",
 	"block.luckytntmod.black_hole_tnt" : "Динамит-Черная Дыра",
+	"block.luckytntmod.bomb_rain_tnt" : "Динамит-Бомбовый Дождь",
 	"block.luckytntmod.flak_tnt" : "Зенитный Динамит",
 	"block.luckytntmod.tnt_rain" : "Дождь из Динамита",
 	"block.luckytntmod.lucky_doomsday" : "Удачный Судный День",
@@ -283,6 +284,7 @@
 	"item.luckytntmod.prism_dynamite" : "Динамитная Шашка-Призма",
 	"item.luckytntmod.ring_dynamite" : "Кольцевая Динамитная Шашка",
 	"item.luckytntmod.sculk_dynamite" : "Скалковая Динамитная Шашка",
+	"item.luckytntmod.bomb_rain_dynamite" : "Динамитная Шашка-Бомбовый Дождь",
 
 
 	"item.luckytntmod.tnt_x5_minecart" : "Вагонетка с Динамитом x5",
@@ -567,6 +569,7 @@
 	"entity.luckytntmod.heat_wave" : "Тепловая Волна",
 	"entity.luckytntmod.winter_tnt" : "Зимний Динамит",
 	"entity.luckytntmod.black_hole_tnt" : "Динамит-Черная Дыра",
+	"entity.luckytntmod.bomb_rain_tnt" : "Динамит-Бомбовый Дождь",
 	"entity.luckytntmod.flak_tnt" : "Зенитный Динамит",
 	"entity.luckytntmod.tnt_rain" : "Дождь из Динамита",
 	"entity.luckytntmod.prism_tnt" : "Динамит-Призма",
@@ -649,6 +652,7 @@
 	"entity.luckytntmod.prism_dynamite" : "Динамитная Шашка-Призма",
 	"entity.luckytntmod.ring_dynamite" : "Кольцевая Динамитная Шашка",
 	"entity.luckytntmod.sculk_dynamite" : "Скалковая Динамитная Шашка",
+	"entity.luckytntmod.bomb_rain_dynamite" : "Динамитная Шашка-Бомбовый Дождь",
 
 	"entity.luckytntmod.tnt_x5_minecart" : "Вагонетка с Динамитом x5",
 	"entity.luckytntmod.tnt_x20_minecart" : "Вагонетка с Динамитом x20",

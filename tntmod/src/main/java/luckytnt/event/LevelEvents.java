@@ -36,6 +36,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.entity.EntityTypes;
 
 public class LevelEvents {
@@ -57,8 +58,13 @@ public class LevelEvents {
 					variables.heatDeathTime--;
 				if(variables.tntRainTime > 0)
 					variables.tntRainTime--;
-				variables.sync(sLevel);
+				variables.syncIfChanged(sLevel);
 			}
+			//the biome registry and the two biome holders do not depend on the player, so they are resolved once
+			//per level tick instead of once per player per tick inside the loop below
+			Registry<Biome> biomeRegistry = variables != null && (variables.iceAgeTime > 0 || variables.heatDeathTime > 0) ? level.registryAccess().lookupOrThrow(Registries.BIOME) : null;
+			Holder<Biome> snowyTaiga = biomeRegistry != null && variables.iceAgeTime > 0 ? biomeRegistry.getOrThrow(Biomes.SNOWY_TAIGA) : null;
+			Holder<Biome> desert = biomeRegistry != null && variables.heatDeathTime > 0 ? biomeRegistry.getOrThrow(Biomes.DESERT) : null;
 			for(Player player : players) {
 				if(variables != null) {
 					double x = player.getX();
@@ -106,9 +112,8 @@ public class LevelEvents {
 						}
 					}
 					if(variables.iceAgeTime > 0) {
-						Registry<Biome> registry = level.registryAccess().lookupOrThrow(Registries.BIOME);
-						Holder<Biome> biome = registry.getOrThrow(Biomes.SNOWY_TAIGA);
-						if(player instanceof ServerPlayer sPlayer) {	
+						Holder<Biome> biome = snowyTaiga;
+						if(player instanceof ServerPlayer sPlayer) {
 							for(double offX = -32; offX <= 32; offX += 16) {
 								for(double offZ = -32; offZ <= 32; offZ += 16) {
 									boolean needsUpdate = false;
@@ -132,9 +137,8 @@ public class LevelEvents {
 						}
 					}
 					if(variables.heatDeathTime > 0) {
-						Registry<Biome> registry = level.registryAccess().lookupOrThrow(Registries.BIOME);
-						Holder<Biome> biome = registry.getOrThrow(Biomes.DESERT);
-						if(player instanceof ServerPlayer sPlayer) {	
+						Holder<Biome> biome = desert;
+						if(player instanceof ServerPlayer sPlayer) {
 							for(double offX = -32; offX <= 32; offX += 16) {
 								for(double offZ = -32; offZ <= 32; offZ += 16) {
 									boolean needsUpdate = false;
@@ -259,30 +263,56 @@ public class LevelEvents {
 		}
 	}
 	
+	/**
+	 * Finds the highest block of a column that has a full collision shape and is not covered by another block with
+	 * a full collision shape, or 0 if there is none.
+	 * <p>
+	 * This used to walk the whole column from {@link Level#getMaxY()} downwards, allocating two {@link BlockPos} and
+	 * reading two block states per step - and every position was read twice, once as {@code pos} in step n and once
+	 * as {@code posUp} in step n + 1. At 384 steps per call that is ~768 block state lookups for a value that is
+	 * usually found after ~256 steps, and the heat death disaster runs 900 of these per player per server tick.
+	 * <p>
+	 * The condition cannot be expressed as a heightmap lookup - a full collision shape is neither implied by nor
+	 * implies {@link Heightmap.Types#MOTION_BLOCKING} (that one also accepts fluids, slabs and fences, and it
+	 * rejects a few blocks that do have a full collision shape, snow at 8 layers among them). A block with a full
+	 * collision shape is however always non-air, so the answer can never be above
+	 * {@link Heightmap.Types#WORLD_SURFACE}. The walk is therefore seeded with that instead of with the world
+	 * ceiling, and the state read one block down is carried into the next step. That is ~2 lookups per call in
+	 * the common case instead of ~512, for exactly the same result. If the chunk is not loaded the heightmap
+	 * reports the minimum height; in that case the old full scan is used, whose first {@code getBlockState}
+	 * loads the chunk just like before.
+	 * @param level  the current level
+	 * @param x  the x coordinate of the column
+	 * @param z  the z coordinate of the column
+	 * @param ignoreLeaves  whether leaves are rejected as a result
+	 * @return the y coordinate of the top block, or 0 if there is none
+	 */
 	public static int getTopBlock(Level level, double x, double z, boolean ignoreLeaves) {
 		if(!level.isClientSide()) {
-			boolean blockFound = false;
-			int y = 0;
-			for(int offY = level.getMaxY(); offY >= level.getMinY(); offY--) {	
-				BlockPos pos = new BlockPos(Mth.floor(x), offY, Mth.floor(z));
-				BlockPos posUp = new BlockPos(Mth.floor(x), offY + 1, Mth.floor(z));
+			final int blockX = Mth.floor(x);
+			final int blockZ = Mth.floor(z);
+			final int minY = level.getMinY();
+			final int maxY = level.getMaxY();
+			int startY = level.getHeight(Heightmap.Types.WORLD_SURFACE, blockX, blockZ);
+			if(startY <= minY || startY > maxY) {
+				startY = maxY;
+			}
+			final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+			final BlockPos.MutableBlockPos posUp = new BlockPos.MutableBlockPos(blockX, startY + 1, blockZ);
+			BlockState stateUp = level.getBlockState(posUp);
+			for(int offY = startY; offY >= minY; offY--) {
+				pos.set(blockX, offY, blockZ);
 				BlockState state = level.getBlockState(pos);
-				BlockState stateUp = level.getBlockState(posUp);				
-				if(state.getBlock().getExplosionResistance() < 200 && stateUp.getBlock().getExplosionResistance() < 200 && !blockFound) {
-					if(ignoreLeaves) {
-						if(state.isCollisionShapeFullBlock(level, pos) && !stateUp.isCollisionShapeFullBlock(level, posUp) && !state.is(BlockTags.LEAVES)) {
-							blockFound = true;
-							y = offY;
-						}	
-					} else {
-						if(state.isCollisionShapeFullBlock(level, pos) && !stateUp.isCollisionShapeFullBlock(level, posUp)) {
-							blockFound = true;
-							y = offY;
-						}	
+				if(state.getBlock().getExplosionResistance() < 200 && stateUp.getBlock().getExplosionResistance() < 200) {
+					if(state.isCollisionShapeFullBlock(level, pos) && !stateUp.isCollisionShapeFullBlock(level, posUp) && (!ignoreLeaves || !state.is(BlockTags.LEAVES))) {
+						return offY;
 					}
 				}
+				//the position of this step is the position above the next one, so its state is carried over
+				posUp.set(blockX, offY, blockZ);
+				stateUp = state;
 			}
-			return y;
+			return 0;
 		} else {
 			return 0;
 		}

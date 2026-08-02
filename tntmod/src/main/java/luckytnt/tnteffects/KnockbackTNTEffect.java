@@ -16,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -23,7 +24,11 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
-		if(ent.getTNTFuse() > 1) {
+		// explosionTick runs on both logical sides, so this 150 wide query used to be walked twice a
+		// tick for 300 ticks. Players now get hurtMarked so the server actually pushes the velocity
+		// down to them, which is what the client side pass used to do implicitly (same as
+		// serverExplosion below already did).
+		if(ent.getTNTFuse() > 1 && ent.getLevel() instanceof ServerLevel) {
 			List<LivingEntity> ents = ent.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(ent.x() - 75, ent.y() - 75, ent.z() - 75, ent.x() + 75, ent.y() + 75, ent.z() + 75));
 			for (LivingEntity lent : ents) {
 				if(lent instanceof LuckyTNTEntityExtension elent) {
@@ -42,6 +47,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 					if (lent instanceof Player player) {
 						if (!player.isCreative()) {
 							lent.setDeltaMovement(vec);
+							player.hurtMarked = true;
 						}
 					} else {
 						lent.setDeltaMovement(vec);
@@ -53,6 +59,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 							tag.putInt("knockbacktime", 40);
 							elent.setAdditionalPersistentData(tag);
 							lent.setDeltaMovement(vec.reverse().normalize().scale(5D).add(0, 0.5D, 0));
+							player.hurtMarked = true;
 						}
 					} else {
 						CompoundTag tag = elent.getAdditionalPersistentData();

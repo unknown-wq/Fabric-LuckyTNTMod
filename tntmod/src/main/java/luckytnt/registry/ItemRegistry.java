@@ -95,6 +95,7 @@ public class ItemRegistry {
 	public static final Supplier<LDynamiteItem> PRISM_DYNAMITE = LuckyTNTMod.RH.registerDynamiteItem("prism_dynamite", EntityRegistry.PRISM_DYNAMITE, "dy");
 	public static final Supplier<LDynamiteItem> RING_DYNAMITE = LuckyTNTMod.RH.registerDynamiteItem("ring_dynamite", EntityRegistry.RING_DYNAMITE, "dy");
 	public static final Supplier<LDynamiteItem> SCULK_DYNAMITE = LuckyTNTMod.RH.registerDynamiteItem("sculk_dynamite", EntityRegistry.SCULK_DYNAMITE, "dy");
+	public static final Supplier<LDynamiteItem> BOMB_RAIN_DYNAMITE = LuckyTNTMod.RH.registerDynamiteItem("bomb_rain_dynamite", EntityRegistry.BOMB_RAIN_DYNAMITE, "dy");
 	
 	public static final Supplier<LDynamiteItem> LUCKY_DYNAMITE = LuckyTNTMod.RH.registerDynamiteItem(LuckyTNTMod.MODID, "lucky_dynamite", () -> new LuckyDynamiteItem(new Item.Properties().setId(ik("lucky_dynamite")), LuckyTNTMod.RH.dynamiteLists.get("dy")), "dy", false, true);
 	

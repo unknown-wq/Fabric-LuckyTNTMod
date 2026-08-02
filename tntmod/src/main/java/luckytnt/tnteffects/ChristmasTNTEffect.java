@@ -1,7 +1,5 @@
 package luckytnt.tnteffects;
 
-import java.util.Random;
-
 import luckytnt.block.ChristmasTNTBlock;
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
@@ -16,6 +14,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.EntitySpawnReason;
 
@@ -51,10 +50,12 @@ public class ChristmasTNTEffect extends PrimedTNTEffect{
 					LExplosiveProjectile present = EntityRegistry.PRESENT.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
 					present.setPos(entity.getPos());
 					present.setOwner(entity.owner());
+					// two `new Random()` per present replaced by the level's RandomSource
+					RandomSource random = entity.getLevel().getRandom();
 					double randomX = Math.random();
-					randomX *= new Random().nextBoolean() ? 1 : -1;
+					randomX *= random.nextBoolean() ? 1 : -1;
 					double randomZ = Math.random();
-					randomZ *= new Random().nextBoolean() ? 1 : -1;
+					randomZ *= random.nextBoolean() ? 1 : -1;
 					present.setDeltaMovement(randomX, -Math.random() * 0.5f, randomZ);
 					entity.getLevel().addFreshEntity(present);
 				}

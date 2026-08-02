@@ -21,13 +21,20 @@ public class ClientConfig extends Config {
 		super(modid, configValues, packetCreator);
 	}
 
+	/**
+	 * @return the file this config is saved to, which lies inside the config directory of the game
+	 */
+	private File getConfigFile() {
+		Path path = FabricLoader.getInstance().getConfigDir();
+		return path.resolve(modid + "-client-config.json").toFile();
+	}
+
 	public void init() {
 		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
 			return;
 		}
 
-		Path path = FabricLoader.getInstance().getConfigDir();
-		File file = new File(path.toString() + "\\" + modid + "-client-config.json");
+		File file = getConfigFile();
 
 		LuckyTNTLib.LOGGER.info("Init client config for " + modid + " from file " + file.toString());
 
@@ -43,16 +50,11 @@ public class ClientConfig extends Config {
 			return;
 		}
 
-		Path path = FabricLoader.getInstance().getConfigDir();
-		File file = new File(path.toString() + "\\" + modid + "-client-config.json");
+		File file = getConfigFile();
 
 		LuckyTNTLib.LOGGER.info("Saving client config for " + modid + " to file " + file.toString());
 
-		if(!file.exists()) {
-			createConfigFile(file);
-		} else {
-			file.delete();
-			createConfigFile(file);
-		}
+		//no need to delete the file first, writing to it truncates it anyway
+		createConfigFile(file);
 	}
 }

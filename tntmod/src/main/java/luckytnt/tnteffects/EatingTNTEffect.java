@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.util.Mth;
 
@@ -24,7 +25,9 @@ public class EatingTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		if(entity.getPersistentData().getIntOr("eatLevel", 0) < 300) {
+		// explosionTick runs on both logical sides and only ItemEntities are touched here, whose
+		// motion and removal are server authoritative anyway, so the client pass was pure waste.
+		if(entity.getPersistentData().getIntOr("eatLevel", 0) < 300 && entity.getLevel() instanceof ServerLevel) {
 			List<ItemEntity> items = entity.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(entity.getPos().add(-10, -10, -10), entity.getPos().add(10, 10, 10)));
 			for(ItemEntity item : items) {
 				item.setDeltaMovement(entity.getPos().add(item.position().scale(-1)).normalize());

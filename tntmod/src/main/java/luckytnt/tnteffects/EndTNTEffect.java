@@ -16,6 +16,7 @@ import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.EntityTypes;
@@ -29,30 +30,51 @@ public class EndTNTEffect extends PrimedTNTEffect {
 		this.strength = strength;
 	}
 	
+	/**
+	 * Endermen spawned per detonation. The roll below fires for 2.5% of every block the
+	 * end explosion touches, which at strength 20 (radius 30) is several hundred mobs
+	 * created in a single tick - each with goal selectors, pathfinding and teleport AI.
+	 * That was the whole cost of this TNT.
+	 */
+	private static final int MAX_ENDERMEN = 24;
+
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos().x, entity.getPos().y + 0.5f, entity.getPos().z, strength);
+		final Level level = entity.getLevel();
+		final Vec3 pos = entity.getPos();
+		ImprovedExplosion explosion = new ImprovedExplosion(level, (Entity)entity, pos.x, pos.y + 0.5f, pos.z, strength);
 		explosion.doEntityExplosion(2f, true);
 		explosion.doBlockExplosion(1f, 1f, 1f, 1.5f, false, false);
-		ImprovedExplosion endExplosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos().add(0, 0.5f, 0), Mth.floor(strength * 1.5f));
+		ImprovedExplosion endExplosion = new ImprovedExplosion(level, (Entity)entity, pos.add(0, 0.5f, 0), Mth.floor(strength * 1.5f));
+		final RandomSource random = level.getRandom();
+		final BlockState endStone = Blocks.END_STONE.defaultBlockState();
+		final BlockState chorus = Blocks.CHORUS_FLOWER.defaultBlockState();
+		final int[] endermen = new int[1];
 		endExplosion.doBlockExplosion(1f, 1f, 1f, 1.5f, false, new IForEachBlockExplosionEffect() {
-			
+
 			@Override
 			public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-				if(distance <= 25) {
-					if(Math.random() < 0.9f) {
-						state.getBlock().wasExploded((ServerLevel) level, pos, endExplosion);
-						level.setBlockAndUpdate(pos, Blocks.END_STONE.defaultBlockState());
-						if(Math.random() < 0.1f) {
-							if(level.getBlockState(pos.above()).isAir()) {
-								level.setBlockAndUpdate(pos.above(), Blocks.CHORUS_FLOWER.defaultBlockState());
-							}
-						}
-						if(Math.random() < 0.025f) {
-							EnderMan enderman = EntityTypes.ENDERMAN.create(level, EntitySpawnReason.MOB_SUMMONED);
-							enderman.setPos(new Vec3(pos.getX(), pos.getY() + 1f, pos.getZ()));
-							level.addFreshEntity(enderman);
-						}
+				if(distance > 25 || random.nextFloat() >= 0.9f) {
+					return;
+				}
+				if(level instanceof ServerLevel serverLevel) {
+					state.getBlock().wasExploded(serverLevel, pos, endExplosion);
+				}
+				// Bulk terrain conversion: the neighbour updates flag 3 would fire are spent
+				// almost entirely on blocks this same pass overwrites.
+				level.setBlock(pos, endStone, Block.UPDATE_CLIENTS);
+				if(random.nextFloat() < 0.1f) {
+					BlockPos above = pos.above();
+					if(level.getBlockState(above).isAir()) {
+						level.setBlock(above, chorus, Block.UPDATE_CLIENTS);
+					}
+				}
+				if(endermen[0] < MAX_ENDERMEN && random.nextFloat() < 0.025f) {
+					EnderMan enderman = EntityTypes.ENDERMAN.create(level, EntitySpawnReason.MOB_SUMMONED);
+					if(enderman != null) {
+						enderman.setPos(pos.getX(), pos.getY() + 1f, pos.getZ());
+						level.addFreshEntity(enderman);
+						endermen[0]++;
 					}
 				}
 			}

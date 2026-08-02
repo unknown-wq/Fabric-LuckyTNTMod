@@ -11,14 +11,17 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySpawnReason;
 
 public class EruptingTNTEffect extends PrimedTNTEffect{
 
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		Level level = entity.getLevel();
+		// explosionTick runs on both logical sides and addFreshEntity is a no-op on the client
+		if(!(entity.getLevel() instanceof ServerLevel level)) {
+			return;
+		}
 		if(entity instanceof PrimedLTNT || entity instanceof LTNTMinecart) {
 			if(entity.getTNTFuse() < 60) {
 				if(entity.getTNTFuse() % 3 == 0) {

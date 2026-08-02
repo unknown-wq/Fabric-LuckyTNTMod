@@ -22,6 +22,17 @@ public class LevelVariables extends SavedData {
 	public int heatDeathTime = 0;
 	public int tntRainTime = 0;
 
+	/**
+	 * Snapshot of the values as of the last {@link #sync(ServerLevel)}. Initialized to a value that can never
+	 * occur so that the very first {@link #syncIfChanged(ServerLevel)} always performs one broadcast.
+	 * Not serialized (the codec only covers the five timers).
+	 */
+	private int syncedDoomsdayTime = -1;
+	private int syncedToxicCloudsTime = -1;
+	private int syncedIceAgeTime = -1;
+	private int syncedHeatDeathTime = -1;
+	private int syncedTntRainTime = -1;
+
 	public static LevelVariables clientSide = new LevelVariables();
 
 	public static final Codec<LevelVariables> CODEC = RecordCodecBuilder.create(
@@ -80,12 +91,45 @@ public class LevelVariables extends SavedData {
 			return clientSide;
 	}
 
+	/**
+	 * Broadcasts the current state to every player on the server and marks this SavedData dirty.
+	 * Only call this when something actually changed - use {@link #syncIfChanged(ServerLevel)} from
+	 * per tick code.
+	 */
 	public void sync(ServerLevel level) {
 		setDirty();
+		syncedDoomsdayTime = doomsdayTime;
+		syncedToxicCloudsTime = toxicCloudsTime;
+		syncedIceAgeTime = iceAgeTime;
+		syncedHeatDeathTime = heatDeathTime;
+		syncedTntRainTime = tntRainTime;
+		LevelVariablesS2CPacket packet = new LevelVariablesS2CPacket(this);
 		for(ServerLevel world : level.getServer().getAllLevels()) {
 			for(ServerPlayer player : world.players()) {
-				LuckyTNTMod.RH.sendS2CPacket(player, new LevelVariablesS2CPacket(this));
+				LuckyTNTMod.RH.sendS2CPacket(player, packet);
 			}
 		}
+	}
+
+	/**
+	 * Broadcasts the current state, but only if any of the five timers changed since the last sync.
+	 * Called every tick, so the no disaster case must stay allocation free.
+	 */
+	public void syncIfChanged(ServerLevel level) {
+		if(doomsdayTime != syncedDoomsdayTime
+			|| toxicCloudsTime != syncedToxicCloudsTime
+			|| iceAgeTime != syncedIceAgeTime
+			|| heatDeathTime != syncedHeatDeathTime
+			|| tntRainTime != syncedTntRainTime) {
+			sync(level);
+		}
+	}
+
+	/**
+	 * Sends the current state to a single player. Used to give a joining client its initial state,
+	 * which used to be a side effect of the (now conditional) every tick broadcast.
+	 */
+	public void syncTo(ServerPlayer player) {
+		LuckyTNTMod.RH.sendS2CPacket(player, new LevelVariablesS2CPacket(this));
 	}
 }

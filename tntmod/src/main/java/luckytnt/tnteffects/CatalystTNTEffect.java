@@ -1,7 +1,5 @@
 package luckytnt.tnteffects;
 
-import java.util.Random;
-
 import org.joml.Vector3f;
 
 import luckytnt.registry.BlockRegistry;
@@ -16,6 +14,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public class CatalystTNTEffect extends PrimedTNTEffect {
@@ -23,16 +23,18 @@ public class CatalystTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		if(ent.getTNTFuse() < 200) {
+			Level level = ent.getLevel();
+			RandomSource random = level.getRandom();
 			if(ent.getPersistentData().getIntOr("nextExplosion", 0) <= 0) {
 				double x = ent.x() + Math.random() * 40 - Math.random() * 40;
 				double y = ent.y() + Math.random() * 15 - Math.random() * 15;
 				double z = ent.z() + Math.random() * 40 - Math.random() * 40;
-				if(!ent.getLevel().isClientSide()) {
-					ImprovedExplosion explosion = new ImprovedExplosion(ent.getLevel(), (Entity)ent, new Vec3(x, y, z), 25 + new Random().nextInt(16));
+				if(!level.isClientSide()) {
+					ImprovedExplosion explosion = new ImprovedExplosion(level, (Entity)ent, new Vec3(x, y, z), 25 + random.nextInt(16));
 					explosion.doEntityExplosion(2f, true);
 					explosion.doBlockExplosion(1f, 1f, 0.75f, 1f, false, false);
 				}
-				ent.getLevel().playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4, (1.0F + (ent.getLevel().getRandom().nextFloat() - ent.getLevel().getRandom().nextFloat()) * 0.2F) * 0.7F);
+				level.playSound(null, new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4, (1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F) * 0.7F);
 				CompoundTag tag = ent.getPersistentData();
 				tag.putInt("nextExplosion", 4 + (int)Math.round(Math.random()));
 				ent.setPersistentData(tag);

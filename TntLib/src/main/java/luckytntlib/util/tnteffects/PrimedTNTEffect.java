@@ -1,5 +1,7 @@
 package luckytntlib.util.tnteffects;
 
+import org.jetbrains.annotations.Nullable;
+
 import luckytntlib.entity.LExplosiveProjectile;
 import luckytntlib.entity.LTNTMinecart;
 import luckytntlib.entity.LivingPrimedLTNT;
@@ -28,6 +30,13 @@ import net.minecraft.world.phys.Vec3;
  * and general logic like conditions for exploding.
  */
 public abstract class PrimedTNTEffect{
+
+	/**
+	 * Cache for {@link PrimedTNTEffect#getItemStack()}, which is called every frame for every visible projectile by the renderer.
+	 */
+	@Nullable
+	private ItemStack itemStack;
+
 	/**
 	 *
 	 * This void is the heart of the PrimedTNTEffect. It's executed every tick on both the logical client and the logical server side
@@ -48,7 +57,7 @@ public abstract class PrimedTNTEffect{
 			if(entity.getTNTFuse() <= 0) {
 				if(entity.getLevel() instanceof ServerLevel) {
 					if(playsSound()) {
-						level.playSound((Entity)entity, new BlockPos(toBlockPos(entity.getPos())), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
+						level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
 					}
 					serverExplosion(entity);
 				}
@@ -68,7 +77,7 @@ public abstract class PrimedTNTEffect{
 				if(ent.getTNTFuse() == 0) {
 					if(ent.level() instanceof ServerLevel) {
 						if(playsSound()) {
-							level.playSound((Entity)entity, new BlockPos(toBlockPos(entity.getPos())), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
+							level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
 						}
 						serverExplosion(entity);
 					}
@@ -78,7 +87,7 @@ public abstract class PrimedTNTEffect{
 			else if(airFuse() && entity.getTNTFuse() == 0) {
 				if(ent.level() instanceof ServerLevel) {
 					if(playsSound()) {
-						level.playSound((Entity)entity, new BlockPos(toBlockPos(entity.getPos())), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
+						level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
 					}
 					serverExplosion(entity);
 				}
@@ -171,7 +180,10 @@ public abstract class PrimedTNTEffect{
 	 * @return {@link ItemStack} to render.
 	 */
 	public ItemStack getItemStack() {
-		return new ItemStack(getItem());
+		if(itemStack == null) {
+			itemStack = new ItemStack(getItem());
+		}
+		return itemStack;
 	}
 
 	/**

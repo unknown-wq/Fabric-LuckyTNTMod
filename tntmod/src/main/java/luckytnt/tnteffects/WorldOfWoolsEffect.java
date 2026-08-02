@@ -1,13 +1,9 @@
 package luckytnt.tnteffects;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.joml.Math;
 import org.joml.Vector3f;
-
-import com.mojang.datafixers.util.Pair;
 
 import luckytnt.event.LevelEvents;
 import luckytnt.registry.BlockRegistry;
@@ -31,6 +27,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.EntityTypes;
 
@@ -61,8 +58,10 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		List<Pair<BlockPos, Block>> blocks = new ArrayList<>();
-		
+		// The deferred list used to hold one Pair + BlockPos per matching block, i.e. millions of live
+		// objects when this goes off in an ocean. Nothing read the world after the sweep, and the sphere
+		// visits every position exactly once (so no read can observe an earlier write), which makes
+		// writing straight from the callback produce the same final blocks.
 		ExplosionHelper.doSphericalExplosion(ent.getLevel(), ent.getPos(), 100, new IForEachBlockExplosionEffect() {
 			
 			@Override
@@ -107,37 +106,43 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 				}
 				*/
 
-				if((state.is(Blocks.WATER) || state.is(Blocks.BUBBLE_COLUMN) || state.getBlock() instanceof BaseCoralPlantTypeBlock) && state.getBlock().getExplosionResistance() <= 200) {
-					blocks.add(Pair.of(pos, Blocks.STAINED_GLASS.blue()));
+				// NOTE: these are deliberately still four independent ifs, not an else-if chain. A
+				// waterlogged sea pickle matches both the seagrass/kelp test and the waterlogged test, and
+				// the later (blue glass) write is what the original produced. Chaining them would turn
+				// waterlogged sea pickles into green wool instead - a visible behaviour change.
+				Block block = state.getBlock();
+				if((state.is(Blocks.WATER) || state.is(Blocks.BUBBLE_COLUMN) || block instanceof BaseCoralPlantTypeBlock) && block.getExplosionResistance() <= 200) {
+					level.setBlock(pos, Blocks.STAINED_GLASS.blue().defaultBlockState(), 3);
 				}
-				
-				if(state.getBlock() == Blocks.SEAGRASS || state.getBlock() == Blocks.TALL_SEAGRASS || state.getBlock() == Blocks.KELP || state.getBlock() == Blocks.SEA_PICKLE || state.getBlock() == Blocks.KELP_PLANT) {
-					blocks.add(Pair.of(pos, Blocks.WOOL.green()));
+
+				if(block == Blocks.SEAGRASS || block == Blocks.TALL_SEAGRASS || block == Blocks.KELP || block == Blocks.SEA_PICKLE || block == Blocks.KELP_PLANT) {
+					level.setBlock(pos, Blocks.WOOL.green().defaultBlockState(), 3);
 				}
-				
-				if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) && state.getBlock().getExplosionResistance() <= 200) {
-					blocks.add(Pair.of(pos, Blocks.STAINED_GLASS.blue()));
+
+				if(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) && block.getExplosionResistance() <= 200) {
+					level.setBlock(pos, Blocks.STAINED_GLASS.blue().defaultBlockState(), 3);
 				}
-				
-				if(state.is(Blocks.LAVA) && state.getBlock().getExplosionResistance() <= 200) {
-					blocks.add(Pair.of(pos, Blocks.STAINED_GLASS.orange()));
+
+				if(state.is(Blocks.LAVA) && block.getExplosionResistance() <= 200) {
+					level.setBlock(pos, Blocks.STAINED_GLASS.orange().defaultBlockState(), 3);
 				}
 			}
 		});
-		
-		for(Pair<BlockPos, Block> pair : blocks) {
-			ent.getLevel().setBlock(pair.getFirst(), pair.getSecond().defaultBlockState(), 3);
-		}
-		
-		for(int i = 0; i < 3 + new Random().nextInt(6); i++) {
-			int x = new Random().nextInt(151) - 75;
-			int z = new Random().nextInt(151) - 75;
-			
+
+		// new Random() sat in the loop *condition*, so the bound was re-rolled on every iteration.
+		// It is now rolled once, which is the intended "3 + rand(6) towers" semantics.
+		// The level's RandomSource replaces the java.util.Random allocation (AnimalKingdomEffect:89).
+		RandomSource random = ent.getLevel().getRandom();
+		int towers = 3 + random.nextInt(6);
+		for(int i = 0; i < towers; i++) {
+			int x = random.nextInt(151) - 75;
+			int z = random.nextInt(151) - 75;
+
 			BlockPos origin = new BlockPos(Mth.floor(ent.x() + x), Mth.floor(LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1), Mth.floor(ent.z() + z));
-			boolean xOrZ = new Random().nextBoolean();
-			int rr = 16 + new Random().nextInt(11);
+			boolean xOrZ = random.nextBoolean();
+			int rr = 16 + random.nextInt(11);
 			Block block = Blocks.CONCRETE.red();
-			
+
 			for(int j = 0; j < 6; j++) {
 				placeRing(ent, origin, block, rr, xOrZ);
 				placeLegs(ent, origin, block, rr--, xOrZ);
@@ -156,22 +161,26 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 			}
 		}
 		
-		for(int i = 0; i <= 60 + new Random().nextInt(21); i++) {
-			Sheep sheep = new Sheep(EntityTypes.SHEEP, ent.getLevel());
-			
-			int x = new Random().nextInt(151) - 75;
-			int z = new Random().nextInt(151) - 75;
-			
-			sheep.setPos(ent.x() + x, LevelEvents.getTopBlock(ent.getLevel(), ent.x() + x, ent.z() + z, true) + 1, ent.z() + z);
-			sheep.finalizeSpawn((ServerLevel)ent.getLevel(), ((ServerLevel)ent.getLevel()).getCurrentDifficultyAt(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
-			ent.getLevel().addFreshEntity(sheep);
+		// Same fix as above: the sheep count was re-rolled every iteration by the loop condition.
+		Level level = ent.getLevel();
+		ServerLevel sLevel = (ServerLevel)level;
+		int sheepCount = 60 + random.nextInt(21);
+		for(int i = 0; i <= sheepCount; i++) {
+			Sheep sheep = new Sheep(EntityTypes.SHEEP, level);
+
+			int x = random.nextInt(151) - 75;
+			int z = random.nextInt(151) - 75;
+
+			sheep.setPos(ent.x() + x, LevelEvents.getTopBlock(level, ent.x() + x, ent.z() + z, true) + 1, ent.z() + z);
+			sheep.finalizeSpawn(sLevel, sLevel.getCurrentDifficultyAt(toBlockPos(ent.getPos())), EntitySpawnReason.MOB_SUMMONED, null);
+			level.addFreshEntity(sheep);
 		}
 		
 		BlockPos min = toBlockPos(ent.getPos()).offset(100, 100, 100);
 		BlockPos max = toBlockPos(ent.getPos()).offset(-100, -100, -100);
 		List<Sheep> list = ent.getLevel().getEntitiesOfClass(Sheep.class, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
 		for(Sheep sheep : list) {
-			sheep.setColor(randomColor());
+			sheep.setColor(randomColor(random));
 		}
 	}
 	
@@ -192,71 +201,70 @@ public class WorldOfWoolsEffect extends PrimedTNTEffect {
 		return 150;
 	}
 	
+	/** Enum#values() clones its backing array on every call; this one is read once per sheep. */
+	private static final DyeColor[] DYE_COLORS = DyeColor.values();
+
+	/**
+	 * @deprecated allocates a fresh RandomSource per call, use {@link #randomColor(RandomSource)}
+	 */
+	@Deprecated
 	public DyeColor randomColor() {
-		int random = new Random().nextInt(DyeColor.values().length);
-		return DyeColor.values()[random];
+		return randomColor(RandomSource.create());
+	}
+
+	public DyeColor randomColor(RandomSource source) {
+		// was `new Random()` plus two DyeColor.values() array clones, once per sheep in a 200 wide AABB
+		return DYE_COLORS[source.nextInt(DYE_COLORS.length)];
 	}
 	
 	public void placeRing(IExplosiveEntity ent, BlockPos origin, Block block, int radius, boolean xOrZ) {
-		if(xOrZ) {
-			for(int offX = -radius - 1; offX <= radius + 1; offX++) {
-				for(int offY = 0; offY <= radius + 1; offY++) {
-					BlockPos pos = origin.offset(offX, offY, 0);
-					double distance = Math.sqrt(offX * offX + offY * offY);
-					if(distance > radius && distance <= (radius + 1) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
-						ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
-					}
-				}
+		// Squared comparison (offX/offY are ints, so offX*offX + offY*offY is exact) and the position is
+		// only built for the cells that are actually on the ring.
+		Level level = ent.getLevel();
+		BlockState state = block.defaultBlockState();
+		int inner = radius * radius;
+		int outer = (radius + 1) * (radius + 1);
+		int stepX = xOrZ ? 1 : 0;
+		int stepZ = xOrZ ? 0 : 1;
+		for(int off = -radius - 1; off <= radius + 1; off++) {
+			int off2 = off * off;
+			if(off2 > outer) {
+				continue;
 			}
-		} else {
-			for(int offZ = -radius - 1; offZ <= radius + 1; offZ++) {
-				for(int offY = 0; offY <= radius + 1; offY++) {
-					BlockPos pos = origin.offset(0, offY, offZ);
-					double distance = Math.sqrt(offZ * offZ + offY * offY);
-					if(distance > radius && distance <= (radius + 1) && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
-						ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
-					}
+			for(int offY = 0; offY <= radius + 1; offY++) {
+				int d2 = off2 + offY * offY;
+				if(d2 <= inner || d2 > outer) {
+					continue;
+				}
+				BlockPos pos = origin.offset(off * stepX, offY, off * stepZ);
+				if(level.getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
+					level.setBlock(pos, state, 3);
 				}
 			}
 		}
 	}
-	
+
 	public void placeLegs(IExplosiveEntity ent, BlockPos origin, Block block, int radius, boolean xOrZ) {
+		int off = radius + 1;
 		if(xOrZ) {
-			for(int offY = -1; offY > -200; offY--) {
-				BlockPos pos = origin.offset(radius + 1, offY, 0);
-				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.empty()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
-					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
-				} else {
-					break;
-				}
-			}
-			
-			for(int offY = -1; offY > -200; offY--) {
-				BlockPos pos = origin.offset(-radius - 1, offY, 0);
-				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.empty()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
-					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
-				} else {
-					break;
-				}
-			}
+			placeLeg(ent, origin, block, off, 0);
+			placeLeg(ent, origin, block, -off, 0);
 		} else {
-			for(int offY = -1; offY > -200; offY--) {
-				BlockPos pos = origin.offset(0, offY, radius + 1);
-				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.empty()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
-					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
-				} else {
-					break;
-				}
-			}
-			
-			for(int offY = -1; offY > -200; offY--) {
-				BlockPos pos = origin.offset(0, offY, -radius - 1);
-				if(ent.getLevel().getBlockState(pos).getCollisionShape(ent.getLevel(), pos, CollisionContext.empty()).isEmpty() && ent.getLevel().getBlockState(pos).getBlock().getExplosionResistance() <= 100) {
-					ent.getLevel().setBlock(pos, block.defaultBlockState(), 3);
-				} else {
-					break;
-				}
+			placeLeg(ent, origin, block, 0, off);
+			placeLeg(ent, origin, block, 0, -off);
+		}
+	}
+
+	private void placeLeg(IExplosiveEntity ent, BlockPos origin, Block block, int offX, int offZ) {
+		Level level = ent.getLevel();
+		BlockState blockState = block.defaultBlockState();
+		for(int offY = -1; offY > -200; offY--) {
+			BlockPos pos = origin.offset(offX, offY, offZ);
+			BlockState state = level.getBlockState(pos);
+			if(state.getCollisionShape(level, pos, CollisionContext.empty()).isEmpty() && state.getBlock().getExplosionResistance() <= 100) {
+				level.setBlock(pos, blockState, 3);
+			} else {
+				break;
 			}
 		}
 	}

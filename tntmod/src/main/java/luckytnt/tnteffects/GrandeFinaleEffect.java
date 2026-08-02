@@ -4,7 +4,6 @@ import net.minecraft.world.entity.EntitySpawnReason;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Random;
 
 import luckytnt.registry.BlockRegistry;
 import luckytnt.registry.EntityRegistry;
@@ -18,90 +17,142 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 
 public class GrandeFinaleEffect extends PrimedTNTEffect {
 
+	/**
+	 * Class#getDeclaredConstructor is not cached by the JDK: every call walks the declared
+	 * constructor array and hands back a defensive copy, plus a setAccessible check and a Class[]
+	 * allocation. This used to happen 1000 times in a single tick.
+	 */
+	private static final Constructor<FallingBlockEntity> FALLING_BLOCK_CONSTRUCTOR = resolveFallingBlockConstructor();
+
+	private static Constructor<FallingBlockEntity> resolveFallingBlockConstructor() {
+		try {
+			Constructor<FallingBlockEntity> constructor = FallingBlockEntity.class.getDeclaredConstructor(Level.class, double.class, double.class, double.class, BlockState.class);
+			constructor.setAccessible(true);
+			return constructor;
+		} catch (NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		
+
 	}
-	
+
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
-		if(ent.getTNTFuse() % (int)(1 + Math.random() * 50) == 0) {
-			PrimedLTNT entity = EntityRegistry.SAND_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
-			int random = new Random().nextInt(4);
+		Level level = ent.getLevel();
+		RandomSource rng = level.getRandom();
+		// explosionTick runs on both logical sides and addFreshEntity is a no-op on the client, so every
+		// entity below (1000 of them through a reflective newInstance that cannot be inlined) used to be
+		// built and thrown away a second time in single player. The delta movement and the particle still
+		// have to run client side, so the guard is per block rather than at the top of the method.
+		final boolean server = level instanceof ServerLevel;
+		if(server && ent.getTNTFuse() % (int)(1 + Math.random() * 50) == 0) {
+			PrimedLTNT entity = EntityRegistry.SAND_FIREWORK.get().create(level, EntitySpawnReason.MOB_SUMMONED);
+			int random = rng.nextInt(4);
 			switch(random){
-				case 0: entity = EntityRegistry.SAND_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED); break;
-				case 1: entity = EntityRegistry.GRAVEL_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED); break;
-				case 2: entity = EntityRegistry.RAINBOW_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);; break;
-				case 3: entity = EntityRegistry.NEW_YEARS_FIREWORK.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+				case 0: entity = EntityRegistry.SAND_FIREWORK.get().create(level, EntitySpawnReason.MOB_SUMMONED); break;
+				case 1: entity = EntityRegistry.GRAVEL_FIREWORK.get().create(level, EntitySpawnReason.MOB_SUMMONED); break;
+				case 2: entity = EntityRegistry.RAINBOW_FIREWORK.get().create(level, EntitySpawnReason.MOB_SUMMONED);; break;
+				case 3: entity = EntityRegistry.NEW_YEARS_FIREWORK.get().create(level, EntitySpawnReason.MOB_SUMMONED);
 						CompoundTag tag = entity.getPersistentData();
 						tag.putInt("type", 1);
 						entity.setPersistentData(tag); break;
 			}
-			ent.getLevel().playSound(null, toBlockPos(ent.getPos()), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.MASTER, 3, 1);
+			level.playSound(null, toBlockPos(ent.getPos()), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.MASTER, 3, 1);
 			entity.setPos(ent.getPos());
 			entity.setOwner(ent.owner());
 			entity.setDeltaMovement(Math.random() * 5 - Math.random() * 5, 0, Math.random() * 5 - Math.random() * 5);
-			entity.setTNTFuse(40 + new Random().nextInt(41));
-			ent.getLevel().addFreshEntity(entity);
+			entity.setTNTFuse(40 + rng.nextInt(41));
+			level.addFreshEntity(entity);
 		}
-		ent.getLevel().setBlock(toBlockPos(ent.getPos()), Blocks.AIR.defaultBlockState(), 3);
-		ent.getLevel().setBlock(toBlockPos(ent.getPos()).offset(0, 1, 0), Blocks.AIR.defaultBlockState(), 3);
+		if(server) {
+			// These two positions are cleared once (when the TNT is primed) and are air for the remaining
+			// 439 ticks, but the writes ran unconditionally: 880 flag-3 setBlock calls - each a six way
+			// neighbour cascade plus a client packet - per detonation. Two getBlockState reads per tick
+			// replace them; the actual writes still use flag 3 so anything resting on the cleared block
+			// keeps updating.
+			BlockPos self = toBlockPos(ent.getPos());
+			if(!level.getBlockState(self).isAir()) {
+				level.setBlock(self, Blocks.AIR.defaultBlockState(), 3);
+			}
+			BlockPos above = self.above();
+			if(!level.getBlockState(above).isAir()) {
+				level.setBlock(above, Blocks.AIR.defaultBlockState(), 3);
+			}
+		}
 		if(ent.getTNTFuse() <= 40) {
 			((Entity)ent).setDeltaMovement(((Entity)ent).getDeltaMovement().x, 1.6f, ((Entity)ent).getDeltaMovement().z);
-			ent.getLevel().addParticle(ParticleTypes.LARGE_SMOKE, ent.x(), ent.y(), ent.z(), 0, -0.5f, 0);
-			if(ent.getTNTFuse() == 0) {
-				Block template = Blocks.CONCRETE.pick(DyeColor.WHITE);
+			level.addParticle(ParticleTypes.LARGE_SMOKE, ent.x(), ent.y(), ent.z(), 0, -0.5f, 0);
+			if(server && ent.getTNTFuse() == 0) {
+				BlockState[] colors = concreteStates();
 				for(int count = 0; count < 1000; count++) {
-					int rand = new Random().nextInt(12);
-					switch (rand) {
-						case 0: template = Blocks.CONCRETE.pick(DyeColor.RED); break;
-						case 1: template = Blocks.CONCRETE.pick(DyeColor.GREEN); break;
-						case 2: template = Blocks.CONCRETE.pick(DyeColor.BLUE); break;
-						case 3: template = Blocks.CONCRETE.pick(DyeColor.YELLOW); break;
-						case 4: template = Blocks.CONCRETE.pick(DyeColor.BROWN); break;
-						case 5: template = Blocks.CONCRETE.pick(DyeColor.CYAN); break;
-						case 6: template = Blocks.CONCRETE.pick(DyeColor.LIME); break;
-						case 7: template = Blocks.CONCRETE.pick(DyeColor.PURPLE); break;
-						case 8: template = Blocks.CONCRETE.pick(DyeColor.PINK); break;
-						case 9: template = Blocks.CONCRETE.pick(DyeColor.MAGENTA); break;
-						case 10: template = Blocks.CONCRETE.pick(DyeColor.ORANGE); break;
-						case 11: template = Blocks.CONCRETE.pick(DyeColor.LIGHT_BLUE); break;
-					}
+					BlockState template = colors[rng.nextInt(colors.length)];
 					FallingBlockEntity block = null;
-					try {
-						@SuppressWarnings("rawtypes")
-						Class[] classes = new Class[]{Level.class, double.class, double.class, double.class, BlockState.class};
-						Constructor<FallingBlockEntity> constructor = FallingBlockEntity.class.getDeclaredConstructor(classes);
-						constructor.setAccessible(true);
-						block = constructor.newInstance(ent.getLevel(), ent.x(), ent.y(), ent.z(), template.defaultBlockState());
-					} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						e.printStackTrace();
+					if(FALLING_BLOCK_CONSTRUCTOR != null) {
+						try {
+							block = FALLING_BLOCK_CONSTRUCTOR.newInstance(level, ent.x(), ent.y(), ent.z(), template);
+						} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+							e.printStackTrace();
+						}
 					}
 					if(block != null) {
 						block.dropItem = false;
 						block.setDeltaMovement(Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f);
-						ent.getLevel().addFreshEntity(block);
+						level.addFreshEntity(block);
 					}
 				}
 				for(int count = 0; count < 500; count++) {
-					PrimedLTNT tnt = EntityRegistry.TNT.get().create(ent.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+					PrimedLTNT tnt = EntityRegistry.TNT.get().create(level, EntitySpawnReason.MOB_SUMMONED);
 					tnt.setOwner(ent.owner());
 					tnt.setPos(ent.getPos());
 					tnt.setTNTFuse(80 + (int)(Math.random() * 100));
 					tnt.setDeltaMovement(Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f, Math.random() * 5f - Math.random() * 5f);
-					ent.getLevel().addFreshEntity(tnt);
+					level.addFreshEntity(tnt);
 				}
 			}
 		}
 	}
 	
+	/**
+	 * Blocks.CONCRETE.pick(DyeColor) was called once per iteration (1000 times) even though the
+	 * 12 possible results never change. Resolved lazily once, not in a static initializer, so the
+	 * class does not depend on Blocks being bootstrapped at class load time.
+	 */
+	private static BlockState[] concreteColors;
+
+	private static BlockState[] concreteStates() {
+		if(concreteColors == null) {
+			concreteColors = new BlockState[] {
+				Blocks.CONCRETE.pick(DyeColor.RED).defaultBlockState(),
+				Blocks.CONCRETE.pick(DyeColor.GREEN).defaultBlockState(),
+				Blocks.CONCRETE.pick(DyeColor.BLUE).defaultBlockState(),
+				Blocks.CONCRETE.pick(DyeColor.YELLOW).defaultBlockState(),
+				Blocks.CONCRETE.pick(DyeColor.BROWN).defaultBlockState(),
+				Blocks.CONCRETE.pick(DyeColor.CYAN).defaultBlockState(),
+				Blocks.CONCRETE.pick(DyeColor.LIME).defaultBlockState(),
+				Blocks.CONCRETE.pick(DyeColor.PURPLE).defaultBlockState(),
+				Blocks.CONCRETE.pick(DyeColor.PINK).defaultBlockState(),
+				Blocks.CONCRETE.pick(DyeColor.MAGENTA).defaultBlockState(),
+				Blocks.CONCRETE.pick(DyeColor.ORANGE).defaultBlockState(),
+				Blocks.CONCRETE.pick(DyeColor.LIGHT_BLUE).defaultBlockState()
+			};
+		}
+		return concreteColors;
+	}
+
 	@Override
 	public Block getBlock() {
 		return BlockRegistry.GRANDE_FINALE.get();

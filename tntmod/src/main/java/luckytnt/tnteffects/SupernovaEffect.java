@@ -6,7 +6,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.level.Level;
 
 public class SupernovaEffect extends SphereTNTEffect {
 
@@ -16,19 +18,29 @@ public class SupernovaEffect extends SphereTNTEffect {
 
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
-		if(ent.getTNTFuse() == 300) {
-			Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, ent.getLevel());
+		// explosionTick runs on both logical sides and addFreshEntity is a no-op on the client
+		if(ent.getTNTFuse() == 300 && ent.getLevel() instanceof ServerLevel level) {
+			Entity lighting = new LightningBolt(EntityTypes.LIGHTNING_BOLT, level);
 			lighting.setPos(ent.x(), ent.y(), ent.z());
-			ent.getLevel().addFreshEntity(lighting);
+			level.addFreshEntity(lighting);
 		}
 	}
-	
+
 	@Override
 	public void spawnParticles(IExplosiveEntity ent) {
-		for(double angle = 0; angle < 360; angle += 6D) {
-			ent.getLevel().addParticle(ParticleTypes.FLAME, ent.x() + 2 * Math.cos(angle * Math.PI / 180), ent.y() + 0.5f, ent.z() + 2 * Math.sin(angle * Math.PI / 180), 0, 0, 0);
-			ent.getLevel().addParticle(ParticleTypes.FLAME, ent.x() + 2 * Math.cos(angle * Math.PI / 180), ent.y() + 0.5f + 2 * Math.sin(angle * Math.PI / 180), ent.z(), 0, 0, 0);
-			ent.getLevel().addParticle(ParticleTypes.FLAME, ent.x(), ent.y() + 0.5f + 2 * Math.cos(angle * Math.PI / 180), ent.z() + 2 * Math.sin(angle * Math.PI / 180), 0, 0, 0);
+		//this runs every tick for 300 ticks, so the level, the position and the trigonometry
+		//(2 calls instead of 6 per step) are only evaluated once per ring position
+		final Level level = ent.getLevel();
+		final double x = ent.x();
+		final double y = ent.y() + 0.5f;
+		final double z = ent.z();
+		for(int step = 0; step < 60; step++) {
+			double angle = step * 6D * Math.PI / 180;
+			double cos = 2 * Math.cos(angle);
+			double sin = 2 * Math.sin(angle);
+			level.addParticle(ParticleTypes.FLAME, x + cos, y, z + sin, 0, 0, 0);
+			level.addParticle(ParticleTypes.FLAME, x + cos, y + sin, z, 0, 0, 0);
+			level.addParticle(ParticleTypes.FLAME, x, y + cos, z + sin, 0, 0, 0);
 		}
 	}
 	

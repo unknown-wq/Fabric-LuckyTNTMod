@@ -76,6 +76,7 @@ public class RendererRegistry {
 		EntityRendererRegistry.register(EntityRegistry.TROLL_TNT_MK2.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.TROLL_TNT_MK3.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.CLUSTER_BOMB_TNT.get(), LTNTRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.BOMB_RAIN_TNT.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.AIR_STRIKE.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.SPAMMING_TNT.get(), LTNTRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.BOUNCING_TNT.get(), BouncingTNTRenderer::new);
@@ -285,6 +286,7 @@ public class RendererRegistry {
 		EntityRendererRegistry.register(EntityRegistry.PRISM_DYNAMITE.get(), LDynamiteRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.RING_DYNAMITE.get(), LDynamiteRenderer::new);
 		EntityRendererRegistry.register(EntityRegistry.SCULK_DYNAMITE.get(), LDynamiteRenderer::new);
+		EntityRendererRegistry.register(EntityRegistry.BOMB_RAIN_DYNAMITE.get(), LDynamiteRenderer::new);
 
 		//Minecarts
 		EntityRendererRegistry.register(EntityRegistry.TNT_X5_MINECART.get(), LTNTMinecartRenderer::new);

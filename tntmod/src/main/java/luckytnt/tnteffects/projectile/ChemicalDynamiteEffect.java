@@ -13,19 +13,32 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Item;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 public class ChemicalDynamiteEffect extends PrimedTNTEffect{
-	
+
+	/**
+	 * Ticks between two dissolve spheres. The dynamite only moves ~1.5 blocks per tick, so a radius-4
+	 * sphere every second tick still covers its path without gaps, at half the cost.
+	 */
+	private static final int DISSOLVE_INTERVAL = 2;
+
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
-		if(entity.getLevel() instanceof ServerLevel) {
+		if(entity.getLevel() instanceof ServerLevel serverLevel && entity.getTNTFuse() % DISSOLVE_INTERVAL == 0) {
+			RandomSource random = serverLevel.getRandom();
 			ExplosionHelper.doSphericalExplosion(entity.getLevel(), entity.getPos(), 4, new IForEachBlockExplosionEffect() {
-				
+
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-					if(state.getBlock().getExplosionResistance() < 100 && distance + Math.random() <= 4) {
+					// Air has resistance 0 and therefore passed the test below, so most of every sphere was
+					// spent re-clearing blocks an earlier tick had already dissolved.
+					if(state.isAir()) {
+						return;
+					}
+					if(state.getBlock().getExplosionResistance() < 100 && distance + random.nextDouble() <= 4) {
 						state.getBlock().wasExploded((ServerLevel)level, pos, ImprovedExplosion.dummyExplosion(entity.getLevel()));
 						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}

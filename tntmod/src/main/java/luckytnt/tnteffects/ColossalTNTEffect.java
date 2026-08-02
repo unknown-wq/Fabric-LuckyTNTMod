@@ -1,8 +1,8 @@
 package luckytnt.tnteffects;
 
 import luckytntlib.util.IExplosiveEntity;
-import luckytntlib.util.explosions.ImprovedExplosion;
 import luckytntlib.util.tnteffects.PrimedTNTEffect;
+import luckytntlib.util.tnteffects.TNTXStrengthEffect.SectionSkippingExplosion;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
@@ -12,9 +12,14 @@ public class ColossalTNTEffect extends PrimedTNTEffect {
 
 	@Override
 	public void serverExplosion(IExplosiveEntity ent) {
-		ImprovedExplosion explosion = new ImprovedExplosion(ent.getLevel(), (Entity)ent, ent.getPos(), 190);
+		//The whole 6601 ms of this detonation is the ray walk of the r=190 explosion: 4*PI*190² rays of
+		//190*0.715/0.225 steps, 2.7e8 iterations. SectionSkippingExplosion walks the identical rays but
+		//jumps over all-air chunk sections and over the open sky above a chunk's WORLD_SURFACE, which is
+		//16x fewer iterations at this radius on flat ground. The affected positions are never read back,
+		//so they are not copied into the explosion either (saveBlockPos = false).
+		SectionSkippingExplosion explosion = new SectionSkippingExplosion(ent.getLevel(), (Entity)ent, ent.getPos(), 190);
 		explosion.doEntityExplosion(20f, true);
-		explosion.doBlockExplosion(1f, 1f, 0.167f, 0.05f, false, true);
+		explosion.doBlockExplosion(1f, 1f, 0.167f, 0.05f, false, true, false);
 	}
 	
 	@Override

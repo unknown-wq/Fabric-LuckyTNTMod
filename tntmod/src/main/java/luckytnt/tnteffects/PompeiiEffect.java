@@ -10,6 +10,7 @@ import luckytntlib.util.tnteffects.PrimedTNTEffect;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 
@@ -18,18 +19,25 @@ public class PompeiiEffect extends PrimedTNTEffect{
 	@SuppressWarnings("resource")
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
+		// explosionTick runs on both logical sides and addFreshEntity is a no-op on the client, so the
+		// client used to build and discard 30 projectiles per batch as well (300 over the fuse).
+		if(!(entity.getLevel() instanceof ServerLevel level)) {
+			return;
+		}
 		if(entity instanceof PrimedLTNT) {
 			if(entity.getTNTFuse() < 150) {
 				if(entity.getTNTFuse() % 15 == 0) {
 					for(int i = 0; i < 30; i++) {
-						LExplosiveProjectile pompeii = EntityRegistry.POMPEII_PROJECTILE.get().create(entity.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+						LExplosiveProjectile pompeii = EntityRegistry.POMPEII_PROJECTILE.get().create(level, EntitySpawnReason.MOB_SUMMONED);
 						pompeii.setPos(entity.getPos());
 						pompeii.setOwner(entity.owner());
-						pompeii.shoot((Math.random() * 3D - 1.5D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 3D - 1.5D) * 0.1f, 3f + entity.getLevel().getRandom().nextFloat() * 2f, 0f);	
+						pompeii.shoot((Math.random() * 3D - 1.5D) * 0.1f, 0.6f + Math.random() * 0.4f, (Math.random() * 3D - 1.5D) * 0.1f, 3f + level.getRandom().nextFloat() * 2f, 0f);
 						pompeii.igniteForTicks(20000);
-						entity.getLevel().addFreshEntity(pompeii);
-						entity.getLevel().playSound(null, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.MASTER, 3, 1);
+						level.addFreshEntity(pompeii);
 					}
+					// was inside the loop: 30 identical explosion sounds broadcast from the same coordinate
+					// per batch, i.e. 300 sound packets per detonation for 10 audible events
+					level.playSound(null, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.MASTER, 3, 1);
 				}
 			}
 		}

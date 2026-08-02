@@ -28,74 +28,95 @@ public class EntityLivingEvent {
 	}
 	
 	public static void onLivingTick(LivingEntity ent) {
-		if(ent != null) {
-			if(ent.level() instanceof ServerLevel sLevel && ent instanceof LuckyTNTEntityExtension lentity) {
-				if(LevelVariables.get(sLevel).iceAgeTime > 0) {
-					if((ent instanceof Player pl && !pl.isCreative()) || !(ent instanceof Player)) {
-						if(sLevel.getBrightness(LightLayer.BLOCK, new BlockPos(Mth.floor(ent.getX()), Mth.floor(ent.getY()), Mth.floor(ent.getZ()))) < 11) {
-							CompoundTag tag = lentity.getAdditionalPersistentData();
-							tag.putInt("freezeTime", lentity.getAdditionalPersistentData().getIntOr("freezeTime", 0) + LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get().intValue());
-							lentity.setAdditionalPersistentData(tag);
-						}
-						else if(lentity.getAdditionalPersistentData().getIntOr("freezeTime", 0) > 0){
-							CompoundTag tag = lentity.getAdditionalPersistentData();
-							tag.putInt("freezeTime", (int)Mth.clamp(lentity.getAdditionalPersistentData().getIntOr("freezeTime", 0) - 0.5f * sLevel.getBrightness(LightLayer.BLOCK, new BlockPos(Mth.floor(ent.getX()), Mth.floor(ent.getY()), Mth.floor(ent.getZ()))), 0, Double.POSITIVE_INFINITY));
-							lentity.setAdditionalPersistentData(tag);
-						}
-					}
-					else {
-						CompoundTag tag = lentity.getAdditionalPersistentData();
-						tag.putInt("freezeTime", 0);
-						lentity.setAdditionalPersistentData(tag);
-					}
-				} else if(lentity.getAdditionalPersistentData().getIntOr("freezeTime", 0) > 0) {
-					CompoundTag tag = lentity.getAdditionalPersistentData();
-					tag.putInt("freezeTime", (int)Mth.clamp(lentity.getAdditionalPersistentData().getIntOr("freezeTime", 0) - 10, 0, Double.POSITIVE_INFINITY));
-					lentity.setAdditionalPersistentData(tag);
+		if(ent == null) {
+			return;
+		}
+		if(!(ent.level() instanceof ServerLevel sLevel) || !(ent instanceof LuckyTNTEntityExtension lentity)) {
+			return;
+		}
+
+		//one data storage lookup instead of two
+		LevelVariables variables = LevelVariables.get(sLevel);
+		boolean iceAge = variables.iceAgeTime > 0;
+		boolean heatDeath = variables.heatDeathTime > 0;
+
+		//each key is read exactly once instead of ~14 times
+		CompoundTag tag = lentity.getAdditionalPersistentData();
+		int freezeTime = tag.getIntOr("freezeTime", 0);
+		int heatTime = tag.getIntOr("heatTime", 0);
+
+		//common case: no disaster running and no leftover freeze/heat state on this entity
+		if(!iceAge && !heatDeath && freezeTime == 0 && heatTime == 0) {
+			return;
+		}
+
+		//matches the old '(ent instanceof Player pl && !pl.isCreative()) || !(ent instanceof Player)'
+		boolean affected = !(ent instanceof Player pl) || !pl.isCreative();
+
+		//FREEZE
+		int newFreezeTime = freezeTime;
+		if(iceAge) {
+			if(affected) {
+				int brightness = sLevel.getBrightness(LightLayer.BLOCK, new BlockPos(Mth.floor(ent.getX()), Mth.floor(ent.getY()), Mth.floor(ent.getZ())));
+				if(brightness < 11) {
+					newFreezeTime = freezeTime + LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get().intValue();
 				}
-				if(lentity.getAdditionalPersistentData().getIntOr("freezeTime", 0) >= 600) {
-					ent.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, lentity.getAdditionalPersistentData().getIntOr("freezeTime", 0) / 600));
-					ent.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, lentity.getAdditionalPersistentData().getIntOr("freezeTime", 0) / 900));
-				}
-				if(lentity.getAdditionalPersistentData().getIntOr("freezeTime", 0) >= 1200 && lentity.getAdditionalPersistentData().getIntOr("freezeTime", 0) % 10 == 0) {
-					DamageSources sources = ent.level().damageSources();
-					ent.hurtServer(sLevel, sources.freeze(), 1);
-				}
-				
-				
-				if(LevelVariables.get(sLevel).heatDeathTime > 0) {
-					if((ent instanceof Player pl && !pl.isCreative()) || !(ent instanceof Player)) {
-						if(!sLevel.getBlockState(ent.blockPosition()).is(Blocks.WATER)) {
-							CompoundTag tag = lentity.getAdditionalPersistentData();
-							tag.putInt("heatTime", lentity.getAdditionalPersistentData().getIntOr("heatTime", 0) + LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get().intValue());
-							lentity.setAdditionalPersistentData(tag);
-						}
-						else if(lentity.getAdditionalPersistentData().getIntOr("heatTime", 0) > 0){
-							CompoundTag tag = lentity.getAdditionalPersistentData();
-							tag.putInt("heatTime", (int)Mth.clamp(lentity.getAdditionalPersistentData().getIntOr("heatTime", 0) - 20, 0, Double.POSITIVE_INFINITY));
-							lentity.setAdditionalPersistentData(tag);
-						}
-					}
-					else {
-						CompoundTag tag = lentity.getAdditionalPersistentData();
-						tag.putInt("heatTime", 0);
-						lentity.setAdditionalPersistentData(tag);
-					}
-				} else if(lentity.getAdditionalPersistentData().getIntOr("heatTime", 0) > 0) {
-					CompoundTag tag = lentity.getAdditionalPersistentData();
-					tag.putInt("heatTime", (int)Mth.clamp(lentity.getAdditionalPersistentData().getIntOr("heatTime", 0) - 20, 0, Double.POSITIVE_INFINITY));
-					lentity.setAdditionalPersistentData(tag);
-				}
-				if(lentity.getAdditionalPersistentData().getIntOr("heatTime", 0) >= 600) {
-					ent.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 0));
-					ent.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0));
-				}
-				if(lentity.getAdditionalPersistentData().getIntOr("heatTime", 0) >= 1200 && lentity.getAdditionalPersistentData().getIntOr("heatTime", 0) % 10 == 0) {
-					ent.igniteForSeconds(lentity.getAdditionalPersistentData().getIntOr("heatTime", 0) / 800);
-					ent.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 1));
-					ent.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 1));
+				else if(freezeTime > 0) {
+					newFreezeTime = (int)Mth.clamp(freezeTime - 0.5f * brightness, 0, Double.POSITIVE_INFINITY);
 				}
 			}
+			else {
+				newFreezeTime = 0;
+			}
+		} else if(freezeTime > 0) {
+			newFreezeTime = (int)Mth.clamp(freezeTime - 10, 0, Double.POSITIVE_INFINITY);
+		}
+		if(newFreezeTime != freezeTime) {
+			freezeTime = newFreezeTime;
+			tag.putInt("freezeTime", freezeTime);
+			lentity.setAdditionalPersistentData(tag);
+		}
+
+		if(freezeTime >= 600) {
+			ent.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, freezeTime / 600));
+			ent.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, freezeTime / 900));
+		}
+		if(freezeTime >= 1200 && freezeTime % 10 == 0) {
+			DamageSources sources = ent.level().damageSources();
+			ent.hurtServer(sLevel, sources.freeze(), 1);
+		}
+
+		//HEAT
+		int newHeatTime = heatTime;
+		if(heatDeath) {
+			if(affected) {
+				if(!sLevel.getBlockState(ent.blockPosition()).is(Blocks.WATER)) {
+					newHeatTime = heatTime + LuckyTNTConfigValues.AVERAGE_DIASTER_INTENSITY.get().intValue();
+				}
+				else if(heatTime > 0) {
+					newHeatTime = (int)Mth.clamp(heatTime - 20, 0, Double.POSITIVE_INFINITY);
+				}
+			}
+			else {
+				newHeatTime = 0;
+			}
+		} else if(heatTime > 0) {
+			newHeatTime = (int)Mth.clamp(heatTime - 20, 0, Double.POSITIVE_INFINITY);
+		}
+		if(newHeatTime != heatTime) {
+			heatTime = newHeatTime;
+			tag.putInt("heatTime", heatTime);
+			lentity.setAdditionalPersistentData(tag);
+		}
+
+		if(heatTime >= 600) {
+			ent.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 0));
+			ent.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0));
+		}
+		if(heatTime >= 1200 && heatTime % 10 == 0) {
+			ent.igniteForSeconds(heatTime / 800);
+			ent.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 1));
+			ent.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 1));
 		}
 	}
 }

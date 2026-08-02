@@ -24,6 +24,7 @@ import luckytnt.tnteffects.projectile.AcceleratingDynamiteEffect;
 import luckytnt.tnteffects.projectile.AnimalDynamiteEffect;
 import luckytnt.tnteffects.projectile.BigDynamiteEffect;
 import luckytnt.tnteffects.projectile.BombEffect;
+import luckytnt.tnteffects.projectile.BombRainDynamiteEffect;
 import luckytnt.tnteffects.projectile.ChemicalDynamiteEffect;
 import luckytnt.tnteffects.projectile.ChicxulubMeteorEffect;
 import luckytnt.tnteffects.projectile.ChristmasDynamiteEffect;
@@ -190,6 +191,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<PrimedLTNT>> TROLL_TNT_MK2 = LuckyTNTMod.RH.registerTNTEntity("troll_tnt_mk2", new TrollTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> TROLL_TNT_MK3 = LuckyTNTMod.RH.registerTNTEntity("troll_tnt_mk3", new TrollTNTMk3Effect());
 	public static final Supplier<EntityType<PrimedLTNT>> CLUSTER_BOMB_TNT = LuckyTNTMod.RH.registerTNTEntity("cluster_bomb_tnt", new DropProjectileTNTEffect(() -> EntityRegistry.CLUSTER_BOMB));
+	public static final Supplier<EntityType<PrimedLTNT>> BOMB_RAIN_TNT = LuckyTNTMod.RH.registerTNTEntity("bomb_rain_tnt", new BombRainTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> AIR_STRIKE = LuckyTNTMod.RH.registerTNTEntity("air_strike", new AirStrikeEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> SPAMMING_TNT = LuckyTNTMod.RH.registerTNTEntity("spamming_tnt", new SpammingTNTEffect());
 	public static final Supplier<EntityType<PrimedLTNT>> BOUNCING_TNT = LuckyTNTMod.RH.registerTNTEntity("bouncing_tnt", new BouncingTNTEffect());
@@ -414,7 +416,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<LExplosiveProjectile>> ICE_METEOR_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("ice_meteor_dynamite", new IceMeteorDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> HONEY_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("honey_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.HONEY_DYNAMITE, ParticleTypes.DRIPPING_HONEY, new HoneyTNTEffect(10)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> ULTRALIGHT_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("ultralight_dynamite", new UltralightDynamiteEffect(), 0.25f, false);
-	public static final Supplier<EntityType<LExplosiveProjectile>> ACCELERATING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("acclerating_dynamite", new AcceleratingDynamiteEffect(), 0.25f, false);
+	public static final Supplier<EntityType<LExplosiveProjectile>> ACCELERATING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("accelerating_dynamite", new AcceleratingDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> NETHER_GROVE_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("nether_grove_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.NETHER_GROVE_DYNAMITE, new NetherGroveTNTEffect(15)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> LUSH_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("lush_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.LUSH_DYNAMITE, dustParticle(0.44f, 0.57f, 0.18f, 1f), new LushTNTEffect(10)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> DRIPSTONE_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("dripstone_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.DRIPSTONE_DYNAMITE, new DripstoneTNTEffect(10)), 0.25f, false);
@@ -423,6 +425,7 @@ public class EntityRegistry {
 	public static final Supplier<EntityType<LExplosiveProjectile>> PRISM_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("prism_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.PRISM_DYNAMITE, new PrismTNTEffect(6)), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> RING_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("ring_dynamite", new RingDynamiteEffect(), 0.25f, false);
 	public static final Supplier<EntityType<LExplosiveProjectile>> SCULK_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("sculk_dynamite", new GeneralDynamiteEffect(() -> ItemRegistry.SCULK_DYNAMITE, new SculkTNTEffect(10)), 0.25f, false);
+	public static final Supplier<EntityType<LExplosiveProjectile>> BOMB_RAIN_DYNAMITE = LuckyTNTMod.RH.registerExplosiveProjectile("bomb_rain_dynamite", new BombRainDynamiteEffect(), 0.25f, false);
 
 	//Minecarts
 	public static final Supplier<EntityType<LTNTMinecart>> TNT_X5_MINECART = LuckyTNTMod.RH.registerTNTMinecart("tnt_x5_minecart", TNT_X5, () -> ItemRegistry.TNT_X5_MINECART);

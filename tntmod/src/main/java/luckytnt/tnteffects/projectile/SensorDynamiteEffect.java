@@ -20,19 +20,27 @@ import net.minecraft.world.level.Level;
 
 public class SensorDynamiteEffect extends PrimedTNTEffect{
 
+	/** Ticks between two proximity polls. Each poll is an AABB entity query. */
+	private static final int SENSOR_INTERVAL = 4;
+
 	@Override
 	public void explosionTick(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
-		if(level instanceof ServerLevel) {
+		if(level instanceof ServerLevel && entity.getTNTFuse() % SENSOR_INTERVAL == 0) {
 			List<Player> players = level.getEntitiesOfClass(Player.class, new AABB(entity.getPos().add(-5f, -5f, -5f), entity.getPos().add(5f, 5f, 5f)));
 			for(Player player : players) {
-				if(!player.equals(entity.owner())) {
-					ImprovedExplosion explosion = new ImprovedExplosion(level, entity.getPos(), 5);
-					explosion.doEntityExplosion(1f, true);
-					explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
-					level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
-					entity.destroy();
+				// Triggers on any player in range, the thrower included.
+				if(player.isSpectator() || player.isRemoved()) {
+					continue;
 				}
+				ImprovedExplosion explosion = new ImprovedExplosion(level, entity.getPos(), 5);
+				explosion.doEntityExplosion(1f, true);
+				explosion.doBlockExplosion(1f, 1f, 1f, 1.25f, false, false);
+				level.playSound((Entity)entity, toBlockPos(entity.getPos()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
+				entity.destroy();
+				// Without this the loop kept running on an already destroyed entity and detonated once
+				// per nearby player.
+				break;
 			}
 		}
 	}
@@ -59,6 +67,8 @@ public class SensorDynamiteEffect extends PrimedTNTEffect{
 	
 	@Override
 	public int getDefaultFuse(IExplosiveEntity entity) {
-		return 5000;
+		// 60 s of armed lifetime instead of 250 s. Combined with SENSOR_INTERVAL this is ~17x fewer
+		// AABB polls per thrown mine.
+		return 1200;
 	}
 }

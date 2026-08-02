@@ -1,6 +1,7 @@
 package luckytnt.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -8,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import luckytnt.registry.BlockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.level.block.PoweredRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,6 +28,23 @@ import net.minecraft.world.level.block.state.BlockState;
 @Mixin(AbstractMinecart.class)
 public abstract class AbstractMinecartEntityMixin {
 
+	/*
+	 * A "this cart is not on an obsidian activator rail" result stays valid for 20 ticks while the cart does not
+	 * change its block position. That bounds the cost for the overwhelmingly common case (a parked cart or a cart on
+	 * vanilla rails) without a per-tick BlockPos allocation + block lookup. A cart that IS on an obsidian activator
+	 * rail is still re-checked every tick, so powering/unpowering the rail keeps working immediately.
+	 */
+	@Unique
+	private int luckytnt$lastX = Integer.MIN_VALUE;
+	@Unique
+	private int luckytnt$lastY = Integer.MIN_VALUE;
+	@Unique
+	private int luckytnt$lastZ = Integer.MIN_VALUE;
+	@Unique
+	private int luckytnt$recheckIn = 0;
+	@Unique
+	private boolean luckytnt$onObsidianActivatorRail = false;
+
 	@Inject(method = "tick", at = @At("TAIL"))
 	private void injectTick(CallbackInfo info) {
 		AbstractMinecart cart = (AbstractMinecart)(Object)this;
@@ -34,10 +53,28 @@ public abstract class AbstractMinecartEntityMixin {
 			return;
 		}
 
+		//cheap early-out: floored position only, no BlockPos allocation and no chunk lookup
+		int x = Mth.floor(cart.getX());
+		int y = Mth.floor(cart.getY());
+		int z = Mth.floor(cart.getZ());
+		boolean moved = x != luckytnt$lastX || y != luckytnt$lastY || z != luckytnt$lastZ;
+
+		if (!moved && !luckytnt$onObsidianActivatorRail && luckytnt$recheckIn > 0) {
+			luckytnt$recheckIn--;
+			return;
+		}
+
+		luckytnt$lastX = x;
+		luckytnt$lastY = y;
+		luckytnt$lastZ = z;
+		luckytnt$recheckIn = 20;
+
 		BlockPos pos = cart.getCurrentBlockPosOrRailBelow();
 		BlockState blockState = level.getBlockState(pos);
 
-		if (blockState.is(BlockRegistry.OBSIDIAN_ACTIVATOR_RAIL.get())) {
+		luckytnt$onObsidianActivatorRail = blockState.is(BlockRegistry.OBSIDIAN_ACTIVATOR_RAIL.get());
+
+		if (luckytnt$onObsidianActivatorRail) {
 			cart.activateMinecart(level, pos.getX(), pos.getY(), pos.getZ(), blockState.getValue(PoweredRailBlock.POWERED));
 		}
 	}

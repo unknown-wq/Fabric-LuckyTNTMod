@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -21,19 +22,19 @@ public class ReactionTNTEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity) {
 		Level level = entity.getLevel();
 		if(!level.isClientSide() && entity.getTNTFuse() < 100) {
-			if(entity.getPersistentData().getIntOr("nextExplosion", 0) == 0) {
+			RandomSource random = level.getRandom();
+			CompoundTag tag = entity.getPersistentData();
+			int nextExplosion = tag.getIntOr("nextExplosion", 0);
+			if(nextExplosion == 0) {
 				Vec3 randomPos = new Vec3(Math.random() * 40 - 20, Math.random() * 20 - 10, Math.random() * 40 - 20);
-				float explosionSize = 10 + level.getRandom().nextFloat() * 10;
-				ImprovedExplosion explosion = new ImprovedExplosion(entity.getLevel(), (Entity)entity, entity.getPos().add(randomPos), Math.round(explosionSize));
+				float explosionSize = 10 + random.nextFloat() * 10;
+				ImprovedExplosion explosion = new ImprovedExplosion(level, (Entity)entity, entity.getPos().add(randomPos), Math.round(explosionSize));
 				explosion.doEntityExplosion(1f + 0.05f * explosionSize, true);
 				explosion.doBlockExplosion(1f, 1f, 0.75f, 1.25f, false, false);
-				level.playSound((Entity)entity, toBlockPos(entity.getPos()).offset(toBlockPos(randomPos)), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f) * 0.7f);
-				CompoundTag tag = entity.getPersistentData();
-				tag.putInt("nextExplosion", 2 + level.getRandom().nextInt(3));
-				entity.setPersistentData(tag);
+				level.playSound((Entity)entity, toBlockPos(entity.getPos()).offset(toBlockPos(randomPos)), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4f, (1f + (random.nextFloat() - random.nextFloat()) * 0.2f) * 0.7f);
+				nextExplosion = 2 + random.nextInt(3);
 			}
-			CompoundTag tag = entity.getPersistentData();
-			tag.putInt("nextExplosion", entity.getPersistentData().getIntOr("nextExplosion", 0) - 1);
+			tag.putInt("nextExplosion", nextExplosion - 1);
 			entity.setPersistentData(tag);
 		}
 	}

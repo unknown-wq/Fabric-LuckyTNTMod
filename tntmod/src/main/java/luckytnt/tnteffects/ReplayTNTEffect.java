@@ -1,6 +1,7 @@
 package luckytnt.tnteffects;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.joml.Vector3f;
 
@@ -40,30 +41,34 @@ public class ReplayTNTEffect extends PrimedTNTEffect {
 					}
 				});
 			}
-			if(tnt.getTNTFuse() > 200) {
+			// Recording every tick meant 200 full r=10 sphere sweeps and 200 retained HashMaps.
+			// Every snapshot is a full cumulative diff against tnt.blocks (not an incremental delta),
+			// so recording only every 4th tick still replays the complete change set, just at a
+			// 4 tick granularity. 400 % 4 == 0 and 200 % 4 == 0, so record and playback stay aligned.
+			if(tnt.getTNTFuse() > 200 && tnt.getTNTFuse() % 4 == 0) {
+				HashMap<BlockPos, BlockState> original = tnt.blocks;
 				HashMap<BlockPos, BlockState> list = new HashMap<>();
 				ExplosionHelper.doSphericalExplosion(sLevel, tnt.getPos(), 10, new IForEachBlockExplosionEffect() {
-					
+
 					@Override
 					public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
-						if(tnt.blocks.get(pos) != null) {
-							if(!tnt.blocks.get(pos).equals(state)) {
-								list.put(pos, state);
-							}
+						BlockState old = original.get(pos);
+						if(old != null && !old.equals(state)) {
+							list.put(pos, state);
 						}
 					}
 				});
 				tnt.blockChanges.set(tnt.getTNTFuse() - 200, list);
 			}
 			if(tnt.getTNTFuse() == 200) {
-				for(BlockPos pos : tnt.blocks.keySet()) {
-					sLevel.setBlockAndUpdate(pos, tnt.blocks.get(pos));
+				for(Map.Entry<BlockPos, BlockState> entry : tnt.blocks.entrySet()) {
+					sLevel.setBlockAndUpdate(entry.getKey(), entry.getValue());
 				}
 			}
 			if(tnt.getTNTFuse() < 200 && tnt.blockChanges.get(tnt.getTNTFuse()) != null) {
 				HashMap<BlockPos, BlockState> list = tnt.blockChanges.get(tnt.getTNTFuse());
-				for(BlockPos pos : list.keySet()) {
-					sLevel.setBlockAndUpdate(pos, list.get(pos));
+				for(Map.Entry<BlockPos, BlockState> entry : list.entrySet()) {
+					sLevel.setBlockAndUpdate(entry.getKey(), entry.getValue());
 				}
 			}
 		}

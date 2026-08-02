@@ -187,6 +187,7 @@
 	"block.luckytntmod.heat_wave" : "Heat Wave",
 	"block.luckytntmod.winter_tnt" : "Winter TNT",
 	"block.luckytntmod.black_hole_tnt" : "Black Hole TNT",
+	"block.luckytntmod.bomb_rain_tnt" : "Bomb Rain TNT",
 	"block.luckytntmod.flak_tnt" : "Flak TNT",
 	"block.luckytntmod.tnt_rain" : "TNT Rain",
 	"block.luckytntmod.lucky_doomsday" : "Lucky Doomsday",
@@ -283,6 +284,7 @@
 	"item.luckytntmod.prism_dynamite" : "Prism Dynamite",
 	"item.luckytntmod.ring_dynamite" : "Ring Dynamite",
 	"item.luckytntmod.sculk_dynamite" : "Sculk Dynamite",
+	"item.luckytntmod.bomb_rain_dynamite" : "Bomb Rain Dynamite",
 
 	"item.luckytntmod.tnt_x5_minecart" : "Minecart with TNT x5",
 	"item.luckytntmod.tnt_x20_minecart" : "Minecart with TNT x20",
@@ -566,6 +568,7 @@
 	"entity.luckytntmod.heat_wave" : "Heat Wave",
 	"entity.luckytntmod.winter_tnt" : "Winter TNT",
 	"entity.luckytntmod.black_hole_tnt" : "Black Hole TNT",
+	"entity.luckytntmod.bomb_rain_tnt" : "Bomb Rain TNT",
 	"entity.luckytntmod.flak_tnt" : "Flak TNT",
 	"entity.luckytntmod.tnt_rain" : "TNT Rain",
 	"entity.luckytntmod.prism_tnt" : "Prism TNT",
@@ -648,6 +651,7 @@
 	"entity.luckytntmod.prism_dynamite" : "Prism Dynamite",
 	"entity.luckytntmod.ring_dynamite" : "Ring Dynamite",
 	"entity.luckytntmod.sculk_dynamite" : "Sculk Dynamite",
+	"entity.luckytntmod.bomb_rain_dynamite" : "Bomb Rain Dynamite",
 
 	"entity.luckytntmod.tnt_x5_minecart" : "Minecart with TNT x5",
 	"entity.luckytntmod.tnt_x20_minecart" : "Minecart with TNT x20",

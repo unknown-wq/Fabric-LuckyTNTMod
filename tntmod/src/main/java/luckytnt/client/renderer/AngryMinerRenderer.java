@@ -16,6 +16,8 @@ import net.minecraft.resources.Identifier;
 @Environment(value = EnvType.CLIENT)
 public class AngryMinerRenderer extends HumanoidMobRenderer<AngryMiner, HumanoidRenderState, HumanoidModel<HumanoidRenderState>> {
 
+	private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "textures/angryminer.png");
+
 	public AngryMinerRenderer(EntityRendererProvider.Context context) {
 		super(context, new HumanoidModel<HumanoidRenderState>(context.bakeLayer(ModelLayers.PLAYER)), 0.5f);
 		addLayer(new HumanoidArmorLayer<>(this, ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, context.getModelSet(), root -> new HumanoidModel<HumanoidRenderState>(root)), context.getEquipmentRenderer()));
@@ -23,7 +25,7 @@ public class AngryMinerRenderer extends HumanoidMobRenderer<AngryMiner, Humanoid
 
 	@Override
 	public Identifier getTextureLocation(HumanoidRenderState state) {
-		return Identifier.fromNamespaceAndPath(LuckyTNTMod.MODID, "textures/angryminer.png");
+		return TEXTURE;
 	}
 
 	@Override

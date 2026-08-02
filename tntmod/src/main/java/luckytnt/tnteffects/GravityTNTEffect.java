@@ -11,7 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.util.Mth;
 
@@ -22,10 +22,10 @@ public class GravityTNTEffect extends PrimedTNTEffect{
 		int x = Mth.floor(entity.getPos().x);
 		int y = Mth.floor(entity.getPos().y);
 		int z = Mth.floor(entity.getPos().z);
-		if(entity.getTNTFuse() < 200) {
-			BlockPos min = new BlockPos(x - 25, y - 25, z - 25);
-			BlockPos max = new BlockPos(x + 25, y + 25, z + 25);
-			List<Entity> ents = entity.getLevel().getEntities((Entity)entity, new AABB(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ()));
+		// explosionTick runs on both logical sides: this 50 wide query used to be walked twice a
+		// tick for 200 ticks. Players are hurtMarked so the server still pushes the velocity to them.
+		if(entity.getTNTFuse() < 200 && entity.getLevel() instanceof ServerLevel) {
+			List<Entity> ents = entity.getLevel().getEntities((Entity)entity, new AABB(x - 25, y - 25, z - 25, x + 25, y + 25, z + 25));
 			for(Entity ent : ents) {
 				if(!(ent instanceof PrimedTnt) && !(ent instanceof LTNTMinecart)) {
 					double lx = ent.getX() - x;
@@ -33,11 +33,16 @@ public class GravityTNTEffect extends PrimedTNTEffect{
 					double lz = ent.getZ() - z;
 					double distance = Math.sqrt(lx * lx + ly * ly + lz * lz) + 0.1f;
 					if(ent instanceof Player) {
-						if(!((Player)ent).isCreative())
-							if(distance > 2 && distance < 25 && ent.getDeltaMovement().y < 5)
+						if(!((Player)ent).isCreative()) {
+							if(distance > 2 && distance < 25 && ent.getDeltaMovement().y < 5) {
 								ent.setDeltaMovement(-lx / distance, -ly / distance + 0.1f, -lz / distance);
-							else if(distance < 2)
+								((Player)ent).hurtMarked = true;
+							}
+							else if(distance < 2) {
 								ent.setDeltaMovement(ent.getDeltaMovement().x, 6, ent.getDeltaMovement().z);
+								((Player)ent).hurtMarked = true;
+							}
+						}
 					}
 					else {
 						if(distance > 2 && distance < 25 && ent.getDeltaMovement().y < 5)
