@@ -25,10 +25,10 @@ not load without the library.
 sha256:
 
 ```
-74e1d2af5f80bacb07bcc941d6d4bc6ed59044890dc4709d57f957ddc8321368  fabric-luckytntmod-26.2-6.0.jar
-b7c3d3f195ff76c4b14df8685572d2dc5522928ba2dd7d6a0c1579fe5dad9676  fabric-luckytntlib-26.2-0.100.6.1.jar
-157a28eff54d52f661183d65594d84f415d5e42b953d39fa01043f826b7d1d65  fabric-luckytntmod-26.2-6.0-sources.jar
-0f63f8450df374f024ea2d47eca8985af938dbbeced44f9288c9840d8045bac2  fabric-luckytntlib-26.2-0.100.6.1-sources.jar
+3087dd5786889d406fe9d635b07b019d9932bc0d1285091ba6b2147c83727d7a  fabric-luckytntmod-26.2-6.0.jar
+c6c4cb70b179597bace3e1abecd676ebf5c1d46923c6083a82bd98c8b4685e0b  fabric-luckytntlib-26.2-0.100.6.1.jar
+44f6a9fb280c83c529d3e6a136b4a877a69d8944478074d7ae694d9cbedd6695  fabric-luckytntmod-26.2-6.0-sources.jar
+842be3ff2a3dcfdc30ef1cf1a8acddd30ae3093011dd3870bf134c354c988b41  fabric-luckytntlib-26.2-0.100.6.1-sources.jar
 ```
 
 **Server-side is verified** — a dedicated 26.2 server boots green with these jars (`Done (…)!`, zero
