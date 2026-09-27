@@ -82,7 +82,7 @@ public class LTNTBlock extends TntBlock {
 			explode(level, false, pos.getX(), pos.getY(), pos.getZ(), null);
 		}
 
-		spawnDestroyParticles(level, player, pos, state);
+		spawnDestroyByEntityParticles(level, player, pos, state);
 		if (state.is(BlockTags.GUARDED_BY_PIGLINS) && level instanceof ServerLevel serverLevel) {
 			PiglinAi.angerNearbyPiglins(serverLevel, player, false);
 		}

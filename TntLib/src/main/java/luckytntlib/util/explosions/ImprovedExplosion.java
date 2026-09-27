@@ -848,7 +848,7 @@ public class ImprovedExplosion implements Explosion {
 					}
 					entity.setDeltaMovement(entity.getDeltaMovement().add(offX * knockback * knockbackStrength, offY * knockback * knockbackStrength, offZ * knockback * knockbackStrength));
 					if(entity instanceof Player player) {
-						player.hurtMarked = true;
+						player.syncVelocity = true;
 						if(!player.isSpectator() && (!player.isCreative() || !player.getAbilities().flying)) {
 							affectedPlayers.put(player, new Vec3(offX * damage, offY * damage, offZ * damage));
 						}
