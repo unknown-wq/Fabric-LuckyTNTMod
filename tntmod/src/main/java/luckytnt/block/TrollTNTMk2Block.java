@@ -63,7 +63,7 @@ public class TrollTNTMk2Block extends LTNTBlock{
 			explode(world, false, pos.getX(), pos.getY(), pos.getZ(), null);
 		}
 
-		spawnDestroyParticles(world, player, pos, state);
+		spawnDestroyByEntityParticles(world, player, pos, state);
         if (state.is(BlockTags.GUARDED_BY_PIGLINS) && world instanceof ServerLevel serverLevel) {
             PiglinAi.angerNearbyPiglins(serverLevel, player, false);
         }

@@ -15,7 +15,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.data.worldgen.features.CaveFeatures;
 
 public class SculkTNTEffect extends PrimedTNTEffect {
@@ -58,16 +58,16 @@ public class SculkTNTEffect extends PrimedTNTEffect {
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if((level.getBlockState(pos.below()).isAir() && !state.isAir()) && Math.random() < 0.025f) {
-						Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.SCULK_PATCH_DEEP_DARK);
+						Holder<Feature> feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.FEATURE).getOrThrow(CaveFeatures.SCULK_PATCH_DEEP_DARK);
 						feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos.below());
 					}
 					if((!level.getBlockState(pos.below()).isAir() && state.isAir()) && Math.random() < 0.03f) {
-						Holder<ConfiguredFeature<?, ?>> feature = null;
+						Holder<Feature> feature = null;
 						if(Math.random() < 0.5f) {
-							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.SCULK_PATCH_DEEP_DARK);
+							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.FEATURE).getOrThrow(CaveFeatures.SCULK_PATCH_DEEP_DARK);
 							feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
 						} else {
-							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.SCULK_PATCH_ANCIENT_CITY);
+							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.FEATURE).getOrThrow(CaveFeatures.SCULK_PATCH_ANCIENT_CITY);
 							feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
 						}
 					}

@@ -33,7 +33,7 @@ public class BombRenderer extends EntityRenderer<LExplosiveProjectile, BombRende
 		poseStack.pushPose();
 		poseStack.scale(state.size, state.size, state.size);
 		RenderType renderType = model.renderType(TEXTURE);
-		submitNodeCollector.submitModel(model, state, poseStack, renderType, state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor, null);
+		submitNodeCollector.submitModel(model, state, poseStack, renderType, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
 		poseStack.popPose();
 		super.submit(state, poseStack, submitNodeCollector, camera);
 	}

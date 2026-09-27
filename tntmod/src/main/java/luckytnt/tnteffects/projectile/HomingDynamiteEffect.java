@@ -53,7 +53,7 @@ public class HomingDynamiteEffect extends PrimedTNTEffect{
 				((Entity)entity).setDeltaMovement(movement);
 				// Let vanilla piggyback the new motion onto the regular tracker update instead of
 				// broadcasting a ClientboundSetEntityMotionPacket to every player in the level.
-				((Entity)entity).hurtMarked = true;
+				((Entity)entity).syncVelocity = true;
 			}
 		}
 	}

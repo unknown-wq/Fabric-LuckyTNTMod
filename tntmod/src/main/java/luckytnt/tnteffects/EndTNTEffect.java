@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -70,7 +70,7 @@ public class EndTNTEffect extends PrimedTNTEffect {
 					}
 				}
 				if(endermen[0] < MAX_ENDERMEN && random.nextFloat() < 0.025f) {
-					EnderMan enderman = EntityTypes.ENDERMAN.create(level, EntitySpawnReason.MOB_SUMMONED);
+					Enderman enderman = EntityTypes.ENDERMAN.create(level, EntitySpawnReason.MOB_SUMMONED);
 					if(enderman != null) {
 						enderman.setPos(pos.getX(), pos.getY() + 1f, pos.getZ());
 						level.addFreshEntity(enderman);

@@ -21,6 +21,10 @@ import net.minecraft.client.renderer.GameRenderer;
  * camera's rotation at the HEAD of that method (before {@code Camera.extractRenderState} reads it).
  * The perturbation goes through {@link CameraExtension} which calls {@code Camera.setRotation} so the
  * internal rotation quaternion (source of the view matrix) is kept in sync.
+ * <p>
+ * 26.3: {@code extractCamera} lost its third parameter (camera-entity partial ticks) and is now
+ * {@code extractCamera(DeltaTracker, float)}; the handler signature follows it. The order is unchanged:
+ * {@code Camera.update} runs before {@code extractCamera}, which calls {@code Camera.extractRenderState} first.
  */
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
@@ -30,7 +34,7 @@ public abstract class GameRendererMixin {
 	private Camera mainCamera;
 
 	@Inject(method = "extractCamera", at = @At("HEAD"))
-	private void extractCameraInject(DeltaTracker deltaTracker, float worldPartialTicks, float cameraEntityPartialTicks, CallbackInfo info) {
+	private void extractCameraInject(DeltaTracker deltaTracker, float worldPartialTicks, CallbackInfo info) {
 		LocalPlayer player = Minecraft.getInstance().player;
 
 		if (player instanceof LuckyTNTEntityExtension lplayer && lplayer.getAdditionalPersistentData().getIntOr("shakeTime", 0) >= 1) {

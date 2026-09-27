@@ -41,7 +41,6 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.Level;
 //import net.minecraft.world.gen.YOffset;
 //import net.minecraft.world.gen.blockpredicate.BlockPredicate;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 //import net.minecraft.world.gen.feature.DiskFeatureConfig;
 import net.minecraft.world.level.levelgen.feature.Feature;
 //import net.minecraft.world.gen.feature.NetherConfiguredFeatures;

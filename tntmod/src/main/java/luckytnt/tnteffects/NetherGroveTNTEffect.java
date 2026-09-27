@@ -19,7 +19,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.data.worldgen.features.NetherFeatures;
 import net.minecraft.data.worldgen.features.TreeFeatures;
 
@@ -33,16 +33,16 @@ public class NetherGroveTNTEffect extends PrimedTNTEffect{
 	
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
-		Holder<ConfiguredFeature<?, ?>> tree;
-		Holder<ConfiguredFeature<?, ?>> vegetation;
+		Holder<Feature> tree;
+		Holder<Feature> vegetation;
 		Block topBlock;
 		if (Math.random() < 0.5D) {
-			tree = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(TreeFeatures.CRIMSON_FUNGUS);
-			vegetation = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(NetherFeatures.CRIMSON_FOREST_VEGETATION_BONEMEAL);
+			tree = entity.getLevel().registryAccess().lookupOrThrow(Registries.FEATURE).getOrThrow(TreeFeatures.CRIMSON_FUNGUS);
+			vegetation = entity.getLevel().registryAccess().lookupOrThrow(Registries.FEATURE).getOrThrow(NetherFeatures.NYLIUM_BONEMEAL);
 			topBlock = Blocks.CRIMSON_NYLIUM;
 		} else {
-			tree = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(TreeFeatures.WARPED_FUNGUS);
-			vegetation = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(NetherFeatures.WARPED_FOREST_VEGETATION_BONEMEAL);
+			tree = entity.getLevel().registryAccess().lookupOrThrow(Registries.FEATURE).getOrThrow(TreeFeatures.WARPED_FUNGUS);
+			vegetation = entity.getLevel().registryAccess().lookupOrThrow(Registries.FEATURE).getOrThrow(NetherFeatures.NYLIUM_BONEMEAL);
 			topBlock = Blocks.WARPED_NYLIUM;
 		}
 		ExplosionHelper.doTopBlockExplosion(entity.getLevel(), entity.getPos(), radius, new IBlockExplosionCondition() {

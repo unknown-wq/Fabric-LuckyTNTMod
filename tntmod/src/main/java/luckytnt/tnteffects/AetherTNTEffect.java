@@ -27,7 +27,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.data.worldgen.features.VegetationFeatures;
 
 public class AetherTNTEffect extends PrimedTNTEffect {
@@ -62,11 +62,11 @@ public class AetherTNTEffect extends PrimedTNTEffect {
 		//registry lookup alone ran 31417 times (once per in-circle column) for a value that never changes,
 		//and so did the chunk generator lookup and a fresh RandomSource per placement.
 		final ServerLevel sLevel = (ServerLevel) level;
-		final Registry<ConfiguredFeature<?, ?>> features = level.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE);
+		final Registry<Feature> features = level.registryAccess().lookupOrThrow(Registries.FEATURE);
 		final ChunkGenerator generator = sLevel.getChunkSource().getGenerator();
 		final RandomSource random = sLevel.getRandom();
-		final ConfiguredFeature<?, ?> forestFlowers = features.getValue(VegetationFeatures.FOREST_FLOWERS);
-		final ConfiguredFeature<?, ?> flowerForestFlowers = features.getValue(VegetationFeatures.FLOWER_FLOWER_FOREST);
+		final Feature forestFlowers = features.getValue(VegetationFeatures.FOREST_FLOWERS);
+		final Feature flowerForestFlowers = features.getValue(VegetationFeatures.FLOWER_FLOWER_FOREST);
 		final int entX = Mth.floor(ent.x());
 		//only used as the y of the isLoaded probe, which must stay inside the build height
 		final int entYFloor = Mth.floor(ent.y());
@@ -82,7 +82,7 @@ public class AetherTNTEffect extends PrimedTNTEffect {
 				//the 2.5% roll now runs *before* the top block lookup instead of after it. Only ~785 of the
 				//31417 in-circle columns still pay for a full Y column scan: ~16M getBlockState -> ~400k.
 				double roll = Math.random();
-				ConfiguredFeature<?, ?> feature;
+				Feature feature;
 				if(roll > 0.1D && roll <= 0.1125D) {
 					feature = forestFlowers;
 				} else if(roll > 0.15D && roll <= 0.1625D) {

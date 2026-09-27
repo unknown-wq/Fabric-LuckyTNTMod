@@ -21,7 +21,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.data.worldgen.features.CaveFeatures;
 
 public class GeodeTNTEffect extends PrimedTNTEffect{
@@ -39,7 +39,7 @@ public class GeodeTNTEffect extends PrimedTNTEffect{
 			}
 		});
 		if(entity.getLevel() instanceof ServerLevel sLevel) {
-			Holder<ConfiguredFeature<?, ?>> feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.AMETHYST_GEODE);
+			Holder<Feature> feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.FEATURE).getOrThrow(CaveFeatures.AMETHYST_GEODE);
 			feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), toBlockPos(entity.getPos()));
 		}
 		for(int i = blocks.size() - 1; i > 0; i--) {

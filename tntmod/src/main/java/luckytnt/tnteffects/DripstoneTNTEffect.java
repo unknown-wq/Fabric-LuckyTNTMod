@@ -16,7 +16,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.data.worldgen.features.CaveFeatures;
 
 public class DripstoneTNTEffect extends PrimedTNTEffect{
@@ -59,13 +59,13 @@ public class DripstoneTNTEffect extends PrimedTNTEffect{
 				@Override
 				public void doBlockExplosion(Level level, BlockPos pos, BlockState state, double distance) {
 					if(((level.getBlockState(pos.below()).isAir() && !state.isAir()) || (!level.getBlockState(pos.below()).isAir() && state.isAir())) && Math.random() < 0.1f) {
-						Holder<ConfiguredFeature<?, ?>> feature = null;
+						Holder<Feature> feature = null;
 						if(Math.random() < 0.9f) {
-							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).get(CaveFeatures.DRIPSTONE_CLUSTER).orElseThrow();
+							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.FEATURE).get(CaveFeatures.DRIPSTONE_CLUSTER).orElseThrow();
 							feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
 						}
 						else {
-							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).get(CaveFeatures.LARGE_DRIPSTONE).orElseThrow();
+							feature = entity.getLevel().registryAccess().lookupOrThrow(Registries.FEATURE).get(CaveFeatures.LARGE_DRIPSTONE).orElseThrow();
 							feature.value().place(sLevel, sLevel.getChunkSource().getGenerator(), sLevel.getRandom(), pos);
 						}
 					}

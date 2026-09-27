@@ -25,7 +25,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 	@Override
 	public void explosionTick(IExplosiveEntity ent) {
 		// explosionTick runs on both logical sides, so this 150 wide query used to be walked twice a
-		// tick for 300 ticks. Players now get hurtMarked so the server actually pushes the velocity
+		// tick for 300 ticks. Players now get syncVelocity so the server actually pushes the velocity
 		// down to them, which is what the client side pass used to do implicitly (same as
 		// serverExplosion below already did).
 		if(ent.getTNTFuse() > 1 && ent.getLevel() instanceof ServerLevel) {
@@ -47,7 +47,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 					if (lent instanceof Player player) {
 						if (!player.isCreative()) {
 							lent.setDeltaMovement(vec);
-							player.hurtMarked = true;
+							player.syncVelocity = true;
 						}
 					} else {
 						lent.setDeltaMovement(vec);
@@ -59,7 +59,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 							tag.putInt("knockbacktime", 40);
 							elent.setAdditionalPersistentData(tag);
 							lent.setDeltaMovement(vec.reverse().normalize().scale(5D).add(0, 0.5D, 0));
-							player.hurtMarked = true;
+							player.syncVelocity = true;
 						}
 					} else {
 						CompoundTag tag = elent.getAdditionalPersistentData();
@@ -89,7 +89,7 @@ public class KnockbackTNTEffect extends PrimedTNTEffect {
 					float damage = (1f - (float)distance);
 					entity.setDeltaMovement(entity.getDeltaMovement().add(offX * damage * 15, offY * damage * 15, offZ * damage * 15));
 					if(entity instanceof Player player) {
-						player.hurtMarked = true;
+						player.syncVelocity = true;
 					}
 				}
 			}

@@ -3,7 +3,7 @@ package luckytnt.feature;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 import luckytnt.config.LuckyTNTConfigValues;
 import luckytnt.registry.BlockRegistry;
@@ -15,11 +15,17 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
-public class Altar extends Feature<NoneFeatureConfiguration>{
+/**
+ * 26.3: {@link Feature} is now an interface whose instances are the configured features themselves; the
+ * feature type is just the {@link MapCodec} registered in {@code BuiltInRegistries.FEATURE_TYPE}. This feature
+ * has no configuration, so its codec is a unit codec that builds a fresh instance.
+ */
+public class Altar implements Feature {
+
+	public static final MapCodec<Altar> CODEC = MapCodec.unit(Altar::new);
 
 	public static final BlockState DEFAULT_GROUND = Blocks.GRASS_BLOCK.defaultBlockState();
 
@@ -43,8 +49,12 @@ public class Altar extends Feature<NoneFeatureConfiguration>{
 	public BlockState wall = Blocks.STONE_BRICK_WALL.defaultBlockState();
 	public BlockState mossyWall = Blocks.MOSSY_STONE_BRICK_WALL.defaultBlockState();
 
-	public Altar(Codec<NoneFeatureConfiguration> codec) {
-		super(codec);
+	public Altar() {
+	}
+
+	@Override
+	public MapCodec<Altar> codec() {
+		return CODEC;
 	}
 
 	public BlockState randomBrick(RandomSource random) {
@@ -78,13 +88,12 @@ public class Altar extends Feature<NoneFeatureConfiguration>{
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
+	public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource featureRandom, BlockPos origin) {
 		if(!LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE.get().booleanValue() && !isSeasonActive()) {
 			return false;
 		}
 
-		WorldGenLevel level = ctx.level();
-		BlockPos pos = ctx.origin();
+		BlockPos pos = origin;
 		RandomSource random = level.getRandom();
 
 		//local, not a field: Feature instances are registry singletons shared by all parallel worldgen threads

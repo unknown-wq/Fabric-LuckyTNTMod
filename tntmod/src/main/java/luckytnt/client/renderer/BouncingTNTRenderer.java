@@ -46,9 +46,9 @@ public class BouncingTNTRenderer extends EntityRenderer<PrimedLTNT, BouncingTNTR
 			poseStack.scale(scale, scale, scale);
 		}
 		poseStack.scale(state.size, state.size, state.size);
-		poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
+		poseStack.rotateDegrees(Axis.YP, -90.0F);
 		poseStack.translate(-0.5F, -0.5F, 0.5F);
-		poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+		poseStack.rotateDegrees(Axis.YP, 90.0F);
 		if (!state.blockState.isEmpty()) {
 			TntMinecartRenderer.submitWhiteSolidBlock(state.blockState, poseStack, submitNodeCollector, state.lightCoords, state.isTNT && TntRenderer.isLit(fuse), state.outlineColor);
 		}

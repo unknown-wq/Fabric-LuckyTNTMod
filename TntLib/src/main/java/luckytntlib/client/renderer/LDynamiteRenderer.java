@@ -38,7 +38,7 @@ public class LDynamiteRenderer<T extends LExplosiveProjectile & ItemSupplier> ex
 		if (state.ageInTicks >= 2.0F || state.distanceToCameraSq >= 12.25D) {
 			poseStack.pushPose();
 			poseStack.scale(state.size, state.size, state.size);
-			poseStack.mulPose(camera.orientation);
+			poseStack.rotate(camera.orientation);
 			state.item.submit(poseStack, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
 			poseStack.popPose();
 		}

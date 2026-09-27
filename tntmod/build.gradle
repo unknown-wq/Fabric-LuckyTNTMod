@@ -18,10 +18,10 @@ dependencies {
 	// Minecraft 26.1+ is unobfuscated and Yarn is discontinued: no mappings line is needed.
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// Ported LuckyTNTLib (26.2). 26.2 is unobfuscated, so the prebuilt jar is already in the
+	// Ported LuckyTNTLib (26.3). 26.3 is unobfuscated, so the prebuilt jar is already in the
 	// named (Mojang) namespace and needs no remapping — plain implementation is enough for both
 	// compile and runtime (Fabric loader scans the classpath for its fabric.mod.json).
-	implementation files("${rootProject.projectDir}/../dist/fabric-luckytntlib-26.2-0.100.6.1.jar")
+	implementation files("${rootProject.projectDir}/../dist/fabric-luckytntlib-26.3-0.100.6.1.jar")
 
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
