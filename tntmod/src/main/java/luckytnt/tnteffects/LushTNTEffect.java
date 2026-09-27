@@ -18,7 +18,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.data.worldgen.features.CaveFeatures;
 
 public class LushTNTEffect extends PrimedTNTEffect{
@@ -78,9 +78,9 @@ public class LushTNTEffect extends PrimedTNTEffect{
 		});
 		if(entLevel instanceof ServerLevel sLevel) {
 			//these three registry lookups used to run once per placed feature
-			final Holder<ConfiguredFeature<?, ?>> mossCeiling = entLevel.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.MOSS_PATCH_CEILING);
-			final Holder<ConfiguredFeature<?, ?>> clay = entLevel.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.LUSH_CAVES_CLAY);
-			final Holder<ConfiguredFeature<?, ?>> moss = entLevel.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(CaveFeatures.MOSS_PATCH);
+			final Holder<Feature> mossCeiling = entLevel.registryAccess().lookupOrThrow(Registries.FEATURE).getOrThrow(CaveFeatures.MOSS_PATCH_CEILING);
+			final Holder<Feature> clay = entLevel.registryAccess().lookupOrThrow(Registries.FEATURE).getOrThrow(CaveFeatures.LUSH_CAVES_CLAY);
+			final Holder<Feature> moss = entLevel.registryAccess().lookupOrThrow(Registries.FEATURE).getOrThrow(CaveFeatures.MOSS_PATCH);
 			final var generator = sLevel.getChunkSource().getGenerator();
 			final var random = sLevel.getRandom();
 			ExplosionHelper.doSphericalExplosion(sLevel, entity.getPos(), Math.round(radius * 0.75f), new IForEachBlockExplosionEffect() {

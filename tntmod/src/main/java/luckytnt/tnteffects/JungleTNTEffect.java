@@ -30,7 +30,6 @@ import net.minecraft.world.level.biome.Biome;
 //import net.minecraft.world.level.chunk.ChunkSection;
 //import net.minecraft.world.level.chunk.PalettedContainer;
 //import net.minecraft.world.level.chunk.ReadableContainer;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 //import net.minecraft.world.gen.feature.VegetationConfiguredFeatures;
 
 public class JungleTNTEffect extends PrimedTNTEffect {

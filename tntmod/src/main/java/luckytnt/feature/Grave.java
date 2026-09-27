@@ -3,7 +3,7 @@ package luckytnt.feature;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 import luckytnt.config.LuckyTNTConfigValues;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
@@ -25,11 +25,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
-public class Grave extends Feature<NoneFeatureConfiguration>{
+/**
+ * 26.3: {@link Feature} is now an interface whose instances are the configured features themselves; the
+ * feature type is just the {@link MapCodec} registered in {@code BuiltInRegistries.FEATURE_TYPE}. This feature
+ * has no configuration, so its codec is a unit codec that builds a fresh instance.
+ */
+public class Grave implements Feature {
+
+	public static final MapCodec<Grave> CODEC = MapCodec.unit(Grave::new);
 
 	public static final BlockState DEFAULT_GROUND = Blocks.GRASS_BLOCK.defaultBlockState();
 
@@ -73,18 +79,21 @@ public class Grave extends Feature<NoneFeatureConfiguration>{
 	public static final ResourceKey<LootTable> GRAVE_LOOT_2 = ResourceKey.create(Registries.LOOT_TABLE, GRAVE_LOOT_2_LOCATION);
 	public static final ResourceKey<LootTable> GRAVE_LOOT_RARE = ResourceKey.create(Registries.LOOT_TABLE, GRAVE_LOOT_RARE_LOCATION);
 	
-	public Grave(Codec<NoneFeatureConfiguration> codec) {
-		super(codec);
+	public Grave() {
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
+	public MapCodec<Grave> codec() {
+		return CODEC;
+	}
+
+	@Override
+	public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource featureRandom, BlockPos origin) {
 		if(!LuckyTNTConfigValues.SEASON_EVENTS_ALWAYS_ACTIVE.get().booleanValue() && !isSeasonActive()) {
 			return false;
 		}
 
-		WorldGenLevel level = ctx.level();
-		BlockPos pos = ctx.origin();
+		BlockPos pos = origin;
 		RandomSource random = level.getRandom();
 		int rand = random.nextInt(3);
 
