@@ -31,7 +31,7 @@ public class VacuumShotEffect extends PrimedTNTEffect{
 	public void explosionTick(IExplosiveEntity entity) {
 		//explosionTick runs on both logical sides. Discarding an entity is server authoritative, so the
 		//client half only allocated an explosion, scanned the entity sections and desynced the toxic
-		//clouds until the server resent them. Nothing here moves an entity, so no hurtMarked is needed.
+		//clouds until the server resent them. Nothing here moves an entity, so no syncVelocity is needed.
 		if(!(entity.getLevel() instanceof ServerLevel level)) {
 			return;
 		}

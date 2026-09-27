@@ -14,7 +14,7 @@ import net.minecraft.world.entity.monster.spider.CaveSpider;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.zombie.Drowned;
 import net.minecraft.world.entity.monster.ElderGuardian;
-import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.monster.illager.Evoker;
 import net.minecraft.world.entity.monster.Ghast;
@@ -143,7 +143,7 @@ public class AnimalKingdomEffect extends PrimedTNTEffect {
 			list.add(mob);
 		}
 		for(int i = 0, n = 4 + random.nextInt(3); i < n; i++) {
-			Mob mob = new EnderMan(EntityTypes.ENDERMAN, ent.getLevel());
+			Mob mob = new Enderman(EntityTypes.ENDERMAN, ent.getLevel());
 			list.add(mob);
 		}
 		for(int i = 0, n = 4 + random.nextInt(3); i < n; i++) {

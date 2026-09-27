@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.joml.Vector3f;
 
-import com.mojang.serialization.MapCodec;
 
 import luckytnt.registry.EffectRegistry;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -38,8 +37,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Explosion;
 
 public class NuclearWasteBlock extends FallingBlock {
-	public static final MapCodec<NuclearWasteBlock> CODEC = simpleCodec(NuclearWasteBlock::new);
-	
 	public NuclearWasteBlock(BlockBehaviour.Properties properties) {
 		super(properties);
 	}
@@ -95,10 +92,5 @@ public class NuclearWasteBlock extends FallingBlock {
 	@Override
 	public int getDustColor(BlockState state, BlockGetter level, BlockPos pos) {
 		return 0xFFFFF019;
-	}
-
-	@Override
-	protected MapCodec<? extends FallingBlock> codec() {
-		return CODEC;
 	}
 }

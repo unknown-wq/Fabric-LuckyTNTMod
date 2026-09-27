@@ -39,7 +39,7 @@ public class HouseTNTEffect extends PrimedTNTEffect{
 	@Override
 	public void serverExplosion(IExplosiveEntity entity) {
 		ServerLevel level = (ServerLevel)entity.getLevel();
-		StructureTemplate template = level.getStructureManager().getOrCreate(houseId);
+		StructureTemplate template = level.getStructureTemplateManager().getOrCreate(houseId);
 		if(template != null) {
 			//the origin was built twice (two Vec3 floors and two BlockPos allocations) for the same value
 			BlockPos origin = toBlockPos(entity.getPos()).offset(offX, 0, offZ);

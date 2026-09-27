@@ -23,7 +23,7 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 	public void explosionTick(IExplosiveEntity ent) {
 		// This 100 wide query ran on both logical sides every tick of a 600 tick fuse. Everything it
 		// does (discarding the target, the "amount" counter, the damage) is server authoritative;
-		// players are hurtMarked so the server still pushes the velocity down to them.
+		// players are syncVelocity so the server still pushes the velocity down to them.
 		if(!(ent.getLevel() instanceof ServerLevel)) {
 			return;
 		}
@@ -55,7 +55,7 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 					target.setDeltaMovement(vec3d);
 				} else if(target instanceof Player player) {
 					target.setDeltaMovement(vec3d.scale(0.3D));
-					player.hurtMarked = true;
+					player.syncVelocity = true;
 				}
 			} else if(magnitude <= 2) {
 				if(!(target instanceof Player)) {
@@ -71,7 +71,7 @@ public class HungryTNTEffect extends PrimedTNTEffect {
 					}
 					Vec3 vec3d = new Vec3(target.getX() - ent.x(), target.getY() - ent.y(), target.getZ() - ent.z()).normalize().scale(10);
 					target.setDeltaMovement(vec3d);
-					player.hurtMarked = true;
+					player.syncVelocity = true;
 				}
 			}
 		}

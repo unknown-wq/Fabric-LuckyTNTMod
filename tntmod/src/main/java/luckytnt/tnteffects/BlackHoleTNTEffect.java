@@ -88,7 +88,7 @@ public class BlackHoleTNTEffect extends PrimedTNTEffect {
 					// the pull loop no longer runs client side, so the server has to actually push
 					// the velocity down to the affected player
 					if(living instanceof Player player) {
-						player.hurtMarked = true;
+						player.syncVelocity = true;
 					}
 				}
 			}
